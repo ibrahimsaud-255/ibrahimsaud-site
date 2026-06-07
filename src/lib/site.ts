@@ -104,7 +104,10 @@ export type Work = {
   category: string;
   roles: string[];
   desc: string;
-  videoUrl: string;
+  videoUrl?: string; // رابط فيديو واحد (اختياري — للتوافق القديم)
+  videos?: string[]; // عدة روابط فيديو لنفس العمل
+  bts?: string; // رابط فيديو الكواليس (اختياري)
+  logo?: string; // مسار شعار العميل داخل public مثل "/LOGO_kwentra.png" (اختياري)
   featured?: boolean;
 };
 
@@ -116,7 +119,7 @@ export const works: Work[] = [
     category: "مؤسسي / سينمائي",
     roles: ["كتابة النص", "تصوير درون", "تمثيل", "تعليق صوتي", "مونتاج"],
     desc: "فيلم سينمائي ليوم التأسيس بلقطات درون وتعليق صوتي ونص كامل — صنعته من الفكرة حتى التسليم، وكنت فيه الممثل والمعلّق والكاتب والمنتج.",
-    videoUrl: "",
+    videos: ["https://www.youtube.com/watch?v=EOOlRJgeT6Y"],
     featured: true,
   },
   {
@@ -125,8 +128,11 @@ export const works: Work[] = [
     title: "الفيديو الافتتاحي + الختامي",
     category: "فعاليات",
     roles: ["إخراج", "تصوير", "مونتاج"],
-    desc: "هوية بصرية متحركة لهاكاثون هيلثون: فيديو افتتاحي يفتح الحدث، وفيديو ختامي يلخّص الإنجاز، وسلسلة مقاطع قصيرة للتواصل.",
-    videoUrl: "",
+    desc: "مشروع متكامل لهاكاثون هيلثون بجامعة الملك سعود: هوية بصرية متحركة، فيلم افتتاحي يفتح الحدث، وفيلم ختامي يلخّص الإنجاز، إضافة لبوسترات، برومو، ولقطات مشاركين — من الفكرة حتى التسليم.",
+    videos: [
+      "https://youtu.be/WL-GJ4ZT7Cg",
+      "https://youtu.be/7Vmq3eTWQwc",
+    ],
     featured: true,
   },
   {
@@ -135,8 +141,13 @@ export const works: Work[] = [
     title: "حملة شاحن السفر — ٣ زوايا",
     category: "إعلان منتج",
     roles: ["فكرة", "نص", "تصوير", "مونتاج"],
-    desc: "حملة من ثلاثة مقاطع لمنتج واحد: مقطع مصوّر من المغرب، مقطع قصيدة بالموشن جرافيك، ومقطع حواري أمام الكاميرا — استُخدمت في الحملات والتسويق.",
-    videoUrl: "",
+    desc: "حملة من عدة مقاطع لمنتج واحد: مقطع مصوّر من المغرب، ومقاطع حوارية وتعريفية أمام الكاميرا — استُخدمت في الحملات والتسويق، مع توثيق كواليس التصوير.",
+    videos: [
+      "https://www.youtube.com/shorts/hzGpY3rvj0w",
+      "https://www.youtube.com/shorts/VG-Wk9eKcMo",
+      "https://youtu.be/GcA8sjlQduI",
+    ],
+    bts: "https://youtu.be/2Og0FzpWbX4",
     featured: true,
   },
   {
