@@ -15,6 +15,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <style>
   :root{
     --bg:#0a0a0b; --panel:#141416; --panel2:#1d1d20; --panel3:#26262b; --line:#2c2c31;
@@ -55,7 +56,12 @@
   .logo-area .tagline{color:var(--muted);font-size:12px;margin-top:3px;letter-spacing:.5px}
   .nav{display:flex;flex-direction:column;gap:3px;flex:1;overflow:auto}
   .nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:var(--muted);font-weight:600;font-size:15px;cursor:pointer;border-right:3px solid transparent;transition:.12s}
-  .nav a .nic{font-size:17px;width:22px;text-align:center}
+  .nav a .nic{font-size:17px;width:22px;text-align:center;display:inline-flex;align-items:center;justify-content:center}
+  .nav a .nic svg{width:19px;height:19px}
+  .stat .ic svg{width:24px;height:24px}
+  .quick button svg{width:16px;height:16px;vertical-align:-3px;margin-left:6px}
+  .page-head h1 svg{width:22px;height:22px;vertical-align:-3px;margin-left:6px}
+  .card h3 svg{width:18px;height:18px;vertical-align:-3px;margin-left:5px}
   .nav a:hover{background:var(--panel2);color:var(--ink)}
   .nav a.active{background:var(--goldsoft);color:var(--gold2);border-right-color:var(--gold)}
   .nav-foot{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:3px}
@@ -71,7 +77,15 @@
   .hero-card{background:linear-gradient(120deg,rgba(245,166,35,.18),rgba(245,166,35,.02));border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:24px}
   .hero-card h1{margin:0 0 4px;font-size:26px}
   .hero-card p{margin:0;color:var(--muted)}
-  .quick{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
+  .quick{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:18px}
+  .oauth-row{display:flex;gap:10px;margin-top:14px}
+  .oauth-row button{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#1a1205;border:none;border-radius:10px;padding:11px;font-weight:700;font-size:14px;cursor:pointer}
+  .oauth-row button.apple{background:#111;color:#fff;border:1px solid var(--line)}
+  .oauth-row button:hover{filter:brightness(.95)}
+  .sep{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:12px;margin:16px 0}
+  .sep:before,.sep:after{content:"";height:1px;background:var(--line);flex:1}
+  .logo-upload{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+  .logo-upload img{height:54px;border-radius:8px;background:#000;padding:4px}
   .quick button{background:#000;border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px 15px;font-weight:700;font-size:14px;cursor:pointer;transition:.12s}
   .quick button:hover{border-color:var(--gold);color:var(--gold2)}
   @media(max-width:860px){
@@ -81,7 +95,7 @@
     .menu-toggle{display:block}
   }
 
-  .main{padding:26px 30px;max-width:1280px;margin:0 auto}
+  .main{padding:26px 34px;max-width:1500px;margin:0 auto;width:100%}
   .page-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;gap:12px;flex-wrap:wrap}
   .page-head h1{margin:0;font-size:24px}
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:26px}
@@ -178,6 +192,11 @@
     <div class="field"><label>كلمة المرور</label><input type="password" id="pw" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
     <button class="btn btn-gold" style="width:100%" onclick="doLogin()">دخول</button>
     <button class="btn btn-ghost" style="width:100%;margin-top:8px" onclick="doSignup()">إنشاء حساب جديد (أول مرة)</button>
+    <div class="sep">أو</div>
+    <div class="oauth-row">
+      <button onclick="oauth('google')"><svg width="16" height="16" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.4 5.4 2.5 13.2l7.8 6.1C12.2 13.5 17.6 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-3.9 6.7-9.7 6.7-17.4z"/><path fill="#FBBC05" d="M10.3 28.3c-.5-1.4-.8-2.9-.8-4.3s.3-3 .8-4.3l-7.8-6.1C.9 16.6 0 20.2 0 24s.9 7.4 2.5 10.5l7.8-6.2z"/><path fill="#34A853" d="M24 48c6.2 0 11.4-2 15.2-5.5l-7.3-5.7c-2 1.4-4.7 2.3-7.9 2.3-6.4 0-11.8-4-13.7-9.6l-7.8 6.2C6.4 42.6 14.6 48 24 48z"/></svg> Google</button>
+      <button class="apple" onclick="oauth('apple')"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.8-3.5.8s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 3 2.3 1.2-.1 1.6-.8 3.1-.8s1.9.8 3 .8c1.3 0 2.1-1.1 2.9-2.3.9-1.3 1.3-2.6 1.3-2.7-.1 0-2.5-1-2.5-3.9zM14.1 5.3c.7-.8 1.1-2 1-3.1-1 0-2.1.6-2.8 1.4-.6.7-1.2 1.9-1 3 1.1.1 2.2-.5 2.8-1.3z"/></svg> Apple</button>
+    </div>
     <div id="loginErr" class="lock-note" style="color:var(--bad)"></div>
     <div id="loginMsg" class="lock-note"></div>
   </div>
@@ -217,7 +236,7 @@ let STATE_ID=null, USER=null, saveTimer=null;
 const KEY='ibsaud_erp_v1';
 const def={
   settings:{brand:'إبراهيم سعود',owner:'إبراهيم سعود',email:'ibrahimsaud25@gmail.com',phone:'966504895213',
-    currency:'ر.س',password:'admin',
+    currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',bankName:'',iban:'',
     vat:{enabled:false,rate:15,number:'',sellerName:'إبراهيم سعود',address:'الرياض، السعودية',cr:''}},
   contacts:[],crm:[],sales:[],invoices:[],projects:[],appointments:[],freelancers:[],
   crmStages:[{key:'lead',label:'عميل محتمل'},{key:'contacted',label:'تم التواصل'},{key:'quoted',label:'عرض مُرسل'},{key:'won',label:'فوز'},{key:'lost',label:'خسارة'}],
@@ -246,8 +265,9 @@ function lerr(m){document.getElementById('loginErr').textContent=m||''}
 function lmsg(m){document.getElementById('loginMsg').textContent=m||''}
 async function doLogin(){const em=document.getElementById('em').value.trim();const pw=document.getElementById('pw').value;lerr('');lmsg('جارٍ الدخول...');const {data,error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error){lmsg('');lerr('تعذّر الدخول: '+error.message);return}lmsg('');await enterApp(data.user)}
 async function doSignup(){const em=document.getElementById('em').value.trim();const pw=document.getElementById('pw').value;if(!em||pw.length<6){lerr('أدخل بريداً وكلمة مرور (6 أحرف فأكثر)');return}lerr('');lmsg('جارٍ إنشاء الحساب...');const {data,error}=await sb.auth.signUp({email:em,password:pw});if(error){lmsg('');lerr('تعذّر الإنشاء: '+error.message);return}if(data.session){lmsg('');await enterApp(data.user)}else{lmsg('تم الإنشاء ✓ تحقّق من بريدك لتأكيد الحساب ثم اضغط دخول.')}}
-async function enterApp(user){USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
+async function enterApp(user){USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
 async function logout(){await sb.auth.signOut();USER=null;STATE_ID=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
+async function oauth(provider){lerr('');lmsg('جارٍ التحويل إلى '+(provider==='google'?'Google':'Apple')+'…');const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});if(error){lmsg('');lerr('تعذّر: '+error.message+' — تأكد من تفعيل المزوّد في Supabase.')}}
 async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
 async function loadFreelancers(){const {data}=await sb.from('freelancers').select('*').order('created_at');S.freelancers=data||[]}
 function flName(id){const f=(S.freelancers||[]).find(x=>x.id===id);return f?f.name:''}
@@ -294,22 +314,23 @@ async function flToggle(token,id,done){await sb.rpc('set_task_done',{p_token:tok
 
 /* ===== APPS / ROUTER ===== */
 const APPS=[
-  {id:'dashboards',name:'لوحات البيانات',icon:'📊',c1:'#ec4899',c2:'#8b5cf6'},
-  {id:'sales',name:'المبيعات',icon:'📈',c1:'#f5a623',c2:'#f97316'},
-  {id:'crm',name:'إدارة علاقات العملاء',icon:'🤝',c1:'#2dd4bf',c2:'#3b82f6'},
-  {id:'contacts',name:'جهات الاتصال',icon:'👤',c1:'#ef4444',c2:'#ec4899'},
-  {id:'appointments',name:'المواعيد',icon:'📆',c1:'#6366f1',c2:'#06b6d4'},
-  {id:'calendar',name:'التقويم',icon:'🗓️',c1:'#f59e0b',c2:'#ef4444'},
-  {id:'projects',name:'المشروع',icon:'✅',c1:'#22c55e',c2:'#14b8a6'},
-  {id:'invoicing',name:'الفوترة',icon:'🧾',c1:'#3b82f6',c2:'#6366f1'},
+  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
+  {id:'sales',name:'المبيعات',icon:'trending-up'},
+  {id:'crm',name:'إدارة علاقات العملاء',icon:'handshake'},
+  {id:'contacts',name:'جهات الاتصال',icon:'contact'},
+  {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
+  {id:'calendar',name:'التقويم',icon:'calendar-days'},
+  {id:'projects',name:'المشروع',icon:'clapperboard'},
+  {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
 ];
 const RENDER={home:renderHome,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
-const NAV=[{id:'home',name:'الرئيسية',icon:'🏠'},...APPS,{id:'team',name:'الفريق',icon:'👥'}];
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
 function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
-function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic">${n.icon}</span> ${esc(n.name)}</a>`).join('')}
+function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+function refreshIcons(){try{if(window.lucide)lucide.createIcons()}catch(e){}}
 let CUR='home';
-function go(view){CUR=view;document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.dataset.v===view));const t=document.getElementById('ctTitle');if(t)t.textContent=navName(view);(RENDER[view]||renderHome)();const sb=document.getElementById('sidebar');if(sb)sb.classList.remove('open')}
+function go(view){CUR=view;document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('active',a.dataset.v===view));const t=document.getElementById('ctTitle');if(t)t.textContent=navName(view);(RENDER[view]||renderHome)();refreshIcons();const sb=document.getElementById('sidebar');if(sb)sb.classList.remove('open')}
 function rerender(){(RENDER[CUR]||renderHome)()}
 
 /* ===== HOME (branded) ===== */
@@ -321,17 +342,17 @@ function renderHome(){
   document.getElementById('main').innerHTML=`
     <div class="hero-card"><h1>أهلاً ${esc(S.settings.owner)} 👋</h1><p>نظرة سريعة على أعمالك — أدِر كل شيء من مكان واحد.</p>
       <div class="quick">
-        <button onclick="go('invoicing');docModal('invoice')">+ فاتورة</button>
-        <button onclick="go('sales');docModal('sale')">+ عرض سعر</button>
-        <button onclick="go('projects');projModal()">+ مشروع</button>
-        <button onclick="go('appointments');apptModal()">+ موعد</button>
-        <button onclick="go('crm');crmModal()">+ فرصة</button>
+        <button onclick="go('invoicing');docModal('invoice')"><i data-lucide="receipt-text"></i> فاتورة</button>
+        <button onclick="go('sales');docModal('sale')"><i data-lucide="file-text"></i> عرض سعر</button>
+        <button onclick="go('projects');projModal()"><i data-lucide="clapperboard"></i> مشروع</button>
+        <button onclick="go('appointments');apptModal()"><i data-lucide="calendar-plus"></i> موعد</button>
+        <button onclick="go('crm');crmModal()"><i data-lucide="target"></i> فرصة</button>
       </div></div>
     <div class="stats">
-      <div class="stat"><span class="ic">💰</span><div class="v">${money(paid)}</div><div class="l">المحصّل</div></div>
-      <div class="stat"><span class="ic">⏳</span><div class="v">${money(due)}</div><div class="l">مستحقات غير مدفوعة</div></div>
-      <div class="stat"><span class="ic">🎬</span><div class="v">${activeP}</div><div class="l">مشاريع نشطة</div></div>
-      <div class="stat"><span class="ic">🤝</span><div class="v">${S.crm.length}</div><div class="l">فرص</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="wallet"></i></span><div class="v">${money(paid)}</div><div class="l">المحصّل</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="hourglass"></i></span><div class="v">${money(due)}</div><div class="l">مستحقات غير مدفوعة</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="clapperboard"></i></span><div class="v">${activeP}</div><div class="l">مشاريع نشطة</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="handshake"></i></span><div class="v">${S.crm.length}</div><div class="l">فرص</div></div>
     </div>
     <div class="grid">
       <div class="card"><h3>آخر الفواتير</h3>${miniList(S.invoices.slice(-5).reverse(),i=>`${esc(i.client)} — ${money(invTotal(i))} ${pill(i.status)}`,'لا فواتير')}</div>
@@ -532,12 +553,12 @@ function printDoc(type,id){
   const inner=`
    <div style="font-family:Tajawal,Arial,sans-serif;direction:rtl;color:#0a0a0a;max-width:760px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #f5a623;padding-bottom:14px;margin-bottom:20px">
-      <div><div style="font-size:30px;font-weight:900">إبراهيم <span style="color:#f5a623">سعود</span></div>
+      <div>${s.logo?`<img src="${s.logo}" style="height:50px;margin-bottom:6px">`:`<div style="font-size:30px;font-weight:900">إبراهيم <span style="color:#f5a623">سعود</span></div>`}
       <div style="color:#475569;font-size:13px">${esc(s.owner)}</div>
       <div style="color:#475569;font-size:13px">${esc(s.email)}${s.phone?' | '+esc(s.phone):''}</div>
       ${isInv&&s.vat.number?`<div style="color:#475569;font-size:13px">الرقم الضريبي: ${esc(s.vat.number)}</div>`:''}
       ${isInv&&s.vat.cr?`<div style="color:#475569;font-size:13px">السجل التجاري: ${esc(s.vat.cr)}</div>`:''}</div>
-      <div style="text-align:left">${qrBlock}<div style="margin-top:6px"><div style="font-size:22px;font-weight:800">${isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):'عرض سعر'}</div><div>رقم: #${d.number}</div><div>التاريخ: ${d.date}</div></div></div>
+      <div style="text-align:left">${qrBlock}<div style="margin-top:6px"><div style="font-size:22px;font-weight:800">${isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):'عرض سعر'}</div><div>رقم: ${esc(s.invPrefix||'')}${d.number}</div><div>التاريخ: ${d.date}</div></div></div>
     </div>
     <div style="margin-bottom:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px"><b>العميل:</b> ${esc(d.client||'—')} ${d.clientVat?` &nbsp; <b>الرقم الضريبي:</b> ${esc(d.clientVat)}`:''}</div>
     <table style="width:100%;border-collapse:collapse">
@@ -550,7 +571,9 @@ function printDoc(type,id){
       <div style="display:flex;justify-content:space-between;padding:9px 0;border-top:2px solid #0a0a0a;font-weight:900;font-size:18px"><span>الإجمالي</span><span>${total.toFixed(2)} ${s.currency}</span></div>
     </div>
     ${d.notes?`<div style="margin-top:18px;color:#475569"><b>ملاحظات:</b> ${esc(d.notes)}</div>`:''}
-    <div style="margin-top:34px;text-align:center;color:#94a3b8;font-size:12px">شكراً لتعاملكم — إبراهيم سعود</div>
+    ${(isInv&&(s.bankName||s.iban))?`<div style="margin-top:12px;color:#475569;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName)} ${esc(s.iban)}</div>`:''}
+    ${(isInv&&s.terms)?`<div style="margin-top:8px;color:#64748b;font-size:12px">${esc(s.terms)}</div>`:''}
+    <div style="margin-top:30px;text-align:center;color:#94a3b8;font-size:12px">شكراً لتعاملكم — ${esc(s.brand||'إبراهيم سعود')}</div>
    </div>`;
   const html=`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
@@ -635,10 +658,10 @@ function renderDashboards(){
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>لوحات البيانات</h1><span style="color:var(--muted)">${today()}</span></div>
     <div class="stats">
-      <div class="stat"><span class="ic">💰</span><div class="v">${money(paid)}</div><div class="l">إجمالي المحصّل</div></div>
-      <div class="stat"><span class="ic">⏳</span><div class="v">${money(due)}</div><div class="l">مستحقات غير مدفوعة</div></div>
-      <div class="stat"><span class="ic">🎯</span><div class="v">${money(pipe)}</div><div class="l">قيمة الفرص</div></div>
-      <div class="stat"><span class="ic">🏆</span><div class="v">${won}</div><div class="l">صفقات مكسوبة</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="wallet"></i></span><div class="v">${money(paid)}</div><div class="l">إجمالي المحصّل</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="hourglass"></i></span><div class="v">${money(due)}</div><div class="l">مستحقات غير مدفوعة</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="target"></i></span><div class="v">${money(pipe)}</div><div class="l">قيمة الفرص</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="trophy"></i></span><div class="v">${won}</div><div class="l">صفقات مكسوبة</div></div>
     </div>
     <div class="grid">
       <div class="card" style="grid-column:span 2;min-width:300px"><h3>الإيرادات المحصّلة — آخر 6 أشهر</h3>
@@ -654,28 +677,45 @@ function renderDashboards(){
 function renderSettings(){
   const s=S.settings;const v=s.vat;
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>الإعدادات</h1></div>
-    <div class="card" style="max-width:720px">
-      <h3 style="margin-top:0">معلومات المؤسسة</h3>
-      <div class="row2"><div class="field"><label>اسم المؤسسة</label><input id="s_brand" value="${esc(s.brand)}"></div><div class="field"><label>اسم المالك</label><input id="s_owner" value="${esc(s.owner)}"></div></div>
-      <div class="row2"><div class="field"><label>البريد</label><input id="s_email" value="${esc(s.email)}"></div><div class="field"><label>الجوال</label><input id="s_phone" value="${esc(s.phone)}"></div></div>
-      <div class="field"><label>العملة</label><input id="s_curr" value="${esc(s.currency)}"></div>
-      <hr style="border-color:var(--line);margin:18px 0"><h3>الضريبة وزاتكا</h3>
-      <div class="badge-note">ℹ️ <div>أدخل بياناتك الضريبية؛ يظهر رمز QR في الفواتير المطبوعة. المرحلة الثانية (الختم التشفيري والربط مع منصة فاتورة) تتطلب التسجيل وإصدار شهادة.</div></div>
-      <div class="row2"><div class="field"><label>تفعيل الضريبة افتراضياً</label><select id="v_en"><option value="0" ${!v.enabled?'selected':''}>مغلقة</option><option value="1" ${v.enabled?'selected':''}>مفعّلة</option></select></div><div class="field"><label>نسبة الضريبة %</label><input type="number" id="v_rate" value="${v.rate}"></div></div>
-      <div class="row2"><div class="field"><label>اسم البائع</label><input id="v_seller" value="${esc(v.sellerName)}"></div><div class="field"><label>الرقم الضريبي</label><input id="v_num" value="${esc(v.number)}"></div></div>
-      <div class="row2"><div class="field"><label>السجل التجاري</label><input id="v_cr" value="${esc(v.cr)}"></div><div class="field"><label>العنوان</label><input id="v_addr" value="${esc(v.address)}"></div></div>
-      <hr style="border-color:var(--line);margin:18px 0"><h3>الأمان</h3>
-      <div class="field"><label>كلمة مرور الدخول</label><input id="s_pw" value="${esc(s.password)}"></div>
-      <button class="btn btn-gold" onclick="saveSettings()">حفظ الإعدادات</button>
-      <hr style="border-color:var(--line);margin:18px 0"><h3>البيانات</h3>
-      <div class="toolbar"><button class="btn btn-ghost btn-sm" onclick="exportData()">⬇️ نسخة احتياطية</button>
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('imp').click()">⬆️ استيراد</button>
-      <input type="file" id="imp" class="hidden" accept=".json" onchange="importData(event)">
-      <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="resetData()">🗑️ مسح الكل</button></div>
+    <div class="page-head"><h1>الإعدادات</h1><button class="btn btn-gold" onclick="saveSettings()"><i data-lucide="save"></i> حفظ الإعدادات</button></div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;align-items:start">
+
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="image"></i> الشعار والهوية</h3>
+        <div class="logo-upload"><img id="logoPrev" src="${s.logo||LOGO}" onerror="this.style.display='none'"><div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('logoFile').click()"><i data-lucide="upload"></i> رفع شعار</button><div style="color:var(--muted);font-size:12px;margin-top:6px">يظهر في القائمة والفواتير</div></div></div>
+        <input type="file" id="logoFile" accept="image/*" class="hidden" onchange="uploadLogo(event)">
+      </div>
+
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="building-2"></i> معلومات المؤسسة</h3>
+        <div class="row2"><div class="field"><label>اسم المؤسسة</label><input id="s_brand" value="${esc(s.brand)}"></div><div class="field"><label>اسم المالك</label><input id="s_owner" value="${esc(s.owner)}"></div></div>
+        <div class="row2"><div class="field"><label>البريد</label><input id="s_email" value="${esc(s.email)}"></div><div class="field"><label>الجوال</label><input id="s_phone" value="${esc(s.phone)}"></div></div>
+        <div class="field"><label>العملة</label><input id="s_curr" value="${esc(s.currency)}"></div>
+      </div>
+
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="receipt-text"></i> إعدادات الفواتير</h3>
+        <div class="row2"><div class="field"><label>بادئة رقم الفاتورة</label><input id="s_prefix" value="${esc(s.invPrefix)}" placeholder="INV-"></div><div class="field"><label>الآيبان (IBAN)</label><input id="s_iban" value="${esc(s.iban)}"></div></div>
+        <div class="field"><label>اسم البنك</label><input id="s_bank" value="${esc(s.bankName)}"></div>
+        <div class="field"><label>الشروط/الملاحظات الافتراضية</label><textarea id="s_terms" rows="2">${esc(s.terms)}</textarea></div>
+      </div>
+
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="badge-percent"></i> الضريبة وزاتكا</h3>
+        <div class="badge-note"><i data-lucide="info"></i> <div>تظهر بيانات الضريبة ورمز QR في الفواتير. المرحلة الثانية لزاتكا تتطلب التسجيل وإصدار شهادة.</div></div>
+        <div class="row2"><div class="field"><label>تفعيل الضريبة افتراضياً</label><select id="v_en"><option value="0" ${!v.enabled?'selected':''}>مغلقة</option><option value="1" ${v.enabled?'selected':''}>مفعّلة</option></select></div><div class="field"><label>نسبة الضريبة %</label><input type="number" id="v_rate" value="${v.rate}"></div></div>
+        <div class="row2"><div class="field"><label>اسم البائع</label><input id="v_seller" value="${esc(v.sellerName)}"></div><div class="field"><label>الرقم الضريبي</label><input id="v_num" value="${esc(v.number)}"></div></div>
+        <div class="row2"><div class="field"><label>السجل التجاري</label><input id="v_cr" value="${esc(v.cr)}"></div><div class="field"><label>العنوان</label><input id="v_addr" value="${esc(v.address)}"></div></div>
+      </div>
+
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="shield-check"></i> الحساب والنسخ الاحتياطي</h3>
+        <div class="field"><label>الحساب الحالي</label><input value="${esc((USER&&USER.email)||'')}" disabled></div>
+        <div class="badge-note"><i data-lucide="cloud-check"></i> <div>بياناتك تُحفظ وتُزامن تلقائياً في السحابة (Supabase) لحظياً — لا حاجة لنسخ يدوي. تقدر أيضاً تنزّل نسخة JSON احتياطية.</div></div>
+        <div class="toolbar"><button class="btn btn-ghost btn-sm" onclick="exportData()"><i data-lucide="download"></i> تنزيل نسخة JSON</button>
+        <button class="btn btn-ghost btn-sm" onclick="logout()"><i data-lucide="log-out"></i> تسجيل الخروج</button></div>
+      </div>
+
     </div>`;
+  refreshIcons();
 }
-function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),password:g('s_pw')||'admin'});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();alert('تم الحفظ ✓')}
+function uploadLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>1500000){alert('حجم الصورة كبير (أقل من 1.5MB)');return}const r=new FileReader();r.onload=()=>{S.settings.logo=r.result;save();applyBranding();const p=document.getElementById('logoPrev');if(p){p.src=r.result;p.style.display='block'}alert('تم تحديث الشعار ✓')};r.readAsDataURL(f)}
+function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),terms:g('s_terms')});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();applyBranding();alert('تم الحفظ ✓')}
 function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-'+today()+'.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem(KEY,r.result);S=load();save();alert('تم الاستيراد ✓');go('settings')}catch(x){alert('ملف غير صالح')}};r.readAsText(f)}
 function resetData(){if(confirm('مسح جميع البيانات نهائياً؟')){localStorage.removeItem(KEY);S=load();save();go('home')}}
@@ -687,9 +727,10 @@ function openModal(title,bodyHtml,onSave,onDelete){
     <div class="modal-body">${bodyHtml}</div>
     <div class="modal-foot"><button class="btn btn-gold" id="mSave">حفظ</button><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
     ${onDelete?'<button class="btn btn-ghost" style="color:var(--bad);margin-right:auto" id="mDel">حذف</button>':''}</div></div></div>`;
-  document.getElementById('mSave').onclick=onSave;if(onDelete)document.getElementById('mDel').onclick=onDelete;
+  document.getElementById('mSave').onclick=onSave;if(onDelete)document.getElementById('mDel').onclick=onDelete;refreshIcons();
 }
 function closeModal(){document.getElementById('modalRoot').innerHTML=''}
+function applyBranding(){const sl=document.querySelector('.logo-area img');if(sl)sl.src=S.settings.logo||LOGO}
 
 async function bootstrap(){
   const params=new URLSearchParams(location.search);
