@@ -113,6 +113,15 @@ export type Work = {
 
 export const works: Work[] = [
   {
+      id: "rinad-coverage",
+      client: "ريناد المجد",
+      title: "فيديو تغطية",
+      category: "تغطية / فعاليات",
+      roles: ["تصوير", "مونتاج"],
+      desc: "فيديو تغطية لشركة ريناد المجد — توثيق الفعالية وإخراجها في مقطع متكامل.",
+      videos: ["https://youtube.com/shorts/g8TnReq0uHs"],
+  },
+  {
       id: "maharah-academy",
       client: "أكاديمية المهارة",
       title: "فيديو تعريفي للأكاديمية",
