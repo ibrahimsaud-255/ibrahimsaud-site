@@ -113,6 +113,15 @@ export type Work = {
 
 export const works: Work[] = [
   {
+      id: "maharah-academy",
+      client: "أكاديمية المهارة",
+      title: "فيديو تعريفي للأكاديمية",
+      category: "تعليمي / مؤسسي",
+      roles: ["فكرة", "تصوير", "مونتاج"],
+      desc: "فيديو خاص لأكاديمية المهارة يعرّف بالأكاديمية وخدماتها — من الفكرة حتى التسليم.",
+      videos: ["https://youtube.com/shorts/THuZT8vOzoM"],
+  },
+  {
     id: "rinad-tasis",
     client: "ريناد المجد",
     title: "فيلم يوم التأسيس",
