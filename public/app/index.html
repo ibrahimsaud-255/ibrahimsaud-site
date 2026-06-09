@@ -535,11 +535,12 @@ function docModal(type,id){
     ${isInv?`<div class="field"><label>الرقم الضريبي للعميل (اختياري — B2B)</label><input id="d_cvat" value="${esc(d.clientVat)}"></div>`:''}
     <div class="field"><label>البنود</label>
     <table class="items-tbl"><thead><tr><th>الوصف</th><th style="width:64px">كمية</th><th style="width:100px">السعر</th><th style="width:90px">المجموع</th><th></th></tr></thead><tbody id="itemsBody">
-    ${d.items.map((it,i)=>`<tr><td><input data-i="${i}" data-f="desc" value="${esc(it.desc)}" placeholder="وصف الخدمة"></td>
+    ${d.items.map((it,i)=>`<tr><td><input data-i="${i}" data-f="desc" value="${esc(it.desc)}" placeholder="عنوان الخدمة"></td>
     <td><input data-i="${i}" data-f="qty" type="number" min="0" value="${it.qty}"></td>
     <td><input data-i="${i}" data-f="price" type="number" min="0" value="${it.price}"></td>
     <td style="white-space:nowrap">${money(Number(it.qty||0)*Number(it.price||0))}</td>
-    <td><button class="link-btn del" onclick="rmItem(${i})">×</button></td></tr>`).join('')}
+    <td><button class="link-btn del" onclick="rmItem(${i})">×</button></td></tr>
+    <tr><td colspan="5" style="padding-top:0;padding-bottom:8px"><input data-i="${i}" data-f="details" value="${esc(it.details||'')}" placeholder="↳ تفاصيل تحت الخدمة (اختياري)…" style="font-size:13px;color:var(--muted);background:transparent;border:none;border-bottom:1px dashed var(--line);border-radius:0;padding:5px 4px"></td></tr>`).join('')}
     </tbody></table><button class="link-btn" onclick="addItem()">+ بند</button>
     <span style="color:var(--muted);font-size:12px;margin-right:8px">قوالب:</span>
     ${['كتابة النص الإعلاني','تصوير احترافي','تصوير درون','تعليق صوتي','مونتاج وإخراج','حملة محتوى كاملة'].map(t=>`<button class="link-btn" onclick="quickItem('${t}')">${t}</button>`).join('')}</div>
@@ -556,7 +557,7 @@ function docModal(type,id){
   window.toggleVat=v=>{collect();d.vat=v==='1';refresh()};
   function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.status=g('d_status').value;d.notes=g('d_notes').value;d.vat=g('d_vat').value==='1';if(g('d_cvat'))d.clientVat=g('d_cvat').value}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
   function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body()}
-  setTimeout(()=>{document.querySelector('#modalRoot .modal-body').addEventListener('input',e=>{if(e.target.closest('#itemsBody')){collect();refresh()}})},0);
+  setTimeout(()=>{document.querySelector('#modalRoot .modal-body').addEventListener('input',e=>{const t=e.target;if(t.closest('#itemsBody')){const f=t.dataset.f;if(f==='qty'||f==='price'){collect();refresh()}else if(f){const i=+t.dataset.i;if(d.items[i])d.items[i][f]=t.value}}})},0);
 }
 
 /* ===== ZATCA QR ===== */
@@ -583,7 +584,7 @@ function printDoc(type,id){
     <div style="margin-bottom:14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px"><b>العميل:</b> ${esc(d.client||'—')} ${d.clientVat?` &nbsp; <b>الرقم الضريبي:</b> ${esc(d.clientVat)}`:''}</div>
     <table style="width:100%;border-collapse:collapse">
       <thead><tr style="background:#1d1d20;color:#fff"><th style="border:1px solid #cbd5e1;padding:9px;text-align:right">الوصف</th><th style="border:1px solid #cbd5e1;padding:9px">الكمية</th><th style="border:1px solid #cbd5e1;padding:9px">السعر</th><th style="border:1px solid #cbd5e1;padding:9px">المجموع</th></tr></thead>
-      <tbody>${d.items.map(it=>`<tr><td style="border:1px solid #cbd5e1;padding:9px">${esc(it.desc)}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${it.qty}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${Number(it.price).toFixed(2)}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${(it.qty*it.price).toFixed(2)}</td></tr>`).join('')}</tbody>
+      <tbody>${d.items.map(it=>`<tr><td style="border:1px solid #cbd5e1;padding:9px"><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:#64748b;margin-top:3px">${esc(it.details)}</div>`:''}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${it.qty}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${Number(it.price).toFixed(2)}</td><td style="border:1px solid #cbd5e1;padding:9px;text-align:center">${(it.qty*it.price).toFixed(2)}</td></tr>`).join('')}</tbody>
     </table>
     <div style="margin-top:16px;width:280px;margin-left:0;margin-right:auto">
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span>المجموع الفرعي</span><span>${sub.toFixed(2)} ${s.currency}</span></div>
