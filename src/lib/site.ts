@@ -122,6 +122,15 @@ export const works: Work[] = [
       videos: ["https://youtube.com/shorts/THuZT8vOzoM"],
   },
   {
+      id: "kwentra-ad",
+      client: "كوينترا",
+      title: "إعلان مع شركة كوينترا",
+      category: "إعلان منتج",
+      roles: ["فكرة", "تصوير", "مونتاج"],
+      desc: "إعلان منتج لشركة كوينترا بعدة مقاطع قصيرة — من الفكرة حتى التسليم.",
+      videos: ["https://www.youtube.com/shorts/nJOzjCP5eh8", "https://www.youtube.com/shorts/zUgdf_2S9uo"],
+  },
+  {
     id: "rinad-tasis",
     client: "ريناد المجد",
     title: "فيلم يوم التأسيس",
