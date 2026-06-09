@@ -299,10 +299,14 @@ async function renderAntar(){
 }
 async function antarLoad(){
   const el=document.getElementById('antarList');if(!el)return;
-  const {data,error}=await sb.from('antar_inbox').select('*').eq('done',false).order('created_at',{ascending:false});
+  const {data,error}=await sb.from('antar_inbox').select('*').eq('done',false).order('scheduled_for',{ascending:true,nullsFirst:false}).order('created_at',{ascending:false});
   if(error){el.innerHTML=emptyBox('alert-triangle','تعذّر التحميل: '+error.message);refreshIcons();return}
   if(!data||!data.length){el.innerHTML=emptyBox('sparkles','الوارد فارغ. أضف مهمة أو قل «يا عنتر».');refreshIcons();return}
-  el.innerHTML='<table><thead><tr><th>المهمة</th><th>أُضيفت</th><th></th></tr></thead><tbody>'+data.map(t=>`<tr><td>${esc(t.text)}</td><td>${(t.created_at||'').slice(0,16).replace('T',' ')}</td><td style="white-space:nowrap"><button class="link-btn" onclick="antarDone('${t.id}')">✓ تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`).join('')+'</tbody></table>';
+  const tk=today();
+  el.innerHTML='<table><thead><tr><th>المهمة</th><th>التاريخ</th><th></th></tr></thead><tbody>'+data.map(t=>{
+    let dchip='<span style="color:var(--muted)">—</span>';
+    if(t.scheduled_for){const sd=t.scheduled_for;const cls=sd<tk?'unpaid':(sd===tk?'progress':'scheduled');const lbl=sd===tk?'اليوم':(sd<tk?'متأخر · '+sd:sd);dchip=`<span class="pill ${cls}">${lbl}</span>`}
+    return `<tr><td>${esc(t.text)}</td><td>${dchip}</td><td style="white-space:nowrap"><button class="link-btn" onclick="antarDone('${t.id}')">✓ تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`;}).join('')+'</tbody></table>';
 }
 async function antarQuickAdd(){const i=document.getElementById('antarInput');const v=i.value.trim();if(!v)return;await sb.from('antar_inbox').insert({text:v});i.value='';antarLoad()}
 async function antarDone(id){await sb.from('antar_inbox').update({done:true}).eq('id',id);antarLoad()}
