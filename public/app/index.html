@@ -288,6 +288,26 @@ function flCopy(token){const u=flLink(token);navigator.clipboard.writeText(u).th
 function flAdd(){openModal('فريلانسر جديد',`<div class="field"><label>الاسم</label><input id="f_name" placeholder="مثلاً: محمد (مونتاج)"></div><div class="field"><label>البريد (للإشعارات لاحقاً)</label><input id="f_email" type="email"></div>`,async()=>{const name=document.getElementById('f_name').value.trim();const email=document.getElementById('f_email').value.trim();if(!name){alert('أدخل الاسم');return}const {data,error}=await sb.from('freelancers').insert({name,email,owner:USER.id}).select().single();if(error){alert('خطأ: '+error.message);return}S.freelancers.push(data);closeModal();renderTeam()})}
 async function flDel(id){if(!confirm('حذف الفريلانسر؟'))return;await sb.from('freelancers').delete().eq('id',id);S.freelancers=S.freelancers.filter(f=>f.id!==id);renderTeam()}
 
+/* ===== عنتر — المساعد ===== */
+async function renderAntar(){
+  document.getElementById('main').innerHTML=`
+    <div class="page-head"><h1><i data-lucide="sparkles"></i> عنتر — مساعدك</h1></div>
+    <div class="badge-note"><i data-lucide="mic"></i> <div>قل «يا Siri، عنتر» وأملِ مهمتك، أو اكتبها هنا — تظهر في الوارد. (ذكاء عنتر الكامل: فهم الجُمل والجدولة والرد، يُفعّل عند ربط مفتاح Groq.)</div></div>
+    <div class="card" style="margin-bottom:16px"><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="antarInput" placeholder="اكتب مهمة لعنتر…" onkeydown="if(event.key==='Enter')antarQuickAdd()" style="flex:1;min-width:160px"><button class="btn btn-gold" onclick="antarQuickAdd()"><i data-lucide="plus"></i> إضافة</button></div></div>
+    <div id="antarList"><p style="color:var(--muted)">جارٍ التحميل…</p></div>`;
+  refreshIcons();antarLoad();
+}
+async function antarLoad(){
+  const el=document.getElementById('antarList');if(!el)return;
+  const {data,error}=await sb.from('antar_inbox').select('*').eq('done',false).order('created_at',{ascending:false});
+  if(error){el.innerHTML=emptyBox('alert-triangle','تعذّر التحميل: '+error.message);refreshIcons();return}
+  if(!data||!data.length){el.innerHTML=emptyBox('sparkles','الوارد فارغ. أضف مهمة أو قل «يا عنتر».');refreshIcons();return}
+  el.innerHTML='<table><thead><tr><th>المهمة</th><th>أُضيفت</th><th></th></tr></thead><tbody>'+data.map(t=>`<tr><td>${esc(t.text)}</td><td>${(t.created_at||'').slice(0,16).replace('T',' ')}</td><td style="white-space:nowrap"><button class="link-btn" onclick="antarDone('${t.id}')">✓ تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`).join('')+'</tbody></table>';
+}
+async function antarQuickAdd(){const i=document.getElementById('antarInput');const v=i.value.trim();if(!v)return;await sb.from('antar_inbox').insert({text:v});i.value='';antarLoad()}
+async function antarDone(id){await sb.from('antar_inbox').update({done:true}).eq('id',id);antarLoad()}
+async function antarDel(id){if(!confirm('حذف؟'))return;await sb.from('antar_inbox').delete().eq('id',id);antarLoad()}
+
 /* ===== FREELANCER VIEW (?ft=token) ===== */
 async function renderFreelancer(token){
   document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.add('hidden');
@@ -319,8 +339,8 @@ const APPS=[
   {id:'projects',name:'المشروع',icon:'clapperboard'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
 ];
-const RENDER={home:renderHome,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
+const RENDER={home:renderHome,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
 function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
 function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
