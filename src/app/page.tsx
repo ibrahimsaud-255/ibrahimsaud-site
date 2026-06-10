@@ -4,7 +4,6 @@ import Brands from "@/components/Brands";
 import Works from "@/components/Works";
 import Services from "@/components/Services";
 import Process from "@/components/Process";
-import About from "@/components/About";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
@@ -18,7 +17,6 @@ export default function Home() {
         <Works />
         <Services />
         <Process />
-        <About />
         <Contact />
         <Brands />
       </main>

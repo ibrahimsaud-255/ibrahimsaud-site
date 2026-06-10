@@ -68,7 +68,7 @@ export default function Hero() {
             <div className="pointer-events-none absolute bottom-0 left-1/2 size-[85%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(231,178,76,0.22),transparent_65%)] blur-2xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/صورتي.png"
+              src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg"
               alt="إبراهيم سعود"
               className="relative max-h-[560px] w-auto object-contain drop-shadow-2xl"
             />
