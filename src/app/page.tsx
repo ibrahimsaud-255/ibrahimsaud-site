@@ -15,12 +15,12 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
-        <Brands />
         <Works />
         <Services />
         <Process />
         <About />
         <Contact />
+        <Brands />
       </main>
       <Footer />
       <WhatsAppFab />

@@ -1,4 +1,4 @@
-import { brands } from "@/lib/site";
+import { brands, waLink } from "@/lib/site";
 
 export default function Brands() {
   if (!brands.length) return null;
@@ -17,22 +17,32 @@ export default function Brands() {
       </div>
 
       <div className="group relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
-        <div className="marquee-track flex w-max items-center gap-6">
+        <div className="marquee-track flex w-max items-center gap-14">
           {items.map((b, i) => (
-            <div
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               key={i}
-              className="flex h-20 w-40 shrink-0 items-center justify-center rounded-2xl border border-line bg-ink-card px-4"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={b.logo}
-                alt={b.name}
-                loading="lazy"
-                className="max-h-12 max-w-full object-contain opacity-80 transition hover:opacity-100"
-              />
-            </div>
+              src={b.logo}
+              alt={b.name}
+              loading="lazy"
+              className="h-12 w-auto max-w-[150px] shrink-0 object-contain opacity-70 transition hover:opacity-100"
+            />
           ))}
         </div>
+      </div>
+
+      {/* زر التواصل */}
+      <div className="mt-14 text-center">
+        <p className="mb-5 text-cream/70">جاهز تكون علامتك التالية؟</p>
+        <a
+          href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-4 text-base font-bold text-ink transition hover:bg-gold-soft"
+        >
+          <span className="text-xl">📱</span>
+          تواصل عبر واتساب
+        </a>
       </div>
     </section>
   );
