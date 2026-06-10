@@ -7,6 +7,7 @@ import Process from "@/components/Process";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
+import ReelsExperience from "@/components/ReelsExperience";
 
 export default function Home() {
   return (
@@ -22,6 +23,7 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppFab />
+      <ReelsExperience />
     </>
   );
 }

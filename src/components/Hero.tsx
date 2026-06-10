@@ -37,18 +37,22 @@ export default function Hero() {
           <Reveal delay={240}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <a
+                href="#reels"
+                className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
+              >
+                <span className="relative flex size-2.5">
+                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-ink/40" />
+                  <span className="relative inline-flex size-2.5 rounded-full bg-ink" />
+                </span>
+                🎬 ابدأ التجربة
+              </a>
+              <a
                 href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
-              >
-                اطلب إعلانك الآن
-              </a>
-              <a
-                href="#works"
                 className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
               >
-                شاهد الأعمال
+                اطلب إعلانك الآن
               </a>
             </div>
           </Reveal>
@@ -68,7 +72,7 @@ export default function Hero() {
             <div className="pointer-events-none absolute bottom-0 left-1/2 size-[85%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(231,178,76,0.22),transparent_65%)] blur-2xl" />
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg"
+              src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/%D8%B5%D9%88%D8%B1%D8%AA%D9%8A_2.png"
               alt="إبراهيم سعود"
               className="relative max-h-[560px] w-auto object-contain drop-shadow-2xl"
             />
