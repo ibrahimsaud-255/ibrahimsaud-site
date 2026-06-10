@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { Work } from "@/lib/site";
-import { toEmbed } from "@/lib/embed";
+import { toEmbed, toThumb } from "@/lib/embed";
 
 const AR_DIGITS = ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"];
 const arNum = (n: number) => AR_DIGITS[n - 1] ?? String(n);
@@ -32,6 +32,9 @@ export default function VideoCard({ work }: { work: Work }) {
   const embed = hasVideo
     ? toEmbed(clips[active].url)
     : ({ kind: "none" } as const);
+  const ytThumb = hasVideo ? toThumb(clips[active].url) : null;
+  // صورة مصغّرة مخصّصة للعمل (للمعاينة الرئيسية)، وإلا صورة يوتيوب
+  const thumb = active === 0 && work.thumb ? work.thumb : ytThumb;
 
   const selectClip = (i: number) => {
     setActive(i);
@@ -69,9 +72,29 @@ export default function VideoCard({ work }: { work: Work }) {
             disabled={!hasVideo}
             className="absolute inset-0 flex flex-col items-center justify-center gap-3"
           >
-            {/* خلفية متدرجة سينمائية */}
-            <div className="absolute inset-0 bg-gradient-to-tr from-ink via-ink-soft to-ink-card" />
-            <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_30%_20%,var(--color-gold),transparent_45%)]" />
+            {thumb ? (
+              <>
+                {/* الصورة المصغّرة للفيديو */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={thumb}
+                  alt={work.title}
+                  loading="lazy"
+                  onError={(e) => {
+                    if (ytThumb && e.currentTarget.src !== ytThumb)
+                      e.currentTarget.src = ytThumb;
+                  }}
+                  className="absolute inset-0 size-full object-cover"
+                />
+                <div className="absolute inset-0 bg-ink/40 transition group-hover:bg-ink/20" />
+              </>
+            ) : (
+              <>
+                {/* خلفية متدرجة سينمائية (عند عدم توفر صورة مصغّرة) */}
+                <div className="absolute inset-0 bg-gradient-to-tr from-ink via-ink-soft to-ink-card" />
+                <div className="pointer-events-none absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_30%_20%,var(--color-gold),transparent_45%)]" />
+              </>
+            )}
 
             {hasVideo ? (
               <span className="relative flex size-16 items-center justify-center rounded-full bg-gold/90 text-2xl text-ink shadow-lg transition group-hover:scale-110">

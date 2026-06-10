@@ -52,19 +52,13 @@ export default function About() {
 
         <Reveal delay={120}>
           <div className="relative">
-            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-line bg-gradient-to-tr from-ink-card via-ink-soft to-ink">
-              <div className="flex size-full flex-col items-center justify-center gap-3 text-center">
-                <div className="flex size-24 items-center justify-center rounded-full border border-gold/40 text-5xl">
-                  🎬
-                </div>
-                <p className="text-sm text-cream/50">
-                  ضع صورتك هنا
-                  <br />
-                  <span className="text-xs">
-                    (public/ibrahim.jpg ثم استبدل هذا البلوك)
-                  </span>
-                </p>
-              </div>
+            <div className="aspect-[4/5] overflow-hidden rounded-3xl border border-line bg-ink-card">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg"
+                alt="إبراهيم سعود"
+                className="size-full object-cover"
+              />
             </div>
             <div className="absolute -bottom-4 right-4 rounded-2xl border border-line bg-ink px-5 py-3 shadow-xl">
               <p className="text-xs text-cream/60">{site.bio}</p>

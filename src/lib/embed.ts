@@ -26,3 +26,13 @@ export function toEmbed(url: string): Embed {
   // افتراضيًا: ضمّنه كـ iframe
   return { kind: "iframe", src: url };
 }
+
+// يرجّع رابط الصورة المصغّرة (thumbnail) للفيديو إن أمكن — يوتيوب فقط حاليًا.
+export function toThumb(url: string): string | null {
+  if (!url) return null;
+  const yt = url.match(
+    /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/,
+  );
+  if (yt) return `https://img.youtube.com/vi/${yt[1]}/hqdefault.jpg`;
+  return null; // Vimeo / TikTok / ملف مباشر: لا صورة مصغّرة جاهزة
+}
