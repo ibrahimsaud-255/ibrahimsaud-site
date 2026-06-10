@@ -188,62 +188,6 @@ export const works: Work[] = [
     ],
   },
   {
-    id: "raqmana-program",
-    client: "برنامج رقمنة — مع م. أحمد الزيادات",
-    title: "رقمنة — التقنية والذكاء الاصطناعي",
-    category: "برنامج / إنتاج",
-    roles: ["إنتاج"],
-    desc: "برنامج من ١٥ حلقة يتناول التقنية والذكاء الاصطناعي، أعدّه وقدّمه المهندس أحمد الزيادات — وكنت المنتج للبرنامج.",
-    videos: [
-      "https://www.youtube.com/watch?v=inCmiqVSnIQ&list=PL3BjsAHgaCzbaadRYhtrDqcMLaBT5nBVF",
-    ],
-  },
-  {
-    id: "akher-faqra",
-    client: "برنامج آخر فقرة",
-    title: "آخر فقرة — شرح كتب",
-    category: "برنامج / تقديم",
-    roles: ["إعداد", "تقديم", "مونتاج"],
-    desc: "برنامج أشرح فيه الكتب حلقةً حلقة: الموسم الأول لكتاب «صناعة المستهلك» (٩ حلقات)، والموسم الثاني لكتاب «متلازمة التيك توك» (٦ حلقات).",
-    videos: [
-      "https://www.youtube.com/watch?v=iU9dl6OCejQ&list=PL3BjsAHgaCzbr5W9nN8YL6rDf4tkvG2Kn",
-      "https://www.youtube.com/watch?v=wOsdAQfbBTg&list=PL3BjsAHgaCzZKne5praOAmlaGJEDmbqIS",
-    ],
-  },
-  {
-    id: "ya-ghulam-podcast",
-    client: "بودكاست يا غلام — بالتعاون مع قناة فلق والمدونة استديو",
-    title: "بودكاست يا غلام",
-    category: "بودكاست",
-    roles: ["إعداد", "تقديم"],
-    desc: "بودكاست «يا غلام» — كنت المقدّم والمُعِدّ، بالتعاون مع قناة فلق والمدونة استديو.",
-    videos: [
-      "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
-    ],
-  },
-  {
-    id: "fee-alkhatir",
-    client: "برنامج في الخاطر",
-    title: "في الخاطر — برنامج ساخر",
-    category: "كوميدي / ساخر",
-    roles: ["فكرة", "تقديم", "مونتاج"],
-    desc: "برنامج قصير ساخر يتناول «أشياء في الخاطر» — أنتجت منه ٤ حلقات قبل التوقّف.",
-    videos: [
-      "https://www.youtube.com/watch?v=38fVZn6OX1U&list=PL3BjsAHgaCzaYHMoLnjODgHrlaXFCizSe",
-    ],
-  },
-  {
-    id: "qoot-program",
-    client: "برنامج قِوت",
-    title: "قِوت — إنتاج تجريبي",
-    category: "برنامج / إنتاج",
-    roles: ["إنتاج"],
-    desc: "برنامج جديد أنتجنا منه حلقتين ومقطعًا ترحيبيًا للمقدّم ومقطعًا دعائيًا تشويقيًا — توقّف لعدم اكتمال التمويل.",
-    videos: [
-      "https://www.youtube.com/watch?v=FrTmum7RIbw&list=PL3BjsAHgaCzYb3XwijX4iIQj5unA4RrmL",
-    ],
-  },
-  {
     id: "wedding-film",
     client: "مناسبة خاصة",
     title: "فيلم زواج",

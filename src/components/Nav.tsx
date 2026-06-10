@@ -30,8 +30,13 @@ export default function Nav() {
       }`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
-        <a href="#top" className="text-lg font-extrabold tracking-tight">
-          إبراهيم <span className="gold-text">سعود</span>
+        <a href="#top" className="flex items-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png"
+            alt="إبراهيم سعود"
+            className="h-9 w-auto"
+          />
         </a>
 
         <div className="hidden items-center gap-8 md:flex">
