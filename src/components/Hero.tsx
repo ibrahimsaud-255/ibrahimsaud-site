@@ -27,8 +27,8 @@ export default function Hero() {
         <Reveal delay={160}>
           <p className="mt-6 max-w-2xl text-lg leading-relaxed text-cream/75 sm:text-xl">
             من الفكرة والنص، للتصوير، للتعليق الصوتي، للمونتاج النهائي — أحوّل
-            منتجك إلى فيديو إعلاني يوقف له الناس. شغل مع جامعة الملك سعود وعلامات
-            تجارية في السعودية والخليج.
+            منتجك إلى فيديو إعلاني يوقف له الناس. شغل مع علامات تجارية رائدة في
+            السعودية والخليج.
           </p>
         </Reveal>
 
@@ -53,9 +53,9 @@ export default function Hero() {
 
         <Reveal delay={320}>
           <div className="mt-16 flex flex-wrap gap-x-10 gap-y-4 border-t border-line/60 pt-8 text-sm">
-            <Stat n="+30" label="فيديو إعلاني" />
-            <Stat n="+9K" label="متابع" />
-            <Stat n="جامعة الملك سعود" label="هاكاثون هيلثون" />
+            <Stat n="+100" label="فيديو إعلاني" />
+            <Stat n="+9000" label="متابع" />
+            <Stat n="السعودية + الخليج" label="نطاق التعامل" />
           </div>
         </Reveal>
       </div>

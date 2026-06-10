@@ -253,3 +253,12 @@ export const works: Work[] = [
     videos: ["https://youtu.be/IIArrpuGomk"],
   },
 ];
+
+// ===== العلامات التجارية (الشركات اللي اشتغلت معها) =====
+// أضف كل شعار: ارفع الصورة في مجلد public ثم اكتب مسارها هنا.
+// مثال: { name: "اسم الشركة", logo: "/logo-company.png" },
+export const brands: { name: string; logo: string }[] = [
+  { name: "ريناد المجد", logo: "/LOGO_RMG.png" },
+  { name: "وكونترا", logo: "/LOGO_kwentra.png" },
+  { name: "درفت تايم", logo: "/LOGO_3_drift_time.png" },
+];

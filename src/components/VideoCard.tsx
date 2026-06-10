@@ -42,7 +42,7 @@ export default function VideoCard({ work }: { work: Work }) {
   };
 
   return (
-    <article className="group relative h-full overflow-hidden rounded-2xl border border-line bg-ink-card transition hover:border-gold/50">
+    <article className="group relative h-full overflow-hidden rounded-2xl border border-line bg-ink-card transition duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-2xl hover:shadow-black/40">
       {/* منطقة الفيديو / المعاينة */}
       <div className="relative aspect-video w-full overflow-hidden bg-ink-soft">
         {playing && embed.kind === "iframe" && (

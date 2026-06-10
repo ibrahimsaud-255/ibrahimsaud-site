@@ -17,12 +17,12 @@ export default function Works() {
           </p>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-6 lg:grid-cols-2">
+        <div className="mt-12 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
           {works.map((w, i) => (
             <Reveal
               key={w.id}
               delay={(i % 2) * 80}
-              className={w.featured ? "lg:col-span-2" : ""}
+              className={w.featured ? "md:col-span-2" : ""}
             >
               <VideoCard work={w} />
             </Reveal>
