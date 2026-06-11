@@ -5,6 +5,7 @@ import Works from "@/components/Works";
 import Services from "@/components/Services";
 import PlaygroundServices from "@/components/PlaygroundServices";
 import Process from "@/components/Process";
+import Booking from "@/components/Booking";
 import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
@@ -20,6 +21,7 @@ export default function Home() {
         <PlaygroundServices />
         <Services />
         <Process />
+        <Booking />
         <Contact />
         <Brands />
       </main>

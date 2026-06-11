@@ -8,6 +8,10 @@ export const site = {
   whatsapp: "966504895213", // بدون + وبدون أصفار، صيغة دولية
   email: "ibrahimsaud25@gmail.com",
   domain: "ibrahimsaud.com",
+  // رابط الحجز من Cal.com — "اسم-المستخدم/نوع-الحدث"
+  // بعد إنشاء حساب Cal.com وربط Google (لتوليد Google Meet)، عدّل هذا السطر.
+  // مثال: لو رابطك cal.com/ibrahim-saud/30min اكتب: "ibrahim-saud/30min"
+  calLink: "ibrahim-saud/30min",
   social: {
     tiktok: "https://www.tiktok.com/@ibrahimsaud", // ← عدّل الرابط
     instagram: "", // ← أضف لو تبي
