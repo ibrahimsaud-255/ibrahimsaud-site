@@ -182,6 +182,47 @@
     .btn{padding:12px 16px}
     .quick button{flex:1;min-width:120px}
   }
+
+  /* ===== PROJECT DETAIL + TASK BOARD ===== */
+  .pd-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .pd-title{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:800}
+  .pd-meta{display:flex;gap:18px;flex-wrap:wrap;color:var(--muted);font-size:14px;margin-top:6px}
+  .pd-meta b{color:var(--ink)}
+  .linkrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+  .ktask{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:11px;margin-bottom:9px;cursor:grab}
+  .ktask:hover{border-color:var(--gold)}
+  .ktask.dragging{opacity:.4}
+  .ktask .tt{font-weight:700;font-size:14px;margin-bottom:5px}
+  .ktask .meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11px;color:var(--muted)}
+  .kcol .addtask{width:100%;background:transparent;border:1px dashed var(--line);color:var(--muted);border-radius:8px;padding:8px;font-size:13px;margin-top:2px}
+  .kcol .addtask:hover{border-color:var(--gold);color:var(--gold2)}
+
+  /* ===== NOTION-LITE EDITOR ===== */
+  .nb{position:relative;display:flex;gap:6px;align-items:flex-start;padding:1px 0}
+  .nb .handle{opacity:0;flex:0 0 22px;color:var(--muted);background:none;border:none;font-size:15px;cursor:pointer;padding:4px 0;line-height:1.2}
+  .nb:hover .handle{opacity:1}
+  .nb .bc{flex:1;min-width:0}
+  .ce{outline:none;border-radius:6px;padding:4px 6px;min-height:1.6em;line-height:1.7}
+  .ce:empty:before{content:attr(data-ph);color:var(--muted);pointer-events:none}
+  .ce.h{font-size:21px;font-weight:800;padding-top:6px}
+  .ce.txt{font-size:15px}
+  .nb.script .bc{background:#0e0e10;border:1px solid var(--line);border-right:3px solid var(--gold);border-radius:10px;padding:6px 10px}
+  .nb.script .lbl{font-size:11px;color:var(--gold2);font-weight:700;margin:2px 4px}
+  .nb.script .ce{font-family:'Tajawal',monospace;white-space:pre-wrap}
+  .nb.todo .bc{display:flex;gap:9px;align-items:flex-start}
+  .nb.todo input[type=checkbox]{width:auto;margin-top:9px}
+  .nb.todo .ce.dn{text-decoration:line-through;color:var(--muted)}
+  .nb.img img{max-width:100%;border-radius:10px;border:1px solid var(--line);display:block}
+  .nb.divider hr{border:none;border-top:1px solid var(--line);margin:10px 0;width:100%}
+  .nb-img-cap{font-size:12px;color:var(--muted);text-align:center;margin-top:4px}
+  .slash{position:absolute;z-index:80;background:var(--panel3);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow);padding:6px;width:230px;max-height:280px;overflow:auto}
+  .slash button{display:flex;align-items:center;gap:10px;width:100%;background:none;border:none;color:var(--ink);padding:9px 10px;border-radius:8px;font-size:14px;text-align:right}
+  .slash button:hover,.slash button.sel{background:var(--goldsoft);color:var(--gold2)}
+  .slash .si{width:26px;text-align:center;font-size:16px}
+  .slash .sd{font-size:11px;color:var(--muted)}
+  .ed-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;position:sticky;top:0;background:var(--panel);padding-bottom:8px;z-index:5}
+  .task-modal{max-width:780px}
+  .upbar{font-size:12px;color:var(--gold2)}
 </style>
 </head>
 <body>
@@ -263,7 +304,7 @@ function lmsg(m){document.getElementById('loginMsg').textContent=m||''}
 async function doLogin(){const em=document.getElementById('em').value.trim();const pw=document.getElementById('pw').value;lerr('');lmsg('جارٍ الدخول...');const {data,error}=await sb.auth.signInWithPassword({email:em,password:pw});if(error){lmsg('');lerr('تعذّر الدخول: '+error.message);return}lmsg('');await enterApp(data.user)}
 async function doSignup(){const em=document.getElementById('em').value.trim();const pw=document.getElementById('pw').value;if(!em||pw.length<6){lerr('أدخل بريداً وكلمة مرور (6 أحرف فأكثر)');return}lerr('');lmsg('جارٍ إنشاء الحساب...');const {data,error}=await sb.auth.signUp({email:em,password:pw});if(error){lmsg('');lerr('تعذّر الإنشاء: '+error.message);return}if(data.session){lmsg('');await enterApp(data.user)}else{lmsg('تم الإنشاء ✓ تحقّق من بريدك لتأكيد الحساب ثم اضغط دخول.')}}
 const ADMIN_EMAIL='ibrahimsaud25@gmail.com';
-async function enterApp(user){if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط ('+ADMIN_EMAIL+'). الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
+async function enterApp(user){if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط ('+ADMIN_EMAIL+'). الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers();migrateData();save()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
 async function logout(){await sb.auth.signOut();USER=null;STATE_ID=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
 async function oauth(provider){lerr('');lmsg('جارٍ التحويل إلى '+(provider==='google'?'Google':'Apple')+'…');const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});if(error){lmsg('');lerr('تعذّر: '+error.message+' — تأكد من تفعيل المزوّد في Supabase.')}}
 async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
@@ -398,6 +439,30 @@ const ST={draft:'مسودة',sent:'مُرسل',accepted:'مقبول',rejected:'�
 function pill(s){return `<span class="pill ${s}">${ST[s]||s}</span>`}
 function miniList(arr,fn,empty){if(!arr.length)return `<p style="color:var(--muted)">${empty}</p>`;return arr.map(x=>`<div style="padding:8px 0;border-bottom:1px solid var(--line)">${fn(x)}</div>`).join('')}
 function contactName(id){const c=S.contacts.find(c=>c.id===id);return c?c.name:''}
+/* ===== UNIFIED CLIENT LINKING (single source = contacts) ===== */
+const DEFAULT_TASK_STAGES=[{key:'todo',label:'قيد الانتظار'},{key:'doing',label:'قيد التنفيذ'},{key:'review',label:'مراجعة'},{key:'done',label:'منجز'}];
+// يجد جهة الاتصال بالاسم (دون حساسية حالة) أو ينشئها مرة واحدة، ويرجّع id
+function findOrCreateContact(name,type){name=(name||'').trim();if(!name)return '';let c=(S.contacts||[]).find(x=>(x.name||'').trim().toLowerCase()===name.toLowerCase());if(c)return c.id;c={id:uid(),name,type:type||'عميل',phone:'',email:'',company:'',notes:''};S.contacts.push(c);return c.id}
+// اسم العميل للعرض: من الـ id المربوط، وإلا النص القديم (توافق)
+function resolveClientName(rec){return contactName(rec.contactId)||rec.client||rec.clientName||rec.contact||'—'}
+// قائمة datalist للإكمال التلقائي (تُضمَّن داخل المودال)
+function contactsDatalist(){return `<datalist id="__contactsDL">${(S.contacts||[]).map(c=>`<option value="${esc(c.name)}">`).join('')}</datalist>`}
+// حقل عميل ذكي: يبحث في المسجّلين ويقبل اسماً جديداً (يُسجّل عند الحفظ)
+function clientFieldHTML(idAttr,current){return `<input id="${idAttr}" list="__contactsDL" value="${esc(current==='—'?'':current||'')}" placeholder="ابحث باسم عميل أو أضف جديد" autocomplete="off">`+contactsDatalist()}
+// روابط عناصر العميل (مواعيد/فواتير/مشاريع) عبر contactId
+function clientItems(contactId){if(!contactId)return {appts:[],invoices:[],projects:[]};return {appts:S.appointments.filter(a=>a.contactId===contactId),invoices:S.invoices.filter(i=>i.contactId===contactId),projects:S.projects.filter(p=>p.contactId===contactId)}}
+// ترحيل آمن: يحوّل الأسماء النصية القديمة لجهات اتصال مربوطة (idempotent)
+function migrateData(){
+  (S.projects||[]).forEach(p=>{
+    if(!p.taskStages||!p.taskStages.length)p.taskStages=JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES));
+    if(!p.contactId&&p.client)p.contactId=findOrCreateContact(p.client);
+    (p.tasks||[]).forEach(t=>{if(!t.stageKey)t.stageKey=t.done?'done':p.taskStages[0].key;if(!Array.isArray(t.blocks))t.blocks=[]});
+  });
+  (S.appointments||[]).forEach(a=>{if(!a.contactId&&a.contact)a.contactId=findOrCreateContact(a.contact)});
+  (S.invoices||[]).forEach(d=>{if(!d.contactId&&d.client)d.contactId=findOrCreateContact(d.client)});
+  (S.sales||[]).forEach(d=>{if(!d.contactId&&d.client)d.contactId=findOrCreateContact(d.client)});
+  (S.crm||[]).forEach(o=>{if(!o.contactId&&(o.clientName||o.client))o.contactId=findOrCreateContact(o.clientName||o.client)});
+}
 function emptyBox(ic,txt){return `<div class="empty"><div class="big">${ic}</div>${txt}</div>`}
 function delItem(coll,id,cb){if(!confirm('تأكيد الحذف؟'))return;S[coll]=S[coll].filter(x=>x.id!==id);save();closeModal();cb&&cb()}
 
@@ -454,42 +519,195 @@ function renderCRM(){
 }
 function crmModal(id){
   let o=id?{...S.crm.find(x=>x.id===id)}:{id:'',title:'',contactId:'',clientName:'',value:0,stageKey:S.crmStages[0].key,notes:'',date:today()};
-  const cOpts=S.contacts.map(c=>`<option value="${c.id}" ${o.contactId===c.id?'selected':''}>${esc(c.name)}</option>`).join('');
   const sOpts=S.crmStages.map(s=>`<option value="${s.key}" ${o.stageKey===s.key?'selected':''}>${esc(s.label)}</option>`).join('');
   openModal(id?'تعديل فرصة':'فرصة جديدة',`
     <div class="field"><label>عنوان الفرصة</label><input id="o_title" value="${esc(o.title)}" placeholder="مثال: فيديو إعلاني لمتجر..."></div>
-    <div class="row2"><div class="field"><label>العميل (من جهات الاتصال)</label><select id="o_contact"><option value="">— اختر —</option>${cOpts}</select></div>
-    <div class="field"><label>أو اسم عميل جديد</label><input id="o_client" value="${esc(o.clientName)}"></div></div>
-    <div class="row2"><div class="field"><label>القيمة المتوقعة</label><input id="o_value" type="number" value="${o.value}"></div>
-    <div class="field"><label>المرحلة</label><select id="o_stage">${sOpts}</select></div></div>
+    <div class="row2"><div class="field"><label>العميل</label>${clientFieldHTML('o_client',resolveClientName(o))}</div>
+    <div class="field"><label>القيمة المتوقعة</label><input id="o_value" type="number" value="${o.value}"></div></div>
+    <div class="field"><label>المرحلة</label><select id="o_stage">${sOpts}</select></div>
     <div class="field"><label>ملاحظات</label><textarea id="o_notes" rows="2">${esc(o.notes)}</textarea></div>`,
-  ()=>{const g=i=>document.getElementById(i).value;o.title=g('o_title');o.contactId=g('o_contact');o.clientName=g('o_client');o.value=Number(g('o_value'));o.stageKey=g('o_stage');o.notes=g('o_notes');if(!o.title.trim()){alert('أدخل عنوان الفرصة');return}if(id){const i=S.crm.findIndex(x=>x.id===id);S.crm[i]=o}else{o.id=uid();S.crm.push(o)}save();closeModal();renderCRM()},id?()=>delItem('crm',id,renderCRM):null);
+  ()=>{const g=i=>document.getElementById(i).value;o.title=g('o_title');const cn=g('o_client').trim();o.contactId=findOrCreateContact(cn);o.clientName=cn;o.value=Number(g('o_value'));o.stageKey=g('o_stage');o.notes=g('o_notes');if(!o.title.trim()){alert('أدخل عنوان الفرصة');return}if(id){const i=S.crm.findIndex(x=>x.id===id);S.crm[i]=o}else{o.id=uid();S.crm.push(o)}save();closeModal();renderCRM()},id?()=>delItem('crm',id,renderCRM):null);
 }
 
-/* ===== PROJECTS ===== */
+/* ===== PROJECTS (board of projects) ===== */
+let CUR_PROJ=null;
 function renderProjects(){
-  renderKanban({title:'المشاريع والمهام',onAdd:'projModal()',addLabel:'مشروع',stagesKey:'projectStages',coll:'projects',
-    emptyIcon:'✅',emptyText:'لا توجد مشاريع بعد.',onOpen:'projModal',
-    note:'<div class="badge-note">🎬 <div>اسحب المشاريع بين مراحل الإنتاج، واضغط ⚙ لتعديل المراحل.</div></div>',
-    card:p=>{const t=p.tasks||[];const dn=t.filter(x=>x.done).length;return `<div class="t">${p.emoji||'🎬'} ${esc(p.title)}</div><div class="m">${esc(p.client||'—')} · ${dn}/${t.length} مهمة</div>`}});
+  CUR_PROJ=null;
+  renderKanban({title:'المشاريع',onAdd:'projModal()',addLabel:'مشروع',stagesKey:'projectStages',coll:'projects',
+    emptyIcon:'🎬',emptyText:'لا توجد مشاريع بعد. أنشئ أول مشروع.',onOpen:'openProject',
+    note:'<div class="badge-note">🎬 <div>اضغط على المشروع لفتح صفحته (المهام على مراحل + التفاصيل والعميل). اسحب البطاقات بين مراحل الإنتاج.</div></div>',
+    card:p=>{const dn=(p.tasks||[]).filter(t=>t.stageKey==='done').length;const tot=(p.tasks||[]).length;return `<div class="t">${p.emoji||'🎬'} ${esc(p.title)}</div><div class="m">${esc(resolveClientName(p))} · ${dn}/${tot} مهمة</div>${p.podcast?`<div class="m" style="color:var(--gold)">🎙️ ${esc(p.podcast)}</div>`:''}`}});
 }
 function projModal(id){
-  let p=id?JSON.parse(JSON.stringify(S.projects.find(x=>x.id===id))):{id:'',title:'',client:'',stageKey:S.projectStages[0].key,emoji:'🎬',tasks:[]};
+  let p=id?JSON.parse(JSON.stringify(S.projects.find(x=>x.id===id))):{id:'',title:'',contactId:'',client:'',podcast:'',stageKey:S.projectStages[0].key,emoji:'🎬',tasks:[],taskStages:JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES))};
   const sOpts=S.projectStages.map(s=>`<option value="${s.key}" ${p.stageKey===s.key?'selected':''}>${esc(s.label)}</option>`).join('');
-  function body(){return `
-    <div class="row2"><div class="field"><label>اسم المشروع</label><input id="p_title" value="${esc(p.title)}"></div>
-    <div class="field"><label>العميل</label><input id="p_client" value="${esc(p.client)}"></div></div>
-    <div class="row2"><div class="field"><label>المرحلة</label><select id="p_stage">${sOpts}</select></div>
-    <div class="field"><label>الأيقونة</label><input id="p_emoji" value="${esc(p.emoji)}" maxlength="2"></div></div>
-    <div class="field"><label>المهام (أسندها لفريلانسر ليصله في رابطه)</label><div id="taskList">${(p.tasks||[]).map((t,i)=>`<div class="task-line"><input type="checkbox" ${t.done?'checked':''} onchange="tglTask(${i})"><span class="${t.done?'done':''}" style="flex:1">${esc(t.title)}${t.assignee?` <span class="kbadge" style="color:var(--gold);background:var(--goldsoft)">👤 ${esc(flName(t.assignee))}</span>`:''}</span><button class="link-btn del" onclick="rmTask(${i})">×</button></div>`).join('')||'<p style="color:var(--muted);font-size:13px">لا مهام</p>'}</div>
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap"><input id="newTask" placeholder="مهمة جديدة" style="flex:1;min-width:140px" onkeydown="if(event.key==='Enter')addTask()"><select id="newAssignee" style="max-width:180px"><option value="">— المسؤول —</option>${(S.freelancers||[]).map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select><button class="btn btn-ghost btn-sm" onclick="addTask()">إضافة</button></div></div>`}
-  openModal(id?'تعديل مشروع':'مشروع جديد',body(),()=>{collect();if(!p.title.trim()){alert('أدخل اسم المشروع');return}if(id){const i=S.projects.findIndex(x=>x.id===id);S.projects[i]=p}else{p.id=uid();S.projects.push(p)}save();syncTasks();closeModal();renderProjects()},id?()=>delItem('projects',id,renderProjects):null);
-  window.addTask=()=>{collect();const v=document.getElementById('newTask').value.trim();const as=(document.getElementById('newAssignee')||{value:''}).value;if(v){p.tasks.push({id:uid(),title:v,done:false,assignee:as});refresh()}};
-  window.rmTask=i=>{collect();p.tasks.splice(i,1);refresh()};
-  window.tglTask=i=>{collect();p.tasks[i].done=!p.tasks[i].done;refresh()};
-  function collect(){const g=i=>document.getElementById(i);if(g('p_title')){p.title=g('p_title').value;p.client=g('p_client').value;p.stageKey=g('p_stage').value;p.emoji=g('p_emoji').value||'🎬'}}
-  function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body();const n=document.getElementById('newTask');if(n)n.focus()}
+  openModal(id?'تعديل المشروع':'مشروع جديد',`
+    <div class="row2"><div class="field"><label>اسم المشروع</label><input id="p_title" value="${esc(p.title)}" placeholder="مثال: حملة فيديو"></div>
+    <div class="field"><label>العميل</label>${clientFieldHTML('p_client',resolveClientName(p))}</div></div>
+    <div class="field"><label>اسم البودكاست/الوصف المختصر (اختياري)</label><input id="p_podcast" value="${esc(p.podcast||'')}" placeholder="مثال: بودكاست خزاما"></div>
+    <div class="row2"><div class="field"><label>مرحلة الإنتاج</label><select id="p_stage">${sOpts}</select></div>
+    <div class="field"><label>الأيقونة</label><input id="p_emoji" value="${esc(p.emoji)}" maxlength="2" style="text-align:center;font-size:20px"></div></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;p.title=g('p_title').trim();const cn=g('p_client').trim();p.contactId=findOrCreateContact(cn);p.client=cn;p.podcast=g('p_podcast').trim();p.stageKey=g('p_stage');p.emoji=g('p_emoji')||'🎬';if(!p.title){alert('أدخل اسم المشروع');return}if(!p.taskStages||!p.taskStages.length)p.taskStages=JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES));if(id){const i=S.projects.findIndex(x=>x.id===id);S.projects[i]=p}else{p.id=uid();S.projects.push(p)}save();syncTasks();closeModal();if(id&&CUR_PROJ===id)renderProjectDetail(id);else openProject(p.id)},id?()=>delItem('projects',id,()=>{CUR_PROJ=null;go('projects')}):null);
 }
+
+/* ===== PROJECT DETAIL (tasks on stages + linked client) ===== */
+function openProject(id){CUR_PROJ=id;renderProjectDetail(id)}
+function proj(){return S.projects.find(x=>x.id===CUR_PROJ)}
+function taskDone(t){return t.stageKey==='done'}
+function renderProjectDetail(id){
+  const p=S.projects.find(x=>x.id===id);if(!p){go('projects');return}
+  CUR_PROJ=id;
+  if(!p.taskStages||!p.taskStages.length)p.taskStages=JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES));
+  const li=clientItems(p.contactId);
+  const stageLbl=(S.projectStages.find(s=>s.key===p.stageKey)||{}).label||'';
+  document.getElementById('main').innerHTML=`
+    <button class="btn btn-ghost btn-sm" onclick="go('projects')" style="margin-bottom:14px">‹ كل المشاريع</button>
+    <div class="pd-head">
+      <div>
+        <div class="pd-title">${p.emoji||'🎬'} ${esc(p.title)}</div>
+        <div class="pd-meta">
+          <span>👤 العميل: <b>${esc(resolveClientName(p))}</b></span>
+          ${p.podcast?`<span>🎙️ <b>${esc(p.podcast)}</b></span>`:''}
+          <span>📦 مرحلة الإنتاج: <b>${esc(stageLbl)}</b></span>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="taskStageEditor('${id}')">⚙ مراحل المهام</button>
+        <button class="btn btn-ghost btn-sm" onclick="projModal('${id}')">✎ تعديل المشروع</button>
+      </div>
+    </div>
+    ${p.contactId?`<div class="card" style="margin-bottom:18px"><h3 style="margin-top:0">🔗 ملف العميل المرتبط</h3>
+      <div class="pd-meta" style="margin-top:0">
+        <span>📅 مواعيد: <b>${li.appts.length}</b></span>
+        <span>🧾 فواتير: <b>${li.invoices.length}</b></span>
+        <span>🎬 مشاريع: <b>${li.projects.length}</b></span>
+      </div>
+      ${li.appts.length?`<div class="linkrow">${li.appts.slice(0,6).map(a=>`<button class="link-btn" onclick="go('appointments');setTimeout(()=>apptModal('${a.id}'),60)">📅 ${esc(a.title)} · ${(a.datetime||'').replace('T',' ')}</button>`).join('')}</div>`:''}
+      ${li.invoices.length?`<div class="linkrow">${li.invoices.slice(0,6).map(i=>`<button class="link-btn" onclick="go('invoicing');setTimeout(()=>docModal('invoice','${i.id}'),60)">🧾 #${i.number} · ${money(invTotal(i))}</button>`).join('')}</div>`:''}
+    </div>`:''}
+    <div class="page-head" style="margin-bottom:12px"><h2 style="margin:0;font-size:18px">المهام</h2></div>
+    <div class="kanban" id="taskBoard">
+    ${p.taskStages.map(st=>{
+      const items=(p.tasks||[]).filter(t=>t.stageKey===st.key);
+      return `<div class="kcol" ondragover="tdover(event)" ondragleave="tdleave(event)" ondrop="tddrop(event,'${st.key}')">
+        <h4><span>${esc(st.label)}</span><span class="kbadge">${items.length}</span></h4>
+        ${items.map(t=>`<div class="ktask" draggable="true" ondragstart="tdstart(event,'${t.id}')" ondragend="tdend(event)" onclick="openTask('${t.id}')">
+          <div class="tt">${esc(t.title)}</div>
+          <div class="meta">${(t.blocks&&t.blocks.length)?`<span class="kbadge">📝 ${t.blocks.length}</span>`:''}${t.assignee?`<span class="kbadge" style="color:var(--gold);background:var(--goldsoft)">👤 ${esc(flName(t.assignee))}</span>`:''}</div>
+        </div>`).join('')}
+        <button class="addtask" onclick="quickAddTask('${st.key}')">+ مهمة</button>
+      </div>`}).join('')}
+    </div>`;
+}
+/* task drag & drop within project */
+let TDRAG=null;
+function tdstart(e,id){TDRAG=id;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.stopPropagation()}
+function tdend(e){e.currentTarget.classList.remove('dragging')}
+function tdover(e){e.preventDefault();e.currentTarget.classList.add('dragover')}
+function tdleave(e){e.currentTarget.classList.remove('dragover')}
+function tddrop(e,stageKey){e.preventDefault();e.currentTarget.classList.remove('dragover');const p=proj();if(p&&TDRAG){const t=(p.tasks||[]).find(x=>x.id===TDRAG);if(t&&t.stageKey!==stageKey){t.stageKey=stageKey;t.done=(stageKey==='done');save();syncTasks();renderProjectDetail(p.id)}}TDRAG=null}
+function quickAddTask(stageKey){const p=proj();if(!p)return;openModal('مهمة جديدة',`
+  <div class="field"><label>عنوان المهمة</label><input id="nt_title" placeholder="مثال: كتابة سكربت الحلقة" onkeydown="if(event.key==='Enter')document.getElementById('mSave').click()"></div>
+  <div class="field"><label>المسؤول (اختياري)</label><select id="nt_as"><option value="">— لا أحد —</option>${(S.freelancers||[]).map(f=>`<option value="${f.id}">${esc(f.name)}</option>`).join('')}</select></div>`,
+  ()=>{const v=document.getElementById('nt_title').value.trim();if(!v){alert('أدخل عنوان المهمة');return}const as=document.getElementById('nt_as').value;p.tasks=p.tasks||[];p.tasks.push({id:uid(),title:v,stageKey,done:stageKey==='done',assignee:as,blocks:[]});save();syncTasks();closeModal();renderProjectDetail(p.id)});
+  setTimeout(()=>{const n=document.getElementById('nt_title');if(n)n.focus()},50);
+}
+function taskStageEditor(id){const p=S.projects.find(x=>x.id===id);if(!p)return;
+  let stages=JSON.parse(JSON.stringify(p.taskStages||DEFAULT_TASK_STAGES));
+  function body(){return `<p style="color:var(--muted);font-size:13px;margin-top:0">مراحل المهام لهذا المشروع. المهام في مرحلة محذوفة تنتقل لأول مرحلة.</p>`+
+    stages.map((s,i)=>`<div style="display:flex;gap:6px;margin-bottom:8px;align-items:center">
+      <input value="${esc(s.label)}" oninput="tsEdit(${i},this.value)" style="flex:1">
+      <button class="link-btn" onclick="tsMove(${i},-1)">▲</button><button class="link-btn" onclick="tsMove(${i},1)">▼</button>
+      <button class="link-btn del" onclick="tsDel(${i})">حذف</button></div>`).join('')+
+    `<button class="btn btn-ghost btn-sm" onclick="tsAdd()">+ مرحلة جديدة</button>`}
+  openModal('مراحل المهام',body(),()=>{if(!stages.length){alert('أضف مرحلة واحدة على الأقل');return}const keys=stages.map(s=>s.key);(p.tasks||[]).forEach(t=>{if(!keys.includes(t.stageKey))t.stageKey=keys[0]});p.taskStages=stages;save();closeModal();renderProjectDetail(id)});
+  window.tsEdit=(i,v)=>{stages[i].label=v};
+  window.tsAdd=()=>{stages.push({key:uid(),label:'مرحلة جديدة'});refresh()};
+  window.tsDel=(i)=>{stages.splice(i,1);refresh()};
+  window.tsMove=(i,d)=>{const j=i+d;if(j<0||j>=stages.length)return;[stages[i],stages[j]]=[stages[j],stages[i]];refresh()};
+  function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body()}
+}
+
+/* ===== NOTION-LITE TASK EDITOR ===== */
+let CUR_TASK=null;
+function curTask(){const p=proj();return p?(p.tasks||[]).find(x=>x.id===CUR_TASK):null}
+function findBlock(id){const t=curTask();return t?(t.blocks||[]).find(b=>b.id===id):null}
+function openTask(taskId){const p=proj();if(!p)return;const t=(p.tasks||[]).find(x=>x.id===taskId);if(!t)return;CUR_TASK=taskId;if(!Array.isArray(t.blocks))t.blocks=[];
+  const asOpts=`<option value="">— لا مسؤول —</option>`+(S.freelancers||[]).map(f=>`<option value="${f.id}" ${t.assignee===f.id?'selected':''}>${esc(f.name)}</option>`).join('');
+  const stOpts=(p.taskStages||DEFAULT_TASK_STAGES).map(s=>`<option value="${s.key}" ${t.stageKey===s.key?'selected':''}>${esc(s.label)}</option>`).join('');
+  document.getElementById('modalRoot').innerHTML=`<div class="modal-bg" onclick="if(event.target===this)closeTask()"><div class="modal task-modal">
+    <div class="modal-head"><input id="t_title" value="${esc(t.title)}" style="font-size:18px;font-weight:800;border:none;background:transparent;padding:4px;width:auto;flex:1" oninput="taskTitle(this.value)"><button class="x" onclick="closeTask()">×</button></div>
+    <div class="modal-body">
+      <div class="row2" style="margin-bottom:14px">
+        <div class="field"><label>المرحلة</label><select id="t_stage" onchange="taskStage(this.value)">${stOpts}</select></div>
+        <div class="field"><label>المسؤول</label><select id="t_as" onchange="taskAssignee(this.value)">${asOpts}</select></div>
+      </div>
+      <div class="ed-toolbar">
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('text')">¶ نص</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('heading')">H عنوان</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('script')">🎬 سكربت</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('todo')">☑ مهمة فرعية</button>
+        <button class="btn btn-ghost btn-sm" onclick="pickImage()">🖼️ صورة</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('divider')">— فاصل</button>
+        <span style="align-self:center;color:var(--muted);font-size:12px">أو اكتب «/» داخل أي سطر · للعريض Ctrl/⌘+B</span>
+        <span id="upStatus" class="upbar"></span>
+      </div>
+      <div id="blocks">${t.blocks.map(b=>blockHTML(b)).join('')}</div>
+      <button class="addtask" style="margin-top:10px" onclick="addBlock('text')">+ أضف سطراً</button>
+      <input type="file" id="imgFile" accept="image/*" class="hidden" onchange="onImagePicked(event)">
+      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:12px"><button class="link-btn del" onclick="deleteTask()">🗑 حذف المهمة</button></div>
+    </div></div></div>`;
+}
+function blockHTML(b){
+  if(b.type==='heading')return blkWrap(b,`<div class="ce h" contenteditable data-bid="${b.id}" data-ph="عنوان" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`);
+  if(b.type==='script')return blkWrap(b,`<div class="lbl">🎬 سكربت الفيديو</div><div class="ce" contenteditable data-bid="${b.id}" data-ph="اكتب نص الفيديو…" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`,'script');
+  if(b.type==='todo')return blkWrap(b,`<input type="checkbox" ${b.done?'checked':''} onchange="todoToggle('${b.id}',this.checked)"><div class="ce txt ${b.done?'dn':''}" contenteditable data-bid="${b.id}" data-ph="مهمة فرعية…" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`,'todo');
+  if(b.type==='image')return blkWrap(b,`<img src="${esc(b.url)}" alt="">`,'img');
+  if(b.type==='divider')return blkWrap(b,`<hr>`,'divider');
+  return blkWrap(b,`<div class="ce txt" contenteditable data-bid="${b.id}" data-ph="اكتب… (أو «/» لأمر)" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`);
+}
+function blkWrap(b,inner,cls){return `<div class="nb ${cls||''}" data-id="${b.id}"><button class="handle" onclick="blockMenu(event,'${b.id}')" title="خيارات">⋮</button><div class="bc">${inner}</div></div>`}
+function onCe(id){const el=document.querySelector(`[data-bid="${id}"]`);const b=findBlock(id);if(el&&b){b.html=el.innerHTML;scheduleTaskSave()}}
+function scheduleTaskSave(){clearTimeout(window.__tsv);window.__tsv=setTimeout(()=>{save();syncTasks()},700)}
+function taskTitle(v){const t=curTask();if(t){t.title=v;scheduleTaskSave()}}
+function taskStage(v){const t=curTask();if(t){t.stageKey=v;t.done=(v==='done');scheduleTaskSave()}}
+function taskAssignee(v){const t=curTask();if(t){t.assignee=v;scheduleTaskSave()}}
+function todoToggle(id,c){const b=findBlock(id);if(b){b.done=c;const el=document.querySelector(`[data-bid="${id}"]`);if(el)el.classList.toggle('dn',c);scheduleTaskSave()}}
+function addBlock(type,afterId){const t=curTask();if(!t)return;const b={id:uid(),type};if(type==='todo')b.done=false;if(type!=='divider'&&type!=='image')b.html='';let idx=t.blocks.length;if(afterId){const i=t.blocks.findIndex(x=>x.id===afterId);if(i>=0)idx=i+1}t.blocks.splice(idx,0,b);scheduleTaskSave();rerenderBlocks((type==='divider'||type==='image')?null:b.id)}
+function removeBlock(id){const t=curTask();if(!t)return;const i=t.blocks.findIndex(b=>b.id===id);if(i<0)return;t.blocks.splice(i,1);scheduleTaskSave();const prev=t.blocks[i-1];rerenderBlocks(prev&&prev.type!=='divider'&&prev.type!=='image'?prev.id:null)}
+function rerenderBlocks(focusId){const t=curTask();const c=document.getElementById('blocks');if(!t||!c)return;c.innerHTML=t.blocks.map(b=>blockHTML(b)).join('');if(focusId){const el=document.querySelector(`[data-bid="${focusId}"]`);if(el)placeCaretEnd(el)}}
+function blockKey(e,id){
+  if(e.key==='Enter'&&!e.shiftKey){const b=findBlock(id);if(b&&b.type!=='script'){e.preventDefault();closeSlash();addBlock('text',id)}}
+  else if(e.key==='Backspace'){if(e.target&&e.target.textContent===''){e.preventDefault();removeBlock(id)}}
+  else if(e.key==='Escape'){closeSlash()}
+  else if(e.key==='/'){setTimeout(()=>{const el=document.querySelector(`[data-bid="${id}"]`);if(el&&el.textContent==='/')openSlash(id,el,false)},0)}
+}
+function placeCaretEnd(el){try{el.focus();const r=document.createRange();r.selectNodeContents(el);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
+const SLASH=[{t:'text',i:'¶',n:'نص',d:'فقرة عادية'},{t:'heading',i:'H',n:'عنوان',d:'عنوان عريض'},{t:'script',i:'🎬',n:'سكربت',d:'نص الفيديو'},{t:'todo',i:'☑',n:'مهمة فرعية',d:'بوكس تحقق'},{t:'image',i:'🖼️',n:'صورة',d:'رفع صورة'},{t:'divider',i:'—',n:'فاصل',d:'خط فاصل'}];
+function openSlash(id,el,withDel){closeSlash();const r=el.getBoundingClientRect();const m=document.createElement('div');m.className='slash';m.id='slashMenu';m.style.top=(r.bottom+window.scrollY+4)+'px';m.style.right=Math.max(8,window.innerWidth-r.right)+'px';
+  m.innerHTML=SLASH.map(s=>`<button onclick="applySlash('${id}','${s.t}')"><span class="si">${s.i}</span><span>${s.n}<div class="sd">${esc(s.d)}</div></span></button>`).join('')+(withDel?`<button onclick="removeBlock('${id}');closeSlash()"><span class="si">🗑</span><span style="color:var(--bad)">حذف البلوك</span></button>`:'');
+  document.body.appendChild(m);setTimeout(()=>document.addEventListener('click',slashOutside),0)}
+function slashOutside(e){if(!e.target.closest('#slashMenu')){closeSlash()}}
+function closeSlash(){const m=document.getElementById('slashMenu');if(m)m.remove();document.removeEventListener('click',slashOutside)}
+function blockMenu(e,id){e.stopPropagation();const el=e.currentTarget;openSlash(id,el,true)}
+function applySlash(id,type){closeSlash();const t=curTask();const b=findBlock(id);if(!b||!t)return;
+  if(type==='image'){b.type='text';b.html='';pickImageFor(id);return}
+  if(type==='divider'){b.type='divider';delete b.html;scheduleTaskSave();rerenderBlocks(null);return}
+  if(type==='todo'){b.type='todo';b.html='';b.done=false}else{b.type=type;b.html=''}
+  scheduleTaskSave();rerenderBlocks(id);
+}
+function pickImage(){window.__imgTarget=null;document.getElementById('imgFile').click()}
+function pickImageFor(id){window.__imgTarget=id;document.getElementById('imgFile').click()}
+async function onImagePicked(e){const f=e.target.files[0];e.target.value='';if(!f)return;const t=curTask();if(!t)return;const st=document.getElementById('upStatus');if(st)st.textContent='⏳ جارٍ رفع الصورة…';
+  try{const ext=(f.name.split('.').pop()||'png').toLowerCase();const path=`${USER.id}/${uid()}.${ext}`;
+    const {error}=await sb.storage.from('task-images').upload(path,f,{upsert:false,contentType:f.type||'image/png'});if(error)throw error;
+    const {data}=sb.storage.from('task-images').getPublicUrl(path);const url=data.publicUrl;
+    const tgt=window.__imgTarget;if(tgt){const b=findBlock(tgt);if(b){b.type='image';b.url=url;delete b.html}}else{t.blocks.push({id:uid(),type:'image',url})}
+    window.__imgTarget=null;if(st)st.textContent='✓ تم';setTimeout(()=>{if(st)st.textContent=''},1500);save();rerenderBlocks(null);
+  }catch(err){if(st)st.textContent='';alert('تعذّر رفع الصورة: '+(err.message||err)+'\n\nتأكد من إنشاء bucket عام باسم «task-images» في Supabase → Storage.')}
+}
+function deleteTask(){const p=proj();const t=curTask();if(!p||!t)return;if(!confirm('حذف هذه المهمة؟'))return;p.tasks=p.tasks.filter(x=>x.id!==t.id);save();syncTasks();document.getElementById('modalRoot').innerHTML='';CUR_TASK=null;renderProjectDetail(p.id)}
+function closeTask(){closeSlash();const t=curTask();if(t){document.querySelectorAll('#blocks [data-bid]').forEach(el=>{const b=(t.blocks||[]).find(x=>x.id===el.dataset.bid);if(b)b.html=el.innerHTML});const tt=document.getElementById('t_title');if(tt)t.title=tt.value}save();syncTasks();document.getElementById('modalRoot').innerHTML='';CUR_TASK=null;if(CUR_PROJ)renderProjectDetail(CUR_PROJ)}
 
 /* ===== CONTACTS ===== */
 function renderContacts(){
@@ -523,7 +741,7 @@ function renderDocs(type){
     ${isInv?`<div class="badge-note">🧾 <div>الفواتير مهيأة للتوافق مع <b>زاتكا</b>: عند الطباعة يُولَّد رمز QR وفق مواصفة TLV. فعّل الضريبة وأدخل رقمك الضريبي من الإعدادات.</div></div>`:''}
     ${!list.length?emptyBox(isInv?'🧾':'📈',`لا توجد ${title} بعد.`):
     `<table><thead><tr><th>الرقم</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th><th>الحالة</th><th></th></tr></thead><tbody>
-    ${list.slice().reverse().map(d=>`<tr><td>#${d.number}</td><td>${esc(d.client)}</td><td>${d.date}</td><td>${money(isInv?invTotal(d):docTotal(d))}</td><td>${pill(d.status)}</td>
+    ${list.slice().reverse().map(d=>`<tr><td>#${d.number}</td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(isInv?invTotal(d):docTotal(d))}</td><td>${pill(d.status)}</td>
     <td style="white-space:nowrap">${!isInv?`<button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button>`:''}
       <button class="link-btn" onclick="printDoc('${type}','${d.id}')">طباعة</button>
       <button class="link-btn" onclick="docModal('${type}','${d.id}')">تعديل</button>
@@ -539,7 +757,7 @@ function docModal(type,id){
   if(d.vat===undefined)d.vat=false;
   const statuses=isInv?['unpaid','paid']:['draft','sent','accepted','rejected'];
   function body(){const sub=docTotal(d);const tax=d.vat?sub*(Number(d.vatRate||0)/100):0;
-    return `<div class="row2"><div class="field"><label>العميل</label><input id="d_client" value="${esc(d.client)}" placeholder="اسم العميل"></div>
+    return `<div class="row2"><div class="field"><label>العميل</label>${clientFieldHTML('d_client',resolveClientName(d))}</div>
     <div class="field"><label>التاريخ</label><input type="date" id="d_date" value="${d.date}"></div></div>
     ${isInv?`<div class="field"><label>الرقم الضريبي للعميل (اختياري — B2B)</label><input id="d_cvat" value="${esc(d.clientVat)}"></div>`:''}
     <div class="field"><label>البنود</label>
@@ -559,7 +777,7 @@ function docModal(type,id){
     <div class="totals"><div class="line"><span>المجموع الفرعي</span><span>${money(sub)}</span></div>
     <div class="line"><span>الضريبة (${d.vat?d.vatRate:0}%)</span><span>${money(tax)}</span></div>
     <div class="line grand"><span>الإجمالي</span><span>${money(sub+tax)}</span></div></div>`;}
-  openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();renderDocs(type)});
+  openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();renderDocs(type)});
   window.addItem=()=>{collect();d.items.push({desc:'',qty:1,price:0});refresh()};
   window.quickItem=t=>{collect();if(d.items.length===1&&!d.items[0].desc)d.items[0].desc=t;else d.items.push({desc:t,qty:1,price:0});refresh()};
   window.rmItem=i=>{collect();d.items.splice(i,1);if(!d.items.length)d.items.push({desc:'',qty:1,price:0});refresh()};
@@ -622,7 +840,7 @@ function renderAppointments(){
     <div class="badge-note">📲 <div>اضغط «.ics» أو «Google» لكل موعد لإضافته إلى تقويم جوالك (Apple / Google). المزامنة اللحظية ثنائية الاتجاه تحتاج نسخة قاعدة البيانات (خطوة لاحقة).</div></div>
     ${!list.length?emptyBox('📆','لا توجد مواعيد بعد.'):
     `<table><thead><tr><th>الموعد</th><th>العنوان</th><th>مع</th><th>المدة</th><th>الحالة</th><th>التقويم</th><th></th></tr></thead><tbody>
-    ${list.map(a=>`<tr><td>${(a.datetime||'').replace('T',' ')}</td><td>${esc(a.title)}</td><td>${esc(a.contact||'—')}</td><td>${esc(a.duration||'')} د</td><td>${pill(a.status||'scheduled')}</td>
+    ${list.map(a=>`<tr><td>${(a.datetime||'').replace('T',' ')}</td><td>${esc(a.title)}</td><td>${esc(resolveClientName(a))}</td><td>${esc(a.duration||'')} د</td><td>${pill(a.status||'scheduled')}</td>
     <td style="white-space:nowrap"><a class="link-btn" href="${gcal(a)}" target="_blank">Google</a><button class="link-btn" onclick="exportICS('${a.id}')">.ics</button></td>
     <td style="white-space:nowrap"><button class="link-btn" onclick="apptModal('${a.id}')">تعديل</button><button class="link-btn del" onclick="delItem('appointments','${a.id}',renderAppointments)">حذف</button></td></tr>`).join('')}
     </tbody></table>`}`;
@@ -633,10 +851,10 @@ function apptModal(id,presetDate){
     <div class="field"><label>العنوان</label><input id="a_title" value="${esc(a.title)}" placeholder="مثال: تصوير في موقع العميل"></div>
     <div class="row2"><div class="field"><label>التاريخ والوقت</label><input type="datetime-local" id="a_dt" value="${a.datetime}"></div>
     <div class="field"><label>المدة (دقائق)</label><input type="number" id="a_dur" value="${a.duration}"></div></div>
-    <div class="row2"><div class="field"><label>مع (العميل)</label><input id="a_contact" value="${esc(a.contact)}"></div>
+    <div class="row2"><div class="field"><label>مع (العميل)</label>${clientFieldHTML('a_contact',resolveClientName(a))}</div>
     <div class="field"><label>الحالة</label><select id="a_status">${['scheduled','done','cancelled'].map(s=>`<option value="${s}" ${a.status===s?'selected':''}>${ST[s]}</option>`).join('')}</select></div></div>
     <div class="field"><label>ملاحظات</label><textarea id="a_notes" rows="2">${esc(a.notes)}</textarea></div>`,
-  ()=>{const g=i=>document.getElementById(i).value;a.title=g('a_title');a.datetime=g('a_dt');a.duration=g('a_dur');a.contact=g('a_contact');a.status=g('a_status');a.notes=g('a_notes');if(!a.title.trim()){alert('أدخل العنوان');return}if(id){const i=S.appointments.findIndex(x=>x.id===id);S.appointments[i]=a}else{a.id=uid();S.appointments.push(a)}save();closeModal();rerender()},id?()=>delItem('appointments',id,rerender):null);
+  ()=>{const g=i=>document.getElementById(i).value;a.title=g('a_title');a.datetime=g('a_dt');a.duration=g('a_dur');const cn=g('a_contact').trim();a.contactId=findOrCreateContact(cn);a.contact=cn;a.status=g('a_status');a.notes=g('a_notes');if(!a.title.trim()){alert('أدخل العنوان');return}if(id){const i=S.appointments.findIndex(x=>x.id===id);S.appointments[i]=a}else{a.id=uid();S.appointments.push(a)}save();closeModal();rerender()},id?()=>delItem('appointments',id,rerender):null);
 }
 function gcal(a){const st=new Date(a.datetime);const en=new Date(st.getTime()+(Number(a.duration)||60)*60000);const f=d=>d.toISOString().replace(/[-:]/g,'').slice(0,15)+'Z';return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(a.title)}&dates=${f(st)}/${f(en)}&details=${encodeURIComponent(a.notes||'')}`}
 function icsLocal(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'T'+p(d.getHours())+p(d.getMinutes())+'00'}
