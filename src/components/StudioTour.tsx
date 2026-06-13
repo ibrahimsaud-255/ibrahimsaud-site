@@ -137,34 +137,83 @@ export default function StudioTour() {
           </p>
         </Reveal>
 
-        {/* النسخة المناسبة للجوال — معرض رأسي بكل عنصر وصورته ووصفه */}
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:hidden">
+        {/* النسخة التفاعلية للجوال — مصغّرات تُفتح بالضغط لعرض الصورة الكاملة */}
+        <div className="mt-8 grid grid-cols-2 gap-3 sm:hidden">
           {studioTour.map((it, i) => (
-            <div
+            <button
               key={it.title}
-              className="overflow-hidden rounded-2xl border border-line bg-ink-card"
+              onClick={() => setCur(i)}
+              className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-ink-card text-right"
             >
-              <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={it.file}
-                  alt={it.title}
-                  loading="lazy"
-                  className="absolute inset-0 size-full object-cover"
-                />
-                <span className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-gold text-xs font-black text-ink">
-                  {i + 1}
-                </span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={it.file}
+                alt={it.title}
+                loading="lazy"
+                className="absolute inset-0 size-full object-cover transition group-active:scale-105"
+              />
+              <span className="absolute right-2 top-2 grid size-6 place-items-center rounded-full bg-gold text-[11px] font-black text-ink">
+                {i + 1}
+              </span>
+              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-3 pt-8">
+                <span className="text-sm font-bold text-cream">{it.title}</span>
               </div>
-              <div className="p-5">
-                <h3 className="text-lg font-extrabold text-gold">{it.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-cream/85">
-                  {it.text}
-                </p>
-              </div>
-            </div>
+            </button>
           ))}
         </div>
+        <p className="mt-4 text-center text-sm text-cream/50 sm:hidden">
+          اضغط أي عنصر لعرض صورته كاملة وتفاصيله
+        </p>
+
+        {/* نافذة العرض الكاملة على الجوال */}
+        {item && (
+          <div className="fixed inset-0 z-[90] flex flex-col bg-black/95 backdrop-blur-sm sm:hidden">
+            <div className="flex items-center justify-between p-4">
+              <button
+                onClick={() => setCur(-1)}
+                className="grid size-10 place-items-center rounded-full bg-white/10 text-xl text-white"
+                aria-label="إغلاق"
+              >
+                ✕
+              </button>
+              <span className="text-sm text-white/70" dir="ltr">
+                {cur + 1} / {studioTour.length}
+              </span>
+            </div>
+
+            <div className="flex flex-1 items-center justify-center px-4">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={item.file}
+                alt={item.title}
+                className="max-h-full w-full rounded-2xl object-contain"
+              />
+            </div>
+
+            <div className="p-5">
+              <h3 className="text-xl font-extrabold text-gold">{item.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                {item.text}
+              </p>
+              <div className="mt-5 flex gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+                <button
+                  onClick={() =>
+                    setCur((cur - 1 + studioTour.length) % studioTour.length)
+                  }
+                  className="flex-1 rounded-xl border border-line py-3 text-sm font-bold text-cream transition active:border-gold"
+                >
+                  ‹ السابق
+                </button>
+                <button
+                  onClick={() => setCur((cur + 1) % studioTour.length)}
+                  className="flex-1 rounded-xl bg-gold py-3 text-sm font-bold text-ink"
+                >
+                  التالي ›
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

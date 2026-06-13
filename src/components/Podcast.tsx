@@ -1,4 +1,4 @@
-import { site, programs, podcastServices, waLink } from "@/lib/site";
+import { site, programs } from "@/lib/site";
 import Reveal from "./Reveal";
 
 export default function Podcast() {
@@ -79,49 +79,6 @@ export default function Podcast() {
           ))}
         </div>
 
-        {/* خدمات إنتاج البودكاست */}
-        <Reveal>
-          <h3 className="mt-20 text-2xl font-extrabold text-cream">
-            خدمات إنتاج بودكاست احترافية
-          </h3>
-          <p className="mt-2 max-w-2xl text-sm text-cream/60">
-            من الفكرة إلى النشر — إنتاج متكامل بنفس الجودة اللي تشوفها في سَعي.
-            مناسب للأفراد والعلامات التجارية.
-          </p>
-        </Reveal>
-
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {podcastServices.map((s, i) => (
-            <Reveal key={s.title} delay={(i % 3) * 80}>
-              <div className="group h-full rounded-2xl border border-line bg-ink-card p-6 transition hover:border-gold/50">
-                <div className="flex size-12 items-center justify-center rounded-xl border border-line bg-ink-soft text-2xl">
-                  {s.icon}
-                </div>
-                <h4 className="mt-5 text-lg font-extrabold text-cream">
-                  {s.title}
-                </h4>
-                <p className="mt-2 text-sm leading-relaxed text-cream/70">
-                  {s.desc}
-                </p>
-              </div>
-            </Reveal>
-          ))}
-        </div>
-
-        <Reveal>
-          <div className="mt-10 text-center">
-            <a
-              href={waLink(
-                "السلام عليكم، أرغب بالاستفسار عن خدمات إنتاج بودكاست سَعي",
-              )}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-gold px-8 py-4 text-base font-bold text-ink transition hover:bg-gold-soft"
-            >
-              تواصل عبر واتساب لطلب خدمة
-            </a>
-          </div>
-        </Reveal>
       </div>
     </section>
   );

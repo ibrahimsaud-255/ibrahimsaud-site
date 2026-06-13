@@ -4,7 +4,6 @@ import Brands from "@/components/Brands";
 import Works from "@/components/Works";
 import Services from "@/components/Services";
 import PlaygroundServices from "@/components/PlaygroundServices";
-import Process from "@/components/Process";
 import Podcast from "@/components/Podcast";
 import StudioTour from "@/components/StudioTour";
 import Contact from "@/components/Contact";
@@ -21,7 +20,6 @@ export default function Home() {
         <Works />
         <PlaygroundServices />
         <Services />
-        <Process />
         <Podcast />
         <StudioTour />
         <Contact />
