@@ -33,12 +33,14 @@ export default function StudioTour() {
             جولة في استوديو سَعي
           </h2>
           <p className="mt-4 max-w-2xl text-cream/70">
-            مساحة مصمّمة للحوار والإنتاج. اضغط على الدوائر النابضة لتتعرّف على كل
-            عنصر، مواصفاته، وكيف نستخدمه في التصوير.
+            مساحة مصمّمة للحوار والإنتاج. تعرّف على كل عنصر، مواصفاته، وكيف
+            نستخدمه في التصوير.
+            <span className="hidden sm:inline"> — اضغط على الدوائر النابضة.</span>
           </p>
         </Reveal>
 
-        <Reveal>
+        {/* النسخة التفاعلية — للشاشات الكبيرة فقط */}
+        <Reveal className="hidden sm:block">
           <div className="relative mx-auto mt-8 select-none overflow-hidden rounded-3xl border border-line shadow-2xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={studioStage} alt="استوديو سَعي" className="block w-full" />
@@ -134,6 +136,35 @@ export default function StudioTour() {
             ◉ عشرة عناصر مخبّأة في المشهد — استكشفها كلها
           </p>
         </Reveal>
+
+        {/* النسخة المناسبة للجوال — معرض رأسي بكل عنصر وصورته ووصفه */}
+        <div className="mt-8 grid grid-cols-1 gap-5 sm:hidden">
+          {studioTour.map((it, i) => (
+            <div
+              key={it.title}
+              className="overflow-hidden rounded-2xl border border-line bg-ink-card"
+            >
+              <div className="relative aspect-[4/3] w-full overflow-hidden bg-ink">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={it.file}
+                  alt={it.title}
+                  loading="lazy"
+                  className="absolute inset-0 size-full object-cover"
+                />
+                <span className="absolute right-3 top-3 grid size-7 place-items-center rounded-full bg-gold text-xs font-black text-ink">
+                  {i + 1}
+                </span>
+              </div>
+              <div className="p-5">
+                <h3 className="text-lg font-extrabold text-gold">{it.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                  {it.text}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

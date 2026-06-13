@@ -265,7 +265,11 @@ export const works: Work[] = [
 // مثال: { name: "اسم الشركة", logo: "/logo-company.png" },
 export const brands: { name: string; logo: string }[] = [
   { name: "ريناد المجد", logo: "/LOGO_RMG.png" },
+  { name: "الهيئة العامة للنقل", logo: "/tga.png" },
+  { name: "إجادة التقنية", logo: "/ejada.png" },
+  { name: "فيه ستور", logo: "/feeh-store.webp" },
   { name: "وكونترا", logo: "/LOGO_kwentra.png" },
+  { name: "جمعية خير لتحفيظ القرآن", logo: "/khair-quran.png" },
   { name: "درفت تايم", logo: "/LOGO_3_drift_time.png" },
 ];
 
@@ -280,6 +284,13 @@ export type Program = {
 };
 
 export const programs: Program[] = [
+  {
+    title: "بودكاست سَعي",
+    desc: "البودكاست الرئيسي — نحوّل الخبرة المتخصصة إلى كلام بسيط يفيدك، ونروي قصة السعي خلف كل تجربة.",
+    meta: "الحلقة الأحدث",
+    ytId: "hZbfphE2tM4",
+    href: "https://www.youtube.com/watch?v=hZbfphE2tM4",
+  },
   {
     title: "رقمنة — التقنية والذكاء الاصطناعي",
     desc: "برنامج من ١٥ حلقة عن التقنية والذكاء الاصطناعي، مع المهندس أحمد الزيادات.",

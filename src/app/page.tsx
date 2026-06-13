@@ -17,6 +17,7 @@ export default function Home() {
       <Nav />
       <main>
         <Hero />
+        <Brands />
         <Works />
         <PlaygroundServices />
         <Services />
@@ -24,7 +25,6 @@ export default function Home() {
         <Podcast />
         <StudioTour />
         <Contact />
-        <Brands />
       </main>
       <Footer />
       <WhatsAppFab />
