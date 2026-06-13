@@ -37,22 +37,18 @@ export default function Hero() {
           <Reveal delay={240}>
             <div className="mt-8 flex flex-wrap items-center gap-4">
               <a
-                href="#reels"
-                className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
-              >
-                <span className="relative flex size-2.5">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-ink/40" />
-                  <span className="relative inline-flex size-2.5 rounded-full bg-ink" />
-                </span>
-                🎬 ابدأ التجربة
-              </a>
-              <a
                 href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
+                className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
               >
                 اطلب إعلانك الآن
+              </a>
+              <a
+                href="#works"
+                className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
+              >
+                🎬 شاهد أعمالي
               </a>
             </div>
           </Reveal>
