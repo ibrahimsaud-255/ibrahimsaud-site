@@ -6,7 +6,8 @@ import { site, waLink } from "@/lib/site";
 const links = [
   { href: "#works", label: "الأعمال" },
   { href: "#services", label: "الخدمات" },
-  { href: "#process", label: "كيف نشتغل" },
+  { href: "#podcast", label: "البودكاست" },
+  { href: "#studio", label: "الاستوديو" },
 ];
 
 export default function Nav() {

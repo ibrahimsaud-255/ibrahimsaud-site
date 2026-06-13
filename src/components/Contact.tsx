@@ -57,6 +57,16 @@ export default function Contact() {
                     🎵 تيك توك
                   </a>
                 )}
+                {site.social.youtube && (
+                  <a
+                    href={site.social.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="transition hover:text-gold"
+                  >
+                    ▶ يوتيوب سَعي
+                  </a>
+                )}
               </div>
             </div>
           </div>

@@ -15,16 +15,23 @@ export const site = {
   social: {
     tiktok: "https://www.tiktok.com/@ibrahimsaud", // ← عدّل الرابط
     instagram: "", // ← أضف لو تبي
-    youtube: "", // ← أضف لو تبي
+    youtube: "https://www.youtube.com/@Sa3y_Podcast",
     x: "",
+  },
+  // ===== بودكاست سَعي (أصبح قسماً داخل الموقع بدل موقع منفصل) =====
+  podcast: {
+    name: "سَعي",
+    youtube: "https://www.youtube.com/@Sa3y_Podcast",
+    tiktok: "https://www.tiktok.com/@sa3y_podcast",
+    registerHref: "/register/", // استمارة «كن ضيفاً»
   },
   // روابط مشاريعك الأخرى (تظهر كبطاقات منفصلة)
   ventures: [
     {
-      title: "سَعي — شركة إنتاج واستديو",
-      desc: "شركة إنتاج واستديو مجهّز ننتج فيه البرامج والبودكاست، ونوفّر خدمات التصوير والإنتاج.",
-      href: "https://sa3ypodcast.com/", // موقع سعي
-      tag: "إنتاج واستديو",
+      title: "منصة حروف ودروس",
+      desc: "منصة تعليمية تساعد المعلّم وتولّد له أسئلة عالية الجودة — منتج تقني قيد الإطلاق.",
+      href: "https://ibrahimsaud.com/app/", // ← عدّل للرابط النهائي للمنصة
+      tag: "منتج تقني",
     },
   ],
 } as const;
@@ -203,4 +210,85 @@ export const brands: { name: string; logo: string }[] = [
   { name: "ريناد المجد", logo: "/LOGO_RMG.png" },
   { name: "وكونترا", logo: "/LOGO_kwentra.png" },
   { name: "درفت تايم", logo: "/LOGO_3_drift_time.png" },
+];
+
+// ===== بودكاست سَعي — البرامج التي أنتجناها وقدّمناها =====
+// ytId: معرّف فيديو يوتيوب (للصورة المصغّرة)، href: رابط القائمة/الحلقة.
+export type Program = {
+  title: string;
+  desc: string;
+  meta?: string; // مثل "١٥ حلقة" أو "موسمان"
+  ytId: string;
+  href: string;
+};
+
+export const programs: Program[] = [
+  {
+    title: "رقمنة — التقنية والذكاء الاصطناعي",
+    desc: "برنامج من ١٥ حلقة عن التقنية والذكاء الاصطناعي، مع المهندس أحمد الزيادات.",
+    meta: "١٥ حلقة",
+    ytId: "inCmiqVSnIQ",
+    href: "https://www.youtube.com/watch?v=inCmiqVSnIQ&list=PL3BjsAHgaCzbaadRYhtrDqcMLaBT5nBVF",
+  },
+  {
+    title: "آخر فقرة — شرح كتب",
+    desc: "شرح كتب حلقة حلقة: «صناعة المستهلك» و«متلازمة التيك توك».",
+    meta: "موسمان",
+    ytId: "iU9dl6OCejQ",
+    href: "https://www.youtube.com/watch?v=iU9dl6OCejQ&list=PL3BjsAHgaCzbr5W9nN8YL6rDf4tkvG2Kn",
+  },
+  {
+    title: "بودكاست يا غلام",
+    desc: "بودكاست حواري — تقديم وإعداد، بالتعاون مع قناة فلق والمدونة استديو.",
+    ytId: "h9WQT7gMP6E",
+    href: "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
+  },
+  {
+    title: "في الخاطر — برنامج ساخر",
+    desc: "برنامج قصير ساخر يتكلّم عن أشياء «في الخاطر».",
+    meta: "٤ حلقات",
+    ytId: "38fVZn6OX1U",
+    href: "https://www.youtube.com/watch?v=38fVZn6OX1U&list=PL3BjsAHgaCzaYHMoLnjODgHrlaXFCizSe",
+  },
+  {
+    title: "قِوت — إنتاج تجريبي",
+    desc: "برنامج أنتجنا منه حلقتين ومقاطع تشويقية.",
+    ytId: "FrTmum7RIbw",
+    href: "https://www.youtube.com/watch?v=FrTmum7RIbw&list=PL3BjsAHgaCzYb3XwijX4iIQj5unA4RrmL",
+  },
+];
+
+// ===== خدمات إنتاج البودكاست (داخل استوديو سَعي) =====
+export const podcastServices = [
+  { icon: "🎬", title: "تصوير وإنتاج", desc: "استوديو مجهّز بكاميرات وإضاءة وصوت احترافي لتصوير حلقاتك بأعلى جودة." },
+  { icon: "✂️", title: "مونتاج وتحرير", desc: "تحرير كامل للحلقة + مقاطع قصيرة (Reels) جاهزة للنشر على المنصات." },
+  { icon: "🧠", title: "إعداد وتحضير محاور", desc: "بحث وتحضير محاور وأسئلة تخدم جمهورك وتبرز ضيفك بأفضل صورة." },
+  { icon: "🎚️", title: "هندسة وتنقية صوت", desc: "معالجة صوتية احترافية تضمن وضوحاً وراحة في الاستماع." },
+  { icon: "📈", title: "توزيع على المنصات", desc: "نشر منظّم على يوتيوب والمنصات الصوتية مع تحسين العناوين والأوصاف." },
+  { icon: "🎙️", title: "تأجير الاستوديو", desc: "احجز الاستوديو لتصوير محتواك الخاص بساعات مرنة وطاقم مساند." },
+] as const;
+
+// ===== جولة الاستوديو التفاعلية — عناصر المشهد =====
+// x/y نِسَب مئوية لموضع النقطة فوق صورة المشهد (studio/tour/stage.jpg).
+export type TourItem = {
+  file: string;
+  title: string;
+  x: number;
+  y: number;
+  text: string;
+};
+
+export const studioStage = "/studio/tour/stage.jpg";
+
+export const studioTour: TourItem[] = [
+  { file: "/studio/tour/item-0.jpg", title: "الإضاءة العلوية", x: 49, y: 7, text: "سوفت بوكس كبير معلّق فوق الكادر يعطي إضاءة ناعمة ومتساوية على الوجوه بلا ظلال حادة. مصدر الإضاءة الأساسي في الأستديو." },
+  { file: "/studio/tour/item-1.jpg", title: "إضاءة الحائط", x: 40, y: 33, text: "إضاءة زرقاء تغسل الستائر فتمنح الخلفية عمقاً ولوناً، وتفصل الضيف عن الجدار. اجعلها أخفت من إضاءة الوجه." },
+  { file: "/studio/tour/item-2.jpg", title: "الأباجورة", x: 89, y: 22, text: "إضاءة دافئة داخل الكادر تكسر برودة الإضاءة وتعطي إحساساً منزلياً مريحاً، وتملأ الجانب المظلم من الوجه." },
+  { file: "/studio/tour/item-3.jpg", title: "مايك المقدّم", x: 65, y: 50, text: "مايك بثّ احترافي على ذراع متحرّك. ثبّت الزاوية نفسها في كل حلقة لاتساق الصوت، على بُعد قبضة من الفم." },
+  { file: "/studio/tour/item-4.jpg", title: "مايك الضيف", x: 42, y: 50, text: "مايك بثّ على ذراع أمام الضيف. اضبط مستواه من المكسر قبل التسجيل وحافظ على ثبات المسافة لصوت نقي." },
+  { file: "/studio/tour/item-5.jpg", title: "المكسر — RODECaster Pro II", x: 58, y: 73, text: "قلب الأستديو الصوتي: يجمع المايكات، يتحكّم بالمستويات والمؤثرات لحظياً، ويسجّل كل صوت في مسار منفصل لمونتاج أنظف." },
+  { file: "/studio/tour/item-6.jpg", title: "الآيباد", x: 61, y: 60, text: "لعرض محاور الحلقة والملاحظات أثناء التصوير، ومتابعة الوقت دون أوراق في الكادر." },
+  { file: "/studio/tour/item-7.jpg", title: "كرسي الضيف", x: 25, y: 75, text: "كرسي خشبي مريح يسار الكادر، يوضع بزاوية بسيطة نحو المقدّم لحوار طبيعي ولغة جسد مريحة." },
+  { file: "/studio/tour/item-8.jpg", title: "كرسي المقدّم", x: 80, y: 72, text: "كرسي المقدّم يمين الكادر، ارتفاعه يناسب مستوى المايك والكاميرا لإطار ثابت ومتّزن." },
+  { file: "/studio/tour/item-9.jpg", title: "الكنب الأصفر", x: 96, y: 91, text: "لمسة لونية حيوية تكسر رتابة المشهد، ومكان مثالي للقطات B-roll أو افتتاحية غير رسمية." },
 ];
