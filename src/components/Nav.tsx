@@ -7,7 +7,6 @@ const links = [
   { href: "#works", label: "الأعمال" },
   { href: "#services", label: "الخدمات" },
   { href: "#process", label: "كيف نشتغل" },
-  { href: "#booking", label: "احجز موعد" },
 ];
 
 export default function Nav() {

@@ -1,8 +1,39 @@
+"use client";
+
+import { useState } from "react";
 import { works } from "@/lib/site";
 import Reveal from "./Reveal";
 import VideoCard from "./VideoCard";
 
+// تجميع التصنيفات الدقيقة في فئات للفلترة
+const GROUP: Record<string, string> = {
+  "إعلان منتج / حملة": "إعلانات منتجات",
+  "إعلان / تمثيل": "إعلانات منتجات",
+  "إعلان منتج": "إعلانات منتجات",
+  "مؤسسي / سينمائي": "أعمال سينمائية",
+  "مناسبات / زواج": "أعمال سينمائية",
+  فعاليات: "فعاليات وتغطيات",
+  "محتوى تفاعلي / تغطية": "فعاليات وتغطيات",
+};
+
+const groupOf = (cat: string) => GROUP[cat] ?? "أخرى";
+
+const ORDER = [
+  "إعلانات منتجات",
+  "أعمال سينمائية",
+  "فعاليات وتغطيات",
+  "أخرى",
+];
+const present = ORDER.filter((g) => works.some((w) => groupOf(w.category) === g));
+const FILTERS = ["الكل", ...present];
+
 export default function Works() {
+  const [active, setActive] = useState("الكل");
+  const filtered =
+    active === "الكل"
+      ? works
+      : works.filter((w) => groupOf(w.category) === active);
+
   return (
     <section id="works" className="border-t border-line/60 px-5 py-24">
       <div className="mx-auto max-w-6xl">
@@ -12,13 +43,32 @@ export default function Works() {
             مشاريع صنعتها — فكرة، تصوير، ومونتاج.
           </h2>
           <p className="mt-4 max-w-2xl text-cream/70">
-            كل عمل هنا قصة: العميل، التحدي، والأدوار اللي مسكتها فيه. اضغط على أي
-            مقطع لمشاهدته.
+            كل عمل هنا قصة: العميل، التحدي، والأدوار اللي مسكتها فيه. اختر تصنيفاً
+            أو اضغط على أي مقطع لمشاهدته.
           </p>
         </Reveal>
 
-        <div className="mt-12 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
-          {works.map((w, i) => (
+        {/* تبويبات التصنيف */}
+        <Reveal delay={80}>
+          <div className="mt-8 inline-flex flex-wrap gap-1.5 rounded-2xl border border-line bg-ink-card/60 p-1.5">
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                onClick={() => setActive(f)}
+                className={`rounded-xl px-4 py-2 text-sm font-bold transition ${
+                  active === f
+                    ? "bg-gold text-ink"
+                    : "text-cream/70 hover:text-cream"
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </Reveal>
+
+        <div className="mt-10 grid grid-cols-1 gap-5 sm:gap-6 md:grid-cols-2">
+          {filtered.map((w, i) => (
             <Reveal
               key={w.id}
               delay={(i % 2) * 80}

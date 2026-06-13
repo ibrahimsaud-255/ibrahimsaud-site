@@ -55,7 +55,7 @@
     if(!K){return}
     const b=document.getElementById('send');b.disabled=true;setMsg('جارٍ الإرسال…','');
     try{
-      const r=await fetch(SUPA+'/rest/v1/rpc/antar_add',{method:'POST',headers:{'apikey':PUB,'Content-Type':'application/json'},body:JSON.stringify({p_token:K,p_text:t})});
+      const r=await fetch(SUPA+'/rest/v1/rpc/antar_add',{method:'POST',headers:{'apikey':PUB,'Authorization':'Bearer '+PUB,'Content-Type':'application/json'},body:JSON.stringify({p_token:K,p_text:t})});
       const d=await r.json();
       if(r.ok && d==='added'){setMsg('✓ أضافها عنتر لنظامك','ok');document.getElementById('t').value='';}
       else if(d==='unauthorized'){setMsg('الرمز غير صحيح','err');}
