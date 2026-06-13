@@ -4,19 +4,21 @@ import Reveal from "./Reveal";
 export default function Podcast() {
   return (
     <section id="podcast" className="bg-glow border-t border-line/60 px-5 py-24">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-6xl text-center">
         <Reveal>
-          <p className="text-sm font-bold tracking-widest text-gold">البودكاست</p>
-          <h2 className="mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-            بودكاست <span className="gold-text">سَعي</span> — معرفة نبسّطها، ورحلة
-            نشاركها.
-          </h2>
-          <p className="mt-4 max-w-2xl text-cream/70">
+          {/* شعار بودكاست سَعي بدل العنوان النصي */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/sa3y-logo.png"
+            alt="بودكاست سَعي"
+            className="mx-auto w-full max-w-[280px] sm:max-w-[340px]"
+          />
+          <p className="mx-auto mt-6 max-w-2xl text-cream/70">
             سَعي مكان تطلع منه بفائدة حقيقية — نحوّل الخبرة المتخصصة إلى كلام بسيط
             يفيدك، ونروي قصة السعي خلف كل تجربة. أنتجناه وقدّمناه في استوديو مجهّز،
             ومن نفس المكان نوفّر خدمات إنتاج لغيرنا.
           </p>
-          <div className="mt-6 flex flex-wrap gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a
               href={site.podcast.youtube}
               target="_blank"
@@ -37,15 +39,15 @@ export default function Podcast() {
         {/* البرامج من إنتاجنا */}
         <Reveal>
           <h3 className="mt-16 text-2xl font-extrabold text-cream">
-            برامج وبودكاست من إنتاجنا
+            البرامج والبودكاست
           </h3>
-          <p className="mt-2 max-w-2xl text-sm text-cream/60">
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-cream/60">
             من برامج تقنية ومعرفية إلى بودكاست حواري. اضغط أي بطاقة لمشاهدتها على
             يوتيوب.
           </p>
         </Reveal>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-8 grid grid-cols-1 gap-5 text-right sm:grid-cols-2 lg:grid-cols-3">
           {programs.map((p, i) => (
             <Reveal key={p.title} delay={(i % 3) * 80}>
               <a

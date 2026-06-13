@@ -9,14 +9,17 @@ export default function StudioTour() {
   const active = cur >= 0;
   const item = active ? studioTour[cur] : null;
 
-  // إغلاق بزر Escape والتنقل بالأسهم
+  const next = () => setCur((c) => (c + 1) % studioTour.length);
+  const prev = () =>
+    setCur((c) => (c - 1 + studioTour.length) % studioTour.length);
+
+  // إغلاق بزر Escape والتنقل بالأسهم (للكيبورد على الديسكتوب)
   useEffect(() => {
     if (!active) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") setCur(-1);
-      if (e.key === "ArrowLeft") setCur((c) => (c + 1) % studioTour.length);
-      if (e.key === "ArrowRight")
-        setCur((c) => (c - 1 + studioTour.length) % studioTour.length);
+      if (e.key === "ArrowLeft") next();
+      if (e.key === "ArrowRight") prev();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -33,137 +36,112 @@ export default function StudioTour() {
             جولة في استوديو سَعي
           </h2>
           <p className="mt-4 max-w-2xl text-cream/70">
-            مساحة مصمّمة للحوار والإنتاج. تعرّف على كل عنصر، مواصفاته، وكيف
-            نستخدمه في التصوير.
-            <span className="hidden sm:inline"> — اضغط على الدوائر النابضة.</span>
+            مساحة مصمّمة للحوار والإنتاج. اضغط على الدوائر النابضة لتتعرّف على كل
+            عنصر، مواصفاته، وكيف نستخدمه في التصوير.
           </p>
         </Reveal>
 
-        {/* النسخة التفاعلية — للشاشات الكبيرة فقط */}
-        <Reveal className="hidden sm:block">
-          <div className="relative mx-auto mt-8 select-none overflow-hidden rounded-3xl border border-line shadow-2xl">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={studioStage} alt="استوديو سَعي" className="block w-full" />
+        <Reveal>
+          {/* حاوية قابلة للتمرير الأفقي على الجوال؛ كاملة العرض على الديسكتوب */}
+          <div className="mt-8 -mx-5 overflow-x-auto px-5 [scrollbar-width:none] sm:mx-0 sm:overflow-visible sm:px-0 [&::-webkit-scrollbar]:hidden">
+            <div className="relative mx-auto w-[680px] max-w-none select-none overflow-hidden rounded-3xl border border-line shadow-2xl sm:w-full">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={studioStage}
+                alt="استوديو سَعي"
+                className="block w-full"
+              />
 
-            {/* غشاوة عند التفعيل */}
-            <button
-              aria-label="إغلاق"
-              onClick={() => setCur(-1)}
-              className={`absolute inset-0 z-10 cursor-default bg-black/55 transition-opacity duration-300 ${
-                active ? "opacity-100" : "pointer-events-none opacity-0"
-              }`}
-            />
-
-            {/* النقاط النابضة */}
-            {studioTour.map((it, i) => (
+              {/* غشاوة عند التفعيل (ديسكتوب) */}
               <button
-                key={it.title}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setCur(i);
-                }}
-                style={{ left: `${it.x}%`, top: `${it.y}%` }}
-                className={`group absolute z-20 -translate-x-1/2 -translate-y-1/2 transition ${
-                  active && cur !== i ? "opacity-30" : "opacity-100"
+                aria-label="إغلاق"
+                onClick={() => setCur(-1)}
+                className={`absolute inset-0 z-10 hidden cursor-default bg-black/55 transition-opacity duration-300 sm:block ${
+                  active ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
-                aria-label={it.title}
-              >
-                <span className="relative grid size-7 place-items-center rounded-full bg-gold/20">
-                  <span className="size-3 rounded-full bg-gold shadow-[0_0_10px_rgba(231,178,76,.8)]" />
-                  <span className="absolute inset-0 animate-ping rounded-full border-2 border-gold" />
-                </span>
-                <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg border border-line bg-black/85 px-2.5 py-1 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100">
-                  {it.title}
-                </span>
-              </button>
-            ))}
+              />
 
-            {/* بطاقة التفاصيل */}
-            {item && (
-              <div
-                className={`absolute bottom-[3%] left-[3%] right-[3%] z-30 overflow-hidden rounded-2xl border border-line bg-ink-card shadow-2xl sm:bottom-auto sm:right-auto sm:top-1/2 sm:max-w-[460px] sm:-translate-y-1/2 ${
-                  item.x < 50 ? "sm:right-[4%] sm:left-auto" : "sm:left-[4%]"
-                }`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={item.file}
-                  alt={item.title}
-                  className="block aspect-[16/10] w-full object-cover"
-                />
+              {/* النقاط النابضة (مساحة ضغط واسعة للجوال) */}
+              {studioTour.map((it, i) => (
                 <button
-                  onClick={() => setCur(-1)}
-                  className="absolute left-2 top-2 grid size-8 place-items-center rounded-full bg-black/55 text-white"
-                  aria-label="إغلاق"
+                  key={it.title}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setCur(i);
+                  }}
+                  style={{ left: `${it.x}%`, top: `${it.y}%` }}
+                  className={`group absolute z-20 -translate-x-1/2 -translate-y-1/2 p-2.5 transition ${
+                    active && cur !== i ? "sm:opacity-30" : "opacity-100"
+                  }`}
+                  aria-label={it.title}
                 >
-                  ✕
+                  <span className="relative grid size-7 place-items-center rounded-full bg-gold/20">
+                    <span className="size-3 rounded-full bg-gold shadow-[0_0_10px_rgba(231,178,76,.8)]" />
+                    <span className="absolute inset-0 animate-ping rounded-full border-2 border-gold" />
+                  </span>
+                  <span className="pointer-events-none absolute bottom-full left-1/2 mb-1 hidden -translate-x-1/2 whitespace-nowrap rounded-lg border border-line bg-black/85 px-2.5 py-1 text-xs font-bold text-white opacity-0 transition group-hover:opacity-100 sm:block">
+                    {it.title}
+                  </span>
                 </button>
-                <div className="p-5">
-                  <h3 className="text-lg font-extrabold text-gold">
-                    {item.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-cream/85">
-                    {item.text}
-                  </p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-xs text-cream/50" dir="ltr">
-                      {cur + 1} / {studioTour.length}
-                    </span>
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          setCur(
-                            (cur - 1 + studioTour.length) % studioTour.length,
-                          )
-                        }
-                        className="rounded-lg border border-line px-3 py-1.5 text-sm font-bold text-cream transition hover:border-gold"
-                      >
-                        ‹ السابق
-                      </button>
-                      <button
-                        onClick={() => setCur((cur + 1) % studioTour.length)}
-                        className="rounded-lg bg-gold px-3 py-1.5 text-sm font-bold text-ink transition hover:bg-gold-soft"
-                      >
-                        التالي ›
-                      </button>
+              ))}
+
+              {/* بطاقة التفاصيل — الديسكتوب فقط (بجانب النقطة) */}
+              {item && (
+                <div
+                  className={`absolute top-1/2 z-30 hidden max-w-[460px] -translate-y-1/2 overflow-hidden rounded-2xl border border-line bg-ink-card shadow-2xl sm:block ${
+                    item.x < 50 ? "right-[4%]" : "left-[4%]"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.file}
+                    alt={item.title}
+                    className="block aspect-[16/10] w-full object-cover"
+                  />
+                  <button
+                    onClick={() => setCur(-1)}
+                    className="absolute left-2 top-2 grid size-8 place-items-center rounded-full bg-black/55 text-white"
+                    aria-label="إغلاق"
+                  >
+                    ✕
+                  </button>
+                  <div className="p-5">
+                    <h3 className="text-lg font-extrabold text-gold">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                      {item.text}
+                    </p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-xs text-cream/50" dir="ltr">
+                        {cur + 1} / {studioTour.length}
+                      </span>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={prev}
+                          className="rounded-lg border border-line px-3 py-1.5 text-sm font-bold text-cream transition hover:border-gold"
+                        >
+                          ‹ السابق
+                        </button>
+                        <button
+                          onClick={next}
+                          className="rounded-lg bg-gold px-3 py-1.5 text-sm font-bold text-ink transition hover:bg-gold-soft"
+                        >
+                          التالي ›
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
+
           <p className="mt-4 text-center text-sm text-cream/50">
-            ◉ عشرة عناصر مخبّأة في المشهد — استكشفها كلها
+            <span className="sm:hidden">اسحب المشهد أفقياً، واضغط أي نقطة لعرض صورتها وتفاصيلها</span>
+            <span className="hidden sm:inline">◉ عشرة عناصر مخبّأة في المشهد — استكشفها كلها</span>
           </p>
         </Reveal>
-
-        {/* النسخة التفاعلية للجوال — مصغّرات تُفتح بالضغط لعرض الصورة الكاملة */}
-        <div className="mt-8 grid grid-cols-2 gap-3 sm:hidden">
-          {studioTour.map((it, i) => (
-            <button
-              key={it.title}
-              onClick={() => setCur(i)}
-              className="group relative aspect-[4/3] overflow-hidden rounded-2xl border border-line bg-ink-card text-right"
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={it.file}
-                alt={it.title}
-                loading="lazy"
-                className="absolute inset-0 size-full object-cover transition group-active:scale-105"
-              />
-              <span className="absolute right-2 top-2 grid size-6 place-items-center rounded-full bg-gold text-[11px] font-black text-ink">
-                {i + 1}
-              </span>
-              <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-3 pt-8">
-                <span className="text-sm font-bold text-cream">{it.title}</span>
-              </div>
-            </button>
-          ))}
-        </div>
-        <p className="mt-4 text-center text-sm text-cream/50 sm:hidden">
-          اضغط أي عنصر لعرض صورته كاملة وتفاصيله
-        </p>
 
         {/* نافذة العرض الكاملة على الجوال */}
         {item && (
@@ -197,15 +175,13 @@ export default function StudioTour() {
               </p>
               <div className="mt-5 flex gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
                 <button
-                  onClick={() =>
-                    setCur((cur - 1 + studioTour.length) % studioTour.length)
-                  }
+                  onClick={prev}
                   className="flex-1 rounded-xl border border-line py-3 text-sm font-bold text-cream transition active:border-gold"
                 >
                   ‹ السابق
                 </button>
                 <button
-                  onClick={() => setCur((cur + 1) % studioTour.length)}
+                  onClick={next}
                   className="flex-1 rounded-xl bg-gold py-3 text-sm font-bold text-ink"
                 >
                   التالي ›

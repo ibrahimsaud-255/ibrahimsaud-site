@@ -6,7 +6,7 @@ const categories = [
   { label: "إعلانات المنتجات", href: "#works" },
   { label: "الأعمال السينمائية", href: "#works" },
   { label: "مقابلات الشارع", href: "#works" },
-  { label: "الهاكاثونات", href: "#works" },
+  { label: "تغطية فعاليات", href: "#works" },
   { label: "بودكاست سَعي", href: "#podcast" },
 ];
 
