@@ -173,7 +173,7 @@ export default function PlaygroundServices() {
   }, [reduced]);
 
   return (
-    <section id="playground" className="border-t border-line/60 px-5 py-24">
+    <section id="services" className="border-t border-line/60 px-5 py-24">
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <p className="text-sm font-bold tracking-widest text-gold">

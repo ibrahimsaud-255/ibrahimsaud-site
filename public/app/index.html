@@ -428,9 +428,9 @@ const APPS=[
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
 ];
 const RENDER={home:renderHome,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
-function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
+function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 function refreshIcons(){try{if(window.lucide)lucide.createIcons()}catch(e){}}
 let CUR='home';

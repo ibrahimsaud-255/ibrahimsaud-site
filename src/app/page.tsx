@@ -2,7 +2,6 @@ import Nav from "@/components/Nav";
 import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import Works from "@/components/Works";
-import Services from "@/components/Services";
 import PlaygroundServices from "@/components/PlaygroundServices";
 import Podcast from "@/components/Podcast";
 import StudioTour from "@/components/StudioTour";
@@ -19,7 +18,6 @@ export default function Home() {
         <Brands />
         <Works />
         <PlaygroundServices />
-        <Services />
         <Podcast />
         <StudioTour />
         <Contact />
