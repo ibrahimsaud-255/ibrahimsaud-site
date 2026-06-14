@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>رادار المحتوى — إبراهيم سعود</title>
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="رادار المحتوى">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{--gold:#f5a623;--gold2:#ffc24d;--line:#2c2c31;--panel:#141416;--ink:#0a0a0b}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:#f4f4f5;font-family:'Tajawal',system-ui,sans-serif;min-height:100vh}
+  a{color:var(--gold2)}
+  .wrap{max-width:760px;margin:0 auto;padding:20px 16px 80px}
+  /* تسجيل الدخول */
+  #loginView{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:22px;text-align:center}
+  #loginView .box{width:100%;max-width:380px}
+  .ico{font-size:54px;margin-bottom:6px}
+  h1{margin:0 0 4px;font-size:24px;font-weight:900}
+  h1 .g{color:var(--gold)}
+  .sub{color:#9b9ba3;font-size:14px;margin:0 0 18px}
+  input{width:100%;background:#000;border:1px solid var(--line);border-radius:12px;color:#fff;font-family:inherit;font-size:16px;padding:13px;margin-top:10px}
+  input:focus{outline:none;border-color:var(--gold)}
+  .btn{width:100%;margin-top:12px;border:none;border-radius:12px;padding:14px;font-family:inherit;font-weight:800;font-size:16px;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;cursor:pointer}
+  .btn:active{filter:brightness(.95)} .btn:disabled{opacity:.6}
+  .btn.ghost{background:transparent;color:#cfcfd6;border:1px solid var(--line)}
+  .msg{margin-top:12px;font-size:14px;min-height:20px;font-weight:700}
+  .ok{color:#22c55e}.err{color:#ef4444}
+  .link{background:none;border:none;color:#9b9ba3;font-family:inherit;font-size:13px;cursor:pointer;margin-top:12px;text-decoration:underline}
+  .hidden{display:none}
+  /* الترويسة */
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+  header h2{margin:0;font-size:20px;font-weight:900}
+  header h2 .g{color:var(--gold)}
+  .topbar{display:flex;gap:8px;align-items:center}
+  .topbar a,.topbar button{font-size:13px;color:#9b9ba3;background:none;border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;text-decoration:none}
+  .gen{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;border:none;border-radius:14px;padding:16px;width:100%;font-family:inherit;font-weight:900;font-size:18px;cursor:pointer;margin-bottom:8px}
+  .gen:disabled{opacity:.6}
+  .note{color:#6b6b73;font-size:12px;text-align:center;margin:0 0 18px;line-height:1.7}
+  .tabs{display:flex;gap:6px;margin:14px 0}
+  .tab{flex:1;text-align:center;font-size:13px;font-weight:800;color:#9b9ba3;border:1px solid var(--line);border-radius:10px;padding:9px;cursor:pointer;background:none}
+  .tab.on{background:var(--gold);color:#1a1205;border-color:var(--gold)}
+  /* بطاقة فكرة */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px}
+  .card.used{opacity:.55}
+  .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+  .badge{font-size:11px;font-weight:800;background:rgba(245,166,35,.14);color:var(--gold2);border:1px solid var(--line);border-radius:20px;padding:3px 10px}
+  .src{font-size:12px;color:#7d7d86}
+  .field{margin-top:12px}
+  .field .lab{font-size:12px;font-weight:800;color:#8a8a92;display:flex;align-items:center;justify-content:space-between}
+  .field .val{margin-top:4px;font-size:15px;line-height:1.85;white-space:pre-wrap}
+  .hook .val{color:var(--gold2);font-weight:800;font-size:16px}
+  .script .val{background:#000;border:1px solid var(--line);border-radius:12px;padding:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .chip{font-size:12px;background:#000;border:1px solid var(--line);border-radius:20px;padding:4px 10px;color:#cfcfd6}
+  .copy{background:none;border:1px solid var(--line);color:#9b9ba3;border-radius:8px;font-family:inherit;font-size:12px;padding:3px 9px;cursor:pointer}
+  .copy:active{color:var(--gold2)}
+  .actions{display:flex;gap:8px;margin-top:14px}
+  .actions button{flex:1;background:none;border:1px solid var(--line);color:#cfcfd6;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;padding:9px;cursor:pointer}
+  .actions button:active{border-color:var(--gold)}
+  .empty{text-align:center;color:#6b6b73;padding:40px 0;font-size:14px}
+  .spin{display:inline-block;width:16px;height:16px;border:2px solid #1a1205;border-top-color:transparent;border-radius:50%;animation:r .7s linear infinite;vertical-align:-3px;margin-left:6px}
+  @keyframes r{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- ============ تسجيل الدخول ============ -->
+<div id="loginView">
+  <div class="box">
+    <div class="ico">📡</div>
+    <h1>رادار <span class="g">المحتوى</span></h1>
+    <p class="sub">أفكار فيديوهات أخبارية جاهزة في مجالك — بضغطة زر.</p>
+    <input id="em" type="email" placeholder="البريد الإلكتروني" autocomplete="email">
+    <input id="pw" type="password" placeholder="كلمة المرور" autocomplete="current-password">
+    <button class="btn" id="btnLogin" onclick="doLogin()">دخول</button>
+    <button class="link" onclick="doForgot()">نسيت كلمة المرور؟</button>
+    <div class="msg" id="lmsg"></div>
+    <div class="msg err" id="lerr"></div>
+  </div>
+</div>
+
+<!-- ============ التطبيق ============ -->
+<div id="appShell" class="hidden">
+  <div class="wrap">
+    <header>
+      <h2>📡 رادار <span class="g">المحتوى</span></h2>
+      <div class="topbar">
+        <a href="./index.html">↩ اللوحة</a>
+        <button onclick="logout()">خروج</button>
+      </div>
+    </header>
+
+    <button class="gen" id="btnGen" onclick="generate()">🎬 ولّد أفكار اليوم</button>
+    <p class="note">يبحث في أهم أخبار التقنية والأعمال والتسويق والبودكاست، ويكتبها سكربتات جاهزة بلهجتك.</p>
+    <div class="msg err" id="gerr" style="text-align:center"></div>
+
+    <div class="tabs">
+      <button class="tab on" id="tabNew" onclick="setTab('new')">الجديدة</button>
+      <button class="tab" id="tabAll" onclick="setTab('all')">الأرشيف</button>
+    </div>
+
+    <div id="list"></div>
+  </div>
+</div>
+
+<script>
+const SUPA_URL='https://rrerwhhxrjyzmnnjsfev.supabase.co';
+const SUPA_KEY='sb_publishable_mTJYx5-UELF01WyGXsTh5Q_RiUSfWtG';
+const ADMIN_EMAIL='ibrahimsaud25@gmail.com';
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
+let USER=null, TAB='new', ITEMS=[];
+
+const $=id=>document.getElementById(id);
+function lmsg(t){$('lmsg').textContent=t}
+function lerr(t){$('lerr').textContent=t}
+function gerr(t){$('gerr').textContent=t||''}
+function busy(id,b){const el=$(id);if(el)el.disabled=b}
+
+// ===== المصادقة =====
+async function doLogin(){
+  const em=$('em').value.trim().toLowerCase(), pw=$('pw').value.trim();
+  if(!em||!pw){lerr('اكتب البريد وكلمة المرور.');return}
+  lerr('');busy('btnLogin',true);lmsg('جارٍ الدخول...');
+  const {data,error}=await sb.auth.signInWithPassword({email:em,password:pw});
+  busy('btnLogin',false);lmsg('');
+  if(error){lerr('تعذّر الدخول. تأكد من البيانات.');return}
+  await enterApp(data.user);
+}
+async function doForgot(){
+  const em=$('em').value.trim().toLowerCase();
+  if(!em){lerr('اكتب بريدك في الخانة أعلاه أولاً.');return}
+  lerr('');lmsg('جارٍ إرسال رابط الاستعادة...');
+  await sb.auth.resetPasswordForEmail(em,{redirectTo:location.origin+'/app/index.html'});
+  lmsg('إن كان البريد مسجّلاً فستصلك رسالة لإعادة التعيين (تحقّق من المهملات).');
+}
+async function enterApp(user){
+  if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){
+    await sb.auth.signOut();lerr('هذا النظام مخصّص لحساب المدير فقط.');return;
+  }
+  USER=user;
+  $('loginView').classList.add('hidden');
+  $('appShell').classList.remove('hidden');
+  await loadArchive();
+}
+async function logout(){await sb.auth.signOut();USER=null;$('appShell').classList.add('hidden');$('loginView').classList.remove('hidden')}
+
+// ===== التوليد =====
+async function generate(){
+  gerr('');busy('btnGen',true);
+  $('btnGen').innerHTML='جارٍ البحث والكتابة...<span class="spin"></span>';
+  try{
+    const {data:s}=await sb.auth.getSession();
+    const token=s&&s.session?s.session.access_token:'';
+    const r=await fetch(SUPA_URL+'/functions/v1/content-radar',{
+      method:'POST',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+      body:JSON.stringify({count:5})
+    });
+    const d=await r.json();
+    if(!r.ok){gerr(d.error||'تعذّر التوليد، حاول مرة أخرى.');}
+    else{TAB='new';syncTabs();await loadArchive();}
+  }catch(e){gerr('تعذّر الاتصال بالخادم.');}
+  busy('btnGen',false);
+  $('btnGen').textContent='🎬 ولّد أفكار اليوم';
+}
+
+// ===== الأرشيف والعرض =====
+async function loadArchive(){
+  let q=sb.from('content_ideas').select('*').order('created_at',{ascending:false}).limit(80);
+  if(TAB==='new')q=q.eq('status','new');
+  const {data,error}=await q;
+  ITEMS=error?[]:(data||[]);
+  render();
+}
+function setTab(t){TAB=t;syncTabs();loadArchive()}
+function syncTabs(){$('tabNew').classList.toggle('on',TAB==='new');$('tabAll').classList.toggle('on',TAB==='all')}
+
+async function setStatus(id,status){
+  await sb.from('content_ideas').update({status}).eq('id',id);
+  await loadArchive();
+}
+function copy(btn,text){navigator.clipboard.writeText(text).then(()=>{const o=btn.textContent;btn.textContent='✓ نُسخ';setTimeout(()=>btn.textContent=o,1200)})}
+
+function esc(s){return (s==null?'':String(s)).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+function card(x){
+  const foot=(x.footage||[]).map(f=>`<span class="chip">${esc(f)}</span>`).join('');
+  const tags=(x.hashtags||[]).map(h=>`<span class="chip">${esc(h)}</span>`).join('');
+  const used=x.status==='used'||x.status==='archived';
+  const fullCopy=`الهوك: ${x.hook}\n\nالسكربت:\n${x.script}\n\nعنوان الشاشة: ${x.screen_title}\n\nهاشتاقات: ${(x.hashtags||[]).join(' ')}`;
+  return `<div class="card ${used?'used':''}">
+    <div class="meta">
+      <span class="badge">${esc(x.topic||'')}</span>
+      ${x.source_url?`<a class="src" href="${esc(x.source_url)}" target="_blank" rel="noopener">${esc(x.source_pub||'المصدر')} ↗</a>`:''}
+    </div>
+    ${x.virality?`<div class="src">⚡ ${esc(x.virality)}</div>`:''}
+    <div class="field hook"><div class="lab">الخطّاف (أول ٣ ثواني)</div><div class="val">${esc(x.hook)}</div></div>
+    <div class="field script"><div class="lab">السكربت <button class="copy" onclick='copy(this,${JSON.stringify(x.script||"")})'>نسخ</button></div><div class="val">${esc(x.script)}</div></div>
+    <div class="field"><div class="lab">عنوان على الشاشة <button class="copy" onclick='copy(this,${JSON.stringify(x.screen_title||"")})'>نسخ</button></div><div class="val">${esc(x.screen_title)}</div></div>
+    ${foot?`<div class="field"><div class="lab">كلمات بحث للقطات الفوقية (B-roll)</div><div class="chips">${foot}</div></div>`:''}
+    ${tags?`<div class="field"><div class="lab">هاشتاقات</div><div class="chips">${tags}</div></div>`:''}
+    ${x.service_tie?`<div class="field"><div class="lab">الربط بخدمتك: ${esc(x.service_tie)}</div><div class="val">${esc(x.cta||'')}</div></div>`:''}
+    <div class="actions">
+      <button onclick='copy(this,${JSON.stringify(fullCopy)})'>📋 انسخ الكل</button>
+      ${used
+        ? `<button onclick="setStatus('${x.id}','new')">↺ رجّعها جديدة</button>`
+        : `<button onclick="setStatus('${x.id}','used')">✓ صوّرتها</button>`}
+    </div>
+  </div>`;
+}
+function render(){
+  const list=$('list');
+  if(!ITEMS.length){list.innerHTML=`<div class="empty">${TAB==='new'?'ما فيه أفكار جديدة — اضغط «ولّد أفكار اليوم».':'الأرشيف فاضي.'}</div>`;return}
+  list.innerHTML=ITEMS.map(card).join('');
+}
+
+// استرجاع الجلسة عند فتح الصفحة
+(async()=>{
+  try{const {data}=await sb.auth.getSession();if(data&&data.session)await enterApp(data.session.user);}catch(e){}
+})();
+</script>
+</body>
+</html>

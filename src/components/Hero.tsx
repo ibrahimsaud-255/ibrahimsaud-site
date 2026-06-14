@@ -59,6 +59,12 @@ export default function Hero() {
             >
               🎬 شاهد أعمالي
             </a>
+            <a
+              href="#studio"
+              className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
+            >
+              🎥 جولة في الاستوديو
+            </a>
           </div>
         </Reveal>
 
