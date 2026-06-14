@@ -1,44 +1,37 @@
-# محتوى الاستوديو — خطوات التشغيل
+# محتوى الاستوديو — content-radar
 
-مولّد محتوى بوضعين:
-- **📡 أخبار** — أهم أخبار مجالك (تقنية/أعمال/تسويق/بودكاست) من RSS مجاني → سكربتات بلهجتك.
-- **📖 قصص** — قصص واقعية مختصرة (عربية ثم عالمية) للسرد أمام الكاميرا.
+مولّد محتوى بوضعين، **منشور وشغّال** على مشروع Supabase (`rrerwhhxrjyzmnnjsfev`):
 
-الصفحة **بدون تسجيل دخول** (خاصة وغير معلنة). التكلفة: **صفر** (RSS مجاني + Gemini مجاني).
+- **📡 أخبار** — أهم أخبار مجالك من Google News RSS (مجاني) → سكربتات بلهجتك، مع رابط المصدر للتحقق.
+- **📖 قصص** — قصص واقعية **مؤصّلة ببحث ويكيبيديا** (حقائق حقيقية، بلا هلوسة)، من قائمة شخصيات منسّقة في مجالك، مع رابط المصدر.
+
+**محرّك الكتابة:** Groq (Llama 3.3 70B) — مجاني. **البحث:** RSS + ويكيبيديا — مجاني بلا مفتاح.
+الصفحة بدون تسجيل دخول. التكلفة: **صفر**.
 
 ---
 
-## 1) مفتاح Gemini المجاني
-<https://aistudio.google.com/app/apikey> ← **Create API key** (يبدأ بـ `AIza...`).
+## الإعدادات الحالية (تمّت)
+- جدول `content_ideas` + سياسة وصول مفتوحة (RLS) — منفّذ.
+- الدالة `content-radar` منشورة بـ `--no-verify-jwt`.
+- السرّ `GROQ_API_KEY` مضبوط في أسرار المشروع.
+- الصفحة: `https://ibrahimsaud.com/app/studio.html`
 
-## 2) قاعدة البيانات
-Supabase ▸ **SQL Editor** ▸ الصق `supabase/content_ideas.sql` ▸ **Run**.
-*(آمن لإعادة التشغيل — يضيف عمود `kind` ويفتح الوصول.)*
-
-## 3) نشر الدالة — **بدون تحقّق JWT** (مهم)
-
-### لوحة Supabase
-1. Edge Functions ▸ **Create a function** ▸ الاسم `content-radar`.
-2. الصق `supabase/functions/content-radar/index.ts` ▸ **Deploy**.
-3. في إعدادات الدالة: **عطّل** خيار «Verify JWT» (Enforce JWT verification = OFF).
-4. Edge Functions ▸ **Secrets** ▸ أضف `GEMINI_API_KEY` = مفتاحك.
-
-### أو CLI
+## إعادة النشر بعد أي تعديل على الكود
 ```bash
-supabase secrets set GEMINI_API_KEY=AIza...your-key...
-supabase functions deploy content-radar --no-verify-jwt
+export SUPABASE_ACCESS_TOKEN=<رمز من Supabase ▸ Account ▸ Access Tokens>
+npx supabase functions deploy content-radar --project-ref rrerwhhxrjyzmnnjsfev --no-verify-jwt
 ```
 
-> `SUPABASE_URL` و`SUPABASE_SERVICE_ROLE_KEY` تُحقن تلقائياً.
-
-## 4) الاستخدام
-افتح **`https://ibrahimsaud.com/app/studio.html`** ← يفتح مباشرة.
-بدّل بين **📡 أخبار** و**📖 قصص** ← اضغط زر التوليد.
+## ضبط/تبديل المفتاح أو النموذج
+```bash
+npx supabase secrets set GROQ_API_KEY=gsk_...     --project-ref rrerwhhxrjyzmnnjsfev
+npx supabase secrets set GROQ_MODEL=llama-3.3-70b-versatile --project-ref rrerwhhxrjyzmnnjsfev
+```
 
 ---
 
-## ملاحظات
-- بلا تسجيل دخول — الوصول عبر المفتاح العام (الصفحة غير معلنة). لو تبي حماية لاحقاً نضيف رمزاً بسيطاً في الرابط.
-- القصص تعتمد معرفة النموذج — **راجع أي رقم/تاريخ قبل النشر**.
-- عدد العناصر/الضغطة: عدّل `count` في `studio.html` (1–8).
-- مجالات الأخبار: عدّل `FEEDS` في `index.ts`. القصص: عدّل `storyPrompt`.
+## ملاحظات وتخصيص
+- **القصص:** عدّل قائمة `STORY_SEEDS` في `index.ts` لإضافة/حذف شخصيات (لازم لها صفحة ويكيبيديا).
+- **الأخبار:** عدّل مصفوفة `FEEDS`. ملاحظة: حد Groq المجاني ≈ 12 ألف توكن/دقيقة، فالعناوين محدودة بـ 18.
+- عدد العناصر/الضغطة: `count` في `studio.html` (1–8).
+- القصص مؤصّلة بويكيبيديا — موثوقة، لكن راجع أي تفصيل حسّاس قبل النشر.
