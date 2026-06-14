@@ -3,6 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>رادار المحتوى — إبراهيم سعود</title>
 <meta name="theme-color" content="#0a0a0b">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -127,7 +130,14 @@ async function doLogin(){
   lerr('');busy('btnLogin',true);lmsg('جارٍ الدخول...');
   const {data,error}=await sb.auth.signInWithPassword({email:em,password:pw});
   busy('btnLogin',false);lmsg('');
-  if(error){lerr('تعذّر الدخول. تأكد من البيانات.');return}
+  if(error){
+    const m=(error.message||'').toLowerCase();
+    if(m.includes('api key')) lerr('مشكلة في مفتاح Supabase — حدّث الصفحة بقوة (الكاش).');
+    else if(m.includes('invalid login')) lerr('البريد أو كلمة المرور غير صحيحة.');
+    else if(m.includes('confirm')) lerr('الحساب غير مُفعّل — تحقّق من بريدك.');
+    else lerr('تعذّر الدخول: '+error.message);
+    return;
+  }
   await enterApp(data.user);
 }
 async function doForgot(){
