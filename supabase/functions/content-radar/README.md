@@ -1,46 +1,44 @@
-# رادار المحتوى — خطوات التشغيل (مرة واحدة)
+# محتوى الاستوديو — خطوات التشغيل
 
-نظام يطلّع لك أفكار فيديوهات أخبارية جاهزة في مجالك (تقنية/أعمال/تسويق/بودكاست)،
-يعيد كتابتها سكربتات «تيك توك» بلهجتك، ويربط كل فكرة بإحدى خدماتك.
+مولّد محتوى بوضعين:
+- **📡 أخبار** — أهم أخبار مجالك (تقنية/أعمال/تسويق/بودكاست) من RSS مجاني → سكربتات بلهجتك.
+- **📖 قصص** — قصص واقعية مختصرة (عربية ثم عالمية) للسرد أمام الكاميرا.
 
-التكلفة: **صفر** — الأخبار من RSS مجاني، والكتابة عبر Gemini (طبقة مجانية).
+الصفحة **بدون تسجيل دخول** (خاصة وغير معلنة). التكلفة: **صفر** (RSS مجاني + Gemini مجاني).
 
 ---
 
-## 1) مفتاح Gemini المجاني (دقيقتان)
-1. افتح <https://aistudio.google.com/app/apikey>
-2. سجّل دخول بحساب Google ← **Create API key** (بدون بطاقة ائتمان).
-3. انسخ المفتاح (يبدأ بـ `AIza...`).
+## 1) مفتاح Gemini المجاني
+<https://aistudio.google.com/app/apikey> ← **Create API key** (يبدأ بـ `AIza...`).
 
-## 2) إنشاء جدول الأفكار
-- Supabase ▸ **SQL Editor** ▸ الصق محتوى `supabase/content_ideas.sql` ▸ **Run**.
+## 2) قاعدة البيانات
+Supabase ▸ **SQL Editor** ▸ الصق `supabase/content_ideas.sql` ▸ **Run**.
+*(آمن لإعادة التشغيل — يضيف عمود `kind` ويفتح الوصول.)*
 
-## 3) نشر الدالة (Edge Function)
+## 3) نشر الدالة — **بدون تحقّق JWT** (مهم)
 
-### الطريقة أ — لوحة Supabase (الأسهل)
-1. Supabase ▸ **Edge Functions** ▸ **Create a function** ▸ الاسم: `content-radar`.
-2. الصق محتوى `supabase/functions/content-radar/index.ts` ▸ **Deploy**.
-3. **Edge Functions ▸ Secrets** (أو Manage secrets) ▸ أضف:
-   - الاسم: `GEMINI_API_KEY` — القيمة: مفتاحك من الخطوة 1 ▸ Save.
+### لوحة Supabase
+1. Edge Functions ▸ **Create a function** ▸ الاسم `content-radar`.
+2. الصق `supabase/functions/content-radar/index.ts` ▸ **Deploy**.
+3. في إعدادات الدالة: **عطّل** خيار «Verify JWT» (Enforce JWT verification = OFF).
+4. Edge Functions ▸ **Secrets** ▸ أضف `GEMINI_API_KEY` = مفتاحك.
 
-### الطريقة ب — سطر الأوامر (CLI)
+### أو CLI
 ```bash
-supabase login
-supabase link --project-ref rrerwhhxrjyzmnnjsfev
 supabase secrets set GEMINI_API_KEY=AIza...your-key...
-supabase functions deploy content-radar
+supabase functions deploy content-radar --no-verify-jwt
 ```
 
-> `SUPABASE_URL` و`SUPABASE_ANON_KEY` و`SUPABASE_SERVICE_ROLE_KEY` تُحقن تلقائياً — لا تضفها يدوياً.
+> `SUPABASE_URL` و`SUPABASE_SERVICE_ROLE_KEY` تُحقن تلقائياً.
 
 ## 4) الاستخدام
-افتح: **`https://ibrahimsaud.com/app/studio.html`**
-ادخل بحسابك ← اضغط **«ولّد أفكار اليوم»**. تطلع الكروت وتنحفظ في الأرشيف.
+افتح **`https://ibrahimsaud.com/app/studio.html`** ← يفتح مباشرة.
+بدّل بين **📡 أخبار** و**📖 قصص** ← اضغط زر التوليد.
 
 ---
 
 ## ملاحظات
-- محصور على حساب المدير فقط (`ibrahimsaud25@gmail.com`).
-- لتغيير عدد الأفكار/الضغطة: عدّل `count` في `studio.html` (1–8).
-- لتعديل مجالات الأخبار: عدّل مصفوفة `FEEDS` في `index.ts`.
-- «الأكثر انتشاراً» مقرّبة عبر مصادر موثوقة + الأحدث + حكم الذكاء (قياس الانتشار الدقيق يحتاج APIs مدفوعة للسوشال).
+- بلا تسجيل دخول — الوصول عبر المفتاح العام (الصفحة غير معلنة). لو تبي حماية لاحقاً نضيف رمزاً بسيطاً في الرابط.
+- القصص تعتمد معرفة النموذج — **راجع أي رقم/تاريخ قبل النشر**.
+- عدد العناصر/الضغطة: عدّل `count` في `studio.html` (1–8).
+- مجالات الأخبار: عدّل `FEEDS` في `index.ts`. القصص: عدّل `storyPrompt`.

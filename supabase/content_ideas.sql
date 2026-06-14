@@ -1,41 +1,47 @@
 -- ╔══════════════════════════════════════════════════════════════╗
--- ║  نظام رادار المحتوى — جدول أفكار الفيديوهات الأخبارية          ║
--- ║  شغّل هذا الملف مرة واحدة في Supabase ▸ SQL Editor             ║
--- ║  آمن لإعادة التشغيل (idempotent).                              ║
+-- ║  نظام محتوى الاستوديو — جدول الأفكار (أخبار + قصص)             ║
+-- ║  شغّل هذا الملف في Supabase ▸ SQL Editor (آمن لإعادة التشغيل). ║
 -- ╚══════════════════════════════════════════════════════════════╝
 
 create table if not exists public.content_ideas (
   id            uuid primary key default gen_random_uuid(),
-  owner         uuid not null default auth.uid() references auth.users(id) on delete cascade,
-  batch_id      uuid,                       -- يجمع أفكار نفس الضغطة
+  owner         uuid,
+  batch_id      uuid,
+  kind          text not null default 'news',  -- news | story
   created_at    timestamptz not null default now(),
 
-  topic         text,                       -- تقنية / أعمال / تسويق / بودكاست
-  source_title  text,                       -- عنوان الخبر الأصلي
-  source_url    text,                       -- رابط المصدر
-  source_pub    text,                       -- اسم الجهة الناشرة
+  topic         text,
+  source_title  text,   -- عنوان الخبر / اسم الشخصية أو الشركة (للقصص)
+  source_url    text,
+  source_pub    text,
 
-  virality      text,                       -- لماذا الخبر قابل للانتشار
-  hook          text,                       -- أول 3 ثواني (الخطّاف)
-  script        text,                       -- السكربت كامل بلهجتك
-  screen_title  text,                       -- العنوان الظاهر على الشاشة
-  footage       text[],                     -- كلمات بحث للقطات الفوقية (B-roll)
-  hashtags      text[],                     -- هاشتاقات
-  service_tie   text,                       -- الخدمة المرتبطة من خدماتك
-  cta           text,                       -- جملة الدعوة لطلب الخدمة
+  virality      text,
+  hook          text,
+  script        text,   -- السكربت (أخبار) أو السرد (قصص)
+  screen_title  text,
+  footage       text[],
+  hashtags      text[],
+  service_tie   text,
+  cta           text,
 
-  status        text not null default 'new' -- new | used | archived
+  status        text not null default 'new'    -- new | used | archived
 );
 
-create index if not exists content_ideas_owner_created_idx
-  on public.content_ideas (owner, created_at desc);
+-- إضافات لمن شغّل النسخة القديمة من قبل (آمنة):
+alter table public.content_ideas add column if not exists kind text not null default 'news';
+alter table public.content_ideas alter column owner drop not null;
 
--- ===== أمان مستوى الصف (RLS) — كل مستخدم يرى صفوفه فقط =====
+create index if not exists content_ideas_kind_created_idx
+  on public.content_ideas (kind, created_at desc);
+
+-- ===== الوصول =====
+-- الصفحة خاصة وغير معلنة، بلا تسجيل دخول — نسمح بالوصول عبر المفتاح العام.
 alter table public.content_ideas enable row level security;
 
 drop policy if exists "content_ideas owner all" on public.content_ideas;
-create policy "content_ideas owner all"
+drop policy if exists "content_ideas open"      on public.content_ideas;
+create policy "content_ideas open"
   on public.content_ideas
   for all
-  using (owner = auth.uid())
-  with check (owner = auth.uid());
+  using (true)
+  with check (true);
