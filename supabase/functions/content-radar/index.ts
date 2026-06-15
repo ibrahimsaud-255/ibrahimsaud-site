@@ -242,6 +242,48 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
+// كتب تسويق مشهورة + المبدأ الأساسي لكل كتاب (مُعطى مباشرة = تأصيل قوي بلا هلوسة)
+const MARKETING_BOOKS: { book: string; author: string; principle: string }[] = [
+  { book: "التأثير", author: "روبرت تشالديني", principle: "ستة مبادئ للإقناع: المعاملة بالمثل، الالتزام والاتساق، الدليل الاجتماعي، السلطة، الإعجاب، الندرة." },
+  { book: "البقرة البنفسجية", author: "سيث جودين", principle: "كن مختلفاً بشكل ملحوظ (Remarkable) وإلا ستكون غير مرئي؛ المنتج العادي لا يُسوّق نفسه." },
+  { book: "التموضع Positioning", author: "آل رايز وجاك تراوت", principle: "التسويق معركة في ذهن العميل؛ احتل كلمة أو مكانة واضحة في عقله قبل المنافس." },
+  { book: "مُعدٍ Contagious", author: "جونا بيرغر", principle: "ما ينتشر يحقّق عناصر STEPPS: عملة اجتماعية، محفّزات، مشاعر، علني، قيمة عملية، قصص." },
+  { book: "هذا هو التسويق", author: "سيث جودين", principle: "سوّق لأصغر جمهور ممكن تخدمه بصدق؛ التسويق تغيير يستحق الانتشار، لا إزعاج." },
+  { book: "ابنِ علامة بقصة", author: "دونالد ميلر", principle: "اجعل العميل هو البطل وعلامتك هي المرشد؛ وضّح المشكلة والخطة والنتيجة." },
+  { book: "عروض بـ100 مليون", author: "أليكس هورموزي", principle: "اصنع عرضاً لا يُرفض: قيمة عالية، حلم واضح، ضمان، ندرة، واستعجال." },
+  { book: "Made to Stick", author: "تشيب ودان هيث", principle: "الأفكار التي تلتصق: بسيطة، غير متوقعة، ملموسة، موثوقة، عاطفية، وقصصية (SUCCESs)." },
+  { book: "ابدأ بالـ«لماذا»", author: "سايمون سينك", principle: "الناس لا تشتري ما تفعله بل لماذا تفعله؛ ابدأ رسالتك بالسبب والقيمة." },
+  { book: "أوغلفي عن الإعلان", author: "ديفيد أوغلفي", principle: "العنوان يقرأه 5 أضعاف النص؛ بِع بالمنفعة والحقائق لا بالذكاء الفارغ." },
+  { book: "Jab, Jab, Jab, Right Hook", author: "غاري فاينرتشوك", principle: "قدّم قيمة مجانية مراراً (Jab) قبل أن تطلب البيع (Right Hook)؛ احترم سياق كل منصة." },
+  { book: "Hooked", author: "نير إيال", principle: "نموذج الخطّاف لبناء العادة: محفّز، فعل، مكافأة متغيّرة، استثمار." },
+  { book: "استراتيجية المحيط الأزرق", author: "كيم وموبورن", principle: "بدل المنافسة الدموية، اخلق سوقاً جديدة بلا منافسين عبر قيمة مبتكرة." },
+  { book: "تسويق الإذن", author: "سيث جودين", principle: "اكسب إذن العميل ليصلك (متوقَّع، شخصي، ملائم) بدل مقاطعته بالإعلانات." },
+  { book: "خطة تسويق من صفحة", author: "آلان ديب", principle: "قبل/أثناء/بعد: استهدف سوقاً، اجذب عميلاً محتملاً، حوّله، ثم اخلق ولاءً وإحالات." },
+];
+
+function marketingPrompt(books: typeof MARKETING_BOOKS) {
+  const blocks = books.map((b, i) => `[${i + 1}] «${b.book}» — ${b.author}\nالمبدأ: ${b.principle}`).join("\n\n");
+  return `أنت معدّ محتوى تسويقي لحساب «إبراهيم سعود». إبراهيم بدأ في التسويق واشتهر فيه، وعنده خدمة **إنتاج فيديوهات إعلانية للشركات**. المنصّة: تيك توك/ريلز، جمهور سعودي/خليجي.
+
+لكل كتاب أدناه، اصنع فكرة فيديو قصير (30–45 ثانية) تشرح مبدأه التسويقي بأسلوب عملي وحماسي:
+
+${blocks}
+
+أنتج لكل واحد عنصراً فيه:
+- topic: "تسويق".
+- source_title: اسم الكتاب ومؤلفه.
+- source_pub: "كتاب تسويق".
+- virality: سطر يبيّن قيمة المبدأ ولماذا يهم صاحب أي مشروع.
+- hook: جملة افتتاحية قوية توقف التمرير، لهجة سعودية بيضاء.
+- script: اشرح المبدأ ببساطة **معتمداً على المبدأ المرفق فقط** (لا تختلق نسبة الكتاب لشيء غير مذكور)، ثم **اربطه بتطبيق عملي للسوق السعودي/الخليجي** (مثال: كيف تستخدمه شركة محلية في إعلانها)، بلهجة محكية. ممنوع كلمات إنجليزية في النص.
+- screen_title: 3–6 كلمات للشاشة.
+- footage: 3–5 كلمات بحث إنجليزية للقطات (B-roll).
+- hashtags: 5–7 هاشتاقات تسويقية.
+- service_tie: "إنتاج فيديوهات إعلانية للشركات".
+- cta: جملة تربط المبدأ بخدمة إبراهيم (نصوّر لك إعلاناً يطبّق هذا المبدأ).
+أرجِع كائن JSON فقط: {"ideas":[ ... ]}.`;
+}
+
 // المرحلة 3: كتابة القصص معتمداً **حصرياً** على نصوص ويكيبيديا المرفقة
 function storyWritePrompt(sources: { name: string; topic: string; extract: string }[]) {
   const blocks = sources.map((s, i) => `[${i + 1}] ${s.name} (${s.topic}):\n${s.extract}`).join("\n\n");
@@ -281,7 +323,7 @@ Deno.serve(async (req) => {
     if (!GROQ_KEY) return json({ error: "مفتاح Groq غير مضبوط (GROQ_API_KEY)." }, 500);
 
     const body = await req.json().catch(() => ({}));
-    const mode = body.mode === "story" ? "story" : "news";
+    const mode = ["story", "marketing"].includes(body.mode) ? body.mode : "news";
     const count = Math.min(Math.max(Number(body.count) || 5, 1), 8);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -312,6 +354,15 @@ Deno.serve(async (req) => {
           norm(s.name).includes(norm(String(x.source_title)).slice(0, 10)));
         if (hit) x.source_url = hit.url;
       }
+    } else if (mode === "marketing") {
+      // تجنّب تكرار الكتب الأخيرة
+      const { data: recent } = await admin
+        .from("content_ideas").select("source_title")
+        .eq("kind", "marketing").order("created_at", { ascending: false }).limit(30);
+      const recentStr = (recent || []).map((r) => String(r.source_title)).join(" ");
+      const pool = shuffle(MARKETING_BOOKS.filter((b) => !recentStr.includes(b.book)));
+      const pick = (pool.length >= count ? pool : shuffle(MARKETING_BOOKS)).slice(0, count);
+      ideas = await callLLM(marketingPrompt(pick), GROQ_KEY, 0.75);
     } else {
       const news = await gatherNews();
       if (!news.length) return json({ error: "تعذّر جلب الأخبار الآن، حاول بعد قليل." }, 502);
