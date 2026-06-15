@@ -65,6 +65,8 @@
   .actions button{flex:1;background:none;border:1px solid var(--line);color:#cfcfd6;border-radius:10px;font-family:inherit;font-weight:700;font-size:13px;padding:9px;cursor:pointer}
   .actions button:active{border-color:var(--gold)}
   .empty{text-align:center;color:#6b6b73;padding:40px 0;font-size:14px}
+  .month-head{display:flex;align-items:center;justify-content:space-between;margin:22px 2px 10px;font-size:15px;font-weight:900;color:var(--gold2);border-bottom:1px solid var(--line);padding-bottom:6px}
+  .month-head .cnt{font-size:12px;font-weight:800;color:#9b9ba3;background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:2px 10px}
   .spin{display:inline-block;width:16px;height:16px;border:2px solid #1a1205;border-top-color:transparent;border-radius:50%;animation:r .7s linear infinite;vertical-align:-3px;margin-left:6px}
   @keyframes r{to{transform:rotate(360deg)}}
 </style>
@@ -91,8 +93,10 @@
     <div class="msg err" id="gerr" style="text-align:center"></div>
 
     <div class="tabs">
-      <button class="tab on" id="tabNew" onclick="setTab('new')">الجديدة</button>
-      <button class="tab" id="tabAll" onclick="setTab('all')">الأرشيف</button>
+      <button class="tab on" data-tab="new" onclick="setTab('new')">🆕 جديدة</button>
+      <button class="tab" data-tab="used" onclick="setTab('used')">🎬 مصوّرة</button>
+      <button class="tab" data-tab="unsuitable" onclick="setTab('unsuitable')">🚫 غير مناسبة</button>
+      <button class="tab" data-tab="all" onclick="setTab('all')">📚 الكل</button>
     </div>
 
     <div id="list"></div>
@@ -144,14 +148,14 @@ async function generate(){
 
 // ===== الأرشيف والعرض =====
 async function loadArchive(){
-  let q=sb.from('content_ideas').select('*').eq('kind',MODE).order('created_at',{ascending:false}).limit(80);
-  if(TAB==='new')q=q.eq('status','new');
+  let q=sb.from('content_ideas').select('*').eq('kind',MODE).order('created_at',{ascending:false}).limit(300);
+  if(TAB!=='all')q=q.eq('status',TAB);
   const {data,error}=await q;
   ITEMS=error?[]:(data||[]);
   render();
 }
 function setTab(t){TAB=t;syncTabs();loadArchive()}
-function syncTabs(){$('tabNew').classList.toggle('on',TAB==='new');$('tabAll').classList.toggle('on',TAB==='all')}
+function syncTabs(){document.querySelectorAll('.tab[data-tab]').forEach(b=>b.classList.toggle('on',b.dataset.tab===TAB))}
 
 async function setStatus(id,status){
   await sb.from('content_ideas').update({status}).eq('id',id);
@@ -165,10 +169,11 @@ function card(x){
   const foot=(x.footage||[]).map(f=>`<span class="chip">${esc(f)}</span>`).join('');
   const tags=(x.hashtags||[]).map(h=>`<span class="chip">${esc(h)}</span>`).join('');
   const used=x.status==='used'||x.status==='archived';
+  const unsuitable=x.status==='unsuitable';
   const isStory=x.kind==='story';
   const bodyLab=isStory?'القصة':'السكربت';
   const fullCopy=`الهوك: ${x.hook}\n\n${bodyLab}:\n${x.script}\n\nعنوان الشاشة: ${x.screen_title}\n\nهاشتاقات: ${(x.hashtags||[]).join(' ')}`;
-  return `<div class="card ${used?'used':''}">
+  return `<div class="card ${used||unsuitable?'used':''}">
     <div class="meta">
       <span class="badge">${esc(x.topic||'')}</span>
       ${x.source_pub?`<span class="src">${esc(x.source_pub)}</span>`:''}
@@ -184,16 +189,33 @@ function card(x){
     ${x.service_tie?`<div class="field"><div class="lab">الربط بخدمتك: ${esc(x.service_tie)}</div><div class="val">${esc(x.cta||'')}</div></div>`:''}
     <div class="actions">
       <button onclick='copy(this,${JSON.stringify(fullCopy)})'>📋 انسخ الكل</button>
-      ${used
+      ${used || unsuitable
         ? `<button onclick="setStatus('${x.id}','new')">↺ رجّعها جديدة</button>`
-        : `<button onclick="setStatus('${x.id}','used')">✓ صوّرتها</button>`}
+        : `<button onclick="setStatus('${x.id}','used')">🎬 صوّرتها</button>
+           <button onclick="setStatus('${x.id}','unsuitable')">🚫 غير مناسب</button>`}
     </div>
   </div>`;
 }
+const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 function render(){
   const list=$('list');
-  if(!ITEMS.length){const w=MODE==='story'?'قصص':'أفكار';list.innerHTML=`<div class="empty">${TAB==='new'?'ما فيه '+w+' جديدة — اضغط زر التوليد فوق.':'الأرشيف فاضي.'}</div>`;return}
-  list.innerHTML=ITEMS.map(card).join('');
+  if(!ITEMS.length){
+    const w=MODE==='story'?'قصص':(MODE==='marketing'?'أفكار تسويقية':'أفكار');
+    const msg={new:'ما فيه '+w+' جديدة — اضغط زر التوليد فوق.',used:'ما صوّرت شي بعد في هذا القسم.',unsuitable:'ما فيه شي في «غير مناسبة».',all:'الأرشيف فاضي.'}[TAB];
+    list.innerHTML=`<div class="empty">${msg}</div>`;return;
+  }
+  // تجميع حسب الشهر والسنة الميلادية (البيانات مرتّبة من الأحدث)
+  const groups=[];
+  for(const x of ITEMS){
+    const d=new Date(x.created_at), key=d.getFullYear()+'-'+d.getMonth();
+    let g=groups[groups.length-1];
+    if(!g||g.key!==key){g={key,label:MONTHS[d.getMonth()]+' '+d.getFullYear(),items:[]};groups.push(g);}
+    g.items.push(x);
+  }
+  list.innerHTML=groups.map(g=>
+    `<div class="month-head">${g.label}<span class="cnt">${g.items.length}</span></div>`+
+    g.items.map(card).join('')
+  ).join('');
 }
 
 // الإقلاع — يفتح مباشرة بلا تسجيل دخول
