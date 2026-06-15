@@ -347,7 +347,7 @@ function flName(id){const f=(S.freelancers||[]).find(x=>x.id===id);return f?f.na
 function flLink(token){return location.origin+location.pathname+'?ft='+token}
 
 /* ===== TASK SYNC (for freelancer links) ===== */
-async function syncTasks(){if(!USER)return;try{const rows=[];S.projects.forEach(p=>{(p.tasks||[]).forEach(t=>{if(t.assignee&&t.id){rows.push({owner:USER.id,client_id:t.id,project_title:p.title,title:t.title,stage:(S.projectStages.find(s=>s.key===p.stageKey)||{}).label||'',freelancer_id:t.assignee})}})});if(rows.length)await sb.from('tasks').upsert(rows,{onConflict:'owner,client_id'});const keep=rows.map(r=>r.client_id);const {data:ex}=await sb.from('tasks').select('id,client_id');const toDel=(ex||[]).filter(r=>!keep.includes(r.client_id)).map(r=>r.id);if(toDel.length)await sb.from('tasks').delete().in('id',toDel)}catch(e){console.warn('syncTasks',e)}}
+async function syncTasks(){if(!USER)return;try{const rows=[];S.projects.forEach(p=>{(p.tasks||[]).forEach(t=>{if(t.assignee&&t.id){rows.push({owner:USER.id,client_id:t.id,project_id:p.id,project_title:p.title,title:t.title,stage:(S.projectStages.find(s=>s.key===p.stageKey)||{}).label||'',freelancer_id:t.assignee})}})});if(rows.length)await sb.from('tasks').upsert(rows,{onConflict:'owner,client_id'});const keep=rows.map(r=>r.client_id);const {data:ex}=await sb.from('tasks').select('id,client_id');const toDel=(ex||[]).filter(r=>!keep.includes(r.client_id)).map(r=>r.id);if(toDel.length)await sb.from('tasks').delete().in('id',toDel)}catch(e){console.warn('syncTasks',e)}}
 
 /* ===== TEAM (freelancers) ===== */
 function renderTeam(){
@@ -619,6 +619,7 @@ function renderProjectDetail(id){
       ${li.appts.length?`<div class="linkrow">${li.appts.slice(0,6).map(a=>`<button class="link-btn" onclick="go('appointments');setTimeout(()=>apptModal('${a.id}'),60)">📅 ${esc(a.title)} · ${(a.datetime||'').replace('T',' ')}</button>`).join('')}</div>`:''}
       ${li.invoices.length?`<div class="linkrow">${li.invoices.slice(0,6).map(i=>`<button class="link-btn" onclick="go('invoicing');setTimeout(()=>docModal('invoice','${i.id}'),60)">🧾 #${i.number} · ${money(invTotal(i))}</button>`).join('')}</div>`:''}
     </div>`:''}
+    <div id="roomPanel" class="card" style="margin-bottom:18px"><div style="color:var(--muted);font-size:13px">جارٍ تحميل غرفة المشروع…</div></div>
     <div class="page-head" style="margin-bottom:12px"><h2 style="margin:0;font-size:18px">المهام</h2></div>
     <div class="kanban" id="taskBoard">
     ${p.taskStages.map(st=>{
@@ -632,7 +633,72 @@ function renderProjectDetail(id){
         <button class="addtask" onclick="quickAddTask('${st.key}')">+ مهمة</button>
       </div>`}).join('')}
     </div>`;
+  loadRoomPanel(p);
 }
+
+/* ===== غرفة المشروع (لوحة المالك) ===== */
+const RBASE=location.origin+location.pathname.replace(/index\.html$/,'')+'r.html';
+function roomLink(kind,token){return RBASE+'?'+(kind==='client'?'c':'ft')+'='+token}
+function copyTxt(t){navigator.clipboard.writeText(t).then(()=>alert('تم النسخ:\n'+t)).catch(()=>prompt('انسخ:',t))}
+async function loadRoomPanel(p){
+  const el=document.getElementById('roomPanel');if(!el)return;
+  const {data:rooms}=await sb.from('project_rooms').select('*').eq('project_id',p.id).limit(1);
+  const room=rooms&&rooms[0];
+  const {data:tasks}=await sb.from('tasks').select('*').eq('project_id',p.id);
+  const ids=(tasks||[]).map(t=>t.id);let revs=[];
+  if(ids.length){const {data:rv}=await sb.from('revisions').select('task_id,num,billable,status').in('task_id',ids);revs=rv||[]}
+  if(document.getElementById('roomPanel'))document.getElementById('roomPanel').innerHTML=roomPanelHTML(p,room,tasks||[],revs);
+}
+function roomPanelHTML(p,room,tasks,revs){
+  if(!room) return `<h3 style="margin-top:0">🚪 غرفة المشروع</h3>
+    <p style="color:var(--muted);font-size:13px">فعّل غرفة العميل: تشارك التسليمات وتستقبل الاعتمادات والتعديلات بعدّاد تكلفة، وتعطي الفريلانسر رابطاً يسلّم فيه نسخه وينفّذ التعديلات.</p>
+    <button class="btn btn-gold" onclick="roomEnable('${p.id}')">تفعيل غرفة العميل</button>`;
+  const cl=roomLink('client',room.client_token);
+  const wa=room.client_phone?('https://wa.me/'+room.client_phone.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent('غرفة مشروع «'+p.title+'» — تابع التسليمات واعتمدها من هنا:\n'+cl)):'';
+  return `<h3 style="margin-top:0">🚪 غرفة المشروع <button class="link-btn" onclick="roomSettings('${p.id}')">⚙ إعدادات</button></h3>
+    <div class="pd-meta" style="margin-top:0"><span>👤 ${esc(room.client_name||'—')}</span><span>📦 تعديلات مجانية: <b>${room.revisions_included}</b></span></div>
+    <div class="linkrow" style="margin-top:10px">
+      <button class="link-btn" onclick="copyTxt('${cl}')">📋 نسخ رابط العميل</button>
+      <a class="link-btn" href="${cl}" target="_blank">فتح</a>
+      ${wa?`<a class="link-btn" href="${wa}" target="_blank">🟢 واتساب العميل</a>`:''}
+    </div>
+    <div style="margin-top:12px">
+    ${tasks.length?tasks.map(t=>{
+      const rs=revs.filter(r=>r.task_id===t.id);const used=rs.length;const pend=rs.filter(r=>r.status==='pending').length;
+      const fl=(S.freelancers||[]).find(f=>f.id===t.freelancer_id);const flink=fl?roomLink('ft',fl.token):'';
+      const cnt=used<=room.revisions_included?`<span class="kbadge">تعديلات ${used}/${room.revisions_included}</span>`:`<span class="kbadge" style="color:#fca5a5">⚠ ${used} (${used-room.revisions_included} مدفوع)</span>`;
+      return `<div style="border-top:1px solid var(--line);padding:9px 0">
+        <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
+          <b>🎞️ ${esc(t.title)}</b>
+          <span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${t.approved?'<span class="kbadge" style="color:#86efac">✓ معتمد</span>':''}${pend?`<span class="kbadge" style="color:#fcd34d">${pend} تعديل معلّق</span>`:''}${cnt}</span>
+        </div>
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">
+          ${t.version_url?`<a href="${esc(t.version_url)}" target="_blank">▶ النسخة الحالية</a>`:'لا نسخة بعد'}
+          ${fl?` · 👤 ${esc(fl.name)} <button class="link-btn" onclick="copyTxt('${flink}')">📋 رابط الفريلانسر</button>`:' · ⚠ بلا مسؤول (أسنده من المهمة)'}
+        </div>
+      </div>`;
+    }).join(''):'<p style="color:var(--muted);font-size:13px">أضف مهاماً وأسندها لفريلانسرز، ثم تظهر هنا كتسليمات.</p>'}
+    </div>`;
+}
+async function roomEnable(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  await syncTasks();
+  const {error}=await sb.from('project_rooms').insert({project_id:p.id,project_title:p.title,client_name:resolveClientName(p),revisions_included:2,owner:USER.id});
+  if(error){alert('تعذّر التفعيل: '+error.message);return}
+  loadRoomPanel(p);
+}
+function roomSettings(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  sb.from('project_rooms').select('*').eq('project_id',p.id).limit(1).then(({data})=>{const r=data&&data[0];if(!r)return;
+    openModal('إعدادات غرفة العميل',`
+      <div class="field"><label>اسم العميل</label><input id="rs_name" value="${esc(r.client_name||'')}"></div>
+      <div class="row2"><div class="field"><label>جوال العميل (واتساب)</label><input id="rs_phone" value="${esc(r.client_phone||'')}" placeholder="9665xxxxxxxx"></div>
+      <div class="field"><label>بريد العميل</label><input id="rs_email" type="email" value="${esc(r.client_email||'')}"></div></div>
+      <div class="field"><label>عدد التعديلات المجانية ضمن الباقة</label><input id="rs_inc" type="number" value="${r.revisions_included}"></div>`,
+      async()=>{const g=i=>document.getElementById(i).value;
+        const {error}=await sb.from('project_rooms').update({client_name:g('rs_name').trim(),client_phone:g('rs_phone').trim(),client_email:g('rs_email').trim(),revisions_included:Number(g('rs_inc'))||0}).eq('id',r.id);
+        if(error){alert('تعذّر الحفظ: '+error.message);return}closeModal();loadRoomPanel(p)});
+  });
+}
+
 /* task drag & drop within project */
 let TDRAG=null;
 function tdstart(e,id){TDRAG=id;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move';e.stopPropagation()}
