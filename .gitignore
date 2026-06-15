@@ -35,6 +35,7 @@ yarn-error.log*
 
 # ملف أسرار النشر المؤقت — لا يُرفع أبداً
 .deploy-secrets
+.webhook-secret.txt
 
 # ملفات Supabase CLI المؤقتة
 supabase/.temp/
