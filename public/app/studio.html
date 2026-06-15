@@ -171,7 +171,7 @@ function card(x){
   const used=x.status==='used'||x.status==='archived';
   const unsuitable=x.status==='unsuitable';
   const isStory=x.kind==='story';
-  const bodyLab=isStory?'القصة':'السكربت';
+  const bodyLab=x.kind==='story'?'القصة':(x.kind==='marketing'?'الفكرة والمحتوى':'الملخص وأهم النقاط');
   const fullCopy=`الهوك: ${x.hook}\n\n${bodyLab}:\n${x.script}\n\nعنوان الشاشة: ${x.screen_title}\n\nهاشتاقات: ${(x.hashtags||[]).join(' ')}`;
   return `<div class="card ${used||unsuitable?'used':''}">
     <div class="meta">

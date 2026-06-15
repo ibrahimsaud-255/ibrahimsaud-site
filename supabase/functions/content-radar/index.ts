@@ -17,13 +17,12 @@ const SERVICES = [
   "إنتاج بودكاست في استوديو سَعي",
 ];
 
-// مصادر أخبار مجانية (Google News RSS)
+// مصادر أخبار مجانية بخلاصات غنية بالمحتوى (نص المقال داخل <description>)
+// تعطي ملخصاً وأرقاماً حقيقية — لا مجرد عناوين.
 const FEEDS = [
-  { topic: "تقنية", url: "https://news.google.com/rss/search?q=%D8%AA%D9%82%D9%86%D9%8A%D8%A9%20OR%20%D8%B0%D9%83%D8%A7%D8%A1%20%D8%A7%D8%B5%D8%B7%D9%86%D8%A7%D8%B9%D9%8A&hl=ar&gl=SA&ceid=SA:ar" },
-  { topic: "تقنية", url: "https://news.google.com/rss/search?q=artificial%20intelligence%20OR%20AI%20launch&hl=en-US&gl=US&ceid=US:en" },
-  { topic: "أعمال", url: "https://news.google.com/rss/search?q=%D8%B1%D9%8A%D8%A7%D8%AF%D8%A9%20%D8%A3%D8%B9%D9%85%D8%A7%D9%84%20OR%20%D8%B4%D8%B1%D9%83%D8%A7%D8%AA%20%D9%86%D8%A7%D8%B4%D8%A6%D8%A9&hl=ar&gl=SA&ceid=SA:ar" },
-  { topic: "تسويق", url: "https://news.google.com/rss/search?q=%D8%AA%D8%B3%D9%88%D9%8A%D9%82%20%D8%B1%D9%82%D9%85%D9%8A%20OR%20%D8%B3%D9%88%D8%B4%D9%8A%D8%A7%D9%84%20%D9%85%D9%8A%D8%AF%D9%8A%D8%A7&hl=ar&gl=SA&ceid=SA:ar" },
-  { topic: "بودكاست", url: "https://news.google.com/rss/search?q=%D8%A8%D9%88%D8%AF%D9%83%D8%A7%D8%B3%D8%AA%20OR%20%D8%B5%D9%86%D8%A7%D8%B9%D8%A9%20%D8%A7%D9%84%D9%85%D8%AD%D8%AA%D9%88%D9%89&hl=ar&gl=SA&ceid=SA:ar" },
+  { topic: "أعمال", pub: "MENAbytes", url: "https://www.menabytes.com/feed/" },     // شركات ناشئة خليجية/سعودية + أرقام
+  { topic: "أعمال", pub: "Wamda", url: "https://www.wamda.com/feed" },              // ريادة أعمال MENA
+  { topic: "تقنية", pub: "عالم التقنية", url: "https://www.tech-wd.com/wd/feed/" }, // تقنية بالعربية
 ];
 
 const cors = {
@@ -42,22 +41,26 @@ function decode(s: string) {
     .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, " ").trim();
 }
 
-type NewsItem = { topic: string; title: string; url: string; pub: string; date: string };
+type NewsItem = { topic: string; title: string; url: string; pub: string; date: string; desc: string };
 
-function parseFeed(xml: string, topic: string): NewsItem[] {
+// تنظيف وصف HTML إلى نص عادي
+function stripHtml(s: string) {
+  return decode(s).replace(/<[^>]+>/g, " ").replace(/&[a-z]+;/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function parseFeed(xml: string, topic: string, pub: string): NewsItem[] {
   const items: NewsItem[] = [];
-  for (const b of xml.split(/<item>/i).slice(1)) {
+  for (const b of xml.split(/<item[>\s]/i).slice(1)) {
     const t = b.match(/<title>(.*?)<\/title>/s);
     const l = b.match(/<link>(.*?)<\/link>/s);
     const d = b.match(/<pubDate>(.*?)<\/pubDate>/s);
-    const s = b.match(/<source[^>]*>(.*?)<\/source>/s);
+    const de = b.match(/<description>(.*?)<\/description>/s);
     if (!t) continue;
-    let title = decode(t[1]);
-    let pub = s ? decode(s[1]) : "";
-    const dash = title.lastIndexOf(" - ");
-    if (!pub && dash > 0) { pub = title.slice(dash + 3); title = title.slice(0, dash); }
-    else if (dash > 0 && title.endsWith(pub)) title = title.slice(0, dash);
-    items.push({ topic, title, url: l ? decode(l[1]) : "", pub, date: d ? decode(d[1]) : "" });
+    const title = decode(t[1]);
+    let url = l ? decode(l[1]) : "";
+    if (!url) { const g = b.match(/<guid[^>]*>(.*?)<\/guid>/s); if (g) url = decode(g[1]); }
+    const desc = de ? stripHtml(de[1]).slice(0, 500) : "";
+    items.push({ topic, title, url, pub, date: d ? decode(d[1]) : "", desc });
   }
   return items;
 }
@@ -70,18 +73,19 @@ async function gatherNews(): Promise<NewsItem[]> {
     await Promise.all(FEEDS.map(async (f) => {
       try {
         const r = await fetch(f.url, { headers: { "User-Agent": "Mozilla/5.0 (compatible; ContentRadar/1.0)" } });
-        if (r.ok) got.push(...parseFeed(await r.text(), f.topic).slice(0, 12));
+        if (r.ok) got.push(...parseFeed(await r.text(), f.topic, f.pub).slice(0, 14));
       } catch (_) { /* تجاهل */ }
     }));
     all = got;
   }
   const seen = new Set<string>();
   const uniq = all.filter((i) => {
+    if (i.desc.length < 60) return false; // نريد أخباراً لها محتوى نقرأه
     const k = i.title.toLowerCase().slice(0, 60);
     if (seen.has(k)) return false; seen.add(k); return true;
   });
   uniq.sort((a, b) => (Date.parse(b.date) || 0) - (Date.parse(a.date) || 0));
-  return uniq.slice(0, 18);
+  return uniq.slice(0, 14);
 }
 
 const IDEA_SCHEMA = {
@@ -165,29 +169,38 @@ async function research(query: string) {
 }
 
 function newsPrompt(news: NewsItem[], count: number) {
-  const headlines = news.map((n, i) => `${i + 1}. ${n.title} — ${n.pub}`).join("\n");
-  return `أنت كاتب محتوى لحساب «إبراهيم سعود | تقنية · أعمال · بودكاست».
-الجمهور: السوق السعودي والخليجي. المنصّة: تيك توك / ريلز / شورتس.
-الهدف: محتوى أخباري سريع الانتشار يبني اسم إبراهيم ويسوّق خدماته.
+  const articles = news.map((n, i) =>
+    `[${i + 1}] العنوان: ${n.title}\nالناشر: ${n.pub}\nنص الخبر: ${n.desc}`).join("\n\n");
+  return `أنت معدّ محتوى لحساب «إبراهيم سعود | تقنية · أعمال · بودكاست». الجمهور سعودي/خليجي.
+المطلوب: من الأخبار التالية اختر أقوى ${count} أخبار عن: **الشركات، ريادة الأعمال، الشركات الناشئة، التقنية والمنتجات، التسويق والحملات، البودكاست وصناعة المحتوى**. ⛔ تجاهل تماماً: السلع (ذهب/نفط/عملات)، المؤشرات الكلية، الرياضة، السياسة، الفن، الحوادث — إلا إذا ارتبطت مباشرة بشركة أو منتج أو ريادة أعمال.
+الهدف: يقرأ إبراهيم الملخص ويصوّر مقطعاً بفهمه — فاكتب **تلخيصاً وأهم النقاط والأرقام**، لا سكربت حرفي.
 خدمات إبراهيم: ${SERVICES.join("، ")}.
 
-أهم العناوين الآن:
-${headlines}
+الأخبار (مع نص كل خبر):
+${articles}
 
-اختر أقوى ${count} أخبار (انتشاراً وصلةً بمجاله)، وحوّل كل خبر لفكرة فيديو قصير:
-- topic: صنّف المجال (تقنية/أعمال/تسويق/بودكاست).
-- source_title: انسخ عنوان الخبر حرفياً من القائمة، **بدون أي أقواس أو تصنيف أو إضافات**.
-- source_pub: الجهة الناشرة كما وردت.
-- virality: سطر يشرح ليش قابل للانتشار.
-- hook: جملة صادمة أو سؤال مثير يوقف التمرير فوراً، لهجة سعودية بيضاء. **إذا في العنوان رقم أو مبلغ أو نسبة لافتة، ضعها في الهوك** (مثال: «سوق البودكاست بيوصل ٣٩ مليار دولار!»). ⛔ تجنّب الجمل الضعيفة المبهمة.
-- script: يُقرأ في 30–45 ثانية، لهجة سعودية/خليجية محكية طبيعية، يبسّط الخبر ويعطي زاوية/فائدة. **مهم: إذا فيه أرقام أو مبالغ أو نسب أو تواريخ في العنوان فاذكرها صراحةً في السكربت — لأنها تثبت الخبر وتقوّيه.** القاعدة: استخدم كل المعطيات الموجودة في العنوان، والممنوع فقط **اختراع** أرقام أو اقتباسات أو تفاصيل غير موجودة في العنوان.
-- **اكتب الهوك والسكربت بالعربية فقط — ممنوع أي حرف غير عربي فيهما** (footage فقط إنجليزي).
-- screen_title: 3–6 كلمات للعرض على الشاشة.
+لكل خبر مختار أنتج عنصراً فيه:
+- topic: المجال (تقنية/أعمال/تسويق/بودكاست).
+- source_title: عنوان الخبر حرفياً بدون أقواس.
+- source_pub: الناشر.
+- virality: سطر يشرح ليش الخبر مهم/قابل للانتشار.
+- hook: زاوية افتتاحية قوية يبدأ بها إبراهيم المقطع، لهجة سعودية بيضاء. إن وُجد رقم لافت ضعه فيها.
+- script: **ملخص الخبر + أهم النقاط + الأرقام**، مع أسطر منفصلة فعلية (سطر جديد بعد كل عنصر) بهذا الشكل:
+  «ملخص: (جملتان يلخّصان الخبر).
+
+أهم النقاط:
+- نقطة
+- نقطة
+- نقطة
+
+أرقام مهمة: (كل الأرقام والنسب والمبالغ والتواريخ الواردة في نص الخبر، خاصة ما يخص السعودية/الخليج).»
+  **استخرج الأرقام من نص الخبر المرفق فقط — ممنوع اختراع أي رقم غير موجود في النص.** إن لم يذكر النص أرقاماً فاكتب «لا أرقام في الخبر».
+- screen_title: 3–6 كلمات للشاشة.
 - footage: 3–5 كلمات بحث إنجليزية للقطات (B-roll).
 - hashtags: 5–7 هاشتاقات.
 - service_tie: أنسب خدمة من خدماته.
 - cta: جملة ختام تدعو لطلب خدمته بسلاسة.
-أرجِع كائن JSON فقط بالشكل: {"ideas": [ ... ]} حيث كل عنصر يحتوي الحقول أعلاه. بدون أي نص خارج JSON.`;
+اكتب كل النصوص بالعربية فقط (عدا footage). أرجِع كائن JSON فقط: {"ideas":[ ... ]}.`;
 }
 
 // قائمة مرشّحين منسّقة يدوياً — كلهم حقيقيون في مجالات إبراهيم ولهم صفحة ويكيبيديا.
