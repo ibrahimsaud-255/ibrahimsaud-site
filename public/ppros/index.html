@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>عرض تعاون — محترفو الخصوصية × إبراهيم سعود</title>
+<meta name="theme-color" content="#0a0a0b">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#f5a623;--gold2:#ffc24d;--ink:#0a0a0b;--panel:#141416;--soft:#1c1c20;--line:#2c2c31;--cream:#f4f4f5;--mut:#9b9ba3}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:'Tajawal',system-ui,sans-serif;line-height:1.85;-webkit-font-smoothing:antialiased}
+  a{color:var(--gold2)}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px}
+  .glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% 0%,rgba(245,166,35,.10),transparent 55%)}
+  /* الترويسة */
+  header{text-align:center;padding:54px 20px 30px}
+  header img{height:38px;width:auto;margin-bottom:20px;opacity:.95}
+  .eyebrow{display:inline-block;font-size:13px;font-weight:800;color:var(--gold);background:rgba(245,166,35,.12);border:1px solid var(--line);border-radius:30px;padding:5px 16px;margin-bottom:16px}
+  h1{font-size:34px;font-weight:900;line-height:1.25}
+  h1 .g{color:var(--gold)}
+  header p{color:var(--mut);max-width:640px;margin:14px auto 0;font-size:16px}
+  /* شريط لماذا الآن */
+  .why{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:34px 0 10px}
+  .why div{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .why .ic{font-size:24px}
+  .why b{display:block;color:var(--gold2);font-size:15px;margin:6px 0 2px}
+  .why span{color:var(--mut);font-size:13px}
+  /* عناوين الأقسام */
+  .sec-title{text-align:center;margin:48px 0 8px;font-size:13px;font-weight:800;letter-spacing:2px;color:var(--gold)}
+  .sec-sub{text-align:center;color:var(--mut);font-size:15px;margin-bottom:26px}
+  /* المربعات الثلاثة */
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px;cursor:pointer;transition:.2s;text-align:center}
+  .card:hover{border-color:var(--gold);transform:translateY(-3px)}
+  .card.active{border-color:var(--gold);background:#191915}
+  .card .ic{font-size:40px}
+  .card h3{font-size:18px;font-weight:900;margin:12px 0 6px}
+  .card p{color:var(--mut);font-size:13.5px}
+  .card .more{margin-top:14px;font-size:13px;font-weight:800;color:var(--gold)}
+  /* لوحة التفاصيل */
+  .detail{display:none;margin-top:26px;background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;animation:fade .3s}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1}}
+  .detail.show{display:block}
+  .dhead{padding:24px 26px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#191915,transparent)}
+  .dhead h2{font-size:24px;font-weight:900}.dhead h2 .g{color:var(--gold)}
+  .dhead p{color:var(--mut);margin-top:6px}
+  .dbody{padding:8px 26px 28px}
+  .block{padding:18px 0;border-bottom:1px solid var(--line)}
+  .block:last-child{border-bottom:none}
+  .block .lab{font-size:12px;font-weight:800;letter-spacing:1px;color:var(--gold);margin-bottom:8px}
+  .block ul{list-style:none;display:grid;gap:8px}
+  .block li{padding-right:24px;position:relative;color:#d7d7db}
+  .block li::before{content:"✓";position:absolute;right:0;color:var(--gold);font-weight:900}
+  .block li.x::before{content:"•";color:var(--mut)}
+  /* النماذج الأولية */
+  .proto{background:var(--ink);border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:6px}
+  .proto-tag{font-size:11px;color:var(--mut);text-align:center;margin-top:10px}
+  /* موك الجوال/ريلز */
+  .reel-row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+  .phone{width:172px;height:300px;border-radius:24px;border:3px solid #333;background:linear-gradient(160deg,#23201a,#0e0e10);position:relative;overflow:hidden;flex:none}
+  .phone .play{position:absolute;top:42%;left:50%;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:rgba(245,166,35,.92);display:grid;place-items:center;color:#1a1205;font-size:20px}
+  .phone .cap{position:absolute;right:12px;left:12px;bottom:14px;font-size:12.5px;font-weight:800;text-shadow:0 1px 6px #000}
+  .phone .top{position:absolute;top:12px;right:12px;font-size:11px;font-weight:800;color:var(--gold2)}
+  .carousel{width:230px;background:#fff;color:#16181c;border-radius:12px;overflow:hidden;flex:none}
+  .carousel .ch{background:#0a66c2;color:#fff;padding:8px 12px;font-size:12px;font-weight:800}
+  .carousel .cb{padding:14px;font-size:13px;font-weight:700;min-height:120px}
+  .carousel .cf{padding:8px 12px;border-top:1px solid #e3e3e3;font-size:11px;color:#666;display:flex;justify-content:space-between}
+  .dots{display:flex;gap:4px}.dots i{width:6px;height:6px;border-radius:50%;background:#cfcfcf;display:block}.dots i.on{background:#0a66c2}
+  /* موك المساعد الذكي */
+  .chat{max-width:460px;margin:auto}
+  .chat .bar{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--cream);padding-bottom:12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .chat .lock{font-size:11px;color:#34d399;border:1px solid #2c2c31;border-radius:20px;padding:2px 9px;margin-right:auto;font-weight:700}
+  .bub{max-width:84%;padding:11px 14px;border-radius:14px;margin-bottom:10px;font-size:14px}
+  .bub.u{background:var(--gold);color:#1a1205;margin-right:auto;border-bottom-right-radius:4px;font-weight:700}
+  .bub.a{background:var(--soft);border:1px solid var(--line);margin-left:auto;border-bottom-left-radius:4px}
+  .bub.a .cite{display:block;margin-top:8px;font-size:11px;color:var(--gold2);border-top:1px dashed var(--line);padding-top:6px}
+  .chat .inp{display:flex;gap:8px;margin-top:6px}
+  .chat .inp div{flex:1;background:var(--ink);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--mut);font-size:13px}
+  .chat .inp span{background:var(--gold);color:#1a1205;border-radius:10px;padding:9px 14px;font-weight:800}
+  /* موك المنصة */
+  .course{display:grid;grid-template-columns:1fr 200px;gap:14px}
+  .player{background:#0e0e10;border:1px solid var(--line);border-radius:12px;aspect-ratio:16/10;position:relative;overflow:hidden;display:grid;place-items:center}
+  .player .pl{width:54px;height:54px;border-radius:50%;background:rgba(245,166,35,.92);display:grid;place-items:center;color:#1a1205;font-size:22px}
+  .player .bar2{position:absolute;left:0;right:0;bottom:0;height:5px;background:#222}
+  .player .bar2 i{display:block;height:100%;width:46%;background:var(--gold)}
+  .quiz{position:absolute;inset:14px;background:rgba(10,10,11,.92);border:1px solid var(--gold);border-radius:12px;padding:16px;display:flex;flex-direction:column;justify-content:center}
+  .quiz b{color:var(--gold2);font-size:13px}.quiz p{font-size:14px;font-weight:800;margin:6px 0 10px}
+  .quiz .opt{background:var(--soft);border:1px solid var(--line);border-radius:8px;padding:8px 12px;font-size:13px;margin-bottom:7px}
+  .quiz .opt.ok{border-color:#34d399;color:#34d399}
+  .modules{background:var(--ink);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .modules .m{font-size:13px;padding:7px 0;border-bottom:1px solid var(--line);color:#d7d7db}
+  .modules .m:last-child{border:none}
+  .modules .m.done{color:var(--mut)}.modules .m.done::before{content:"✓ ";color:#34d399}
+  .modules .m.now{color:var(--gold2);font-weight:800}.modules .m.now::before{content:"▶ ";color:var(--gold)}
+  .modules .m.lock::before{content:"🔒 "}
+  .exam{margin-top:10px;background:rgba(245,166,35,.12);border:1px solid var(--line);border-radius:10px;padding:10px;font-size:12.5px;font-weight:800;color:var(--gold2);text-align:center}
+  /* التسعير */
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:6px}
+  .tier{background:var(--ink);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .tier.pop{border-color:var(--gold)}
+  .tier .nm{font-weight:900;font-size:16px}
+  .tier .pr{font-size:22px;font-weight:900;color:var(--gold);margin:8px 0}
+  .tier .pr small{font-size:12px;color:var(--mut);font-weight:700}
+  .tier ul{list-style:none;margin-top:8px;display:grid;gap:6px}
+  .tier li{font-size:12.5px;color:#d7d7db;padding-right:18px;position:relative}
+  .tier li::before{content:"✓";position:absolute;right:0;color:var(--gold)}
+  .badge-pop{display:inline-block;font-size:10px;font-weight:800;background:var(--gold);color:#1a1205;border-radius:20px;padding:2px 8px;margin-bottom:6px}
+  .note{font-size:12px;color:var(--mut);margin-top:12px;text-align:center}
+  .close{display:inline-block;margin-top:18px;background:none;border:1px solid var(--line);color:var(--mut);border-radius:10px;padding:8px 16px;font-family:inherit;font-weight:700;cursor:pointer;font-size:13px}
+  /* نموذج التعاون */
+  .flow{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:8px}
+  .step{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:center}
+  .step .n{width:30px;height:30px;border-radius:50%;background:var(--gold);color:#1a1205;font-weight:900;display:grid;place-items:center;margin:0 auto 8px}
+  .step b{display:block;font-size:14px}.step span{font-size:12px;color:var(--mut)}
+  footer{text-align:center;padding:46px 20px 60px;color:var(--mut)}
+  footer .cta{display:inline-block;background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;font-weight:900;border-radius:30px;padding:13px 30px;text-decoration:none;font-size:16px;margin-bottom:14px}
+  @media(max-width:760px){
+    .why,.cards,.tiers,.flow{grid-template-columns:1fr}
+    .course{grid-template-columns:1fr}
+    h1{font-size:26px}
+  }
+</style>
+</head>
+<body>
+<div class="glow"></div>
+
+<header class="wrap">
+  <img src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png" alt="إبراهيم سعود">
+  <div class="eyebrow">عرض تعاون خاص</div>
+  <h1>محترفو الخصوصية <span class="g">×</span> إبراهيم سعود</h1>
+  <p>الشركة السعودية الوحيدة المتخصصة في الخصوصية وحماية البيانات — تملك خبرة نادرة وحضوراً إعلامياً نائماً. هذا عرض لتحويل خبرتكم إلى <b>حضور وأثر ومنتجات</b>، عبر ثلاثة نطاقات متكاملة.</p>
+</header>
+
+<div class="wrap">
+  <div class="why">
+    <div><div class="ic">🏛️</div><b>سلطة نادرة</b><span>خبرة كتابة متطلبات الخصوصية على مستوى الجهات</span></div>
+    <div><div class="ic">📵</div><b>إعلام نائم</b><span>تخصّص عميق بلا حضور بصري — فرصة تموضع كبيرة</span></div>
+    <div><div class="ic">⚙️</div><b>فجوات تشغيلية</b><span>تأهيل بطيء + بيانات حساسة تحتاج حلاً آمناً</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="sec-title">النطاقات الثلاثة</div>
+  <div class="sec-sub">اضغط أي نطاق لعرض الفكرة + النموذج الأولي + ما نحتاجه</div>
+  <div class="cards">
+    <div class="card" data-t="media" onclick="openD('media',this)">
+      <div class="ic">📣</div><h3>الإعلام والتسويق</h3>
+      <p>تحويل خبرتكم إلى محتوى يبني السلطة ويجلب الجهات</p>
+      <div class="more">اعرض التفاصيل ↓</div>
+    </div>
+    <div class="card" data-t="ai" onclick="openD('ai',this)">
+      <div class="ic">🤖</div><h3>الذكاء الاصطناعي الداخلي</h3>
+      <p>مساعد معرفي آمن داخل الشبكة — يسرّع الموظفين بلا تسريب</p>
+      <div class="more">اعرض التفاصيل ↓</div>
+    </div>
+    <div class="card" data-t="edu" onclick="openD('edu',this)">
+      <div class="ic">🎓</div><h3>المنصة التعليمية</h3>
+      <p>دورات مسجّلة تفاعلية تختصر التأهيل وتصير منتجاً يُباع</p>
+      <div class="more">اعرض التفاصيل ↓</div>
+    </div>
+  </div>
+
+  <!-- ============ الإعلام ============ -->
+  <div class="detail" id="d-media">
+    <div class="dhead"><h2>📣 الإعلام <span class="g">والتسويق</span></h2>
+      <p>المشكلة: تخصّص قوي بلا حضور — لا فيديو، أصول (ملفات وورش) غير مستثمَرة. الفرصة: تموضعكم كـ«المرجع» في الخصوصية بالسعودية.</p></div>
+    <div class="dbody">
+      <div class="block"><div class="lab">الفكرة</div>
+        <ul>
+          <li>قيادة فكر للمديرة التنفيذية (الخبيرة التي صاغت المتطلبات) — أقوى محرّك للعملاء</li>
+          <li>إعادة صياغة ملف الـPDF والورش إلى مقاطع قصيرة ومنشورات احترافية</li>
+          <li>سلسلة مقابلات شارع مبسّطة عن أهمية البيانات الشخصية (إنتاجها من اختصاصي)</li>
+          <li>إبراز أنكم الشركة السعودية الوحيدة في المجال — تموضع وطني مميّز</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">القناة الصحيحة</div>
+        <ul>
+          <li>جمهوركم جهات حكومية → التركيز على <b>لينكدإن</b> ومحتوى السلطة، مع ريلز للوعي العام</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">النموذج الأولي</div>
+        <div class="proto">
+          <div class="reel-row">
+            <div class="phone"><div class="top">سَعي · إبراهيم</div><div class="play">▶</div><div class="cap">«بياناتك الشخصية… مين يحميها فعلاً؟» — ٣٠ ثانية</div></div>
+            <div class="carousel">
+              <div class="ch">محترفو الخصوصية · LinkedIn</div>
+              <div class="cb">٣ أخطاء تقع فيها الجهات في حماية البيانات الشخصية — والحل في السلايد التالي ←</div>
+              <div class="cf"><span>تمرير ←</span><div class="dots"><i class="on"></i><i></i><i></i><i></i></div></div>
+            </div>
+          </div>
+          <div class="proto-tag">نموذج توضيحي — ريل قصير + كاروسيل لينكدإن (الشكل النهائي يُصمَّم بهويتكم)</div>
+        </div>
+      </div>
+      <div class="block"><div class="lab">وش نحتاج لإطلاقها</div>
+        <ul>
+          <li class="x">جلسة محتوى أولى مع المديرة + تسليم ملف الـPDF والورش السابقة</li>
+          <li class="x">موافقة على الهوية البصرية ونبرة الخطاب</li>
+          <li class="x">إتاحة ساعة تصوير شهرية تقريباً (مقابلات / لقطات مكتب)</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">طريقة العمل (أنا منسّق إنتاج)</div>
+        <ul>
+          <li>أتولّى الاستراتيجية، السكربتات، المقابلات (لدي أعمال سابقة)، والتصوير الحضوري للورش</li>
+          <li class="x">التصميم والمونتاج عبر فريقي المتعاقد — أنتم تستلمون نتيجة جاهزة</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">الباقات الشهرية (مقترح مبدئي — قابل للضبط)</div>
+        <div class="tiers">
+          <div class="tier"><div class="nm">أساسية</div><div class="pr">7,500 <small>ر.س / شهر</small></div>
+            <ul><li>٦ مقاطع قصيرة</li><li>٤ منشورات لينكدإن</li><li>إدارة + تقرير شهري</li></ul></div>
+          <div class="tier pop"><span class="badge-pop">الأنسب لكم</span><div class="nm">احترافية</div><div class="pr">14,000 <small>ر.س / شهر</small></div>
+            <ul><li>١٠ مقاطع قصيرة</li><li>٦ كاروسيلات لينكدإن</li><li>مقابلة شهرية + تغطية ورشة</li><li>محتوى قيادة فكر للمديرة</li></ul></div>
+          <div class="tier"><div class="nm">متكاملة</div><div class="pr">22,000 <small>ر.س / شهر</small></div>
+            <ul><li>إنتاج موسّع + حملة شهرية</li><li>فيديو تعريفي ربعي</li><li>أولوية تنفيذ</li></ul></div>
+        </div>
+        <div class="note">+ رسوم اكتشاف واستراتيجية لمرة واحدة (٥,٠٠٠–٨,٠٠٠ ر.س). الدفع: عقد ٣ أشهر، ٥٠٪ مقدماً + شهرياً مقدماً. إضافات بالمشروع (حملة إطلاق، فعالية) بعرض منفصل.</div>
+      </div>
+      <button class="close" onclick="closeD()">إغلاق ↑</button>
+    </div>
+  </div>
+
+  <!-- ============ الذكاء الاصطناعي ============ -->
+  <div class="detail" id="d-ai">
+    <div class="dhead"><h2>🤖 الذكاء الاصطناعي <span class="g">الداخلي</span></h2>
+      <p>المشكلة: بياناتكم سرّية وممنوع رفعها لأدوات الذكاء العامة (تسريب + فقدان الميزة التنافسية). والموظف الجديد يحتاج وقتاً طويلاً ليجاوب العميل بثقة.</p></div>
+    <div class="dbody">
+      <div class="block"><div class="lab">الفكرة</div>
+        <ul>
+          <li>نموذج ذكاء مفتوح المصدر <b>داخل شبكتكم</b> (أو سحابة سعودية) — البيانات ما تطلع أبداً</li>
+          <li>يتغذّى على مشاريعكم ووثائقكم السابقة، فالموظف يسأل ويلقى الجواب فوراً</li>
+          <li>مطابق لهويتكم: شركة «حوكمة ذكاء مسؤول» تستخدم ذكاءً يحفظ الخصوصية = دراسة حالة بحد ذاتها</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">النموذج الأولي</div>
+        <div class="proto">
+          <div class="chat">
+            <div class="bar">🤖 مساعد المعرفة الداخلي <span class="lock">🔒 داخل الشبكة — لا تسريب</span></div>
+            <div class="bub u">كيف طبّقنا متطلبات حماية البيانات لمشروع مستشفى سابق؟</div>
+            <div class="bub a">حسب مشاريعنا السابقة: نبدأ بتقييم أثر الخصوصية (DPIA)، ثم تصنيف البيانات الصحية كبيانات حسّاسة، وتطبيق ضوابط الوصول والاحتفاظ…
+              <span class="cite">المصدر: أرشيف «مشروع قطاع صحي ٢٠٢٥» — داخلي</span></div>
+            <div class="inp"><div>اكتب سؤالك…</div><span>إرسال</span></div>
+          </div>
+          <div class="proto-tag">نموذج توضيحي — مساعد يجيب من معرفتكم الداخلية فقط</div>
+        </div>
+      </div>
+      <div class="block"><div class="lab">وش نحتاج</div>
+        <ul>
+          <li class="x">مرحلة نموذج أولي (Proof of Concept) أولاً لإثبات الفكرة</li>
+          <li class="x">عيّنة وثائق غير حسّاسة للتجربة + تحديد بيئة الاستضافة (جهاز داخلي / سحابة بالمملكة)</li>
+          <li class="x">شريك تقني للتنفيذ (أنا أقود التصوّر والإدارة، والبناء عبر فريق مختص)</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">المسار والتسعير</div>
+        <ul>
+          <li>المرحلة ١: نموذج أولي بنطاق وسعر محدد (نثبت القيمة على عيّنة)</li>
+          <li>المرحلة ٢: التنفيذ الكامل بعرض منفصل بعد تحديد البنية والأمان</li>
+        </ul>
+      </div>
+      <button class="close" onclick="closeD()">إغلاق ↑</button>
+    </div>
+  </div>
+
+  <!-- ============ المنصة التعليمية ============ -->
+  <div class="detail" id="d-edu">
+    <div class="dhead"><h2>🎓 المنصة <span class="g">التعليمية</span></h2>
+      <p>المشكلة: المشاريع تجي بوقت ضيّق، والموظفون مشغولون، وتأهيل موظف جديد ياخذ شهر–شهرين فيضيع المشروع. الفرصة: تأهيل أسرع — ومنتج يُباع للجهات.</p></div>
+    <div class="dbody">
+      <div class="block"><div class="lab">الفكرة</div>
+        <ul>
+          <li>دورات مسجّلة تشرح أساسيات مجالكم، على منصة <b>تفاعلية</b></li>
+          <li>أسئلة تظهر في نص الفيديو (تركيز + لا تخطّي) + <b>اختبار عملي</b> يثبت الجاهزية</li>
+          <li>قيمة مزدوجة: تأهيل داخلي أسرع + <b>منتج تدريبي تبيعونه</b> (التدريب أصلاً من خدماتكم)</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">النموذج الأولي</div>
+        <div class="proto">
+          <div class="course">
+            <div class="player"><div class="pl">▶</div>
+              <div class="quiz"><b>سؤال سريع</b><p>أي البيانات تُصنّف «حسّاسة»؟</p>
+                <div class="opt ok">البيانات الصحية ✓</div><div class="opt">اسم الشركة</div></div>
+              <div class="bar2"><i></i></div>
+            </div>
+            <div>
+              <div class="modules">
+                <div class="m done">مقدمة في حماية البيانات</div>
+                <div class="m done">تصنيف البيانات</div>
+                <div class="m now">تقييم أثر الخصوصية</div>
+                <div class="m lock">التعامل مع العميل</div>
+                <div class="m lock">حالات عملية</div>
+              </div>
+              <div class="exam">🎯 اختبار عملي للتأهيل</div>
+            </div>
+          </div>
+          <div class="proto-tag">نموذج توضيحي — مشغّل دورة بسؤال تفاعلي + مسار وحدات + اختبار</div>
+        </div>
+      </div>
+      <div class="block"><div class="lab">وش نحتاج</div>
+        <ul>
+          <li class="x">منهج المحتوى من خبرائكم (الموضوعات والأولويات)</li>
+          <li class="x">تسجيل الشروحات (ننتجها بجودة عالية) + تصميم الأسئلة العملية</li>
+          <li class="x">قرار: أداة منصة جاهزة (أسرع/أرخص) أو منصة مخصّصة (مرحلة لاحقة)</li>
+        </ul>
+      </div>
+      <div class="block"><div class="lab">المسار والتسعير</div>
+        <ul>
+          <li>المرحلة ١: إنتاج مسار تدريبي تجريبي (وحدة كاملة) بسعر محدد</li>
+          <li>المرحلة ٢: استكمال المنهج + المنصة بعرض منفصل</li>
+        </ul>
+      </div>
+      <button class="close" onclick="closeD()">إغلاق ↑</button>
+    </div>
+  </div>
+</div>
+
+<!-- نموذج التعاون -->
+<div class="wrap">
+  <div class="sec-title">طريقة التعاون</div>
+  <div class="sec-sub">تعاون مرن بنطاق وتسعير واضح — لا توظيف</div>
+  <div class="flow">
+    <div class="step"><div class="n">1</div><b>اكتشاف</b><span>جلسة + استراتيجية مدفوعة</span></div>
+    <div class="step"><div class="n">2</div><b>باكدج تجريبي</b><span>يثبت القيمة بسرعة</span></div>
+    <div class="step"><div class="n">3</div><b>ريتينر شهري</b><span>إعلام مستمر بتسليمات محددة</span></div>
+    <div class="step"><div class="n">4</div><b>مشاريع</b><span>التقنية والمنصة بعروض منفصلة</span></div>
+  </div>
+</div>
+
+<footer class="wrap">
+  <a class="cta" href="https://wa.me/966504895213?text=%D8%A8%D8%AE%D8%B5%D9%88%D8%B5%20%D8%B9%D8%B1%D8%B6%20%D8%A7%D9%84%D8%AA%D8%B9%D8%A7%D9%88%D9%86" target="_blank" rel="noopener">نبدأ بجلسة الاكتشاف 🚀</a>
+  <div>إبراهيم سعود — إنتاج إعلامي وحلول محتوى · ibrahimsaud.com</div>
+</footer>
+
+<script>
+  function openD(t, el){
+    document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+    document.querySelectorAll('.detail').forEach(d=>d.classList.remove('show'));
+    el.classList.add('active');
+    const d=document.getElementById('d-'+t);
+    d.classList.add('show');
+    setTimeout(()=>d.scrollIntoView({behavior:'smooth',block:'start'}),60);
+  }
+  function closeD(){
+    document.querySelectorAll('.detail').forEach(d=>d.classList.remove('show'));
+    document.querySelectorAll('.card').forEach(c=>c.classList.remove('active'));
+    document.querySelector('.cards').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+</script>
+</body>
+</html>
