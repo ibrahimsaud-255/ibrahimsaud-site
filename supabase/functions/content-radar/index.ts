@@ -284,6 +284,43 @@ ${blocks}
 أرجِع كائن JSON فقط: {"ideas":[ ... ]}.`;
 }
 
+// وضع «إعلان»: يأخذ بريف المنتج من المستخدم ويكتب بإطار إبراهيم (احتياج→تضخيم→حل / Hook→محتوى→تفاعل)
+function adPrompt(brief: { client: string; field: string; goal: string }, count: number) {
+  return `أنت كاتب نصوص إعلانية محترف لـ«إبراهيم سعود» (خدمة: إنتاج فيديوهات إعلانية للشركات). المنصّة: تيك توك/ريلز/سناب. الجمهور سعودي/خليجي. اكتب بلهجة سعودية بيضاء حيّة.
+
+الإعلان (المنتج/الجهة): ${brief.client}
+المجال: ${brief.field || "—"}
+هدف الإعلان / الجمهور المستهدف: ${brief.goal || "تعريف بالمنتج وجذب عملاء"}
+
+اكتب ${count} نسخاً إعلانية **مختلفة الزاوية** لنفس المنتج (فيديو قصير ٢٠–٤٠ ثانية)، كل نسخة تلتزم بهذا الإطار بدقّة:
+【البنية الإعلانية】 ١) خلق احتياج (المشكلة)  ٢) تضخيم الاحتياج (الألم/الكلفة لو ما حلّها)  ٣) عرض الحل = المنتج.
+【بنية الفيديو】
+• Hook (أول ٣ ثواني): يوقف التمرير. أساليب: تساؤل تشويقي يُجاب آخر المقطع · رقم أو مفارقة صادمة · تحدٍّ · صيغة تفضيل (أكبر/أفضل/أسرع). ⛔ ممنوع يبدأ بترحيب أو مقدمة أو شعار — ادخل بالصدمة مباشرة.
+• المحتوى: صلب الرسالة — نقاط أو خطوات أو «ليش هذا المنتج يفرق».
+• التفاعل (CTA): اختم بسؤال للجمهور أو دعوة واضحة للطلب/التواصل.
+
+لكل نسخة أنتج عنصراً فيه:
+- topic: "إعلان".
+- source_title: اسم المنتج/الجهة (${brief.client}).
+- source_pub: "نص إعلاني".
+- virality: سطر يوضّح زاوية هذه النسخة وعلى أي شريحة من الجمهور تشتغل.
+- hook: **ثلاثة هوكات بديلة** للاختبار (A/B)، كل واحد بسطر مرقّم: "١) ...\\n٢) ...\\n٣) ..." — كلها أقل من ٣ ثواني نطقاً.
+- script: النص الكامل بأسطر فعلية (سطر جديد فعلي) بهذا الشكل:
+  «🎣 الهوك: (أقوى هوك من الثلاثة)
+
+🎯 المحتوى:
+(خلق الاحتياج ← تضخيمه ← عرض الحل=المنتج، بنقاط أو سرد محكي)
+
+🔁 التفاعل:
+(سؤال للجمهور أو دعوة للطلب)»
+- screen_title: ٣–٦ كلمات للشاشة.
+- footage: ٣–٥ كلمات بحث إنجليزية للقطات (B-roll).
+- hashtags: ٥–٧ هاشتاقات ملائمة للمنتج والمجال.
+- service_tie: "إنتاج فيديوهات إعلانية للشركات".
+- cta: جملة تربط بخدمة إبراهيم (نصوّر ونكتب لك إعلانك).
+اكتب كل النصوص بالعربية فقط (عدا footage). ⛔ ممنوع اختراع أرقام أو ادعاءات غير مؤكَّدة عن المنتج — لو ما عندك رقم فاكتب فائدة لا رقماً. أرجِع كائن JSON فقط: {"ideas":[ ... ]}.`;
+}
+
 // المرحلة 3: كتابة القصص معتمداً **حصرياً** على نصوص ويكيبيديا المرفقة
 function storyWritePrompt(sources: { name: string; topic: string; extract: string }[]) {
   const blocks = sources.map((s, i) => `[${i + 1}] ${s.name} (${s.topic}):\n${s.extract}`).join("\n\n");
@@ -323,7 +360,7 @@ Deno.serve(async (req) => {
     if (!GROQ_KEY) return json({ error: "مفتاح Groq غير مضبوط (GROQ_API_KEY)." }, 500);
 
     const body = await req.json().catch(() => ({}));
-    const mode = ["story", "marketing"].includes(body.mode) ? body.mode : "news";
+    const mode = ["story", "marketing", "ad"].includes(body.mode) ? body.mode : "news";
     const count = Math.min(Math.max(Number(body.count) || 5, 1), 8);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
@@ -363,6 +400,16 @@ Deno.serve(async (req) => {
       const pool = shuffle(MARKETING_BOOKS.filter((b) => !recentStr.includes(b.book)));
       const pick = (pool.length >= count ? pool : shuffle(MARKETING_BOOKS)).slice(0, count);
       ideas = await callLLM(marketingPrompt(pick), GROQ_KEY, 0.75);
+    } else if (mode === "ad") {
+      const brief = (body.brief || {}) as Record<string, string>;
+      const client = String(brief.client || "").trim();
+      if (!client) return json({ error: "اكتب اسم المنتج أو الجهة في خانة الإعلان." }, 400);
+      ideas = await callLLM(
+        adPrompt({ client, field: String(brief.field || ""), goal: String(brief.goal || "") }, count),
+        GROQ_KEY,
+        0.85,
+      );
+      for (const x of ideas) { if (!x.source_title) x.source_title = client; if (!x.topic) x.topic = "إعلان"; }
     } else {
       const news = await gatherNews();
       if (!news.length) return json({ error: "تعذّر جلب الأخبار الآن، حاول بعد قليل." }, 502);

@@ -87,6 +87,13 @@
       <button class="tab on" id="modeNews" onclick="setMode('news')">📡 أخبار</button>
       <button class="tab" id="modeMarketing" onclick="setMode('marketing')">📈 تسويق</button>
       <button class="tab" id="modeStory" onclick="setMode('story')">📖 قصص</button>
+      <button class="tab" id="modeAd" onclick="setMode('ad')">✍️ إعلان</button>
+    </div>
+
+    <div id="adBrief" class="hidden" style="margin-bottom:10px">
+      <input id="adClient" placeholder="المنتج أو الجهة (مثال: متجر فيه للحاسبات)">
+      <input id="adField" placeholder="المجال (مثال: متجر تقني / مطعم / تطبيق)">
+      <input id="adGoal" placeholder="هدف الإعلان أو الجمهور (مثال: زيادة مبيعات الجمعة البيضاء)">
     </div>
 
     <button class="gen" id="btnGen" onclick="generate()">🎬 ولّد أفكار اليوم</button>
@@ -114,6 +121,7 @@ const MODE_CFG={
   news:{ btn:'🎬 ولّد أخبار اليوم', note:'يقرأ أهم أخبار التقنية والأعمال والشركات الناشئة، ويطلّع ملخصاً وأهم النقاط والأرقام — تقرأها وتصوّر بفهمك.', loading:'جارٍ قراءة الأخبار وتلخيصها...' },
   marketing:{ btn:'📈 ولّد أفكار تسويق', note:'مبادئ من كتب التسويق المشهورة + تطبيقها على السوق المحلي — مرتبطة بخدمة إنتاج الإعلانات.', loading:'جارٍ توليد أفكار التسويق...' },
   story:{ btn:'📖 ولّد قصصاً', note:'قصص واقعية مؤصّلة بمصادر من العالم العربي والعالمي في مجالاتك — جاهزة للسرد أمام الكاميرا.', loading:'جارٍ اختيار القصص وكتابتها...' },
+  ad:{ btn:'✍️ ولّد نصوصاً إعلانية', note:'اكتب المنتج/الجهة والهدف فوق، ويبني لك ٣ نسخ إعلانية بإطارك: هوك يوقف التمرير ← محتوى (احتياج ثم حل) ← تفاعل. بلهجتك السعودية.', loading:'جارٍ كتابة النصوص الإعلانية...' },
 };
 
 const $=id=>document.getElementById(id);
@@ -126,6 +134,8 @@ function setMode(m){
   $('modeNews').classList.toggle('on',m==='news');
   $('modeMarketing').classList.toggle('on',m==='marketing');
   $('modeStory').classList.toggle('on',m==='story');
+  $('modeAd').classList.toggle('on',m==='ad');
+  $('adBrief').classList.toggle('hidden',m!=='ad');
   $('btnGen').textContent=MODE_CFG[m].btn;
   $('genNote').textContent=MODE_CFG[m].note;
   loadArchive();
@@ -133,13 +143,20 @@ function setMode(m){
 
 // ===== التوليد =====
 async function generate(){
-  gerr('');busy('btnGen',true);
+  gerr('');
+  let payload={count:5,mode:MODE};
+  if(MODE==='ad'){
+    const client=$('adClient').value.trim();
+    if(!client){gerr('اكتب اسم المنتج أو الجهة أولاً.');return;}
+    payload={count:3,mode:'ad',brief:{client,field:$('adField').value.trim(),goal:$('adGoal').value.trim()}};
+  }
+  busy('btnGen',true);
   $('btnGen').innerHTML=MODE_CFG[MODE].loading+'<span class="spin"></span>';
   try{
     const r=await fetch(SUPA_URL+'/functions/v1/content-radar',{
       method:'POST',
       headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json'},
-      body:JSON.stringify({count:5,mode:MODE})
+      body:JSON.stringify(payload)
     });
     const d=await r.json();
     if(!r.ok){gerr(d.error||'تعذّر التوليد، حاول مرة أخرى.');}
@@ -174,7 +191,8 @@ function card(x){
   const used=x.status==='used'||x.status==='archived';
   const unsuitable=x.status==='unsuitable';
   const isStory=x.kind==='story';
-  const bodyLab=x.kind==='story'?'القصة':(x.kind==='marketing'?'الفكرة والمحتوى':'الملخص وأهم النقاط');
+  const bodyLab=x.kind==='story'?'القصة':(x.kind==='marketing'?'الفكرة والمحتوى':(x.kind==='ad'?'النص الإعلاني (هوك ← محتوى ← تفاعل)':'الملخص وأهم النقاط'));
+  const hookLab=x.kind==='ad'?'٣ هوكات بديلة — اختبرها':'الخطّاف (أول ٣ ثواني)';
   const fullCopy=`الهوك: ${x.hook}\n\n${bodyLab}:\n${x.script}\n\nعنوان الشاشة: ${x.screen_title}\n\nهاشتاقات: ${(x.hashtags||[]).join(' ')}`;
   return `<div class="card ${used||unsuitable?'used':''}">
     <div class="meta">
@@ -184,7 +202,7 @@ function card(x){
     </div>
     ${x.source_title?`<div class="src" style="font-weight:800;color:#cfcfd6">${esc(x.source_title)}</div>`:''}
     ${x.virality?`<div class="src">⚡ ${esc(x.virality)}</div>`:''}
-    <div class="field hook"><div class="lab">الخطّاف (أول ٣ ثواني)</div><div class="val">${esc(x.hook)}</div></div>
+    <div class="field hook"><div class="lab">${hookLab}</div><div class="val">${esc(x.hook)}</div></div>
     <div class="field script"><div class="lab">${bodyLab} <button class="copy" onclick='copy(this,${JSON.stringify(x.script||"")})'>نسخ</button></div><div class="val">${esc(x.script)}</div></div>
     <div class="field"><div class="lab">عنوان على الشاشة <button class="copy" onclick='copy(this,${JSON.stringify(x.screen_title||"")})'>نسخ</button></div><div class="val">${esc(x.screen_title)}</div></div>
     ${foot?`<div class="field"><div class="lab">كلمات بحث للقطات الفوقية (B-roll)</div><div class="chips">${foot}</div></div>`:''}
@@ -203,7 +221,7 @@ const MONTHS=['يناير','فبراير','مارس','أبريل','مايو','ي
 function render(){
   const list=$('list');
   if(!ITEMS.length){
-    const w=MODE==='story'?'قصص':(MODE==='marketing'?'أفكار تسويقية':'أفكار');
+    const w=MODE==='story'?'قصص':(MODE==='marketing'?'أفكار تسويقية':(MODE==='ad'?'نصوص إعلانية':'أفكار'));
     const msg={new:'ما فيه '+w+' جديدة — اضغط زر التوليد فوق.',used:'ما صوّرت شي بعد في هذا القسم.',unsuitable:'ما فيه شي في «غير مناسبة».',all:'الأرشيف فاضي.'}[TAB];
     list.innerHTML=`<div class="empty">${msg}</div>`;return;
   }
