@@ -459,6 +459,15 @@ function renderHome(){
       <div class="stat"><span class="ic"><i data-lucide="handshake"></i></span><div class="v">${S.crm.length}</div><div class="l">فرص</div></div>
     </div>
     <div class="grid">
+      <div class="card"><h3>🎤 عروضي وأدواتي</h3>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <a href="../ppros/" target="_blank" style="color:var(--gold2);font-weight:700">📊 عرض محترفو الخصوصية (تقديمي)</a>
+          <a href="../ppros/media.html" target="_blank" style="color:var(--muted);font-size:13px">↳ الإعلام والتسويق</a>
+          <a href="../ppros/ai.html" target="_blank" style="color:var(--muted);font-size:13px">↳ الذكاء الاصطناعي الداخلي</a>
+          <a href="../ppros/edu.html" target="_blank" style="color:var(--muted);font-size:13px">↳ المنصة التعليمية</a>
+          <a href="./studio.html" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px">🎬 مولّد المحتوى والنصوص الإعلانية</a>
+        </div>
+      </div>
       <div class="card"><h3>آخر الفواتير</h3>${miniList(S.invoices.slice(-5).reverse(),i=>`${esc(i.client)} — ${money(invTotal(i))} ${pill(i.status)}`,'لا فواتير')}</div>
       <div class="card"><h3>مواعيد قادمة</h3>${miniList(upcoming.slice(0,5),a=>`${esc(a.title)} — ${a.datetime.replace('T',' ')}`,'لا مواعيد')}</div>
       <div class="card"><h3>مهام معلّقة</h3>${miniList(S.projects.flatMap(p=>(p.tasks||[]).filter(t=>!t.done).map(t=>esc(t.title)+(t.assignee?' · 👤'+esc(t.assignee):''))).slice(0,6),x=>x,'لا مهام')}</div>
