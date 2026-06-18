@@ -111,7 +111,7 @@ begin
         'comments', coalesce((select json_agg(json_build_object(
               'author',c.author,'author_name',c.author_name,'body',c.body,'created_at',c.created_at
             ) order by c.created_at) from public.room_comments c where c.task_id = t.id), '[]'::json)
-      ) order by t.created_at)
+      ) order by t.updated_at)
       from public.tasks t where t.owner = r.owner and t.project_id = r.project_id
     ), '[]'::json)
   ) into result;
@@ -191,7 +191,7 @@ begin
         'comments', coalesce((select json_agg(json_build_object(
               'author',c.author,'author_name',c.author_name,'body',c.body,'created_at',c.created_at
             ) order by c.created_at) from public.room_comments c where c.task_id = t.id), '[]'::json)
-      ) order by t.created_at)
+      ) order by t.updated_at)
       from public.tasks t where t.freelancer_id = f.id
     ), '[]'::json)
   ) into result;
