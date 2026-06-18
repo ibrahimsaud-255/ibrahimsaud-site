@@ -670,6 +670,7 @@ function roomPanelHTML(p,room,tasks,revs){
       <button class="link-btn" onclick="copyTxt('${cl}')">📋 نسخ رابط العميل</button>
       <a class="link-btn" href="${cl}" target="_blank">فتح</a>
       ${wa?`<a class="link-btn" href="${wa}" target="_blank">🟢 واتساب العميل</a>`:''}
+      <button class="link-btn" onclick="addPodcastDeliverables('${p.id}')">🎙️ أضف مخرجات حلقة بودكاست</button>
     </div>
     <div style="margin-top:12px">
     ${tasks.length?tasks.map(t=>{
@@ -688,6 +689,14 @@ function roomPanelHTML(p,room,tasks,revs){
       </div>`;
     }).join(''):'<p style="color:var(--muted);font-size:13px">أضف مهاماً وأسندها لفريلانسرز، ثم تظهر هنا كتسليمات.</p>'}
     </div>`;
+}
+// مخرجات حلقة البودكاست القياسية — تُضاف كمهام/تسليمات للمشروع بضغطة
+const PODCAST_DELIVERABLES=['🎬 الحلقة الكاملة (مونتاج)','✂️ ١٠ مقاطع قصيرة','🎨 تصاميم إنستقرام','🖼️ ثمبنيل يوتيوب','📣 إعلان الضيف + صورته'];
+async function addPodcastDeliverables(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;
+  if(!confirm('إضافة ٥ مخرجات حلقة بودكاست كتسليمات للمشروع؟ (الحلقة · الشورتس · تصاميم إنستقرام · الثمبنيل · إعلان الضيف)'))return;
+  p.tasks=p.tasks||[];const st=(p.taskStages&&p.taskStages[0]?p.taskStages[0].key:'todo');
+  PODCAST_DELIVERABLES.forEach(t=>p.tasks.push({id:uid(),title:t,stageKey:st,done:false,assignee:'',blocks:[]}));
+  save();renderProjectDetail(p.id);await syncTasks();loadRoomPanel(p);
 }
 async function roomEnable(pid){const p=S.projects.find(x=>x.id===pid);if(!p)return;
   await syncTasks();

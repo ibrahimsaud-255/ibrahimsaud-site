@@ -79,12 +79,16 @@ async function loadClient(){
   if(error||!data){badLink();return;}
   const inc=data.revisions_included||0;
   const dels=data.deliverables||[];
+  const ready=dels.filter(d=>d.version_url).length, appr=dels.filter(d=>d.approved).length;
+  const pct=dels.length?Math.round(ready/dels.length*100):0;
   document.title='غرفة '+(data.project_title||'المشروع');
   $('root').innerHTML=`
-    <div class="head"><div class="ico">🎬</div>
+    <div class="head"><div class="ico">🎙️</div>
       <h1>غرفة <span class="g">${esc(data.project_title||'المشروع')}</span></h1>
-      <div class="sub">${esc(data.client_name||'')} · راجِع التسليمات واعتمدها أو اطلب تعديلاً</div></div>
-    ${dels.length?dels.map(d=>clientCard(d,inc)).join(''):'<div class="empty">ما فيه تسليمات بعد — بنرفعها لك هنا أول بأول.</div>'}
+      <div class="sub">${esc(data.client_name||'')} · تابِع مخرجاتك واعتمدها أو اطلب تعديلاً</div></div>
+    ${dels.length?`<div class="card"><div style="display:flex;justify-content:space-between;font-size:13px;color:var(--mut)"><span>تقدّم المشروع</span><span><b style="color:#f4f4f5">${ready}/${dels.length}</b> جاهز · ${appr} معتمد</span></div>
+      <div style="height:9px;background:#000;border:1px solid var(--line);border-radius:6px;margin-top:8px;overflow:hidden"><i style="display:block;height:100%;width:${pct}%;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:.4s"></i></div></div>`:''}
+    ${dels.length?dels.map(d=>clientCard(d,inc)).join(''):'<div class="empty">ما فيه مخرجات بعد — بنرفعها لك هنا أول بأول.</div>'}
     <div class="note">💡 أضف هذي الصفحة لشاشتك الرئيسية لمتابعة مشروعك بضغطة. كل اعتماد أو تعديل يوصل إبراهيم فوراً.</div>`;
 }
 function clientCard(d,inc){
