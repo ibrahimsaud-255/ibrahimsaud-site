@@ -3,8 +3,8 @@
 
 export const site = {
   name: "إبراهيم سعود",
-  tagline: "أصنع إعلانات تبيع",
-  bio: "إبراهيم سعود | تقنية أعمال بودكاست",
+  tagline: "تقنية أعمال وبودكاست",
+  bio: "إبراهيم سعود — تقنية أعمال وبودكاست",
   whatsapp: "966504895213", // بدون + وبدون أصفار، صيغة دولية
   email: "ibrahimsaud25@gmail.com",
   domain: "ibrahimsaud.com",
@@ -274,6 +274,8 @@ export type Program = {
   title: string;
   desc: string;
   meta?: string; // مثل "١٥ حلقة" أو "موسمان"
+  year?: string; // سنة الإنتاج — عدّلها لو غير دقيقة
+  active?: boolean; // true = البرنامج قائم الآن (تظهر شارة «قائم الآن»)
   ytId: string;
   href: string;
 };
@@ -283,6 +285,8 @@ export const programs: Program[] = [
     title: "بودكاست سَعي",
     desc: "البودكاست الرئيسي — نحوّل الخبرة المتخصصة إلى كلام بسيط يفيدك، ونروي قصة السعي خلف كل تجربة.",
     meta: "الحلقة الأحدث",
+    year: "٢٠٢٤ – الآن",
+    active: true,
     ytId: "hZbfphE2tM4",
     href: "https://www.youtube.com/watch?v=hZbfphE2tM4",
   },
@@ -290,6 +294,7 @@ export const programs: Program[] = [
     title: "رقمنة — التقنية والذكاء الاصطناعي",
     desc: "برنامج من ١٥ حلقة عن التقنية والذكاء الاصطناعي، مع المهندس أحمد الزيادات.",
     meta: "١٥ حلقة",
+    year: "٢٠٢٤",
     ytId: "inCmiqVSnIQ",
     href: "https://www.youtube.com/watch?v=inCmiqVSnIQ&list=PL3BjsAHgaCzbaadRYhtrDqcMLaBT5nBVF",
   },
@@ -297,12 +302,14 @@ export const programs: Program[] = [
     title: "آخر فقرة — شرح كتب",
     desc: "شرح كتب حلقة حلقة: «صناعة المستهلك» و«متلازمة التيك توك».",
     meta: "موسمان",
+    year: "٢٠٢٣",
     ytId: "iU9dl6OCejQ",
     href: "https://www.youtube.com/watch?v=iU9dl6OCejQ&list=PL3BjsAHgaCzbr5W9nN8YL6rDf4tkvG2Kn",
   },
   {
     title: "بودكاست يا غلام",
     desc: "بودكاست حواري — تقديم وإعداد، بالتعاون مع قناة فلق والمدونة استديو.",
+    year: "٢٠٢٣",
     ytId: "h9WQT7gMP6E",
     href: "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
   },
@@ -310,12 +317,14 @@ export const programs: Program[] = [
     title: "في الخاطر — برنامج ساخر",
     desc: "برنامج قصير ساخر يتكلّم عن أشياء «في الخاطر».",
     meta: "٤ حلقات",
+    year: "٢٠٢٢",
     ytId: "38fVZn6OX1U",
     href: "https://www.youtube.com/watch?v=38fVZn6OX1U&list=PL3BjsAHgaCzaYHMoLnjODgHrlaXFCizSe",
   },
   {
     title: "قِوت — إنتاج تجريبي",
     desc: "برنامج أنتجنا منه حلقتين ومقاطع تشويقية.",
+    year: "٢٠٢٢",
     ytId: "FrTmum7RIbw",
     href: "https://www.youtube.com/watch?v=FrTmum7RIbw&list=PL3BjsAHgaCzYb3XwijX4iIQj5unA4RrmL",
   },
@@ -330,6 +339,50 @@ export const podcastServices = [
   { icon: "📈", title: "توزيع على المنصات", desc: "نشر منظّم على يوتيوب والمنصات الصوتية مع تحسين العناوين والأوصاف." },
   { icon: "🎙️", title: "تأجير الاستوديو", desc: "احجز الاستوديو لتصوير محتواك الخاص بساعات مرنة وطاقم مساند." },
 ] as const;
+
+// ===== باقات تسجيل البودكاست =====
+export type PodcastPackage = {
+  id: string;
+  name: string;
+  tagline: string;
+  persons: string;
+  badge?: string;
+  setup: string[]; // المكان والمعدّات
+};
+
+// مخرجات مشتركة لكل حلقة (تُعرض مرة واحدة لأنها تنطبق على الباقتين)
+export const packageDeliverables: string[] = [
+  "فيديو مسجّل كامل للحلقة بجودة عالية",
+  "١٠ مقاطع قصيرة (مقتطفات) جاهزة للنشر",
+  "تصاميم الحلقة: صورة الثمنيل + صور مقتطفات (كاروسيل) للضيف والمقدّم + صورة إعلان عن الضيف",
+];
+
+export const podcastPackages: PodcastPackage[] = [
+  {
+    id: "duo",
+    name: "حلقة — مقدّم وضيف",
+    tagline: "الباقة الأشهر لحلقة حوارية بشخصين",
+    persons: "شخصان (مقدّم + ضيف)",
+    badge: "الأكثر طلباً",
+    setup: [
+      "مكان التصوير (استوديو مجهّز بالكامل)",
+      "مايكروفونات احترافية + مكسر صوت",
+      "٣ كاميرات: كاميرا للضيف، كاميرا للمقدّم، وكاميرا للاثنين معاً",
+    ],
+  },
+  {
+    id: "quad",
+    name: "حلقة — ٤ أشخاص",
+    tagline: "لحلقات النقاش الجماعي والبانل",
+    persons: "أربعة أشخاص",
+    setup: [
+      "مكان التصوير (استوديو مجهّز بالكامل)",
+      "٤ مقاعد لأربعة أشخاص",
+      "٤ مايكروفونات احترافية",
+      "٣ كاميرات: كاميرا لشخصين، كاميرا لشخصين، وكاميرا واسعة للجميع وللمكان",
+    ],
+  },
+];
 
 // ===== جولة الاستوديو التفاعلية — عناصر المشهد =====
 // x/y نِسَب مئوية لموضع النقطة فوق صورة المشهد (studio/tour/stage.jpg).

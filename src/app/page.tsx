@@ -16,10 +16,10 @@ export default function Home() {
       <main>
         <Hero />
         <Brands />
-        <Works />
-        <PlaygroundServices />
         <Podcast />
         <StudioTour />
+        <PlaygroundServices />
+        <Works />
         <Contact />
       </main>
       <Footer />

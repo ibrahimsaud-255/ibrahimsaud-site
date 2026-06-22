@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import "./globals.css";
+import Analytics from "@/components/Analytics";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -13,16 +14,18 @@ const SITE_URL = "https://ibrahimsaud.com";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "إبراهيم سعود — أصنع إعلانات تبيع",
+  title: "إبراهيم سعود — تقنية أعمال وبودكاست",
   description:
-    "إبراهيم سعود — خبير إنتاج فيديوهات إعلانية تبيع: من الفكرة والنص، للتصوير، للتعليق الصوتي، للمونتاج النهائي. لعلامات تجارية في السعودية والخليج.",
+    "إبراهيم سعود — أوظّف التقنية في تطوير الأعمال والأنظمة، وأنتج البودكاست والمحتوى المرئي من استوديو مجهّز بالرياض. تقنية أعمال، بودكاست سَعي، وإنتاج إعلامي.",
   keywords: [
     "إبراهيم سعود",
-    "إنتاج فيديو",
-    "فيديوهات إعلانية",
-    "إعلانات",
-    "تسويق",
-    "مونتاج",
+    "تقنية أعمال",
+    "بودكاست",
+    "بودكاست سعي",
+    "أنظمة أعمال",
+    "إنتاج بودكاست",
+    "إنتاج محتوى",
+    "استوديو بودكاست الرياض",
     "السعودية",
   ],
   authors: [{ name: "إبراهيم سعود", url: SITE_URL }],
@@ -32,9 +35,9 @@ export const metadata: Metadata = {
       "https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png",
   },
   openGraph: {
-    title: "إبراهيم سعود — أصنع إعلانات تبيع",
+    title: "إبراهيم سعود — تقنية أعمال وبودكاست",
     description:
-      "إنتاج فيديوهات إعلانية تبيع: فكرة، نص، تصوير، تعليق صوتي، ومونتاج.",
+      "تقنية تخدم أعمالك، وبودكاست ومحتوى مرئي يبني حضورك — من استوديو مجهّز بالرياض.",
     url: SITE_URL,
     siteName: "إبراهيم سعود",
     locale: "ar_SA",
@@ -45,8 +48,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "إبراهيم سعود — أصنع إعلانات تبيع",
-    description: "إنتاج فيديوهات إعلانية تبيع. فكرة، نص، تصوير، مونتاج.",
+    title: "إبراهيم سعود — تقنية أعمال وبودكاست",
+    description:
+      "تقنية تخدم أعمالك، وبودكاست ومحتوى مرئي يبني حضورك.",
     images: [
       "https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png",
     ],
@@ -58,7 +62,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
-      <body className={`${tajawal.variable} antialiased`}>{children}</body>
+      <body className={`${tajawal.variable} antialiased`}>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

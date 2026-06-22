@@ -10,16 +10,18 @@ export default function Contact() {
             <div className="pointer-events-none absolute inset-0 opacity-30 [background-image:radial-gradient(circle_at_50%_0%,var(--color-gold),transparent_55%)]" />
             <div className="relative">
               <h2 className="text-4xl font-black leading-tight sm:text-5xl">
-                عندك منتج؟ <span className="gold-text">نعطيه إعلان يستاهله.</span>
+                عندك فكرة، نظام، أو بودكاست؟{" "}
+                <span className="gold-text">نبدأها سوا.</span>
               </h2>
               <p className="mx-auto mt-4 max-w-xl text-cream/75">
-                راسلني على واتساب، احكِ لي عن مشروعك، وأرجع لك بفكرة وعرض سعر.
+                راسلني على واتساب واحكِ لي عن مشروعك — تقنية أعمال، بودكاست، أو
+                إنتاج محتوى — وأرجع لك بخطة وعرض سعر.
               </p>
 
               <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
                 <a
                   href={waLink(
-                    "السلام عليكم إبراهيم، شفت موقعك وأبي أطلب فيديو إعلاني 🎬",
+                    "السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋",
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -30,7 +32,7 @@ export default function Contact() {
                 </a>
                 <a
                   href={waLink(
-                    "السلام عليكم، أبي أطلب خدمة إنتاج فيديو. التفاصيل: ",
+                    "السلام عليكم، أبي أستفسر عن خدماتك (تقنية أعمال / بودكاست / إنتاج). التفاصيل: ",
                   )}
                   target="_blank"
                   rel="noopener noreferrer"

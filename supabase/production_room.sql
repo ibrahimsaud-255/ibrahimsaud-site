@@ -17,6 +17,15 @@ alter table public.tasks add column if not exists version_url  text;   -- راب
 alter table public.tasks add column if not exists version_note text;   -- ملاحظة الفريلانسر مع التسليم
 alter table public.tasks add column if not exists approved     boolean not null default false;
 alter table public.tasks add column if not exists approved_at  timestamptz;
+-- updated_at مطلوب لترتيب التسليمات في room_get/fl_room — غيابه يسبب «رابط غير صالح».
+alter table public.tasks add column if not exists created_at   timestamptz not null default now();
+alter table public.tasks add column if not exists updated_at   timestamptz not null default now();
+-- تحديث updated_at تلقائياً عند أي تعديل
+create or replace function public.tasks_touch() returns trigger language plpgsql as $$
+begin new.updated_at = now(); return new; end $$;
+drop trigger if exists tasks_touch_trg on public.tasks;
+create trigger tasks_touch_trg before update on public.tasks
+  for each row execute function public.tasks_touch();
 
 -- ---------- 2) غرف العملاء (توكن العميل لكل مشروع) ----------
 create table if not exists public.project_rooms (

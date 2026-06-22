@@ -33,6 +33,12 @@ export default function Podcast() {
             >
               🎙️ كن ضيفاً في سَعي
             </a>
+            <a
+              href="/packages/"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-6 py-3 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
+            >
+              📦 باقات تسجيل البودكاست
+            </a>
           </div>
         </Reveal>
 
@@ -66,6 +72,17 @@ export default function Podcast() {
                   <div className="absolute inset-0 grid place-items-center bg-black/30 text-4xl text-white/90 transition group-hover:bg-black/20">
                     ▶
                   </div>
+                  {p.active && (
+                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
+                      <span className="size-2 animate-pulse rounded-full bg-white" />
+                      قائم الآن
+                    </span>
+                  )}
+                  {p.year && (
+                    <span className="absolute bottom-3 left-3 rounded-full bg-black/65 px-3 py-1 text-xs font-bold text-cream backdrop-blur-sm">
+                      {p.year}
+                    </span>
+                  )}
                 </div>
                 <div className="p-5">
                   <h4 className="text-lg font-extrabold text-cream">{p.title}</h4>
@@ -73,7 +90,8 @@ export default function Podcast() {
                     {p.desc}
                   </p>
                   <p className="mt-3 text-xs font-bold text-gold">
-                    {p.meta ? `${p.meta} · ` : ""}مشاهدة ↗
+                    {[p.year, p.meta].filter(Boolean).join(" · ")}
+                    {p.year || p.meta ? " · " : ""}مشاهدة ↗
                   </p>
                 </div>
               </a>
