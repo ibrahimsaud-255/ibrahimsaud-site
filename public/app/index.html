@@ -351,7 +351,9 @@ const def={
   ],
   crmStages:[{key:'lead',label:'عميل محتمل'},{key:'contacted',label:'تم التواصل'},{key:'quoted',label:'عرض مُرسل'},{key:'won',label:'فوز'},{key:'lost',label:'خسارة'}],
   projectStages:[{key:'s1',label:'نفهم منتجك'},{key:'s2',label:'نكتب القصة'},{key:'s3',label:'نصوّر وننتج'},{key:'s4',label:'نسلّم ونطلق'},{key:'done',label:'منجز'}],
-  counters:{sale:1000,invoice:1000,credit:1000}
+  counters:{sale:1000,invoice:1000,credit:1000},
+  focus:{goalMin:180,breakEveryMin:50,breakLenMin:10,soundOn:true,log:{}},
+  prayer:{city:'الرياض',country:'Saudi Arabia',method:4}
 };
 let S=load();
 function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(e){s=JSON.parse(JSON.stringify(def))}
@@ -502,6 +504,10 @@ function renderHome(){
         <button onclick="go('appointments');apptModal()"><i data-lucide="calendar-plus"></i> موعد</button>
         <button onclick="go('crm');crmModal()"><i data-lucide="target"></i> فرصة</button>
       </div></div>
+    <div class="grid" style="margin-bottom:24px">
+      <div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="brain"></i> تركيز اليوم الواعي</h3><div id="focusWidget"></div></div>
+      <div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="moon-star"></i> مواقيت الصلاة</h3><div id="prayerWidget"></div></div>
+    </div>
     <div class="stats">
       <div class="stat"><span class="ic"><i data-lucide="wallet"></i></span><div class="v">${money(paid)}</div><div class="l">المحصّل</div></div>
       <div class="stat"><span class="ic"><i data-lucide="hourglass"></i></span><div class="v">${money(due)}</div><div class="l">مستحقات غير مدفوعة</div></div>
@@ -522,7 +528,92 @@ function renderHome(){
       <div class="card"><h3>مواعيد قادمة</h3>${miniList(upcoming.slice(0,5),a=>`${esc(a.title)} — ${a.datetime.replace('T',' ')}`,'لا مواعيد')}</div>
       <div class="card"><h3>مهام معلّقة</h3>${miniList(S.projects.flatMap(p=>(p.tasks||[]).filter(t=>!t.done).map(t=>esc(t.title)+(t.assignee?' · 👤'+esc(t.assignee):''))).slice(0,6),x=>x,'لا مهام')}</div>
     </div>`;
+  paintFocus();loadPrayer();startPrayerTicker();
 }
+
+/* ===== FOCUS TIMER + PRAYER (نظام تركيز إسلامي) ===== */
+let FOCUS={running:false,sinceBreak:0,breakUntil:0,iv:null,lastPrayer:''};
+let PRAYER={date:'',timings:null,loading:false};
+let AC=null;
+function localDay(){const d=new Date();const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())}
+function focusSec(){return (S.focus&&S.focus.log&&S.focus.log[localDay()])||0}
+function fmtMS(s){return Math.floor(s/60)+':'+String(Math.floor(s%60)).padStart(2,'0')}
+function beep(times){if(S.focus&&S.focus.soundOn===false)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();let t=AC.currentTime;for(let i=0;i<(times||2);i++){const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type='sine';o.frequency.value=880;g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.3,t+0.02);g.gain.exponentialRampToValueAtTime(0.0001,t+0.35);o.start(t);o.stop(t+0.37);t+=0.45;}}catch(e){}}
+function notifyMe(title,body){try{if(window.Notification){if(Notification.permission==='granted'){new Notification(title,{body})}else if(Notification.permission!=='denied'){Notification.requestPermission().then(p=>{if(p==='granted')new Notification(title,{body})})}}}catch(e){}}
+function startFocus(){if(FOCUS.running)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){}if(window.Notification&&Notification.permission==='default'){try{Notification.requestPermission()}catch(e){}}FOCUS.running=true;FOCUS.breakUntil=0;if(FOCUS.iv)clearInterval(FOCUS.iv);FOCUS.iv=setInterval(focusTick,1000);paintFocus();}
+function pauseFocus(){FOCUS.running=false;if(FOCUS.iv){clearInterval(FOCUS.iv);FOCUS.iv=null}save();paintFocus();}
+function resetFocusToday(){if(!confirm('تصفير ساعات تركيز اليوم؟'))return;if(!S.focus.log)S.focus.log={};S.focus.log[localDay()]=0;FOCUS.sinceBreak=0;FOCUS.breakUntil=0;save();paintFocus();}
+function focusTick(){
+  if(!S.focus.log)S.focus.log={};const k=localDay();
+  if(FOCUS.breakUntil){if(Date.now()>=FOCUS.breakUntil){FOCUS.breakUntil=0;FOCUS.sinceBreak=0;beep(2);notifyMe('انتهى البريك ✅','يلا نكمّل تركيز 💪');}paintFocus();return;}
+  S.focus.log[k]=(S.focus.log[k]||0)+1;FOCUS.sinceBreak++;
+  if(S.focus.log[k]%15===0)save();
+  const everySec=(S.focus.breakEveryMin||50)*60;
+  if(FOCUS.sinceBreak>=everySec){FOCUS.breakUntil=Date.now()+(S.focus.breakLenMin||10)*60000;beep(3);notifyMe('🧘 وقت البريك',`خذ راحة ${S.focus.breakLenMin||10} دقائق ثم نكمّل.`);}
+  checkPrayerAlert();paintFocus();
+}
+function paintFocus(){const el=document.getElementById('focusWidget');if(!el)return;el.innerHTML=focusInner();refreshIcons();}
+function focusInner(){
+  const sec=focusSec();const goal=(S.focus.goalMin||180)*60;const pct=Math.min(100,Math.round(sec/goal*100));
+  const hh=Math.floor(sec/3600),mm=Math.floor(sec%3600/60),ss=sec%60;const fmt=hh+':'+String(mm).padStart(2,'0')+':'+String(ss).padStart(2,'0');
+  const goalH=Math.round(((S.focus.goalMin||180)/60)*10)/10;
+  const inBreak=FOCUS.breakUntil&&Date.now()<FOCUS.breakUntil;const breakLeft=inBreak?Math.ceil((FOCUS.breakUntil-Date.now())/1000):0;
+  const everySec=(S.focus.breakEveryMin||50)*60;const toBreak=Math.max(0,everySec-FOCUS.sinceBreak);
+  const done=sec>=goal;
+  return `<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+    <div style="width:118px;height:118px;border-radius:50%;background:conic-gradient(${done?'var(--good)':'var(--gold)'} ${pct}%, var(--panel3) 0);display:grid;place-items:center;flex:0 0 auto">
+      <div style="width:94px;height:94px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center">
+        <div><div style="font-size:21px;font-weight:900">${pct}%</div><div style="font-size:11px;color:var(--muted)">من ${goalH} ساعات</div></div></div></div>
+    <div style="flex:1;min-width:200px">
+      <div style="font-size:13px;color:var(--muted)">${inBreak?'🧘 وقت البريك':(done?'🎉 أكملت هدف اليوم':'⏱️ تركيز اليوم')}</div>
+      <div style="font-size:33px;font-weight:900;letter-spacing:1px">${inBreak?fmtMS(breakLeft):fmt}</div>
+      <div style="font-size:12px;color:var(--muted);margin-top:2px">${inBreak?'استرح ثم نكمّل':(FOCUS.running?`البريك القادم بعد ${fmtMS(toBreak)}`:'اضغط «ابدأ» لتشغيل العدّاد الواعي')}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+        ${FOCUS.running?`<button class="btn btn-ghost btn-sm" onclick="pauseFocus()"><i data-lucide="pause"></i> إيقاف مؤقت</button>`:`<button class="btn btn-gold btn-sm" onclick="startFocus()"><i data-lucide="play"></i> ابدأ التركيز</button>`}
+        <button class="btn btn-ghost btn-sm" onclick="focusSettings()"><i data-lucide="settings"></i> إعدادات</button>
+        <button class="btn btn-ghost btn-sm" onclick="resetFocusToday()">تصفير</button>
+      </div></div></div>`;
+}
+function focusSettings(){const f=S.focus;openModal('إعدادات التركيز',`
+  <div class="row2"><div class="field"><label>هدف التركيز اليومي (دقائق)</label><input id="f_goal" type="number" inputmode="decimal" value="${f.goalMin||180}">${amtChipsHTML('f_goal',[30,60,120])}</div>
+  <div class="field"><label>بريك كل (دقائق)</label><input id="f_be" type="number" inputmode="decimal" value="${f.breakEveryMin||50}"></div></div>
+  <div class="row2"><div class="field"><label>مدة البريك (دقائق)</label><input id="f_bl" type="number" inputmode="decimal" value="${f.breakLenMin||10}"></div>
+  <div class="field"><label>التنبيه الصوتي</label><select id="f_snd"><option value="1" ${f.soundOn!==false?'selected':''}>مفعّل</option><option value="0" ${f.soundOn===false?'selected':''}>صامت</option></select></div></div>
+  <div class="badge-note">🎯 <div>الهدف الافتراضي ٣ ساعات تركيز واعٍ يومياً. عند بلوغ مدة البريك يصدر تنبيه صوتي وإشعار.</div></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;f.goalMin=Number(g('f_goal'))||180;f.breakEveryMin=Number(g('f_be'))||50;f.breakLenMin=Number(g('f_bl'))||10;f.soundOn=g('f_snd')==='1';save();closeModal();paintFocus();});}
+/* ----- مواقيت الصلاة (Aladhan API) ----- */
+function loadPrayer(force){const day=localDay();if(!force&&PRAYER.date===day&&PRAYER.timings){paintPrayer();return;}if(PRAYER.loading)return;PRAYER.loading=true;paintPrayer();
+  const p=S.prayer||{};const url='https://api.aladhan.com/v1/timingsByCity?city='+encodeURIComponent(p.city||'الرياض')+'&country='+encodeURIComponent(p.country||'Saudi Arabia')+'&method='+(p.method||4);
+  fetch(url).then(r=>r.json()).then(j=>{if(j&&j.data&&j.data.timings){PRAYER.timings=j.data.timings;PRAYER.date=day;}PRAYER.loading=false;paintPrayer();}).catch(()=>{PRAYER.loading=false;paintPrayer();});}
+function nextPrayerInfo(){const t=PRAYER.timings;if(!t)return null;const order=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];const now=new Date();
+  for(const it of order){const hm=(t[it[0]]||'').slice(0,5).split(':');const d=new Date();d.setHours(+hm[0]||0,+hm[1]||0,0,0);if(d>now)return {name:it[1],at:d};}
+  const fj=(t.Fajr||'05:00').slice(0,5).split(':');const d=new Date();d.setDate(d.getDate()+1);d.setHours(+fj[0]||5,+fj[1]||0,0,0);return {name:'الفجر',at:d};}
+function fmt12(hhmm){if(!hhmm)return '—';const a=hhmm.slice(0,5).split(':');let h=+a[0];const m=a[1];const ap=h<12?'ص':'م';h=h%12;if(h===0)h=12;return h+':'+m+' '+ap;}
+function paintPrayer(){const el=document.getElementById('prayerWidget');if(!el)return;el.innerHTML=prayerInner();refreshIcons();}
+function prayerInner(){
+  if(PRAYER.loading&&!PRAYER.timings)return '<p style="color:var(--muted)">…جارٍ تحميل مواقيت الصلاة</p>';
+  const t=PRAYER.timings;if(!t)return '<p style="color:var(--muted)">تعذّر تحميل المواقيت. <button class="link-btn" onclick="loadPrayer(true)">إعادة المحاولة</button></p>';
+  const order=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
+  const np=nextPrayerInfo();const now=new Date();const cd=np?Math.max(0,Math.floor((np.at-now)/1000)):0;const ch=Math.floor(cd/3600),cm=Math.floor(cd%3600/60);
+  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
+      <div style="font-size:13px;color:var(--muted)">📍 ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()">⚙ تغيير</button></div>
+      ${np?`<div style="font-size:13px">القادمة: <b style="color:var(--gold2)">${np.name}</b> بعد ${ch>0?ch+'س ':''}${cm}د</div>`:''}</div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
+      ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'var(--goldsoft)':'var(--panel2)'};border:1px solid ${isNext?'var(--gold)':'var(--line)'};border-radius:10px;padding:8px 3px"><div style="font-size:12px;color:var(--muted)">${it[1]}</div><div style="font-weight:800;font-size:13px">${fmt12(t[it[0]])}</div></div>`}).join('')}
+    </div>`;
+}
+function checkPrayerAlert(){const t=PRAYER.timings;if(!t)return;const now=new Date();const hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  const names={Fajr:'الفجر',Dhuhr:'الظهر',Asr:'العصر',Maghrib:'المغرب',Isha:'العشاء'};
+  for(const k in names){if((t[k]||'').slice(0,5)===hm){const tag=localDay()+k;if(FOCUS.lastPrayer!==tag){FOCUS.lastPrayer=tag;beep(4);notifyMe('🕌 حان وقت '+names[k],'الصلاة خير من العمل 🤍');if(FOCUS.running)pauseFocus();}}}}
+function prayerSettings(){const p=S.prayer||{};openModal('مواقيت الصلاة — الموقع',`
+  <div class="field"><label>المدينة</label><input id="pr_city" value="${esc(p.city||'الرياض')}"></div>
+  <div class="field"><label>الدولة (بالإنجليزية)</label><input id="pr_country" value="${esc(p.country||'Saudi Arabia')}" placeholder="Saudi Arabia"></div>
+  <div class="field"><label>طريقة الحساب</label><select id="pr_method"><option value="4" ${(p.method||4)==4?'selected':''}>أم القرى (السعودية)</option><option value="3" ${p.method==3?'selected':''}>رابطة العالم الإسلامي</option><option value="2" ${p.method==2?'selected':''}>ISNA (أمريكا)</option><option value="5" ${p.method==5?'selected':''}>الهيئة المصرية</option></select></div>
+  <button type="button" class="btn btn-ghost btn-sm" onclick="prayerGeo()"><i data-lucide="map-pin"></i> استخدم موقعي تلقائياً</button>`,
+  ()=>{const g=i=>document.getElementById(i).value;S.prayer={city:g('pr_city').trim()||'الرياض',country:g('pr_country').trim()||'Saudi Arabia',method:Number(g('pr_method'))||4};save();closeModal();loadPrayer(true);});}
+function prayerGeo(){if(!navigator.geolocation){alert('الموقع غير متاح في متصفحك');return}navigator.geolocation.getCurrentPosition(pos=>{const la=pos.coords.latitude,lo=pos.coords.longitude;PRAYER.loading=true;
+  fetch('https://api.aladhan.com/v1/timings?latitude='+la+'&longitude='+lo+'&method='+((S.prayer&&S.prayer.method)||4)).then(r=>r.json()).then(j=>{if(j&&j.data&&j.data.timings){PRAYER.timings=j.data.timings;PRAYER.date=localDay();S.prayer=Object.assign(S.prayer||{},{city:'موقعي',latlng:[la,lo]});save();}PRAYER.loading=false;closeModal();paintPrayer();}).catch(()=>{PRAYER.loading=false;alert('تعذّر تحديد الموقع')});},()=>alert('تعذّر الوصول للموقع'));}
+function startPrayerTicker(){if(window.__ptick)return;window.__ptick=setInterval(()=>{try{checkPrayerAlert();paintPrayer()}catch(e){}},15000);}
 
 /* ===== HELPERS ===== */
 function lineTotal(it){return Number(it.qty||0)*Number(it.price||0)*(1-(Number(it.discount||0)/100))}
