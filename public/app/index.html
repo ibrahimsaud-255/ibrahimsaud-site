@@ -81,7 +81,7 @@
   .shell.sb-resizing{transition:none;user-select:none;cursor:col-resize}
   .shell.sb-collapsed{grid-template-columns:0 1fr}
   .shell.sb-collapsed .sidebar{opacity:0;pointer-events:none;padding-left:0;padding-right:0;overflow:hidden}
-  .sidebar{background:linear-gradient(180deg,rgba(22,22,25,.86),rgba(8,8,10,.94));backdrop-filter:blur(22px) saturate(150%);-webkit-backdrop-filter:blur(22px) saturate(150%);border-left:1px solid rgba(255,255,255,.07);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;height:100vh}
+  .sidebar{background:linear-gradient(180deg,rgba(20,20,24,.58),rgba(10,10,12,.72));backdrop-filter:blur(26px) saturate(160%);-webkit-backdrop-filter:blur(26px) saturate(160%);border-left:1px solid rgba(255,255,255,.09);display:flex;flex-direction:column;padding:20px 14px;position:sticky;top:0;height:100vh}
   /* مقبض السحب لتكبير/تصغير القائمة */
   .sb-resizer{position:absolute;left:-4px;top:0;bottom:0;width:9px;cursor:col-resize;z-index:45;touch-action:none}
   .sb-resizer::before{content:"";position:absolute;left:3px;top:50%;transform:translateY(-50%);width:3px;height:42px;border-radius:3px;background:rgba(255,255,255,.14);transition:.16s}
@@ -163,7 +163,7 @@
   .lp-head h2 svg{width:20px;height:20px;color:var(--gold2)}
   .lp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:16px 12px}
   .lp-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:6px 2px;border:none;background:none;cursor:pointer;text-align:center;color:inherit}
-  .lp-ic{position:relative;overflow:hidden;width:62px;height:62px;border-radius:22px;display:grid;place-items:center;box-shadow:0 12px 26px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.14);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s}
+  .lp-ic{position:relative;overflow:hidden;width:62px;height:62px;border-radius:22px;display:grid;place-items:center;box-shadow:0 12px 26px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.18);backdrop-filter:blur(8px) saturate(170%);-webkit-backdrop-filter:blur(8px) saturate(170%);transition:transform .18s cubic-bezier(.34,1.56,.64,1),box-shadow .18s}
   .lp-ic::before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:inset 0 1.5px 1px rgba(255,255,255,.55),inset 0 -12px 22px rgba(0,0,0,.28);pointer-events:none}
   .lp-ic::after{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(155deg,rgba(255,255,255,.5),rgba(255,255,255,.08) 36%,transparent 58%);pointer-events:none}
   .lp-ic svg{position:relative;z-index:1;width:28px;height:28px;color:#fff;stroke-width:2.1;filter:drop-shadow(0 1px 2px rgba(0,0,0,.35))}
@@ -626,8 +626,10 @@ const LAUNCH=[
   {id:'prompts',name:'مكتبة البرومتات',icon:'library',href:'../prompts/',c:'#eab308,#a16207'},
   {id:'identity',name:'الهوية البصرية',icon:'palette',href:'../identity/',c:'#d946ef,#a21caf'},
 ];
+function hexA(h,al){h=String(h).trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${al})`}
+function gGrad(c,al){return c.split(',').map(x=>hexA(x,al)).join(',')}
 function lpTile(a){
-  const inner=`<span class="lp-ic" style="background:linear-gradient(140deg,${a.c})"><i data-lucide="${a.icon}"></i></span><span class="lp-name">${esc(a.name)}</span>`;
+  const inner=`<span class="lp-ic" style="background:linear-gradient(140deg,${gGrad(a.c,.82)})"><i data-lucide="${a.icon}"></i></span><span class="lp-name">${esc(a.name)}</span>`;
   return a.href?`<a class="lp-tile" href="${a.href}"${a.href.startsWith('http')?' target="_blank" rel="noopener"':''}>${inner}</a>`
               :`<button class="lp-tile" type="button" onclick="go('${a.id}')">${inner}</button>`;
 }
@@ -674,17 +676,18 @@ const WALL_IMAGES=[
 function wpList(){return (S.settings&&S.settings.wallpapers)||[]}
 function wpActiveImg(){const w=S.settings&&S.settings.wallpaper;return w&&w.type==='image'?(w.id||'__legacy'):null}
 function applyWallpaper(){
-  const el=document.querySelector('.content');if(!el)return;
+  const el=document.querySelector('.shell');if(!el)return;
+  const c=document.querySelector('.content');if(c){c.style.background='';c.style.backgroundAttachment=''}
   const w=(S.settings&&S.settings.wallpaper)||null;
   if(!w||w.type==='none'||(w.type==='preset'&&w.key==='none')){el.style.background='';el.style.backgroundAttachment='';return}
   if(w.type==='url'){
-    el.style.background=`linear-gradient(rgba(10,10,11,.62),rgba(10,10,11,.82)), url("${w.url}") center/cover no-repeat`;
+    el.style.background=`linear-gradient(rgba(10,10,11,.58),rgba(10,10,11,.80)), url("${w.url}") center/cover no-repeat`;
     el.style.backgroundAttachment='fixed';
   }else if(w.type==='image'){
     let val=w.value;
     if(!val&&w.id){const f=wpList().find(x=>x.id===w.id);val=f&&f.value}
     if(val){
-      el.style.background=`linear-gradient(rgba(10,10,11,.66),rgba(10,10,11,.84)), url("${val}") center/cover no-repeat`;
+      el.style.background=`linear-gradient(rgba(10,10,11,.62),rgba(10,10,11,.82)), url("${val}") center/cover no-repeat`;
       el.style.backgroundAttachment='fixed';
     }
   }else if(w.type==='preset'){
@@ -860,8 +863,8 @@ function focusInner(){
   const everySec=(S.focus.breakEveryMin||50)*60;const toBreak=Math.max(0,everySec-FOCUS.sinceBreak);
   const done=sec>=goal;
   return `<div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
-    <div style="width:118px;height:118px;border-radius:50%;background:conic-gradient(${done?'var(--good)':'var(--gold)'} ${pct}%, var(--panel3) 0);display:grid;place-items:center;flex:0 0 auto">
-      <div style="width:94px;height:94px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center">
+    <div style="width:118px;height:118px;border-radius:50%;background:conic-gradient(${done?'var(--good)':'var(--gold)'} ${pct}%, rgba(255,255,255,.10) 0);display:grid;place-items:center;flex:0 0 auto;box-shadow:0 6px 18px rgba(0,0,0,.3)">
+      <div style="width:94px;height:94px;border-radius:50%;background:rgba(20,20,24,.42);backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);border:1px solid rgba(255,255,255,.12);box-shadow:inset 0 1px 0 rgba(255,255,255,.14);display:grid;place-items:center;text-align:center">
         <div><div style="font-size:21px;font-weight:900">${pct}%</div><div style="font-size:11px;color:var(--muted)">من ${goalH} ساعات</div></div></div></div>
     <div style="flex:1;min-width:200px">
       <div style="font-size:13px;color:var(--muted)">${inBreak?'<i class="inl" data-lucide="coffee"></i> وقت البريك':(done?'<i class="inl" data-lucide="party-popper"></i> أكملت هدف اليوم':'<i class="inl" data-lucide="timer"></i> تركيز اليوم')}</div>
@@ -898,7 +901,7 @@ function prayerInner(){
       <div style="font-size:13px;color:var(--muted)"><span class="inl"><i data-lucide="map-pin"></i></span> ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()">⚙ تغيير</button></div>
       ${np?`<div style="font-size:13px">القادمة: <b style="color:var(--gold2)">${np.name}</b> بعد ${ch>0?ch+'س ':''}${cm}د</div>`:''}</div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
-      ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'var(--goldsoft)':'var(--panel2)'};border:1px solid ${isNext?'var(--gold)':'var(--line)'};border-radius:10px;padding:8px 3px"><div style="font-size:12px;color:var(--muted)">${it[1]}</div><div style="font-weight:800;font-size:13px">${fmt12(t[it[0]])}</div></div>`}).join('')}
+      ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'rgba(245,166,35,.18)':'rgba(255,255,255,.05)'};backdrop-filter:blur(8px) saturate(140%);-webkit-backdrop-filter:blur(8px) saturate(140%);border:1px solid ${isNext?'var(--gold)':'rgba(255,255,255,.10)'};border-radius:10px;padding:8px 3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)"><div style="font-size:12px;color:var(--muted)">${it[1]}</div><div style="font-weight:800;font-size:13px">${fmt12(t[it[0]])}</div></div>`}).join('')}
     </div>`;
 }
 function checkPrayerAlert(){const t=PRAYER.timings;if(!t)return;const now=new Date();const hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
