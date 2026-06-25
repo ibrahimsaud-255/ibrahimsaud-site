@@ -16,9 +16,6 @@ const FIELDS: [string, string][] = [
   ["email", "البريد"],
   ["phone", "الجوال/واتساب"],
   ["field", "المجال"],
-  ["shoot_date", "التاريخ المفضّل"],
-  ["shoot_time", "الوقت المفضّل"],
-  ["shoot_date_alt", "تاريخ بديل"],
   ["value", "الفائدة للمستمع"],
   ["journey", "السعي/الرحلة"],
   ["turning_point", "موقف/تحوّل"],
@@ -46,16 +43,13 @@ async function sendEmail(key: string, from: string, to: string, subject: string,
 
 function guestEmail(rec: Record<string, unknown>) {
   const name = esc(rec.nickname || rec.full_name || "ضيفنا الكريم");
-  const date = esc(rec.shoot_date || "—");
-  const time = esc(rec.shoot_time || "");
   return `
   <div dir="rtl" style="font-family:Tahoma,Arial,sans-serif;background:#0a0a0b;color:#f4f4f5;padding:28px;border-radius:14px;max-width:560px;margin:auto">
     <div style="font-size:40px;text-align:center">🎙️</div>
     <h2 style="color:#f5a623;text-align:center;margin:6px 0 16px">وصلنا طلبك للمشاركة في بودكاست سَعي</h2>
     <p>أهلاً ${name}،</p>
-    <p>شكراً لتسجيلك للمشاركة كضيف في <b>بودكاست سَعي</b> 🌟 — استلمنا طلبك بنجاح.</p>
-    <p>موعدك المبدئي اللي اخترته: <b>${date}${time ? " — " + time : ""}</b>.</p>
-    <p>فريقنا بيتواصل معك قريباً لتأكيد <b>الموعد النهائي</b> وتفاصيل التصوير. لو عندك أي استفسار، رد على هذا الإيميل.</p>
+    <p>شكراً لتسجيلك للمشاركة كضيف في <b>بودكاست سَعي</b> — استلمنا طلبك بنجاح.</p>
+    <p>فريقنا بيتواصل معك قريباً لتحديد <b>موعد التصوير</b> حسب جدولك وجدول الأستديو، ومناقشة تفاصيل الحلقة. لو عندك أي استفسار، رد على هذا الإيميل.</p>
     <p style="margin-top:22px;color:#9b9ba3">نشوفك على خير 🤍<br>فريق سَعي — إبراهيم سعود</p>
   </div>`;
 }
@@ -72,19 +66,27 @@ function hostEmail(rec: Record<string, unknown>) {
   </div>`;
 }
 
+const CORS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
+};
+const JSON_CORS = { ...CORS, "Content-Type": "application/json" };
+
 Deno.serve(async (req) => {
-  if (req.method !== "POST") return new Response("ok");
+  if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  if (req.method !== "POST") return new Response("ok", { headers: CORS });
   try {
     const KEY = Deno.env.get("RESEND_API_KEY");
     const FROM = Deno.env.get("RESEND_FROM") || "سَعي <onboarding@resend.dev>";
     const ADMIN = Deno.env.get("ADMIN_EMAIL") || "ibrahimsaud25@gmail.com";
     const SECRET = Deno.env.get("WEBHOOK_SECRET");
-    if (!KEY) return new Response(JSON.stringify({ error: "RESEND_API_KEY غير مضبوط" }), { status: 500 });
+    if (!KEY) return new Response(JSON.stringify({ error: "RESEND_API_KEY غير مضبوط" }), { status: 500, headers: JSON_CORS });
 
     // تحقّق بسيط من سرّ الويب هوك (إن ضُبط)
     if (SECRET) {
       const got = (req.headers.get("authorization") || "").replace(/^Bearer\s+/i, "");
-      if (got !== SECRET) return new Response("unauthorized", { status: 401 });
+      if (got !== SECRET) return new Response("unauthorized", { status: 401, headers: CORS });
     }
 
     const body = await req.json().catch(() => ({}));
@@ -100,8 +102,8 @@ Deno.serve(async (req) => {
       try { await sendEmail(KEY, FROM, guestTo, "وصلنا طلبك للمشاركة في بودكاست سَعي 🎙️", guestEmail(rec)); results.guest = "ok"; }
       catch (e) { results.guest = String(e instanceof Error ? e.message : e); }
     }
-    return new Response(JSON.stringify({ ok: true, results }), { headers: { "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ ok: true, results }), { headers: JSON_CORS });
   } catch (e) {
-    return new Response(JSON.stringify({ error: String(e instanceof Error ? e.message : e) }), { status: 500 });
+    return new Response(JSON.stringify({ error: String(e instanceof Error ? e.message : e) }), { status: 500, headers: JSON_CORS });
   }
 });

@@ -148,7 +148,7 @@ footer{color:var(--muted);text-align:center;font-size:12.5px;margin-top:24px}
 </div>
 </section>
 <section class="page" data-name="التواصل">
-<div class="eyebrow">الخطوة ٣</div>
+<div class="eyebrow">الخطوة ٣ · الأخيرة</div>
 <h2>حسابات التواصل</h2>
 <p class="muted">تساعدنا نفهم محتواك وأسلوبك ونحضّر محاور أقرب لك.</p>
 <div class="check">
@@ -171,63 +171,17 @@ footer{color:var(--muted);text-align:center;font-size:12.5px;margin-top:24px}
 <label>ألصق نبذة عنك أو روابط أبرز محتوى تقدّمه <span class="hint">(يحسّن التحليل كثير)</span></label>
 <textarea name="bio_links" placeholder="نبذة قصيرة + أهم منشور/مقطع/مقال يمثّلك"></textarea>
 </div>
-<div class="nav">
-<button type="button" class="btn btn-ghost" data-prev>السابق</button>
-<button type="button" class="btn btn-primary" data-next>التالي ←</button>
-</div>
-</section>
-<section class="page" data-name="القهوة">
-<div class="eyebrow">الخطوة ٤</div>
-<h2>جلسة قهوة قبل التصوير؟</h2>
-<p class="muted">بعض الضيوف يحبّون نلتقي قهوة أو شاهي نكسر الحواجز ونتفق على المحاور قبل الكاميرا. اختياري تماماً.</p>
-<div class="check">
-<input type="checkbox" id="wantCoffee" name="want_coffee">
-<label for="wantCoffee" style="margin:0">نعم، أحب نلتقي قهوة/شاهي قبل التصوير</label>
-</div>
-<div id="coffeeBlock" class="hidden">
-<div class="row">
-<div><label>المدينة / المكان المفضّل</label><input type="text" name="coffee_place" placeholder="الرياض — حي …"></div>
-<div><label>أوقات تناسبك</label><input type="text" name="coffee_time" placeholder="مساء الثلاثاء/الأربعاء"></div>
-</div>
-</div>
-<div class="nav">
-<button type="button" class="btn btn-ghost" data-prev>السابق</button>
-<button type="button" class="btn btn-primary" data-next>التالي ←</button>
-</div>
-</section>
-<section class="page" data-name="الموعد">
-<div class="eyebrow">الخطوة ٥ · الأخيرة</div>
-<h2>موعد تصوير الحلقة</h2>
-<p class="muted">اختر موعداً مبدئياً يناسبك، ونأكّده معك بالإيميل + دعوة تقويم.</p>
-<div class="row">
-<div><label>التاريخ المفضّل <span class="req">*</span></label><input type="date" name="shoot_date" id="shootDate" required></div>
-<div><label>الوقت المفضّل <span class="req">*</span></label>
-<select name="shoot_time" required>
-<option value="">اختر الوقت</option>
-<option>10:00 صباحاً</option><option>12:00 ظهراً</option><option>2:00 عصراً</option>
-<option>4:00 عصراً</option><option>6:00 مساءً</option><option>8:00 مساءً</option><option>9:00 مساءً</option><option>9:30 مساءً</option><option>10:00 مساءً</option>
-</select>
-</div>
-</div>
-<label>تاريخ بديل (احتياطي) <span class="hint">(اختياري)</span></label>
-<input type="date" name="shoot_date_alt" id="shootDateAlt">
-<div class="commit">
-<div class="check">
-<input type="checkbox" id="commit" name="commitment" required>
-<label for="commit" style="margin:0"><b>رسالة التزام:</b> ألتزم بالموعد اللي اخترته، وأبلّغ قبل <b>٤٨ ساعة</b> على الأقل لو احتجت أأجّله. وأفهم إن وقت الفريق والإعداد محجوز خصيصاً لحلقتي.</label>
-</div>
-</div>
 <div class="err-msg" data-err></div>
 <div class="nav">
 <button type="button" class="btn btn-ghost" data-prev>السابق</button>
-<button type="submit" class="btn btn-primary" id="submitBtn">إرسال وحجز الموعد ✓</button>
+<button type="submit" class="btn btn-primary" id="submitBtn">أرسِل بياناتي ✓</button>
 </div>
 </section>
 <section class="page" data-name="تم" data-final>
 <div class="success">
 <div class="tick">✓</div>
 <h2>تم استلام بياناتك!</h2>
-<p class="lead">بيوصلك إيميل تأكيد بموعدك قريباً. متحمّسين لحلقتك في سَعي 🤍</p>
+<p class="lead">وصلك إيميل تأكيد، وبنتواصل معك قريباً لتحديد موعد التصوير حسب جدولك وجدول الأستديو. متحمّسين لحلقتك في سَعي 🤍</p>
 </div>
 </section>
 </form>
@@ -290,11 +244,6 @@ if(e.target.matches('[data-prev]')) show(idx-1);
 });
 const noSocial = document.getElementById('noSocial');
 noSocial.addEventListener('change',()=>document.getElementById('socialBlock').classList.toggle('hidden', noSocial.checked));
-const wantCoffee = document.getElementById('wantCoffee');
-wantCoffee.addEventListener('change',()=>document.getElementById('coffeeBlock').classList.toggle('hidden', !wantCoffee.checked));
-const today = new Date().toISOString().split('T')[0];
-document.getElementById('shootDate').min = today;
-document.getElementById('shootDateAlt').min = today;
 form.addEventListener('submit', async (e)=>{
 e.preventDefault();
 if(idx !== inputPages.length-1){ if(validatePage(pages[idx])) show(idx+1); return; }
@@ -302,11 +251,10 @@ if(!validatePage(pages[idx])) return;
 const btn = document.getElementById('submitBtn');
 btn.disabled = true; btn.textContent='جاري الإرسال…';
 const data = Object.fromEntries(new FormData(form).entries());
-['no_social','want_coffee','commitment'].forEach(k=>data[k]=form.elements[k].checked);
+['no_social'].forEach(k=>{ if(form.elements[k]) data[k]=form.elements[k].checked; });
 data.submitted_at = new Date().toISOString();
-// حقول التاريخ الفارغة ترسَل null (لا قيمة نصية فارغة)
-['shoot_date','shoot_date_alt'].forEach(k=>{ if(!data[k]) data[k]=null; });
 try{
+// 1) حفظ بيانات الضيف في قاعدة البيانات
 const res = await fetch(SUPABASE_URL+'/rest/v1/'+SUPABASE_TABLE, {
 method:'POST',
 headers:{
@@ -318,11 +266,23 @@ headers:{
 body: JSON.stringify(data)
 });
 if(!res.ok) throw new Error('HTTP '+res.status);
+// 2) إرسال إشعارات الإيميل (تنبيه لإبراهيم + تأكيد للضيف) عبر دالة guest-notify
+try{
+await fetch(SUPABASE_URL+'/functions/v1/guest-notify', {
+method:'POST',
+headers:{
+'apikey': SUPABASE_KEY,
+'Authorization': 'Bearer '+SUPABASE_KEY,
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(data)
+});
+}catch(_){ /* لا نمنع نجاح التسجيل لو تعذّر إرسال الإيميل */ }
 show(pages.length-1);
 }catch(err){
 const e2=pages[idx].querySelector('[data-err]');
 if(e2) e2.textContent='صار خطأ بالإرسال، حاول مرة ثانية.';
-btn.disabled=false; btn.textContent='إرسال وحجز الموعد ✓';
+btn.disabled=false; btn.textContent='أرسِل بياناتي ✓';
 }
 });
 show(0);
