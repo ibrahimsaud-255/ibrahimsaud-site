@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import Reveal from "@/components/Reveal";
+import PodcastGear from "@/components/PodcastGear";
 import {
   site,
   waLink,
@@ -87,6 +88,9 @@ export default function PackagesPage() {
             ))}
           </div>
         </section>
+
+        {/* استعراض المعدّات ثلاثي الأبعاد */}
+        <PodcastGear />
 
         {/* المخرجات المشتركة */}
         <section className="px-5 py-16">

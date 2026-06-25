@@ -235,6 +235,24 @@ export default function PlaygroundServices() {
             </div>
           ))}
         </div>
+
+        {/* دعوة لباقات الإعلانات بأسعارها */}
+        <Reveal>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 text-center sm:justify-start">
+            <a
+              href="/ad-packages/"
+              className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
+            >
+              🎬 باقات الإعلانات وأسعارها
+            </a>
+            <a
+              href="/studio-rental/"
+              className="inline-flex items-center gap-2 rounded-full border border-line px-7 py-3.5 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
+            >
+              🎥 احجز الاستوديو
+            </a>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

@@ -6,8 +6,10 @@ import { site, waLink } from "@/lib/site";
 const links = [
   { href: "#podcast", label: "البودكاست" },
   { href: "#studio", label: "الاستوديو" },
-  { href: "#services", label: "الخدمات" },
+  { href: "/ad-packages/", label: "باقات الإعلانات" },
+  { href: "/studio-rental/", label: "احجز الاستوديو" },
   { href: "#works", label: "الأعمال" },
+  { href: "/blog/", label: "المدونة" },
 ];
 
 export default function Nav() {

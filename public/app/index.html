@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>نظام إبراهيم سعود</title>
+<title>مؤسسة حروف ودروس</title>
 <meta name="theme-color" content="#0a0a0b">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="إبراهيم سعود">
+<meta name="apple-mobile-web-app-title" content="حروف ودروس">
 <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%95%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85_%D8%B3%D8%B9%D9%88%D8%AF.png">
 <link rel="manifest" href='data:application/manifest+json,{"name":"Ibrahim Saud System","short_name":"Ibrahim Saud","start_url":".","scope":".","display":"standalone","orientation":"portrait","background_color":"%230a0a0b","theme_color":"%230a0a0b","icons":[{"src":"https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%95%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85_%D8%B3%D8%B9%D9%88%D8%AF.png","sizes":"any","type":"image/png","purpose":"any"}]}'>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -323,9 +323,9 @@ let STATE_ID=null, USER=null, saveTimer=null;
 /* ===== STATE ===== */
 const KEY='ibsaud_erp_v1';
 const def={
-  settings:{brand:'إبراهيم سعود',owner:'إبراهيم سعود',email:'ibrahimsaud25@gmail.com',phone:'966504895213',
+  settings:{brand:'مؤسسة حروف ودروس',owner:'إبراهيم سعود',email:'ibrahimsaud25@gmail.com',phone:'966504895213',
     currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',salePrefix:'S',salesperson:'إبراهيم سعود',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',bankName:'',iban:'',
-    vat:{enabled:false,rate:15,number:'',sellerName:'إبراهيم سعود',address:'الرياض، السعودية',cr:''}},
+    vat:{enabled:false,rate:15,number:'',sellerName:'مؤسسة حروف ودروس',address:'الرياض، السعودية',cr:''}},
   products:[
     {id:'p_pod',name:'إنتاج حلقة بودكاست',price:2000,unit:'حلقة',desc:'تصوير + مونتاج + ١٠ مقاطع قصيرة + تصاميم'},
     {id:'p_studio',name:'Studio Video Production – Filming & Editing',price:1500,unit:'فيديو',desc:''},
@@ -522,6 +522,7 @@ function renderHome(){
           <a href="../ppros/ai.html" target="_blank" style="color:var(--muted);font-size:13px">↳ الذكاء الاصطناعي الداخلي</a>
           <a href="../ppros/edu.html" target="_blank" style="color:var(--muted);font-size:13px">↳ المنصة التعليمية</a>
           <a href="./studio.html" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px">🎬 مولّد المحتوى والنصوص الإعلانية</a>
+          <a href="../prompts/" target="_blank" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px">🗂️ مكتبة البرومتات (احفظ وانسخ)</a>
         </div>
       </div>
       <div class="card"><h3>آخر الفواتير</h3>${miniList(S.invoices.slice(-5).reverse(),i=>`${esc(i.client)} — ${money(invTotal(i))} ${pill(i.status)}`,'لا فواتير')}</div>
@@ -641,6 +642,12 @@ function clientFieldHTML(idAttr,current){return `<input id="${idAttr}" list="__c
 function clientItems(contactId){if(!contactId)return {appts:[],invoices:[],projects:[]};return {appts:S.appointments.filter(a=>a.contactId===contactId),invoices:S.invoices.filter(i=>i.contactId===contactId),projects:S.projects.filter(p=>p.contactId===contactId)}}
 // ترحيل آمن: يحوّل الأسماء النصية القديمة لجهات اتصال مربوطة (idempotent)
 function migrateData(){
+  // ترحيل لمرّة واحدة: تحديث الاسم القديم إلى اسم المؤسسة المسجّل (قابل للتغيير من الإعدادات لاحقاً)
+  if(S.settings && !S.settings.brandMigrated){
+    if((S.settings.brand||'')==='إبراهيم سعود')S.settings.brand='مؤسسة حروف ودروس';
+    if(S.settings.vat && (S.settings.vat.sellerName||'')==='إبراهيم سعود')S.settings.vat.sellerName='مؤسسة حروف ودروس';
+    S.settings.brandMigrated=true;
+  }
   (S.projects||[]).forEach(p=>{
     if(!p.taskStages||!p.taskStages.length)p.taskStages=JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES));
     if(!p.contactId&&p.client)p.contactId=findOrCreateContact(p.client);
@@ -1220,12 +1227,12 @@ function printDoc(type,id){
   const s=S.settings;const sub=docTotal(d);const tax=d.vat?sub*(Number(d.vatRate||0)/100):0;const total=sub+tax;
   const gross=(d.items||[]).reduce((a,it)=>a+Number(it.qty||0)*Number(it.price||0),0);const disc=gross-sub;const paid=isInv?invPaid(d):0;const due=isInv?Math.max(0,total-paid):0;
   let qrBlock='';
-  if(isInv||isCredit){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(s.vat.sellerName||s.brand,s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center;margin-top:8px">${qrImg(b64)}<div style="font-size:10px;color:#64748b">رمز QR (زاتكا)</div></div>`;}
+  if(isInv||isCredit){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(s.vat.sellerName||s.brand,s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center;margin-top:8px">${qrImg(b64)}<div style="font-size:10px;color:#64748b">رمز QR</div></div>`;}
   const inner=`
    <div style="font-family:Tajawal,Arial,sans-serif;direction:rtl;color:#0a0a0a;max-width:760px;margin:0 auto">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #f5a623;padding-bottom:14px;margin-bottom:20px">
-      <div>${s.logo?`<img src="${s.logo}" style="height:50px;margin-bottom:6px">`:`<div style="font-size:30px;font-weight:900">إبراهيم <span style="color:#f5a623">سعود</span></div>`}
-      <div style="color:#475569;font-size:13px">${esc(s.owner)}</div>
+      <div>${s.logo?`<img src="${s.logo}" style="height:50px;margin-bottom:6px"><br>`:''}<div style="font-size:26px;font-weight:900;color:#0a0a0a">${esc(s.brand||'مؤسسة حروف ودروس')}</div>
+      ${s.owner?`<div style="color:#475569;font-size:13px">${esc(s.owner)}</div>`:''}
       <div style="color:#475569;font-size:13px">${esc(s.email)}${s.phone?' | '+esc(s.phone):''}</div>
       ${(isInv||isCredit)&&s.vat.number?`<div style="color:#475569;font-size:13px">الرقم الضريبي: ${esc(s.vat.number)}</div>`:''}
       ${(isInv||isCredit)&&s.vat.cr?`<div style="color:#475569;font-size:13px">السجل التجاري: ${esc(s.vat.cr)}</div>`:''}</div>
@@ -1252,7 +1259,7 @@ function printDoc(type,id){
     ${d.notes?`<div style="margin-top:18px;color:#475569"><b>ملاحظات:</b> ${esc(d.notes)}</div>`:''}
     ${(isInv&&(s.bankName||s.iban))?`<div style="margin-top:12px;color:#475569;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName)} ${esc(s.iban)}</div>`:''}
     ${(isInv&&s.terms)?`<div style="margin-top:8px;color:#64748b;font-size:12px">${esc(s.terms)}</div>`:''}
-    <div style="margin-top:30px;text-align:center;color:#94a3b8;font-size:12px">شكراً لتعاملكم — ${esc(s.brand||'إبراهيم سعود')}</div>
+    <div style="margin-top:30px;text-align:center;color:#94a3b8;font-size:12px">شكراً لتعاملكم — ${esc(s.brand||'مؤسسة حروف ودروس')}</div>
    </div>`;
   const html=`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800;900&display=swap" rel="stylesheet">
