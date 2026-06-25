@@ -18,6 +18,15 @@
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
 <style>
+  /* ===== خط ثمانية (Thmanyah) — خط النظام ===== */
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Light.woff2") format("woff2");font-weight:300;font-display:swap}
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:800 900;font-display:swap}
+  @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+  @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Black.woff2") format("woff2");font-weight:800 900;font-display:swap}
   :root{
     --bg:#0a0a0b; --panel:#141416; --panel2:#1d1d20; --panel3:#26262b; --line:#2c2c31;
     --ink:#f4f4f5; --muted:#9b9ba3; --gold:#f5a623; --gold2:#ffc24d; --goldsoft:rgba(245,166,35,.14);
@@ -26,7 +35,8 @@
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;height:100%}
-  body{font-family:'Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  body{font-family:'Thmanyah Sans','Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  .wordmark,.hero-card h1,.desk-head h1,.page-head h1,.pd-title,.login-box .wordmark{font-family:'Thmanyah Serif','Thmanyah Sans',serif}
   button{font-family:inherit;cursor:pointer}
   a{color:inherit;text-decoration:none}
   .hidden{display:none !important}
@@ -270,7 +280,7 @@
   .totals .grand{font-size:19px;font-weight:800;border-top:1px solid var(--line);margin-top:8px;padding-top:10px;color:var(--gold)}
   @media(max-width:760px){
     .row2,.row3{grid-template-columns:1fr}
-    .main{padding:16px}
+    .main{padding:16px 14px;max-width:100%}
     table{display:block;overflow-x:auto;white-space:nowrap;-webkit-overflow-scrolling:touch}
     .content-top{padding:0 14px}
     .page-head h1{font-size:21px}
@@ -279,6 +289,32 @@
     .modal-foot{flex-wrap:wrap}
     .btn{padding:12px 16px}
     .quick button{flex:1;min-width:120px}
+    /* تجاوب: شبكة البطاقات تتحوّل لعمود واحد، وتُلغى امتدادات الأعمدة */
+    .grid{grid-template-columns:1fr !important}
+    .grid > *{grid-column:auto !important;min-width:0 !important}
+    .stats{grid-template-columns:1fr 1fr !important}
+    .stats > *{min-width:0 !important}
+    .wp-grid{grid-template-columns:repeat(auto-fill,minmax(86px,1fr)) !important}
+    .lp-grid{grid-template-columns:repeat(auto-fill,minmax(76px,1fr)) !important}
+    .desk-grid{grid-template-columns:repeat(auto-fill,minmax(88px,1fr)) !important;gap:22px 8px}
+    .desk-head h1{font-size:24px}
+    .page-head{gap:8px}
+    .toolbar{gap:8px}
+    .statusbar{overflow-x:auto;flex-wrap:nowrap}
+    .statusbar .st{flex:0 0 auto}
+    .kanban{grid-auto-columns:minmax(82vw,1fr)}
+    /* نافذة منبثقة مريحة على الجوال */
+    .modal-bg{padding:10px}
+    .modal{max-height:94vh;border-radius:14px}
+    .modal-body{padding:18px 16px}
+    .modal-head,.modal-foot{padding:14px 16px}
+    /* مساحة آمنة لحواف الجوال (الناتش/الشريط السفلي) */
+    .content-top{padding-top:env(safe-area-inset-top)}
+    .main{padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+  }
+  @media(max-width:430px){
+    .desk-grid{grid-template-columns:repeat(auto-fill,minmax(80px,1fr)) !important}
+    .lp-grid{grid-template-columns:repeat(4,1fr) !important}
   }
 
   /* ===== PROJECT DETAIL + TASK BOARD ===== */
@@ -321,6 +357,30 @@
   .ed-toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px;position:sticky;top:0;background:var(--panel);padding-bottom:8px;z-index:5}
   .task-modal{max-width:780px}
   .upbar{font-size:12px;color:var(--gold2)}
+
+  /* ===== هوية Apple Liquid Glass — تحويل الأسطح إلى زجاج شفّاف ===== */
+  .card,.stat,.statusbar,.totals,.kcol,.empty,.cal-cell,.kitem,.ktask,.badge-note{
+    background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.022));
+    backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);
+    border-color:rgba(255,255,255,.10);
+    box-shadow:0 10px 30px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.10);
+  }
+  .stat:after{opacity:.45}
+  table{background:linear-gradient(160deg,rgba(255,255,255,.05),rgba(255,255,255,.02));backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border-color:rgba(255,255,255,.10)}
+  th{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+  td{border-color:rgba(255,255,255,.06)}
+  tbody tr:hover{background:rgba(255,255,255,.05)}
+  .modal{background:linear-gradient(165deg,rgba(26,26,30,.82),rgba(14,14,17,.9));backdrop-filter:blur(26px) saturate(160%);-webkit-backdrop-filter:blur(26px) saturate(160%);border:1px solid rgba(255,255,255,.12);box-shadow:0 26px 64px rgba(0,0,0,.62),inset 0 1px 0 rgba(255,255,255,.1)}
+  .modal-head,.modal-foot{background:rgba(20,20,24,.55);backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);border-color:rgba(255,255,255,.1)}
+  .slash{background:rgba(30,30,35,.82);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);border-color:rgba(255,255,255,.12)}
+  .btn-ghost{background:rgba(255,255,255,.06);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border-color:rgba(255,255,255,.14)}
+  .btn-ghost:hover{background:rgba(255,255,255,.12);border-color:var(--gold)}
+  .quick button{background:rgba(255,255,255,.06);backdrop-filter:blur(12px) saturate(140%);-webkit-backdrop-filter:blur(12px) saturate(140%);border-color:rgba(255,255,255,.12)}
+  .hero-card{background:linear-gradient(120deg,rgba(245,166,35,.20),rgba(255,255,255,.04));backdrop-filter:blur(18px) saturate(150%);-webkit-backdrop-filter:blur(18px) saturate(150%);border-color:rgba(255,255,255,.12);box-shadow:0 16px 44px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.12)}
+  .pill{backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  .content-top{background:rgba(13,13,15,.55)}
+  /* تباعد الحروف لخط ثمانية */
+  .wordmark{letter-spacing:0}
 </style>
 </head>
 <body>
@@ -386,7 +446,8 @@ const KEY='ibsaud_erp_v1';
 const def={
   settings:{brand:'مؤسسة حروف ودروس',owner:'إبراهيم سعود',email:'ibrahimsaud25@gmail.com',phone:'966504895213',
     currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',salePrefix:'S',salesperson:'إبراهيم سعود',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',bankName:'',iban:'',
-    vat:{enabled:false,rate:15,number:'',sellerName:'مؤسسة حروف ودروس',address:'الرياض، السعودية',cr:''}},
+    vat:{enabled:false,rate:15,number:'',sellerName:'مؤسسة حروف ودروس',address:'الرياض، السعودية',cr:''},
+    wallpaper:{type:'url',key:'tahoe-dark',url:'./wallpapers/tahoe-dark.jpg'},wallpapers:[]},
   products:[
     {id:'p_pod',name:'إنتاج حلقة بودكاست',price:2000,unit:'حلقة',desc:'تصوير + مونتاج + ١٠ مقاطع قصيرة + تصاميم'},
     {id:'p_studio',name:'Studio Video Production – Filming & Editing',price:1500,unit:'فيديو',desc:''},
@@ -596,23 +657,38 @@ const WALLS=[
   {key:'mesh',name:'شبكة',css:'radial-gradient(620px 420px at 14% 18%, rgba(245,166,35,.13), transparent 60%), radial-gradient(720px 520px at 86% 82%, rgba(45,212,191,.11), transparent 60%), #0a0a0b'},
   {key:'royal',name:'ملكي',css:'radial-gradient(900px 600px at 100% 0%, rgba(168,85,247,.18), transparent 55%), #0a0a0b'},
 ];
+/* خلفيات النظام الجاهزة (آبل macOS) — قابلة للاختيار افتراضياً */
+const WALL_IMAGES=[
+  {key:'tahoe-dark',name:'Tahoe داكن',url:'./wallpapers/tahoe-dark.jpg'},
+  {key:'tahoe-flow',name:'Tahoe تدفّق',url:'./wallpapers/tahoe-flow.jpg'},
+  {key:'tahoe-blue',name:'Tahoe أزرق',url:'./wallpapers/tahoe-blue.jpg'},
+  {key:'tahoe-sunset',name:'Tahoe غروب',url:'./wallpapers/tahoe-sunset.jpg'},
+  {key:'sequoia-forest',name:'Sequoia غابة',url:'./wallpapers/sequoia-forest.jpg'},
+  {key:'monterey-dark',name:'Monterey داكن',url:'./wallpapers/monterey-dark.jpg'},
+  {key:'monterey-black',name:'Monterey أسود',url:'./wallpapers/monterey-black.jpg'},
+  {key:'bigsur-color',name:'Big Sur ألوان',url:'./wallpapers/bigsur-color.jpg'},
+];
 function wpList(){return (S.settings&&S.settings.wallpapers)||[]}
 function wpActiveImg(){const w=S.settings&&S.settings.wallpaper;return w&&w.type==='image'?(w.id||'__legacy'):null}
 function applyWallpaper(){
   const el=document.querySelector('.content');if(!el)return;
   const w=(S.settings&&S.settings.wallpaper)||null;
   if(!w||w.type==='none'||(w.type==='preset'&&w.key==='none')){el.style.background='';el.style.backgroundAttachment='';return}
-  if(w.type==='image'){
+  if(w.type==='url'){
+    el.style.background=`linear-gradient(rgba(10,10,11,.62),rgba(10,10,11,.82)), url("${w.url}") center/cover no-repeat`;
+    el.style.backgroundAttachment='fixed';
+  }else if(w.type==='image'){
     let val=w.value;
     if(!val&&w.id){const f=wpList().find(x=>x.id===w.id);val=f&&f.value}
     if(val){
-      el.style.background=`linear-gradient(rgba(10,10,11,.80),rgba(10,10,11,.92)), url("${val}") center/cover no-repeat`;
+      el.style.background=`linear-gradient(rgba(10,10,11,.66),rgba(10,10,11,.84)), url("${val}") center/cover no-repeat`;
       el.style.backgroundAttachment='fixed';
     }
   }else if(w.type==='preset'){
     const p=WALLS.find(x=>x.key===w.key);el.style.background=p?p.css:'';el.style.backgroundAttachment='fixed';
   }
 }
+function wpPickUrl(key){const im=WALL_IMAGES.find(x=>x.key===key);if(!im)return;S.settings.wallpaper={type:'url',key:im.key,url:im.url};save();applyWallpaper();wpRenderBody();wpMsg('تم تطبيق الخلفية ✓');}
 function wpPick(key){S.settings.wallpaper={type:'preset',key};save();applyWallpaper();wpRenderBody();wpMsg('تم تطبيق الخلفية ✓');}
 function wpPickImage(id){const f=wpList().find(x=>x.id===id);if(!f)return;S.settings.wallpaper={type:'image',id:f.id,value:f.value};save();applyWallpaper();wpRenderBody();wpMsg('تم تطبيق الخلفية ✓');}
 function wpDelImage(id){
@@ -651,7 +727,11 @@ function wpRenderBody(){
   const cur=(S.settings&&S.settings.wallpaper)||{type:'preset',key:'none'};
   const mine=wpList();
   body.innerHTML=`
-    <div class="wp-sec-title"><i data-lucide="palette"></i> خلفيات الهوية الجاهزة</div>
+    <div class="wp-sec-title"><i data-lucide="apple"></i> خلفيات النظام (آبل)</div>
+    <div class="wp-grid">
+      ${WALL_IMAGES.map(im=>{const active=cur.type==='url'&&cur.key===im.key;return `<div class="wp-chip img" onclick="wpPickUrl('${im.key}')" style="background-image:url('${im.url}');border:2px solid ${active?'var(--gold)':'var(--line)'}" title="${esc(im.name)}"><span>${active?'✓ مُفعّلة':esc(im.name)}</span></div>`}).join('')}
+    </div>
+    <div class="wp-sec-title"><i data-lucide="palette"></i> خلفيات متدرّجة</div>
     <div class="wp-grid">
       ${WALLS.map(w=>`<button type="button" class="wp-chip" onclick="wpPick('${w.key}')" style="background:${w.css};border:2px solid ${cur.type==='preset'&&cur.key===w.key?'var(--gold)':'var(--line)'}">${w.name}</button>`).join('')}
     </div>
@@ -1727,7 +1807,7 @@ function renderSettings(){
   const s=S.settings;const v=s.vat;
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>الإعدادات</h1><button class="btn btn-gold" onclick="saveSettings()"><i data-lucide="save"></i> حفظ الإعدادات</button></div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px;align-items:start">
+    <div class="grid" style="align-items:start">
 
       <div class="card"><h3 style="margin-top:0"><i data-lucide="image"></i> الشعار والهوية</h3>
         <div class="logo-upload"><img id="logoPrev" src="${s.logo||LOGO}" onerror="this.style.display='none'"><div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('logoFile').click()"><i data-lucide="upload"></i> رفع شعار</button><div style="color:var(--muted);font-size:12px;margin-top:6px">يظهر في القائمة والفواتير</div></div></div>

@@ -25,13 +25,15 @@ export default function Nav() {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-line/60 bg-ink/80 backdrop-blur-md"
-          : "border-b border-transparent"
+      className={`fixed inset-x-0 z-50 transition-all duration-300 ${
+        scrolled ? "top-2" : "top-4"
       }`}
     >
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-5 py-4">
+      <nav
+        className={`mx-auto flex max-w-5xl items-center justify-between rounded-2xl px-5 py-3 transition-all duration-300 ${
+          scrolled ? "glass-nav mx-3 md:mx-auto" : "border border-transparent"
+        }`}
+      >
         <a href="#top" className="flex items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -73,7 +75,7 @@ export default function Nav() {
       </nav>
 
       {open && (
-        <div className="border-t border-line bg-ink/95 px-5 py-4 md:hidden">
+        <div className="glass-nav mx-3 mt-2 rounded-2xl px-5 py-4 md:hidden">
           <div className="flex flex-col gap-4">
             {links.map((l) => (
               <a
