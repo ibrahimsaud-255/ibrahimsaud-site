@@ -46,3 +46,8 @@ supabase/.temp/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# dev scratch / editor junk
+.fuse_hidden*
+outputs/
+public/**/.fuse_hidden*

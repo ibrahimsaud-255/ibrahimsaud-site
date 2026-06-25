@@ -85,12 +85,15 @@
   .nav-foot{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:3px}
   .nav-foot a{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;color:var(--muted);font-weight:600;font-size:14px;cursor:pointer}
   .nav-foot a:hover{background:var(--panel2);color:var(--ink)}
+  .nav-foot a .nic{width:22px;display:inline-flex;align-items:center;justify-content:center}
+  .nav-foot a .nic svg{width:18px;height:18px}
   .content{display:flex;flex-direction:column;min-height:100vh;min-width:0}
   .content-top{height:60px;background:#0d0d0f;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:14px;padding:0 24px;position:sticky;top:0;z-index:30}
   .ct-left{display:flex;align-items:center;gap:12px}
   .ct-title{font-weight:800;font-size:18px}
   .ct-date{color:var(--muted);font-size:13px}
   .menu-toggle{display:none;background:none;border:none;color:var(--ink);font-size:22px;cursor:pointer}
+  .menu-toggle svg{width:22px;height:22px;vertical-align:-4px}
   /* branded home */
   .hero-card{background:linear-gradient(120deg,rgba(245,166,35,.18),rgba(245,166,35,.02));border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:24px}
   .hero-card h1{margin:0 0 4px;font-size:26px}
@@ -126,6 +129,26 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
   .card h3{margin-top:0}
 
+  /* ===== LAUNCHPAD (شبكة التطبيقات) ===== */
+  .lp-wrap{margin-bottom:28px}
+  .lp-head{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:16px}
+  .lp-head h2{margin:0;font-size:18px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .lp-head h2 svg{width:20px;height:20px;color:var(--gold2)}
+  .lp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:16px 12px}
+  .lp-tile{display:flex;flex-direction:column;align-items:center;gap:9px;padding:6px 2px;border:none;background:none;cursor:pointer;text-align:center;color:inherit}
+  .lp-ic{width:62px;height:62px;border-radius:19px;display:grid;place-items:center;box-shadow:0 10px 24px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.10);transition:transform .15s,box-shadow .15s}
+  .lp-ic svg{width:28px;height:28px;color:#fff;stroke-width:2.1}
+  .lp-tile:hover .lp-ic{transform:translateY(-4px) scale(1.05);box-shadow:0 16px 30px rgba(0,0,0,.55)}
+  .lp-tile:active .lp-ic{transform:translateY(-1px) scale(1.0)}
+  .lp-name{font-size:12.5px;font-weight:700;color:var(--ink);line-height:1.3}
+  /* خلفية الشاشة */
+  .wp-chip{position:relative;height:64px;border-radius:12px;color:#fff;font-size:11px;font-weight:800;display:grid;place-items:end center;padding-bottom:6px;cursor:pointer;text-shadow:0 1px 3px rgba(0,0,0,.6)}
+  .wp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:10px;margin-bottom:16px}
+  /* أيقونات داخل الملاحظات والعناوين والوسوم */
+  .badge-note svg{width:18px;height:18px;flex:0 0 auto;margin-top:2px;color:var(--gold2)}
+  .inl{display:inline-flex;align-items:center;vertical-align:-3px}
+  .inl svg{width:14px;height:14px}
+
   table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
   th,td{padding:12px 14px;text-align:right;border-bottom:1px solid var(--line);font-size:14px}
   th{background:var(--panel2);color:var(--muted);font-weight:700;font-size:13px}
@@ -160,6 +183,7 @@
   .kbadge{background:var(--panel3);color:var(--muted);border-radius:20px;font-size:12px;font-weight:700;padding:2px 9px}
   .empty{text-align:center;padding:48px 20px;color:var(--muted);background:var(--panel);border:1px dashed var(--line);border-radius:var(--radius)}
   .empty .big{font-size:44px;margin-bottom:8px}
+  .empty .big svg{width:46px;height:46px;color:var(--muted);opacity:.7}
   .link-btn{background:none;border:none;color:var(--gold);font-weight:700;font-size:13px;padding:4px 7px}
   .link-btn.del{color:var(--bad)}
   .toolbar{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap;align-items:center}
@@ -296,13 +320,13 @@
       <div class="logo-area" style="text-align:center"><img src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%95%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85_%D8%B3%D8%B9%D9%88%D8%AF.png" alt="إبراهيم سعود" style="max-width:155px;width:86%;display:block;margin:0 auto 6px;border-radius:10px" onerror="this.style.display='none'"><div class="tagline">نظام إدارة الأعمال</div></div>
       <nav class="nav" id="nav"></nav>
       <div class="nav-foot">
-        <a onclick="go('settings')"><span class="nic">⚙️</span> الإعدادات</a>
-        <a onclick="logout()"><span class="nic">⎋</span> تسجيل الخروج</a>
+        <a onclick="go('settings')"><span class="nic"><i data-lucide="settings"></i></span> الإعدادات</a>
+        <a onclick="logout()"><span class="nic"><i data-lucide="log-out"></i></span> تسجيل الخروج</a>
       </div>
     </aside>
     <div class="content">
       <header class="content-top">
-        <div class="ct-left"><button class="menu-toggle" onclick="toggleSidebar()">☰</button><div class="ct-title" id="ctTitle">الرئيسية</div></div>
+        <div class="ct-left"><button class="menu-toggle" onclick="toggleSidebar()"><i data-lucide="menu"></i></button><div class="ct-title" id="ctTitle">الرئيسية</div></div>
         <div style="display:flex;align-items:center;gap:10px"><span id="syncDot" title="مزامنة سحابية" style="color:var(--good);font-size:10px">●</span><div class="ct-date" id="ctDate"></div></div>
       </header>
       <div class="main" id="main"></div>
@@ -403,8 +427,8 @@ async function syncTasks(){if(!USER)return;try{const rows=[];S.projects.forEach(
 function renderTeam(){
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>الفريق (الفريلانسرز)</h1><button class="btn btn-gold" onclick="flAdd()">+ فريلانسر</button></div>
-    <div class="badge-note">🔗 <div>أضف فريلانسر ثم انسخ رابطه الخاص وأرسله له. يفتح الرابط ويرى <b>مهامه فقط</b> دون أي بيانات أخرى، ويقدر يضيفه كاختصار في جواله. أسند المهام له من «المشروع».</div></div>
-    ${!S.freelancers.length?emptyBox('👥','لا يوجد فريلانسرز بعد. أضف أول عضو.'):
+    <div class="badge-note"><i data-lucide="link"></i> <div>أضف فريلانسر ثم انسخ رابطه الخاص وأرسله له. يفتح الرابط ويرى <b>مهامه فقط</b> دون أي بيانات أخرى، ويقدر يضيفه كاختصار في جواله. أسند المهام له من «المشروع».</div></div>
+    ${!S.freelancers.length?emptyBox('users','لا يوجد فريلانسرز بعد. أضف أول عضو.'):
     `<table><thead><tr><th>الاسم</th><th>البريد</th><th>الرابط الخاص</th><th></th></tr></thead><tbody>
     ${S.freelancers.map(f=>`<tr><td><span style="font-size:18px">${f.icon||'🎬'}</span> ${esc(f.name)}</td><td>${esc(f.email||'—')}</td>
     <td style="white-space:nowrap"><button class="link-btn" onclick="flCopy('${f.token}')">📋 نسخ الرابط</button> <a class="link-btn" href="${flLink(f.token)}" target="_blank">فتح</a></td>
@@ -481,6 +505,75 @@ const APPS=[
 ];
 const RENDER={home:renderHome,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
+
+/* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
+const LAUNCH=[
+  {id:'antar',name:'عنتر',icon:'sparkles',c:'#8b5cf6,#6366f1'},
+  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
+  {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
+  {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
+  {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488'},
+  {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777'},
+  {id:'crm',name:'علاقات العملاء',icon:'handshake',c:'#f59e0b,#b45309'},
+  {id:'contacts',name:'العملاء',icon:'contact',c:'#0ea5e9,#0284c7'},
+  {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
+  {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
+  {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
+  {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
+  {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
+  {id:'prompts',name:'مكتبة البرومتات',icon:'library',href:'../prompts/',c:'#eab308,#a16207'},
+  {id:'identity',name:'الهوية البصرية',icon:'palette',href:'../identity/',c:'#d946ef,#a21caf'},
+];
+function lpTile(a){
+  const inner=`<span class="lp-ic" style="background:linear-gradient(140deg,${a.c})"><i data-lucide="${a.icon}"></i></span><span class="lp-name">${esc(a.name)}</span>`;
+  return a.href?`<a class="lp-tile" href="${a.href}"${a.href.startsWith('http')?' target="_blank" rel="noopener"':''}>${inner}</a>`
+              :`<button class="lp-tile" type="button" onclick="go('${a.id}')">${inner}</button>`;
+}
+function launchpadHTML(){
+  return `<div class="lp-wrap">
+    <div class="lp-head"><h2><i data-lucide="layout-grid"></i> التطبيقات</h2>
+      <button class="btn btn-ghost btn-sm" onclick="wallpaperModal()"><i data-lucide="image"></i> تخصيص الخلفية</button></div>
+    <div class="lp-grid">${LAUNCH.map(lpTile).join('')}</div>
+  </div>`;
+}
+
+/* ===== WALLPAPER (خلفية الشاشة) ===== */
+const WALLS=[
+  {key:'none',name:'بدون',css:'var(--panel2)'},
+  {key:'aurora',name:'شفق ذهبي',css:'radial-gradient(1200px 620px at 82% -12%, rgba(245,166,35,.22), transparent 60%), radial-gradient(900px 520px at 0% 100%, rgba(99,102,241,.14), transparent 55%), #0a0a0b'},
+  {key:'noir',name:'نوار',css:'radial-gradient(1000px 720px at 50% -5%, #18181c, #0a0a0b 72%)'},
+  {key:'sand',name:'رمل دافئ',css:'linear-gradient(160deg, #15110a 0%, #0a0a0b 60%)'},
+  {key:'mesh',name:'شبكة',css:'radial-gradient(620px 420px at 14% 18%, rgba(245,166,35,.13), transparent 60%), radial-gradient(720px 520px at 86% 82%, rgba(45,212,191,.11), transparent 60%), #0a0a0b'},
+  {key:'royal',name:'ملكي',css:'radial-gradient(900px 600px at 100% 0%, rgba(168,85,247,.18), transparent 55%), #0a0a0b'},
+];
+function applyWallpaper(){
+  const el=document.querySelector('.content');if(!el)return;
+  const w=(S.settings&&S.settings.wallpaper)||null;
+  if(!w||w.type==='none'||(w.type==='preset'&&w.key==='none')){el.style.background='';el.style.backgroundAttachment='';return}
+  if(w.type==='image'&&w.value){
+    el.style.background=`linear-gradient(rgba(10,10,11,.80),rgba(10,10,11,.92)), url("${w.value}") center/cover no-repeat`;
+    el.style.backgroundAttachment='fixed';
+  }else if(w.type==='preset'){
+    const p=WALLS.find(x=>x.key===w.key);el.style.background=p?p.css:'';el.style.backgroundAttachment='fixed';
+  }
+}
+function wpPick(key){S.settings.wallpaper={type:'preset',key};save();applyWallpaper();const m=document.getElementById('wpMsg');if(m)m.textContent='تم تطبيق الخلفية ✓';document.querySelectorAll('#wpPresets .wp-chip').forEach(b=>b.style.borderColor=(b.dataset.k===key?'var(--gold)':'var(--line)'));}
+function wpUpload(input){
+  const f=input.files&&input.files[0];if(!f)return;
+  if(f.size>3.5*1024*1024){const m=document.getElementById('wpMsg');if(m){m.style.color='var(--bad)';m.textContent='الصورة كبيرة (أكثر من 3.5MB). اختر صورة أصغر.'}return}
+  const r=new FileReader();r.onload=()=>{S.settings.wallpaper={type:'image',value:r.result};save();applyWallpaper();const m=document.getElementById('wpMsg');if(m){m.style.color='var(--muted)';m.textContent='تم رفع الخلفية وتطبيقها ✓'}document.querySelectorAll('#wpPresets .wp-chip').forEach(b=>b.style.borderColor='var(--line)')};r.readAsDataURL(f);
+}
+function wallpaperModal(){
+  const cur=(S.settings&&S.settings.wallpaper)||{type:'preset',key:'none'};
+  openModal('خلفية الشاشة',`
+    <p style="color:var(--muted);margin:0 0 14px;font-size:13px">اختر خلفية جاهزة بالهوية، أو ارفع صورتك الخاصة. تُطبَّق فوراً وتُحفظ في حسابك.</p>
+    <div id="wpPresets" class="wp-grid">
+      ${WALLS.map(w=>`<button type="button" class="wp-chip" data-k="${w.key}" onclick="wpPick('${w.key}')" style="background:${w.css};border:2px solid ${cur.type==='preset'&&cur.key===w.key?'var(--gold)':'var(--line)'}">${w.name}</button>`).join('')}
+    </div>
+    <div class="field"><label>أو ارفع صورة خلفية (PNG/JPG)</label><input type="file" id="wpFile" accept="image/*" onchange="wpUpload(this)"></div>
+    <div id="wpMsg" style="font-size:12px;color:var(--muted);margin-top:6px">${cur.type==='image'?'الخلفية الحالية: صورة مرفوعة ✓':''}</div>`,
+    ()=>closeModal());
+}
 function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
 function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
@@ -496,7 +589,7 @@ function renderHome(){
   const activeP=S.projects.filter(p=>(p.tasks||[]).some(t=>!t.done)).length;
   const upcoming=S.appointments.filter(a=>a.datetime>=new Date().toISOString()).sort((a,b)=>a.datetime.localeCompare(b.datetime));
   document.getElementById('main').innerHTML=`
-    <div class="hero-card"><h1>أهلاً ${esc(S.settings.owner)} 👋</h1><p>نظرة سريعة على أعمالك — أدِر كل شيء من مكان واحد.</p>
+    <div class="hero-card"><h1>أهلاً ${esc(S.settings.owner)}</h1><p>نظرة سريعة على أعمالك — أدِر كل شيء من مكان واحد.</p>
       <div class="quick">
         <button onclick="go('invoicing');docModal('invoice')"><i data-lucide="receipt-text"></i> فاتورة</button>
         <button onclick="go('sales');docModal('sale')"><i data-lucide="file-text"></i> عرض سعر</button>
@@ -514,23 +607,24 @@ function renderHome(){
       <div class="stat"><span class="ic"><i data-lucide="clapperboard"></i></span><div class="v">${activeP}</div><div class="l">مشاريع نشطة</div></div>
       <div class="stat"><span class="ic"><i data-lucide="handshake"></i></span><div class="v">${S.crm.length}</div><div class="l">فرص</div></div>
     </div>
+    ${launchpadHTML()}
     <div class="grid">
-      <div class="card"><h3>🎤 عروضي وأدواتي</h3>
+      <div class="card"><h3><i data-lucide="presentation"></i> عروضي وأدواتي</h3>
         <div style="display:flex;flex-direction:column;gap:9px">
-          <a href="../ppros/" target="_blank" style="color:var(--gold2);font-weight:700">📊 عرض محترفو الخصوصية (تقديمي)</a>
-          <a href="../ppros/media.html" target="_blank" style="color:var(--muted);font-size:13px">↳ الإعلام والتسويق</a>
-          <a href="../ppros/ai.html" target="_blank" style="color:var(--muted);font-size:13px">↳ الذكاء الاصطناعي الداخلي</a>
-          <a href="../ppros/edu.html" target="_blank" style="color:var(--muted);font-size:13px">↳ المنصة التعليمية</a>
-          <a href="./studio.html" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px">🎬 مولّد المحتوى والنصوص الإعلانية</a>
+          <a href="../ppros/" target="_blank" style="color:var(--gold2);font-weight:700"><span class="inl"><i data-lucide="monitor-play"></i></span> عرض محترفو الخصوصية (تقديمي)</a>
+          <a href="../ppros/media.html" target="_blank" style="color:var(--muted);font-size:13px"><span class="inl"><i data-lucide="corner-down-left"></i></span> الإعلام والتسويق</a>
+          <a href="../ppros/ai.html" target="_blank" style="color:var(--muted);font-size:13px"><span class="inl"><i data-lucide="corner-down-left"></i></span> الذكاء الاصطناعي الداخلي</a>
+          <a href="../ppros/edu.html" target="_blank" style="color:var(--muted);font-size:13px"><span class="inl"><i data-lucide="corner-down-left"></i></span> المنصة التعليمية</a>
+          <a href="./studio.html" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px"><span class="inl"><i data-lucide="clapperboard"></i></span> مولّد المحتوى والنصوص الإعلانية</a>
           <a href="../prompts/" target="_blank" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px"><i data-lucide="library" style="width:15px;height:15px;display:inline-block;vertical-align:-2px"></i> مكتبة البرومتات (احفظ وانسخ)</a>
           <a href="../identity/" target="_blank" style="color:var(--gold2);font-weight:700;border-top:1px solid var(--line);padding-top:9px"><i data-lucide="palette" style="width:15px;height:15px;display:inline-block;vertical-align:-2px"></i> دليل الهوية البصرية</a>
         </div>
       </div>
       <div class="card"><h3>آخر الفواتير</h3>${miniList(S.invoices.slice(-5).reverse(),i=>`${esc(i.client)} — ${money(invTotal(i))} ${pill(i.status)}`,'لا فواتير')}</div>
       <div class="card"><h3>مواعيد قادمة</h3>${miniList(upcoming.slice(0,5),a=>`${esc(a.title)} — ${a.datetime.replace('T',' ')}`,'لا مواعيد')}</div>
-      <div class="card"><h3>مهام معلّقة</h3>${miniList(S.projects.flatMap(p=>(p.tasks||[]).filter(t=>!t.done).map(t=>esc(t.title)+(t.assignee?' · 👤'+esc(t.assignee):''))).slice(0,6),x=>x,'لا مهام')}</div>
+      <div class="card"><h3>مهام معلّقة</h3>${miniList(S.projects.flatMap(p=>(p.tasks||[]).filter(t=>!t.done).map(t=>esc(t.title)+(t.assignee?' · '+esc(t.assignee):''))).slice(0,6),x=>x,'لا مهام')}</div>
     </div>`;
-  paintFocus();loadPrayer();startPrayerTicker();
+  applyWallpaper();paintFocus();loadPrayer();startPrayerTicker();
 }
 
 /* ===== FOCUS TIMER + PRAYER (نظام تركيز إسلامي) ===== */
@@ -581,7 +675,7 @@ function focusSettings(){const f=S.focus;openModal('إعدادات التركي�
   <div class="field"><label>بريك كل (دقائق)</label><input id="f_be" type="number" inputmode="decimal" value="${f.breakEveryMin||50}"></div></div>
   <div class="row2"><div class="field"><label>مدة البريك (دقائق)</label><input id="f_bl" type="number" inputmode="decimal" value="${f.breakLenMin||10}"></div>
   <div class="field"><label>التنبيه الصوتي</label><select id="f_snd"><option value="1" ${f.soundOn!==false?'selected':''}>مفعّل</option><option value="0" ${f.soundOn===false?'selected':''}>صامت</option></select></div></div>
-  <div class="badge-note">🎯 <div>الهدف الافتراضي ٣ ساعات تركيز واعٍ يومياً. عند بلوغ مدة البريك يصدر تنبيه صوتي وإشعار.</div></div>`,
+  <div class="badge-note"><i data-lucide="target"></i> <div>الهدف الافتراضي ٣ ساعات تركيز واعٍ يومياً. عند بلوغ مدة البريك يصدر تنبيه صوتي وإشعار.</div></div>`,
   ()=>{const g=i=>document.getElementById(i).value;f.goalMin=Number(g('f_goal'))||180;f.breakEveryMin=Number(g('f_be'))||50;f.breakLenMin=Number(g('f_bl'))||10;f.soundOn=g('f_snd')==='1';save();closeModal();paintFocus();});}
 /* ----- مواقيت الصلاة (Aladhan API) ----- */
 function loadPrayer(force){const day=localDay();if(!force&&PRAYER.date===day&&PRAYER.timings){paintPrayer();return;}if(PRAYER.loading)return;PRAYER.loading=true;paintPrayer();
@@ -598,7 +692,7 @@ function prayerInner(){
   const order=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
   const np=nextPrayerInfo();const now=new Date();const cd=np?Math.max(0,Math.floor((np.at-now)/1000)):0;const ch=Math.floor(cd/3600),cm=Math.floor(cd%3600/60);
   return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-      <div style="font-size:13px;color:var(--muted)">📍 ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()">⚙ تغيير</button></div>
+      <div style="font-size:13px;color:var(--muted)"><span class="inl"><i data-lucide="map-pin"></i></span> ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()">⚙ تغيير</button></div>
       ${np?`<div style="font-size:13px">القادمة: <b style="color:var(--gold2)">${np.name}</b> بعد ${ch>0?ch+'س ':''}${cm}د</div>`:''}</div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
       ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'var(--goldsoft)':'var(--panel2)'};border:1px solid ${isNext?'var(--gold)':'var(--line)'};border-radius:10px;padding:8px 3px"><div style="font-size:12px;color:var(--muted)">${it[1]}</div><div style="font-weight:800;font-size:13px">${fmt12(t[it[0]])}</div></div>`}).join('')}
@@ -659,7 +753,7 @@ function migrateData(){
   (S.sales||[]).forEach(d=>{if(!d.contactId&&d.client)d.contactId=findOrCreateContact(d.client)});
   (S.crm||[]).forEach(o=>{if(!o.contactId&&(o.clientName||o.client))o.contactId=findOrCreateContact(o.clientName||o.client)});
 }
-function emptyBox(ic,txt){return `<div class="empty"><div class="big">${ic}</div>${txt}</div>`}
+function emptyBox(ic,txt){const isName=/^[a-z][a-z0-9-]*$/.test(ic||'');const inner=isName?`<i data-lucide="${ic}"></i>`:ic;return `<div class="empty"><div class="big">${inner}</div>${txt}</div>`}
 function delItem(coll,id,cb){if(!confirm('تأكيد الحذف؟'))return;S[coll]=S[coll].filter(x=>x.id!==id);save();closeModal();cb&&cb()}
 
 /* ===== DRAG & DROP (kanban) ===== */
@@ -709,8 +803,8 @@ function renderKanban(cfg){
 /* ===== CRM ===== */
 function renderCRM(){
   renderKanban({title:'إدارة علاقات العملاء',onAdd:'crmModal()',addLabel:'فرصة جديدة',stagesKey:'crmStages',coll:'crm',valueField:'value',
-    emptyIcon:'🤝',emptyText:'لا توجد فرص بعد. أضف أول فرصة.',onOpen:'crmModal',
-    note:'<div class="badge-note">💡 <div>اسحب البطاقات بين المراحل، واضغط ⚙ لإضافة/حذف/إعادة ترتيب المراحل.</div></div>',
+    emptyIcon:'handshake',emptyText:'لا توجد فرص بعد. أضف أول فرصة.',onOpen:'crmModal',
+    note:'<div class="badge-note"><i data-lucide="lightbulb"></i> <div>اسحب البطاقات بين المراحل، واضغط ⚙ لإضافة/حذف/إعادة ترتيب المراحل.</div></div>',
     card:o=>`<div class="t">${esc(o.title)}</div><div class="m">${esc(contactName(o.contactId)||o.clientName||'—')}</div><div class="val">${money(o.value)}</div>`});
 }
 function crmModal(id){
@@ -730,8 +824,8 @@ let CUR_PROJ=null;
 function renderProjects(){
   CUR_PROJ=null;
   renderKanban({title:'المشاريع',onAdd:'projModal()',addLabel:'مشروع',stagesKey:'projectStages',coll:'projects',
-    emptyIcon:'🎬',emptyText:'لا توجد مشاريع بعد. أنشئ أول مشروع.',onOpen:'openProject',
-    note:'<div class="badge-note">🎬 <div>اضغط على المشروع لفتح صفحته (المهام على مراحل + التفاصيل والعميل). اسحب البطاقات بين مراحل الإنتاج.</div></div>',
+    emptyIcon:'clapperboard',emptyText:'لا توجد مشاريع بعد. أنشئ أول مشروع.',onOpen:'openProject',
+    note:'<div class="badge-note"><i data-lucide="clapperboard"></i> <div>اضغط على المشروع لفتح صفحته (المهام على مراحل + التفاصيل والعميل). اسحب البطاقات بين مراحل الإنتاج.</div></div>',
     card:p=>{const dn=(p.tasks||[]).filter(t=>t.stageKey==='done').length;const tot=(p.tasks||[]).length;return `<div class="t">${p.emoji||'🎬'} ${esc(p.title)}</div><div class="m">${esc(resolveClientName(p))} · ${dn}/${tot} مهمة</div>${p.podcast?`<div class="m" style="color:var(--gold)">🎙️ ${esc(p.podcast)}</div>`:''}`}});
 }
 function projModal(id){
@@ -772,7 +866,7 @@ function renderProjectDetail(id){
         <button class="btn btn-ghost btn-sm" onclick="projModal('${id}')">✎ تعديل المشروع</button>
       </div>
     </div>
-    ${p.contactId?`<div class="card" style="margin-bottom:18px"><h3 style="margin-top:0">🔗 ملف العميل المرتبط</h3>
+    ${p.contactId?`<div class="card" style="margin-bottom:18px"><h3 style="margin-top:0"><i data-lucide="link"></i> ملف العميل المرتبط</h3>
       <div class="pd-meta" style="margin-top:0">
         <span>📅 مواعيد: <b>${li.appts.length}</b></span>
         <span>🧾 فواتير: <b>${li.invoices.length}</b></span>
@@ -812,12 +906,12 @@ async function loadRoomPanel(p){
   if(document.getElementById('roomPanel'))document.getElementById('roomPanel').innerHTML=roomPanelHTML(p,room,tasks||[],revs);
 }
 function roomPanelHTML(p,room,tasks,revs){
-  if(!room) return `<h3 style="margin-top:0">🚪 غرفة المشروع</h3>
+  if(!room) return `<h3 style="margin-top:0"><i data-lucide="door-open"></i> غرفة المشروع</h3>
     <p style="color:var(--muted);font-size:13px">فعّل غرفة العميل: تشارك التسليمات وتستقبل الاعتمادات والتعديلات بعدّاد تكلفة، وتعطي الفريلانسر رابطاً يسلّم فيه نسخه وينفّذ التعديلات.</p>
     <button class="btn btn-gold" onclick="roomEnable('${p.id}')">تفعيل غرفة العميل</button>`;
   const cl=roomLink('client',room.client_token);
   const wa=room.client_phone?('https://wa.me/'+room.client_phone.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent('غرفة مشروع «'+p.title+'» — تابع التسليمات واعتمدها من هنا:\n'+cl)):'';
-  return `<h3 style="margin-top:0">🚪 غرفة المشروع <button class="link-btn" onclick="roomSettings('${p.id}')">⚙ إعدادات</button></h3>
+  return `<h3 style="margin-top:0"><i data-lucide="door-open"></i> غرفة المشروع <button class="link-btn" onclick="roomSettings('${p.id}')">⚙ إعدادات</button></h3>
     <div class="pd-meta" style="margin-top:0"><span>👤 ${esc(room.client_name||'—')}</span><span>📦 تعديلات مجانية: <b>${room.revisions_included}</b></span></div>
     <div class="linkrow" style="margin-top:10px">
       <button class="link-btn" onclick="copyTxt('${cl}')">📋 نسخ رابط العميل</button>
@@ -1008,7 +1102,7 @@ function renderContacts(){
   const cs=S.contacts.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ar'));
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>العملاء وجهات الاتصال</h1><button class="btn btn-gold" onclick="contactModal(null,renderContacts)">+ عميل جديد</button></div>
-    ${!cs.length?emptyBox('👤','لا يوجد عملاء بعد. أضف أول عميل ببياناته وشعاره.'):
+    ${!cs.length?emptyBox('user','لا يوجد عملاء بعد. أضف أول عميل ببياناته وشعاره.'):
     `<div class="grid">
     ${cs.map(c=>{const b=clientBalance(c.id);return `<div class="card" style="cursor:pointer;display:flex;flex-direction:column;gap:12px" onclick="openClient('${c.id}')">
       <div style="display:flex;align-items:center;gap:12px">${clientAvatar(c,48)}
@@ -1101,8 +1195,8 @@ function renderProducts(){
   const ps=S.products||[];
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>المنتجات والخدمات</h1><button class="btn btn-gold" onclick="productModal()">+ منتج</button></div>
-    <div class="badge-note">📦 <div>عرّف خدماتك ومنتجاتك بأسعارها مرة واحدة — ثم اخترها مباشرة في عروض الأسعار والفواتير بضغطة.</div></div>
-    ${!ps.length?emptyBox('📦','لا توجد منتجات بعد.'):
+    <div class="badge-note"><i data-lucide="package"></i> <div>عرّف خدماتك ومنتجاتك بأسعارها مرة واحدة — ثم اخترها مباشرة في عروض الأسعار والفواتير بضغطة.</div></div>
+    ${!ps.length?emptyBox('package','لا توجد منتجات بعد.'):
     `<table><thead><tr><th>المنتج/الخدمة</th><th>الوحدة</th><th>السعر</th><th></th></tr></thead><tbody>
     ${ps.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.desc?`<div style="font-size:12px;color:var(--muted)">${esc(p.desc)}</div>`:''}</td><td>${esc(p.unit||'—')}</td><td>${money(p.price)} ${esc(S.settings.currency)}</td>
     <td style="white-space:nowrap"><button class="link-btn" onclick="productModal('${p.id}')">تعديل</button><button class="link-btn del" onclick="delItem('products','${p.id}',renderProducts)">حذف</button></td></tr>`).join('')}
@@ -1134,7 +1228,7 @@ function renderSubscriptions(){
       <div class="stat"><span class="ic"><i data-lucide="calendar-range"></i></span><div class="v">${money(ySar)}</div><div class="l">اشتراكات سنوية (ريال/سنة)</div></div>
       <div class="stat"><span class="ic"><i data-lucide="sigma"></i></span><div class="v">${money(grandM)}</div><div class="l">الإجمالي الشهري التقريبي</div></div>
     </div>
-    ${!subs.length?emptyBox('💳','لا اشتراكات بعد.'):
+    ${!subs.length?emptyBox('credit-card','لا اشتراكات بعد.'):
     `<table><thead><tr><th>الاشتراك</th><th>النوع</th><th>$ دولار</th><th>ريال</th><th>التاريخ</th><th>ملاحظات</th><th></th></tr></thead><tbody>
     ${subs.map(s=>`<tr><td><b>${esc(s.name)}</b>${s.url?` <a href="${esc(s.url)}" target="_blank" style="color:var(--gold2)">↗</a>`:''}${s.cycle==='installment'&&s.remaining?`<div style="font-size:12px;color:var(--warn)">باقٍ ${s.remaining} أقساط</div>`:''}</td>
     <td>${subCycleLabel(s.cycle)}</td><td>${s.usd?'$'+money(s.usd):'—'}</td><td>${money(s.sar)}</td><td>${esc(s.date||'—')}</td><td style="max-width:240px;font-size:13px;color:var(--muted)">${esc(s.note||'')}</td>
@@ -1165,8 +1259,8 @@ function renderDocs(type){
   const isInv=type==='invoice';const list=isInv?S.invoices:S.sales;const title=isInv?'الفوترة':'المبيعات';
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>${title}</h1><button class="btn btn-gold" onclick="docModal('${type}')">+ ${isInv?'فاتورة':'عرض سعر'}</button></div>
-    ${isInv?`<div class="badge-note">🧾 <div>الفواتير مهيأة للتوافق مع <b>زاتكا</b>: عند الطباعة يُولَّد رمز QR وفق مواصفة TLV. فعّل الضريبة وأدخل رقمك الضريبي من الإعدادات.</div></div>`:''}
-    ${!list.length?emptyBox(isInv?'🧾':'📈',`لا توجد ${title} بعد.`):
+    ${isInv?`<div class="badge-note"><i data-lucide="receipt-text"></i> <div>الفواتير مهيأة للتوافق مع <b>زاتكا</b>: عند الطباعة يُولَّد رمز QR وفق مواصفة TLV. فعّل الضريبة وأدخل رقمك الضريبي من الإعدادات.</div></div>`:''}
+    ${!list.length?emptyBox(isInv?'receipt-text':'trending-up',`لا توجد ${title} بعد.`):
     `<table><thead><tr><th>الرقم</th><th>العميل</th><th>التاريخ</th><th>الإجمالي</th>${isInv?'<th>المتبقي</th>':''}<th>الحالة</th><th></th></tr></thead><tbody>
     ${list.slice().reverse().map(d=>{const pfx=isInv?(S.settings.invPrefix||'INV-'):(S.settings.salePrefix||'S');return `<tr><td><button class="link-btn" style="padding:0" onclick="openDoc('${type}','${d.id}')">${esc(pfx)}${String(d.number).padStart(5,'0')}</button></td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(isInv?invTotal(d):docTotal(d))}</td>${isInv?`<td>${invDue(d)>0?`<span style="color:var(--warn)">${money(invDue(d))}</span>`:'—'}</td>`:''}<td>${pill(d.status)}</td>
     <td style="white-space:nowrap">${!isInv&&d.status==='sale'?`<button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button>`:''}
@@ -1363,7 +1457,7 @@ function openDoc(type,id){
 function paymentModal(invId){
   const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;const due=invDue(inv);
   openModal('تسجيل دفعة',`
-    <div class="badge-note">💰 <div>المتبقي على الفاتورة: <b>${money(due)} ${esc(S.settings.currency)}</b></div></div>
+    <div class="badge-note"><i data-lucide="wallet"></i> <div>المتبقي على الفاتورة: <b>${money(due)} ${esc(S.settings.currency)}</b></div></div>
     <div class="row2"><div class="field"><label>المبلغ</label><input id="pa_amt" type="number" inputmode="decimal" value="${Number(due.toFixed(2))}">${amtChipsHTML('pa_amt',[500,1000,2500])}</div>
     <div class="field"><label>التاريخ</label><input id="pa_date" type="date" value="${today()}"></div></div>
     <div class="field"><label>طريقة الدفع</label><select id="pa_method"><option>تحويل بنكي</option><option>نقداً</option><option>مدى / بطاقة</option><option>STC Pay</option><option>أخرى</option></select></div>`,
@@ -1376,8 +1470,8 @@ function renderAppointments(){
   const list=S.appointments.slice().sort((a,b)=>(a.datetime||'').localeCompare(b.datetime||''));
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>المواعيد</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير الكل .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
-    <div class="badge-note">📲 <div>اضغط «.ics» أو «Google» لكل موعد لإضافته إلى تقويم جوالك (Apple / Google). المزامنة اللحظية ثنائية الاتجاه تحتاج نسخة قاعدة البيانات (خطوة لاحقة).</div></div>
-    ${!list.length?emptyBox('📆','لا توجد مواعيد بعد.'):
+    <div class="badge-note"><i data-lucide="smartphone"></i> <div>اضغط «.ics» أو «Google» لكل موعد لإضافته إلى تقويم جوالك (Apple / Google). المزامنة اللحظية ثنائية الاتجاه تحتاج نسخة قاعدة البيانات (خطوة لاحقة).</div></div>
+    ${!list.length?emptyBox('calendar-x','لا توجد مواعيد بعد.'):
     `<table><thead><tr><th>الموعد</th><th>العنوان</th><th>مع</th><th>المدة</th><th>الحالة</th><th>التقويم</th><th></th></tr></thead><tbody>
     ${list.map(a=>`<tr><td>${(a.datetime||'').replace('T',' ')}</td><td>${esc(a.title)}</td><td>${esc(resolveClientName(a))}</td><td>${esc(a.duration||'')} د</td><td>${pill(a.status||'scheduled')}</td>
     <td style="white-space:nowrap"><a class="link-btn" href="${gcal(a)}" target="_blank">Google</a><button class="link-btn" onclick="exportICS('${a.id}')">.ics</button></td>
@@ -1417,7 +1511,7 @@ function renderCalendar(){
   if(FC){try{FC.destroy()}catch(e){}FC=null;}
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
-    <div class="badge-note">🗓️ <div>اسحب أي موعد لتغيير وقته، اسحب حافته لتمديد المدة، وبدّل بين العرض الشهري/الأسبوعي/اليومي/السنوي من الأعلى. اضغط على أي يوم/وقت لإضافة موعد.</div></div>
+    <div class="badge-note"><i data-lucide="calendar-days"></i> <div>اسحب أي موعد لتغيير وقته، اسحب حافته لتمديد المدة، وبدّل بين العرض الشهري/الأسبوعي/اليومي/السنوي من الأعلى. اضغط على أي يوم/وقت لإضافة موعد.</div></div>
     <div class="card" id="fcal" style="padding:14px"></div>`;
   const events=[];
   (S.appointments||[]).forEach(a=>{const st=new Date(a.datetime);if(isNaN(st))return;const en=new Date(st.getTime()+(Number(a.duration)||60)*60000);
@@ -1451,7 +1545,7 @@ function renderCalendarGrid(){
     cells+=`<div class="cal-cell ${other?'other':''} ${k===tk?'today':''}" onclick="apptModal(null,'${k}')"><div class="d">${d.getDate()}</div>${ev}${more}</div>`;}
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
-    <div class="badge-note">🗓️ <div>اضغط على أي يوم لإضافة موعد، واضغط على أي حدث لتعديله. صدّر .ics لاستيراد المواعيد في تقويم Apple/Google على جوالك.</div></div>
+    <div class="badge-note"><i data-lucide="calendar-days"></i> <div>اضغط على أي يوم لإضافة موعد، واضغط على أي حدث لتعديله. صدّر .ics لاستيراد المواعيد في تقويم Apple/Google على جوالك.</div></div>
     <div class="cal-head"><button class="btn btn-ghost btn-sm" onclick="calMove(-1)">‹ السابق</button>
     <h3 style="margin:0">${calRef.toLocaleDateString('ar',{month:'long',year:'numeric'})}</h3>
     <button class="btn btn-ghost btn-sm" onclick="calMove(1)">التالي ›</button></div>
