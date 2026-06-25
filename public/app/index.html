@@ -78,6 +78,7 @@
   .nav a .nic svg{width:19px;height:19px}
   .stat .ic svg{width:24px;height:24px}
   .quick button svg{width:16px;height:16px;vertical-align:-3px;margin-left:6px}
+  .btn svg{width:15px;height:15px;vertical-align:-2px}
   .page-head h1 svg{width:22px;height:22px;vertical-align:-3px;margin-left:6px}
   .card h3 svg{width:18px;height:18px;vertical-align:-3px;margin-left:5px}
   .nav a:hover{background:var(--panel2);color:var(--ink)}
@@ -148,6 +149,8 @@
   .badge-note svg{width:18px;height:18px;flex:0 0 auto;margin-top:2px;color:var(--gold2)}
   .inl{display:inline-flex;align-items:center;vertical-align:-3px}
   .inl svg{width:14px;height:14px}
+  .ed-toolbar .btn svg{width:15px;height:15px;vertical-align:-2px}
+  .slash .si svg{width:16px;height:16px}
 
   table{width:100%;border-collapse:collapse;background:var(--panel);border-radius:var(--radius);overflow:hidden;border:1px solid var(--line)}
   th,td{padding:12px 14px;text-align:right;border-bottom:1px solid var(--line);font-size:14px}
@@ -431,7 +434,7 @@ function renderTeam(){
     ${!S.freelancers.length?emptyBox('users','لا يوجد فريلانسرز بعد. أضف أول عضو.'):
     `<table><thead><tr><th>الاسم</th><th>البريد</th><th>الرابط الخاص</th><th></th></tr></thead><tbody>
     ${S.freelancers.map(f=>`<tr><td><span style="font-size:18px">${f.icon||'🎬'}</span> ${esc(f.name)}</td><td>${esc(f.email||'—')}</td>
-    <td style="white-space:nowrap"><button class="link-btn" onclick="flCopy('${f.token}')">📋 نسخ الرابط</button> <a class="link-btn" href="${flLink(f.token)}" target="_blank">فتح</a></td>
+    <td style="white-space:nowrap"><button class="link-btn" onclick="flCopy('${f.token}')"><i class="inl" data-lucide="copy"></i> نسخ الرابط</button> <a class="link-btn" href="${flLink(f.token)}" target="_blank">فتح</a></td>
     <td><button class="link-btn del" onclick="flDel('${f.id}')">حذف</button></td></tr>`).join('')}
     </tbody></table>`}`;
 }
@@ -462,7 +465,7 @@ async function antarLoad(){
   el.innerHTML='<table><thead><tr><th>المهمة</th><th>التاريخ</th><th></th></tr></thead><tbody>'+data.map(t=>{
     let dchip='<span style="color:var(--muted)">—</span>';
     if(t.scheduled_for){const sd=t.scheduled_for;const cls=sd<tk?'unpaid':(sd===tk?'progress':'scheduled');const lbl=sd===tk?'اليوم':(sd<tk?'متأخر · '+sd:sd);dchip=`<span class="pill ${cls}">${lbl}</span>`}
-    return `<tr><td>${esc(t.text)}</td><td>${dchip}</td><td style="white-space:nowrap"><button class="link-btn" onclick="antarDone('${t.id}')">✓ تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`;}).join('')+'</tbody></table>';
+    return `<tr><td>${esc(t.text)}</td><td>${dchip}</td><td style="white-space:nowrap"><button class="link-btn" onclick="antarDone('${t.id}')"><i class="inl" data-lucide="check"></i> تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`;}).join('')+'</tbody></table>';
 }
 async function antarQuickAdd(){const i=document.getElementById('antarInput');const v=i.value.trim();if(!v)return;await sb.from('antar_inbox').insert({text:v});i.value='';antarLoad()}
 async function antarDone(id){await sb.from('antar_inbox').update({done:true}).eq('id',id);antarLoad()}
@@ -474,17 +477,18 @@ async function renderFreelancer(token){
   const v=document.getElementById('flView');v.classList.remove('hidden');
   v.innerHTML='<div style="padding:50px;text-align:center;color:var(--muted)">جارٍ التحميل…</div>';
   const {data:fl,error:e1}=await sb.rpc('get_freelancer',{p_token:token});
-  if(e1||!fl||!fl.length){v.innerHTML='<div style="padding:60px 20px;text-align:center"><div style="font-size:42px">🔒</div><p>رابط غير صالح أو منتهٍ.</p></div>';return}
+  if(e1||!fl||!fl.length){v.innerHTML='<div style="padding:60px 20px;text-align:center"><div><i data-lucide="lock" style="width:42px;height:42px;color:var(--muted)"></i></div><p>رابط غير صالح أو منتهٍ.</p></div>';refreshIcons();return}
   const name=fl[0].name||''; const ic=fl[0].icon||'🎬';
   setFreelancerAppIcon(ic,name);
   const {data:tasks}=await sb.rpc('get_freelancer_tasks',{p_token:token});
   const list=tasks||[];const pending=list.filter(t=>!t.done),done=list.filter(t=>t.done);
   v.innerHTML=`<div style="max-width:680px;margin:0 auto;padding:22px 16px">
     <div style="text-align:center;margin-bottom:18px"><div style="font-size:58px;line-height:1">${ic}</div><div style="color:var(--muted);margin-top:6px">مهام: <b style="color:var(--ink)">${esc(name)}</b></div></div>
-    <div class="card"><h3 style="margin-top:0">مهامي الحالية (${pending.length})</h3>${pending.length?pending.map(t=>flTaskRow(token,t)).join(''):'<p style="color:var(--muted)">لا مهام حالية 🎉</p>'}</div>
+    <div class="card"><h3 style="margin-top:0">مهامي الحالية (${pending.length})</h3>${pending.length?pending.map(t=>flTaskRow(token,t)).join(''):'<p style="color:var(--muted)"><i class="inl" data-lucide="circle-check"></i> لا مهام حالية</p>'}</div>
     ${done.length?`<div class="card" style="margin-top:14px;opacity:.65"><h3 style="margin-top:0">منجزة (${done.length})</h3>${done.map(t=>flTaskRow(token,t)).join('')}</div>`:''}
-    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:18px">💡 أضف هذا الرابط لشاشة جوالك الرئيسية لمتابعة مهامك كتطبيق.</p>
+    <p style="text-align:center;color:var(--muted);font-size:12px;margin-top:18px"><i class="inl" data-lucide="lightbulb"></i> أضف هذا الرابط لشاشة جوالك الرئيسية لمتابعة مهامك كتطبيق.</p>
   </div>`;
+  refreshIcons();
 }
 function flTaskRow(token,t){return `<div class="task-line"><input type="checkbox" ${t.done?'checked':''} onchange="flToggle('${token}','${t.id}',this.checked)"><span class="${t.done?'done':''}" style="flex:1"><b>${esc(t.title)}</b><div style="font-size:12px;color:var(--muted)">${esc(t.project_title||'')}${t.stage?' · '+esc(t.stage):''}</div></span></div>`}
 async function flToggle(token,id,done){await sb.rpc('set_task_done',{p_token:token,p_task:id,p_done:done});renderFreelancer(token)}
@@ -661,7 +665,7 @@ function focusInner(){
       <div style="width:94px;height:94px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center">
         <div><div style="font-size:21px;font-weight:900">${pct}%</div><div style="font-size:11px;color:var(--muted)">من ${goalH} ساعات</div></div></div></div>
     <div style="flex:1;min-width:200px">
-      <div style="font-size:13px;color:var(--muted)">${inBreak?'🧘 وقت البريك':(done?'🎉 أكملت هدف اليوم':'⏱️ تركيز اليوم')}</div>
+      <div style="font-size:13px;color:var(--muted)">${inBreak?'<i class="inl" data-lucide="coffee"></i> وقت البريك':(done?'<i class="inl" data-lucide="party-popper"></i> أكملت هدف اليوم':'<i class="inl" data-lucide="timer"></i> تركيز اليوم')}</div>
       <div style="font-size:33px;font-weight:900;letter-spacing:1px">${inBreak?fmtMS(breakLeft):fmt}</div>
       <div style="font-size:12px;color:var(--muted);margin-top:2px">${inBreak?'استرح ثم نكمّل':(FOCUS.running?`البريك القادم بعد ${fmtMS(toBreak)}`:'اضغط «ابدأ» لتشغيل العدّاد الواعي')}</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
@@ -786,7 +790,7 @@ function renderKanban(cfg){
   const stages=S[cfg.stagesKey];
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>${cfg.title}</h1><div style="display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn btn-ghost btn-sm" onclick="stageEditor('${cfg.stagesKey}','${cfg.coll}')">⚙ تعديل المراحل</button>
+      <button class="btn btn-ghost btn-sm" onclick="stageEditor('${cfg.stagesKey}','${cfg.coll}')"><i data-lucide="settings"></i> تعديل المراحل</button>
       <button class="btn btn-gold" onclick="${cfg.onAdd}">+ ${cfg.addLabel}</button></div></div>
     ${cfg.note||''}
     ${!S[cfg.coll].length?emptyBox(cfg.emptyIcon,cfg.emptyText):
@@ -804,7 +808,7 @@ function renderKanban(cfg){
 function renderCRM(){
   renderKanban({title:'إدارة علاقات العملاء',onAdd:'crmModal()',addLabel:'فرصة جديدة',stagesKey:'crmStages',coll:'crm',valueField:'value',
     emptyIcon:'handshake',emptyText:'لا توجد فرص بعد. أضف أول فرصة.',onOpen:'crmModal',
-    note:'<div class="badge-note"><i data-lucide="lightbulb"></i> <div>اسحب البطاقات بين المراحل، واضغط ⚙ لإضافة/حذف/إعادة ترتيب المراحل.</div></div>',
+    note:'<div class="badge-note"><i data-lucide="lightbulb"></i> <div>اسحب البطاقات بين المراحل، واضغط <i class="inl" data-lucide="settings"></i> لإضافة/حذف/إعادة ترتيب المراحل.</div></div>',
     card:o=>`<div class="t">${esc(o.title)}</div><div class="m">${esc(contactName(o.contactId)||o.clientName||'—')}</div><div class="val">${money(o.value)}</div>`});
 }
 function crmModal(id){
@@ -826,7 +830,7 @@ function renderProjects(){
   renderKanban({title:'المشاريع',onAdd:'projModal()',addLabel:'مشروع',stagesKey:'projectStages',coll:'projects',
     emptyIcon:'clapperboard',emptyText:'لا توجد مشاريع بعد. أنشئ أول مشروع.',onOpen:'openProject',
     note:'<div class="badge-note"><i data-lucide="clapperboard"></i> <div>اضغط على المشروع لفتح صفحته (المهام على مراحل + التفاصيل والعميل). اسحب البطاقات بين مراحل الإنتاج.</div></div>',
-    card:p=>{const dn=(p.tasks||[]).filter(t=>t.stageKey==='done').length;const tot=(p.tasks||[]).length;return `<div class="t">${p.emoji||'🎬'} ${esc(p.title)}</div><div class="m">${esc(resolveClientName(p))} · ${dn}/${tot} مهمة</div>${p.podcast?`<div class="m" style="color:var(--gold)">🎙️ ${esc(p.podcast)}</div>`:''}`}});
+    card:p=>{const dn=(p.tasks||[]).filter(t=>t.stageKey==='done').length;const tot=(p.tasks||[]).length;return `<div class="t">${p.emoji||'🎬'} ${esc(p.title)}</div><div class="m">${esc(resolveClientName(p))} · ${dn}/${tot} مهمة</div>${p.podcast?`<div class="m" style="color:var(--gold)"><i class="inl" data-lucide="mic"></i> ${esc(p.podcast)}</div>`:''}`}});
 }
 function projModal(id){
   let p=id?JSON.parse(JSON.stringify(S.projects.find(x=>x.id===id))):{id:'',title:'',contactId:'',client:'',podcast:'',stageKey:S.projectStages[0].key,emoji:'🎬',tasks:[],taskStages:JSON.parse(JSON.stringify(DEFAULT_TASK_STAGES))};
@@ -856,24 +860,24 @@ function renderProjectDetail(id){
       <div>
         <div class="pd-title">${p.emoji||'🎬'} ${esc(p.title)}</div>
         <div class="pd-meta">
-          <span>👤 العميل: <b>${esc(resolveClientName(p))}</b></span>
-          ${p.podcast?`<span>🎙️ <b>${esc(p.podcast)}</b></span>`:''}
-          <span>📦 مرحلة الإنتاج: <b>${esc(stageLbl)}</b></span>
+          <span><i class="inl" data-lucide="user"></i> العميل: <b>${esc(resolveClientName(p))}</b></span>
+          ${p.podcast?`<span><i class="inl" data-lucide="mic"></i> <b>${esc(p.podcast)}</b></span>`:''}
+          <span><i class="inl" data-lucide="package"></i> مرحلة الإنتاج: <b>${esc(stageLbl)}</b></span>
         </div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="taskStageEditor('${id}')">⚙ مراحل المهام</button>
-        <button class="btn btn-ghost btn-sm" onclick="projModal('${id}')">✎ تعديل المشروع</button>
+        <button class="btn btn-ghost btn-sm" onclick="taskStageEditor('${id}')"><i data-lucide="settings"></i> مراحل المهام</button>
+        <button class="btn btn-ghost btn-sm" onclick="projModal('${id}')"><i data-lucide="pencil"></i> تعديل المشروع</button>
       </div>
     </div>
     ${p.contactId?`<div class="card" style="margin-bottom:18px"><h3 style="margin-top:0"><i data-lucide="link"></i> ملف العميل المرتبط</h3>
       <div class="pd-meta" style="margin-top:0">
-        <span>📅 مواعيد: <b>${li.appts.length}</b></span>
-        <span>🧾 فواتير: <b>${li.invoices.length}</b></span>
-        <span>🎬 مشاريع: <b>${li.projects.length}</b></span>
+        <span><i class="inl" data-lucide="calendar-days"></i> مواعيد: <b>${li.appts.length}</b></span>
+        <span><i class="inl" data-lucide="receipt-text"></i> فواتير: <b>${li.invoices.length}</b></span>
+        <span><i class="inl" data-lucide="clapperboard"></i> مشاريع: <b>${li.projects.length}</b></span>
       </div>
-      ${li.appts.length?`<div class="linkrow">${li.appts.slice(0,6).map(a=>`<button class="link-btn" onclick="go('appointments');setTimeout(()=>apptModal('${a.id}'),60)">📅 ${esc(a.title)} · ${(a.datetime||'').replace('T',' ')}</button>`).join('')}</div>`:''}
-      ${li.invoices.length?`<div class="linkrow">${li.invoices.slice(0,6).map(i=>`<button class="link-btn" onclick="go('invoicing');setTimeout(()=>docModal('invoice','${i.id}'),60)">🧾 #${i.number} · ${money(invTotal(i))}</button>`).join('')}</div>`:''}
+      ${li.appts.length?`<div class="linkrow">${li.appts.slice(0,6).map(a=>`<button class="link-btn" onclick="go('appointments');setTimeout(()=>apptModal('${a.id}'),60)"><i class="inl" data-lucide="calendar-days"></i> ${esc(a.title)} · ${(a.datetime||'').replace('T',' ')}</button>`).join('')}</div>`:''}
+      ${li.invoices.length?`<div class="linkrow">${li.invoices.slice(0,6).map(i=>`<button class="link-btn" onclick="go('invoicing');setTimeout(()=>docModal('invoice','${i.id}'),60)"><i class="inl" data-lucide="receipt-text"></i> #${i.number} · ${money(invTotal(i))}</button>`).join('')}</div>`:''}
     </div>`:''}
     <div id="roomPanel" class="card" style="margin-bottom:18px"><div style="color:var(--muted);font-size:13px">جارٍ تحميل غرفة المشروع…</div></div>
     <div class="page-head" style="margin-bottom:12px"><h2 style="margin:0;font-size:18px">المهام</h2></div>
@@ -884,12 +888,12 @@ function renderProjectDetail(id){
         <h4><span>${esc(st.label)}</span><span class="kbadge">${items.length}</span></h4>
         ${items.map(t=>`<div class="ktask" draggable="true" ondragstart="tdstart(event,'${t.id}')" ondragend="tdend(event)" onclick="openTask('${t.id}')">
           <div class="tt">${esc(t.title)}</div>
-          <div class="meta">${(t.blocks&&t.blocks.length)?`<span class="kbadge">📝 ${t.blocks.length}</span>`:''}${t.assignee?`<span class="kbadge" style="color:var(--gold);background:var(--goldsoft)">👤 ${esc(flName(t.assignee))}</span>`:''}</div>
+          <div class="meta">${(t.blocks&&t.blocks.length)?`<span class="kbadge"><i class="inl" data-lucide="file-text"></i> ${t.blocks.length}</span>`:''}${t.assignee?`<span class="kbadge" style="color:var(--gold);background:var(--goldsoft)"><i class="inl" data-lucide="user"></i> ${esc(flName(t.assignee))}</span>`:''}</div>
         </div>`).join('')}
         <button class="addtask" onclick="quickAddTask('${st.key}')">+ مهمة</button>
       </div>`}).join('')}
     </div>`;
-  loadRoomPanel(p);
+  refreshIcons();loadRoomPanel(p);
 }
 
 /* ===== غرفة المشروع (لوحة المالك) ===== */
@@ -903,7 +907,7 @@ async function loadRoomPanel(p){
   const {data:tasks}=await sb.from('tasks').select('*').eq('project_id',p.id);
   const ids=(tasks||[]).map(t=>t.id);let revs=[];
   if(ids.length){const {data:rv}=await sb.from('revisions').select('task_id,num,billable,status').in('task_id',ids);revs=rv||[]}
-  if(document.getElementById('roomPanel'))document.getElementById('roomPanel').innerHTML=roomPanelHTML(p,room,tasks||[],revs);
+  if(document.getElementById('roomPanel')){document.getElementById('roomPanel').innerHTML=roomPanelHTML(p,room,tasks||[],revs);refreshIcons();}
 }
 function roomPanelHTML(p,room,tasks,revs){
   if(!room) return `<h3 style="margin-top:0"><i data-lucide="door-open"></i> غرفة المشروع</h3>
@@ -911,28 +915,28 @@ function roomPanelHTML(p,room,tasks,revs){
     <button class="btn btn-gold" onclick="roomEnable('${p.id}')">تفعيل غرفة العميل</button>`;
   const cl=roomLink('client',room.client_token);
   const wa=room.client_phone?('https://wa.me/'+room.client_phone.replace(/[^0-9]/g,'')+'?text='+encodeURIComponent('غرفة مشروع «'+p.title+'» — تابع التسليمات واعتمدها من هنا:\n'+cl)):'';
-  return `<h3 style="margin-top:0"><i data-lucide="door-open"></i> غرفة المشروع <button class="link-btn" onclick="roomSettings('${p.id}')">⚙ إعدادات</button></h3>
-    <div class="pd-meta" style="margin-top:0"><span>👤 ${esc(room.client_name||'—')}</span><span>📦 تعديلات مجانية: <b>${room.revisions_included}</b></span></div>
+  return `<h3 style="margin-top:0"><i data-lucide="door-open"></i> غرفة المشروع <button class="link-btn" onclick="roomSettings('${p.id}')"><i class="inl" data-lucide="settings"></i> إعدادات</button></h3>
+    <div class="pd-meta" style="margin-top:0"><span><i class="inl" data-lucide="user"></i> ${esc(room.client_name||'—')}</span><span><i class="inl" data-lucide="package"></i> تعديلات مجانية: <b>${room.revisions_included}</b></span></div>
     <div class="linkrow" style="margin-top:10px">
-      <button class="link-btn" onclick="copyTxt('${cl}')">📋 نسخ رابط العميل</button>
+      <button class="link-btn" onclick="copyTxt('${cl}')"><i class="inl" data-lucide="copy"></i> نسخ رابط العميل</button>
       <a class="link-btn" href="${cl}" target="_blank">فتح</a>
-      ${wa?`<a class="link-btn" href="${wa}" target="_blank">🟢 واتساب العميل</a>`:''}
-      <button class="link-btn" onclick="addPodcastDeliverables('${p.id}')">🎙️ أضف مخرجات حلقة بودكاست</button>
+      ${wa?`<a class="link-btn" href="${wa}" target="_blank"><i class="inl" data-lucide="message-circle"></i> واتساب العميل</a>`:''}
+      <button class="link-btn" onclick="addPodcastDeliverables('${p.id}')"><i class="inl" data-lucide="mic"></i> أضف مخرجات حلقة بودكاست</button>
     </div>
     <div style="margin-top:12px">
     ${tasks.length?tasks.map(t=>{
       const rs=revs.filter(r=>r.task_id===t.id);const used=rs.length;const pend=rs.filter(r=>r.status==='pending').length;
       const fl=(S.freelancers||[]).find(f=>f.id===t.freelancer_id);const flink=fl?roomLink('ft',fl.token):'';
-      const cnt=used<=room.revisions_included?`<span class="kbadge">تعديلات ${used}/${room.revisions_included}</span>`:`<span class="kbadge" style="color:#fca5a5">⚠ ${used} (${used-room.revisions_included} مدفوع)</span>`;
+      const cnt=used<=room.revisions_included?`<span class="kbadge">تعديلات ${used}/${room.revisions_included}</span>`:`<span class="kbadge" style="color:#fca5a5"><i class="inl" data-lucide="alert-triangle"></i> ${used} (${used-room.revisions_included} مدفوع)</span>`;
       return `<div style="border-top:1px solid var(--line);padding:9px 0">
         <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;align-items:center">
-          <b>🎞️ ${esc(t.title)}</b>
-          <span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${t.approved?'<span class="kbadge" style="color:#86efac">✓ معتمد</span>':''}${pend?`<span class="kbadge" style="color:#fcd34d">${pend} تعديل معلّق</span>`:''}${cnt}</span>
+          <b><i class="inl" data-lucide="film"></i> ${esc(t.title)}</b>
+          <span style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">${t.approved?'<span class="kbadge" style="color:#86efac"><i class="inl" data-lucide="check"></i> معتمد</span>':''}${pend?`<span class="kbadge" style="color:#fcd34d">${pend} تعديل معلّق</span>`:''}${cnt}</span>
         </div>
         <div style="font-size:12px;color:var(--muted);margin-top:4px">
-          ${t.version_url?`<a href="${esc(t.version_url)}" target="_blank">▶ المخرَج الحالي</a>`:'لا مخرَج بعد'}
-          <button class="link-btn" onclick="setDeliverable('${p.id}','${t.id}')">🔗 ${t.version_url?'تعديل':'إضافة'} رابط المخرَج</button>
-          ${fl?` · 👤 ${esc(fl.name)} <button class="link-btn" onclick="copyTxt('${flink}')">📋 رابط الفريلانسر</button>`:' · ⚠ بلا مسؤول (أسنده من المهمة)'}
+          ${t.version_url?`<a href="${esc(t.version_url)}" target="_blank"><i class="inl" data-lucide="play"></i> المخرَج الحالي</a>`:'لا مخرَج بعد'}
+          <button class="link-btn" onclick="setDeliverable('${p.id}','${t.id}')"><i class="inl" data-lucide="link"></i> ${t.version_url?'تعديل':'إضافة'} رابط المخرَج</button>
+          ${fl?` · <i class="inl" data-lucide="user"></i> ${esc(fl.name)} <button class="link-btn" onclick="copyTxt('${flink}')"><i class="inl" data-lucide="copy"></i> رابط الفريلانسر</button>`:' · <i class="inl" data-lucide="alert-triangle"></i> بلا مسؤول (أسنده من المهمة)'}
         </div>
       </div>`;
     }).join(''):'<p style="color:var(--muted);font-size:13px">أضف مهاماً وأسندها لفريلانسرز، ثم تظهر هنا كتسليمات.</p>'}
@@ -954,7 +958,7 @@ function setDeliverable(pid,taskId){
       <div class="field"><label>عنوان المخرَج</label><input id="dl_title" value="${esc((lt&&lt.title)||dt.title||'')}"></div>
       <div class="field"><label>رابط المخرَج (Google Drive / يوتيوب / WeTransfer)</label><input id="dl_url" value="${esc(dt.version_url||'')}" placeholder="https://drive.google.com/..."></div>
       <div class="field"><label>ملاحظة مع التسليم (اختياري)</label><input id="dl_note" value="${esc(dt.version_note||'')}"></div>
-      <div class="badge-note" style="margin-top:4px">🔗 <div>هذا الرابط يظهر للعميل مباشرة في رابط الغرفة ليعتمده أو يطلب تعديلاً.</div></div>`,
+      <div class="badge-note" style="margin-top:4px"><i data-lucide="link"></i> <div>هذا الرابط يظهر للعميل مباشرة في رابط الغرفة ليعتمده أو يطلب تعديلاً.</div></div>`,
     async()=>{const g=i=>document.getElementById(i).value;const title=g('dl_title').trim();const url=g('dl_url').trim();const note=g('dl_note').trim();
       if(lt&&title&&title!==lt.title){lt.title=title;save();await syncTasks();}
       const {error}=await sb.from('tasks').update({version_url:url,version_note:note,title:title||dt.title}).eq('id',taskId);
@@ -1025,24 +1029,25 @@ function openTask(taskId){const p=proj();if(!p)return;const t=(p.tasks||[]).find
         <div class="field"><label>المسؤول</label><select id="t_as" onchange="taskAssignee(this.value)">${asOpts}</select></div>
       </div>
       <div class="ed-toolbar">
-        <button class="btn btn-ghost btn-sm" onclick="addBlock('text')">¶ نص</button>
-        <button class="btn btn-ghost btn-sm" onclick="addBlock('heading')">H عنوان</button>
-        <button class="btn btn-ghost btn-sm" onclick="addBlock('script')">🎬 سكربت</button>
-        <button class="btn btn-ghost btn-sm" onclick="addBlock('todo')">☑ مهمة فرعية</button>
-        <button class="btn btn-ghost btn-sm" onclick="pickImage()">🖼️ صورة</button>
-        <button class="btn btn-ghost btn-sm" onclick="addBlock('divider')">— فاصل</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('text')"><i data-lucide="pilcrow"></i> نص</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('heading')"><i data-lucide="heading"></i> عنوان</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('script')"><i data-lucide="film"></i> سكربت</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('todo')"><i data-lucide="square-check"></i> مهمة فرعية</button>
+        <button class="btn btn-ghost btn-sm" onclick="pickImage()"><i data-lucide="image"></i> صورة</button>
+        <button class="btn btn-ghost btn-sm" onclick="addBlock('divider')"><i data-lucide="minus"></i> فاصل</button>
         <span style="align-self:center;color:var(--muted);font-size:12px">أو اكتب «/» داخل أي سطر · للعريض Ctrl/⌘+B</span>
         <span id="upStatus" class="upbar"></span>
       </div>
       <div id="blocks">${t.blocks.map(b=>blockHTML(b)).join('')}</div>
       <button class="addtask" style="margin-top:10px" onclick="addBlock('text')">+ أضف سطراً</button>
       <input type="file" id="imgFile" accept="image/*" class="hidden" onchange="onImagePicked(event)">
-      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:12px"><button class="link-btn del" onclick="deleteTask()">🗑 حذف المهمة</button></div>
+      <div style="margin-top:18px;border-top:1px solid var(--line);padding-top:12px"><button class="link-btn del" onclick="deleteTask()"><i class="inl" data-lucide="trash-2"></i> حذف المهمة</button></div>
     </div></div></div>`;
+  refreshIcons();
 }
 function blockHTML(b){
   if(b.type==='heading')return blkWrap(b,`<div class="ce h" contenteditable data-bid="${b.id}" data-ph="عنوان" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`);
-  if(b.type==='script')return blkWrap(b,`<div class="lbl">🎬 سكربت الفيديو</div><div class="ce" contenteditable data-bid="${b.id}" data-ph="اكتب نص الفيديو…" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`,'script');
+  if(b.type==='script')return blkWrap(b,`<div class="lbl"><i class="inl" data-lucide="film"></i> سكربت الفيديو</div><div class="ce" contenteditable data-bid="${b.id}" data-ph="اكتب نص الفيديو…" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`,'script');
   if(b.type==='todo')return blkWrap(b,`<input type="checkbox" ${b.done?'checked':''} onchange="todoToggle('${b.id}',this.checked)"><div class="ce txt ${b.done?'dn':''}" contenteditable data-bid="${b.id}" data-ph="مهمة فرعية…" onkeydown="blockKey(event,'${b.id}')" oninput="onCe('${b.id}')">${b.html||''}</div>`,'todo');
   if(b.type==='image')return blkWrap(b,`<img src="${esc(b.url)}" alt="">`,'img');
   if(b.type==='divider')return blkWrap(b,`<hr>`,'divider');
@@ -1057,7 +1062,7 @@ function taskAssignee(v){const t=curTask();if(t){t.assignee=v;scheduleTaskSave()
 function todoToggle(id,c){const b=findBlock(id);if(b){b.done=c;const el=document.querySelector(`[data-bid="${id}"]`);if(el)el.classList.toggle('dn',c);scheduleTaskSave()}}
 function addBlock(type,afterId){const t=curTask();if(!t)return;const b={id:uid(),type};if(type==='todo')b.done=false;if(type!=='divider'&&type!=='image')b.html='';let idx=t.blocks.length;if(afterId){const i=t.blocks.findIndex(x=>x.id===afterId);if(i>=0)idx=i+1}t.blocks.splice(idx,0,b);scheduleTaskSave();rerenderBlocks((type==='divider'||type==='image')?null:b.id)}
 function removeBlock(id){const t=curTask();if(!t)return;const i=t.blocks.findIndex(b=>b.id===id);if(i<0)return;t.blocks.splice(i,1);scheduleTaskSave();const prev=t.blocks[i-1];rerenderBlocks(prev&&prev.type!=='divider'&&prev.type!=='image'?prev.id:null)}
-function rerenderBlocks(focusId){const t=curTask();const c=document.getElementById('blocks');if(!t||!c)return;c.innerHTML=t.blocks.map(b=>blockHTML(b)).join('');if(focusId){const el=document.querySelector(`[data-bid="${focusId}"]`);if(el)placeCaretEnd(el)}}
+function rerenderBlocks(focusId){const t=curTask();const c=document.getElementById('blocks');if(!t||!c)return;c.innerHTML=t.blocks.map(b=>blockHTML(b)).join('');refreshIcons();if(focusId){const el=document.querySelector(`[data-bid="${focusId}"]`);if(el)placeCaretEnd(el)}}
 function blockKey(e,id){
   if(e.key==='Enter'&&!e.shiftKey){const b=findBlock(id);if(b&&b.type!=='script'){e.preventDefault();closeSlash();addBlock('text',id)}}
   else if(e.key==='Backspace'){if(e.target&&e.target.textContent===''){e.preventDefault();removeBlock(id)}}
@@ -1065,10 +1070,10 @@ function blockKey(e,id){
   else if(e.key==='/'){setTimeout(()=>{const el=document.querySelector(`[data-bid="${id}"]`);if(el&&el.textContent==='/')openSlash(id,el,false)},0)}
 }
 function placeCaretEnd(el){try{el.focus();const r=document.createRange();r.selectNodeContents(el);r.collapse(false);const s=getSelection();s.removeAllRanges();s.addRange(r)}catch(e){}}
-const SLASH=[{t:'text',i:'¶',n:'نص',d:'فقرة عادية'},{t:'heading',i:'H',n:'عنوان',d:'عنوان عريض'},{t:'script',i:'🎬',n:'سكربت',d:'نص الفيديو'},{t:'todo',i:'☑',n:'مهمة فرعية',d:'بوكس تحقق'},{t:'image',i:'🖼️',n:'صورة',d:'رفع صورة'},{t:'divider',i:'—',n:'فاصل',d:'خط فاصل'}];
+const SLASH=[{t:'text',i:'pilcrow',n:'نص',d:'فقرة عادية'},{t:'heading',i:'heading',n:'عنوان',d:'عنوان عريض'},{t:'script',i:'film',n:'سكربت',d:'نص الفيديو'},{t:'todo',i:'square-check',n:'مهمة فرعية',d:'بوكس تحقق'},{t:'image',i:'image',n:'صورة',d:'رفع صورة'},{t:'divider',i:'minus',n:'فاصل',d:'خط فاصل'}];
 function openSlash(id,el,withDel){closeSlash();const r=el.getBoundingClientRect();const m=document.createElement('div');m.className='slash';m.id='slashMenu';m.style.top=(r.bottom+window.scrollY+4)+'px';m.style.right=Math.max(8,window.innerWidth-r.right)+'px';
-  m.innerHTML=SLASH.map(s=>`<button onclick="applySlash('${id}','${s.t}')"><span class="si">${s.i}</span><span>${s.n}<div class="sd">${esc(s.d)}</div></span></button>`).join('')+(withDel?`<button onclick="removeBlock('${id}');closeSlash()"><span class="si">🗑</span><span style="color:var(--bad)">حذف البلوك</span></button>`:'');
-  document.body.appendChild(m);setTimeout(()=>document.addEventListener('click',slashOutside),0)}
+  m.innerHTML=SLASH.map(s=>`<button onclick="applySlash('${id}','${s.t}')"><span class="si"><i data-lucide="${s.i}"></i></span><span>${s.n}<div class="sd">${esc(s.d)}</div></span></button>`).join('')+(withDel?`<button onclick="removeBlock('${id}');closeSlash()"><span class="si"><i data-lucide="trash-2"></i></span><span style="color:var(--bad)">حذف البلوك</span></button>`:'');
+  document.body.appendChild(m);refreshIcons();setTimeout(()=>document.addEventListener('click',slashOutside),0)}
 function slashOutside(e){if(!e.target.closest('#slashMenu')){closeSlash()}}
 function closeSlash(){const m=document.getElementById('slashMenu');if(m)m.remove();document.removeEventListener('click',slashOutside)}
 function blockMenu(e,id){e.stopPropagation();const el=e.currentTarget;openSlash(id,el,true)}
@@ -1080,7 +1085,7 @@ function applySlash(id,type){closeSlash();const t=curTask();const b=findBlock(id
 }
 function pickImage(){window.__imgTarget=null;document.getElementById('imgFile').click()}
 function pickImageFor(id){window.__imgTarget=id;document.getElementById('imgFile').click()}
-async function onImagePicked(e){const f=e.target.files[0];e.target.value='';if(!f)return;const t=curTask();if(!t)return;const st=document.getElementById('upStatus');if(st)st.textContent='⏳ جارٍ رفع الصورة…';
+async function onImagePicked(e){const f=e.target.files[0];e.target.value='';if(!f)return;const t=curTask();if(!t)return;const st=document.getElementById('upStatus');if(st)st.textContent='جارٍ رفع الصورة…';
   try{const ext=(f.name.split('.').pop()||'png').toLowerCase();const path=`${USER.id}/${uid()}.${ext}`;
     const {error}=await sb.storage.from('task-images').upload(path,f,{upsert:false,contentType:f.type||'image/png'});if(error)throw error;
     const {data}=sb.storage.from('task-images').getPublicUrl(path);const url=data.publicUrl;
@@ -1145,7 +1150,7 @@ function openClient(id){
         ${info('المدينة',c.city)}
         ${info('العنوان',c.address)}
         ${info('الموقع',c.website,c.website?(c.website.startsWith('http')?esc(c.website):'https://'+esc(c.website)):'')}
-        ${c.notes?`<div style="padding-top:10px;color:var(--muted);font-size:13px">📝 ${esc(c.notes)}</div>`:''}
+        ${c.notes?`<div style="padding-top:10px;color:var(--muted);font-size:13px"><i class="inl" data-lucide="sticky-note"></i> ${esc(c.notes)}</div>`:''}
         ${(!c.phone&&!c.email&&!c.vat&&!c.company&&!c.address)?'<p style="color:var(--muted)">لا توجد بيانات بعد — اضغط «تعديل البيانات».</p>':''}
       </div>
       <div class="card"><h3><i data-lucide="receipt-text"></i> الفواتير</h3>
@@ -1159,8 +1164,8 @@ function openClient(id){
           <span>${money(docTotal(d))} ${pill(d.status)}</span></div>`).join(''):'<p style="color:var(--muted)">لا عروض أسعار.</p>'}
       </div>
       <div class="card"><h3><i data-lucide="clapperboard"></i> المشاريع والمواعيد</h3>
-        ${it.projects.length?it.projects.map(p=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)">🎬 ${esc(p.title)}</div>`).join(''):''}
-        ${apptUp.length?apptUp.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)">📅 ${esc(a.title)} — ${esc((a.datetime||'').replace('T',' '))}</div>`).join(''):''}
+        ${it.projects.length?it.projects.map(p=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)"><i class="inl" data-lucide="clapperboard"></i> ${esc(p.title)}</div>`).join(''):''}
+        ${apptUp.length?apptUp.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)"><i class="inl" data-lucide="calendar-days"></i> ${esc(a.title)} — ${esc((a.datetime||'').replace('T',' '))}</div>`).join(''):''}
         ${(!it.projects.length&&!apptUp.length)?'<p style="color:var(--muted)">لا مشاريع أو مواعيد مرتبطة.</p>':''}
       </div>
     </div>`;
@@ -1235,7 +1240,7 @@ function renderSubscriptions(){
     <td style="white-space:nowrap"><button class="link-btn" onclick="subModal('${s.id}')">تعديل</button><button class="link-btn del" onclick="delItem('subscriptions','${s.id}',renderSubscriptions)">حذف</button></td></tr>`).join('')}
     <tr style="background:var(--panel2);font-weight:800"><td>الإجمالي الشهري (شهري+أقساط)</td><td>—</td><td>$${money(mUsd)}</td><td>${money(mSar)}</td><td colspan="3"></td></tr>
     </tbody></table>
-    <div class="badge-note" style="margin-top:16px">💡 <div>«المصروف الشهري» يجمع الشهري والأقساط. الاشتراكات السنوية تُعرض منفصلة (وتعادل شهرياً ≈ ${money(ySar/12)} ريال). سعر الصرف المستخدم ≈ 3.75 ريال للدولار.</div></div>`}`;
+    <div class="badge-note" style="margin-top:16px"><i data-lucide="lightbulb"></i> <div>«المصروف الشهري» يجمع الشهري والأقساط. الاشتراكات السنوية تُعرض منفصلة (وتعادل شهرياً ≈ ${money(ySar/12)} ريال). سعر الصرف المستخدم ≈ 3.75 ريال للدولار.</div></div>`}`;
   refreshIcons();
 }
 function subModal(id){
@@ -1388,7 +1393,7 @@ function openCredit(id){const cn=(S.credits||[]).find(x=>x.id===id);if(!cn){go('
       ${(cn.items||[]).map(it=>`<tr><td>${esc(it.desc)}</td><td>${it.qty}</td><td>${money(it.price)}</td><td>${money(lineTotal(it))}</td></tr>`).join('')}
       </tbody></table>
       <div class="totals" style="margin-top:14px"><div class="line grand"><span>إجمالي الإشعار الدائن</span><span>${money(total)} ${esc(s.currency)}</span></div></div>
-      ${cn.notes?`<div style="margin-top:12px;color:var(--muted)">📝 ${esc(cn.notes)}</div>`:''}
+      ${cn.notes?`<div style="margin-top:12px;color:var(--muted)"><i class="inl" data-lucide="sticky-note"></i> ${esc(cn.notes)}</div>`:''}
     </div>`;
   refreshIcons();
 }
@@ -1447,7 +1452,7 @@ function openDoc(type,id){
         ${isInv&&paid>0?`<div class="line"><span>المدفوع</span><span style="color:var(--good)">${money(paid)} ${esc(s.currency)}</span></div>`:''}
         ${isInv&&due>0?`<div class="line"><span>المتبقي</span><span style="color:var(--warn);font-weight:800">${money(due)} ${esc(s.currency)}</span></div>`:''}
       </div>
-      ${d.notes?`<div style="margin-top:14px;color:var(--muted)">📝 ${esc(d.notes)}</div>`:''}
+      ${d.notes?`<div style="margin-top:14px;color:var(--muted)"><i class="inl" data-lucide="sticky-note"></i> ${esc(d.notes)}</div>`:''}
     </div>
     ${isInv&&d.payments&&d.payments.length?`<div class="card" style="margin-top:16px"><h3><i data-lucide="wallet"></i> سجل الدفعات</h3>
       ${d.payments.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${esc(p.date)} · ${esc(p.method||'')}</span><span>${money(p.amount)} ${esc(s.currency)} <button class="link-btn del" onclick="rmPayment('${id}',${i})">×</button></span></div>`).join('')}</div>`:''}
@@ -1469,7 +1474,7 @@ function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv
 function renderAppointments(){
   const list=S.appointments.slice().sort((a,b)=>(a.datetime||'').localeCompare(b.datetime||''));
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>المواعيد</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير الكل .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
+    <div class="page-head"><h1>المواعيد</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()"><i data-lucide="download"></i> تصدير الكل .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
     <div class="badge-note"><i data-lucide="smartphone"></i> <div>اضغط «.ics» أو «Google» لكل موعد لإضافته إلى تقويم جوالك (Apple / Google). المزامنة اللحظية ثنائية الاتجاه تحتاج نسخة قاعدة البيانات (خطوة لاحقة).</div></div>
     ${!list.length?emptyBox('calendar-x','لا توجد مواعيد بعد.'):
     `<table><thead><tr><th>الموعد</th><th>العنوان</th><th>مع</th><th>المدة</th><th>الحالة</th><th>التقويم</th><th></th></tr></thead><tbody>
@@ -1510,7 +1515,7 @@ function renderCalendar(){
   if(!window.FullCalendar){return renderCalendarGrid();}
   if(FC){try{FC.destroy()}catch(e){}FC=null;}
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
+    <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()"><i data-lucide="download"></i> تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
     <div class="badge-note"><i data-lucide="calendar-days"></i> <div>اسحب أي موعد لتغيير وقته، اسحب حافته لتمديد المدة، وبدّل بين العرض الشهري/الأسبوعي/اليومي/السنوي من الأعلى. اضغط على أي يوم/وقت لإضافة موعد.</div></div>
     <div class="card" id="fcal" style="padding:14px"></div>`;
   const events=[];
@@ -1544,7 +1549,7 @@ function renderCalendarGrid(){
     const more=(evs[k]||[]).length>3?`<div style="font-size:10px;color:var(--muted)">+${(evs[k]||[]).length-3}</div>`:'';
     cells+=`<div class="cal-cell ${other?'other':''} ${k===tk?'today':''}" onclick="apptModal(null,'${k}')"><div class="d">${d.getDate()}</div>${ev}${more}</div>`;}
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()">📥 تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
+    <div class="page-head"><h1>التقويم</h1><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="exportICS()"><i data-lucide="download"></i> تصدير .ics</button><button class="btn btn-gold" onclick="apptModal()">+ موعد</button></div></div>
     <div class="badge-note"><i data-lucide="calendar-days"></i> <div>اضغط على أي يوم لإضافة موعد، واضغط على أي حدث لتعديله. صدّر .ics لاستيراد المواعيد في تقويم Apple/Google على جوالك.</div></div>
     <div class="cal-head"><button class="btn btn-ghost btn-sm" onclick="calMove(-1)">‹ السابق</button>
     <h3 style="margin:0">${calRef.toLocaleDateString('ar',{month:'long',year:'numeric'})}</h3>
