@@ -457,6 +457,7 @@ const def={
     {id:'p_design',name:'تصاميم منشورات التواصل الاجتماعي',price:0,unit:'',desc:''}
   ],
   contacts:[],crm:[],sales:[],invoices:[],credits:[],projects:[],appointments:[],freelancers:[],
+  guestMeta:{},
   subscriptions:[
     {id:'sub_apple',name:'حساب مطوّر آبل',usd:99,sar:371,cycle:'yearly',date:'',url:'https://developer.apple.com/account',note:'لنشر تطبيق حروف ودروس على آب ستور',active:true},
     {id:'sub_opus',name:'Opus Clip',usd:29,sar:109,cycle:'monthly',date:'',url:'https://www.opus.pro',note:'قص اللقطات القصيرة من حلقات البودكاست',active:true},
@@ -601,8 +602,9 @@ const APPS=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
   {id:'calendar',name:'التقويم',icon:'calendar-days'},
   {id:'projects',name:'المشروع',icon:'clapperboard'},
+  {id:'guests',name:'ضيوف سَعي',icon:'mic'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -618,6 +620,7 @@ const LAUNCH=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
   {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
+  {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
   {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
   {id:'prompts',name:'مكتبة البرومتات',icon:'library',href:'../prompts/',c:'#eab308,#a16207'},
@@ -1491,7 +1494,7 @@ function docModal(type,id,presetName,cb){
     <td><input data-i="${i}" data-f="qty" type="number" inputmode="decimal" min="0" value="${it.qty}" onfocus="this.select()"></td>
     <td><input data-i="${i}" data-f="price" type="number" inputmode="decimal" min="0" value="${it.price}" onfocus="this.select()"></td>
     <td><input data-i="${i}" data-f="discount" type="number" inputmode="decimal" min="0" max="100" value="${it.discount||0}" onfocus="this.select()"></td>
-    <td style="white-space:nowrap">${money(lineTotal(it))}</td>
+    <td style="white-space:nowrap" data-total="${i}">${money(lineTotal(it))}</td>
     <td><button class="link-btn del" onclick="rmItem(${i})">×</button></td></tr>
     <tr><td colspan="6" style="padding-top:0;padding-bottom:8px"><input data-i="${i}" data-f="details" value="${esc(it.details||'')}" placeholder="↳ تفاصيل تحت الخدمة (اختياري)…" style="font-size:13px;color:var(--muted);background:transparent;border:none;border-bottom:1px dashed var(--line);border-radius:0;padding:5px 4px"></td></tr>`).join('')}
     </tbody></table><button class="link-btn" onclick="addItem()">+ بند</button>
@@ -1499,9 +1502,12 @@ function docModal(type,id,presetName,cb){
     <div class="row2"><div class="field"><label>الحالة</label><select id="d_status">${statuses.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${ST[s]||s}</option>`).join('')}</select></div>
     <div class="field"><label>ضريبة القيمة المضافة</label><select id="d_vat" onchange="toggleVat(this.value)"><option value="0" ${!d.vat?'selected':''}>بدون ضريبة</option><option value="1" ${d.vat?'selected':''}>تطبيق ${d.vatRate}%</option></select></div></div>
     <div class="field"><label>ملاحظات</label><textarea id="d_notes" rows="2">${esc(d.notes)}</textarea></div>
-    <div class="totals"><div class="line"><span>المجموع الفرعي</span><span>${money(sub)}</span></div>
+    <div class="totals" id="docTotals">${totalsHTML()}</div>`;}
+  function totalsHTML(){const sub=docTotal(d);const tax=d.vat?sub*(Number(d.vatRate||0)/100):0;
+    return `<div class="line"><span>المجموع الفرعي</span><span>${money(sub)}</span></div>
     <div class="line"><span>الضريبة (${d.vat?d.vatRate:0}%)</span><span>${money(tax)}</span></div>
-    <div class="line grand"><span>الإجمالي</span><span>${money(sub+tax)}</span></div></div>`;}
+    <div class="line grand"><span>الإجمالي</span><span>${money(sub+tax)}</span></div>`;}
+  function updateTotals(){const el=document.getElementById('docTotals');if(el)el.innerHTML=totalsHTML()}
   openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>renderDocs(type)))()});
   window.addItem=()=>{collect();d.items.push({desc:'',qty:1,price:0,discount:0});refresh()};
   window.addProduct=pid=>{collect();const p=(S.products||[]).find(x=>x.id===pid);if(!p)return;const line={desc:p.name,qty:1,price:Number(p.price||0),discount:0,details:p.desc||''};if(d.items.length===1&&!d.items[0].desc)d.items[0]=line;else d.items.push(line);refresh()};
@@ -1509,7 +1515,7 @@ function docModal(type,id,presetName,cb){
   window.toggleVat=v=>{collect();d.vat=v==='1';refresh()};
   function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.status=g('d_status').value;d.notes=g('d_notes').value;d.vat=g('d_vat').value==='1';if(g('d_cvat'))d.clientVat=g('d_cvat').value;if(g('d_sp'))d.salesperson=g('d_sp').value;if(g('d_expiry'))d.expiry=g('d_expiry').value}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
   function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body()}
-  setTimeout(()=>{document.querySelector('#modalRoot .modal-body').addEventListener('input',e=>{const t=e.target;if(t.closest('#itemsBody')){const f=t.dataset.f;if(f==='qty'||f==='price'||f==='discount'){collect();refresh()}else if(f){const i=+t.dataset.i;if(d.items[i])d.items[i][f]=t.value}}})},0);
+  setTimeout(()=>{const mb=document.querySelector('#modalRoot .modal-body');if(!mb)return;mb.addEventListener('input',e=>{const t=e.target;if(!t.dataset||t.dataset.f===undefined||!t.closest('#itemsBody'))return;const i=+t.dataset.i,f=t.dataset.f;if(d.items[i])d.items[i][f]=t.value;if(f==='qty'||f==='price'||f==='discount'){const cell=mb.querySelector('#itemsBody [data-total="'+i+'"]');if(cell)cell.textContent=money(lineTotal(d.items[i]));updateTotals();}});},0);
 }
 
 /* ===== ZATCA QR ===== */
@@ -1801,6 +1807,120 @@ async function loadVisits(){const box=document.getElementById('visitsBox');if(!b
     <div><div style="font-size:26px;font-weight:800">${fmt(m.count)}</div><div style="color:var(--muted);font-size:13px">آخر ٣٠ يوم</div></div>
     <div><div style="font-size:26px;font-weight:800">${fmt(day.count)}</div><div style="color:var(--muted);font-size:13px">آخر ٢٤ ساعة</div></div></div>`;
 }catch(e){box.innerHTML='<p style="color:var(--muted);font-size:13px">لتفعيل العدّاد: شغّل ملف <b>supabase/analytics.sql</b> في Supabase (جدول ziyarat/pageviews). يبدأ العدّ بعدها تلقائياً.</p>'}}
+
+/* ===== ضيوف سَعي — تسجيلات استبيان البودكاست (guest_registrations) ===== */
+const GUEST_FIELDS=[
+  ['full_name','الاسم الكامل'],['nickname','نناديه بـ'],['email','البريد'],['phone','الجوال/واتساب'],
+  ['field','المجال'],['value','الفائدة للمستمع'],['journey','السعي/الرحلة'],['turning_point','موقف/تحوّل'],
+  ['misconception','مفهوم يُبسّطه'],['dream_question','سؤال يتمناه'],['avoid','أشياء يتجنّبها'],
+  ['website','موقع/بودكاست'],['x','X'],['instagram','إنستقرام'],['linkedin','لينكدإن'],
+  ['youtube','يوتيوب'],['tiktok','تيك توك'],['bio_links','نبذة/روابط'],
+];
+const GUEST_LONG=['value','journey','turning_point','misconception','dream_question','avoid','bio_links'];
+const GUEST_STATUS=[
+  {k:'new',l:'جديد'},{k:'contacted',l:'تم التواصل'},{k:'scheduled',l:'مجدول للتصوير'},
+  {k:'recorded',l:'تم التسجيل'},{k:'archived',l:'مؤرشف'},
+];
+const GS_PILL={new:'lead',contacted:'contacted',scheduled:'scheduled',recorded:'done',archived:'cancelled'};
+let GUESTS=null,GUESTS_ERR=null,GUESTS_LOADING=false;
+function gMeta(id){if(!S.guestMeta)S.guestMeta={};return S.guestMeta[id]||(S.guestMeta[id]={status:'new',recordDate:'',axes:'',notes:''})}
+function gName(r){return esc(r.full_name||r.nickname||'ضيف')}
+function gStatusOf(r){return (S.guestMeta&&S.guestMeta[r.id]&&S.guestMeta[r.id].status)||'new'}
+function gStatusLabel(k){const s=GUEST_STATUS.find(x=>x.k===k);return s?s.l:k}
+async function loadGuests(force){
+  if(GUESTS_LOADING)return; if(GUESTS&&!force){renderGuestsBody();return;}
+  GUESTS_LOADING=true;GUESTS_ERR=null;renderGuestsBody();
+  try{
+    const{data,error}=await sb.from('guest_registrations').select('*').order('created_at',{ascending:false});
+    if(error)throw error;
+    GUESTS=data||[];
+  }catch(e){GUESTS_ERR=(e&&e.message)||String(e);}
+  GUESTS_LOADING=false;renderGuestsBody();
+}
+function renderGuests(){
+  document.getElementById('main').innerHTML=`
+    <div class="page-head"><h1><i data-lucide="mic"></i> ضيوف سَعي</h1>
+      <button class="btn btn-ghost btn-sm" onclick="loadGuests(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
+    <div class="badge-note"><i data-lucide="info"></i><div>كل من يسجّل في <b>استبيان الضيوف</b> يصل هنا تلقائياً بكل أجوبته. افتح الضيف لقراءة إجاباته، ونسّق <b>محاور الحلقة</b> وحالته وموعد التصوير — كل التنسيق يُحفظ في حسابك.</div></div>
+    <div id="guestsBody"></div>`;
+  refreshIcons();
+  if(GUESTS&&!GUESTS_ERR)renderGuestsBody(); else loadGuests();
+}
+function renderGuestsBody(){
+  const box=document.getElementById('guestsBody');if(!box)return;
+  if(GUESTS_LOADING&&!GUESTS){box.innerHTML='<p style="color:var(--muted)">…جارٍ تحميل تسجيلات الضيوف</p>';return;}
+  if(GUESTS_ERR){
+    box.innerHTML=`<div class="empty"><div class="big"><i data-lucide="lock"></i></div>
+      <p style="margin:0 0 6px">تعذّر قراءة تسجيلات الضيوف من السحابة.</p>
+      <p style="font-size:12.5px;color:var(--muted);max-width:560px;margin:0 auto 12px">السبب غالباً صلاحيات القراءة (RLS). شغّل هذا في Supabase SQL لتمكين قراءة المالك:</p>
+      <pre dir="ltr" style="text-align:left;background:#0e0e10;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:11.5px;overflow:auto;max-width:560px;margin:0 auto">create policy "owner reads guests"
+on public.guest_registrations for select
+to authenticated using (true);</pre>
+      <p style="font-size:11px;color:var(--muted);margin-top:10px">${esc(GUESTS_ERR)}</p>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="loadGuests(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>`;
+    refreshIcons();return;
+  }
+  const list=GUESTS||[];
+  if(!list.length){box.innerHTML='<div class="empty"><div class="big"><i data-lucide="mic-off"></i></div>لا توجد تسجيلات ضيوف بعد. أول من يعبّئ الاستبيان سيظهر هنا.</div>';refreshIcons();return;}
+  const counts={};list.forEach(r=>{const k=gStatusOf(r);counts[k]=(counts[k]||0)+1});
+  box.innerHTML=`
+    <div class="stats" style="margin-bottom:18px">
+      <div class="stat"><span class="ic"><i data-lucide="users"></i></span><div class="v">${list.length}</div><div class="l">إجمالي الضيوف</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="sparkle"></i></span><div class="v">${counts.new||0}</div><div class="l">جدد بانتظار التواصل</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="calendar-check"></i></span><div class="v">${counts.scheduled||0}</div><div class="l">مجدولون للتصوير</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="check-circle"></i></span><div class="v">${counts.recorded||0}</div><div class="l">تم تسجيلهم</div></div>
+    </div>
+    <div class="grid">${list.map(guestCard).join('')}</div>`;
+  refreshIcons();
+}
+function guestCard(r){
+  const st=gStatusOf(r);const m=(S.guestMeta&&S.guestMeta[r.id])||{};
+  const date=(r.created_at||'').slice(0,10);
+  const wa=String(r.phone||'').replace(/[^\d]/g,'');
+  return `<div class="card" style="cursor:pointer" onclick="openGuest('${esc(r.id)}')">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+      <div><h3 style="margin:0 0 2px">${gName(r)}</h3>
+        <div style="color:var(--muted);font-size:13px">${esc(r.field||'')}${r.nickname&&r.full_name?` · نناديه ${esc(r.nickname)}`:''}</div></div>
+      ${pill2(GS_PILL[st]||'lead',gStatusLabel(st))}</div>
+    <div style="margin:10px 0;color:var(--muted);font-size:13px;line-height:1.7;max-height:66px;overflow:hidden">${esc((r.value||r.journey||r.misconception||'').slice(0,150))||'—'}</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:9px">
+      ${r.phone?`<span class="inl"><i data-lucide="phone"></i></span> ${esc(r.phone)}`:''}
+      ${date?`<span class="inl"><i data-lucide="calendar"></i></span> ${date}`:''}
+      ${m.recordDate?`<span style="color:var(--gold2)"><span class="inl"><i data-lucide="clapperboard"></i></span> ${esc(m.recordDate)}</span>`:''}
+    </div></div>`;
+}
+function pill2(cls,txt){return `<span class="pill ${cls}">${esc(txt)}</span>`}
+function openGuest(id){
+  const r=(GUESTS||[]).find(x=>String(x.id)===String(id));if(!r)return;
+  const m=gMeta(id);
+  const answers=GUEST_FIELDS.filter(([k])=>r[k]!=null&&String(r[k]).trim()!=='').map(([k,label])=>{
+    const long=GUEST_LONG.includes(k);const val=esc(r[k]);
+    return `<div style="padding:9px 0;border-bottom:1px solid var(--line)">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:${long?'4px':'2px'}">${label}</div>
+      <div style="font-weight:${long?'500':'700'};line-height:1.7;white-space:pre-wrap">${val}</div></div>`;
+  }).join('');
+  const wa=String(r.phone||'').replace(/[^\d]/g,'');
+  const statusOpts=GUEST_STATUS.map(s=>`<option value="${s.k}" ${m.status===s.k?'selected':''}>${s.l}</option>`).join('');
+  openModal(`الضيف: ${gName(r)}`,`
+    <div class="row2" style="align-items:start">
+      <div>
+        <div class="wp-sec-title"><i data-lucide="file-text"></i> أجوبة الضيف في الاستبيان</div>
+        ${answers||'<p style="color:var(--muted)">لا توجد أجوبة.</p>'}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+          ${wa?`<a class="btn btn-ghost btn-sm" href="https://wa.me/${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> واتساب</a>`:''}
+          ${r.email?`<a class="btn btn-ghost btn-sm" href="mailto:${esc(r.email)}"><i data-lucide="mail"></i> إيميل</a>`:''}
+        </div>
+      </div>
+      <div>
+        <div class="wp-sec-title"><i data-lucide="sliders-horizontal"></i> تنسيق الحلقة</div>
+        <div class="field"><label>الحالة</label><select id="g_status">${statusOpts}</select></div>
+        <div class="field"><label>موعد التصوير المقترح</label><input id="g_record" value="${esc(m.recordDate||'')}" placeholder="مثال: الأحد 6 يوليو 4 عصراً"></div>
+        <div class="field"><label>محاور الحلقة (محور في كل سطر)</label><textarea id="g_axes" rows="6" placeholder="• المحور الأول&#10;• المحور الثاني&#10;• ...">${esc(m.axes||'')}</textarea></div>
+        <div class="field"><label>ملاحظات داخلية</label><textarea id="g_notes" rows="3" placeholder="ملاحظات للتنسيق…">${esc(m.notes||'')}</textarea></div>
+      </div>
+    </div>`,
+    ()=>{const g=i=>document.getElementById(i);m.status=g('g_status').value;m.recordDate=g('g_record').value.trim();m.axes=g('g_axes').value;m.notes=g('g_notes').value;S.guestMeta[id]=m;save();closeModal();renderGuestsBody();});
+}
 
 /* ===== SETTINGS ===== */
 function renderSettings(){
