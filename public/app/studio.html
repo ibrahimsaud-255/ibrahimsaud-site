@@ -298,7 +298,32 @@ function render(){
   refreshIcons();
 }
 
+// ===== ربط الخلفية بإعداد النظام (مشترك عبر localStorage نفس الأصل) =====
+const WALL_PRESETS={
+  none:'#07070a',
+  aurora:'radial-gradient(1200px 620px at 82% -12%, rgba(245,166,35,.22), transparent 60%), radial-gradient(900px 520px at 0% 100%, rgba(99,102,241,.14), transparent 55%), #0a0a0b',
+  noir:'radial-gradient(1000px 720px at 50% -5%, #18181c, #0a0a0b 72%)',
+  sand:'linear-gradient(160deg, #15110a 0%, #0a0a0b 60%)',
+  mesh:'radial-gradient(620px 420px at 14% 18%, rgba(245,166,35,.13), transparent 60%), radial-gradient(720px 520px at 86% 82%, rgba(45,212,191,.11), transparent 60%), #0a0a0b',
+  royal:'radial-gradient(900px 600px at 100% 0%, rgba(168,85,247,.18), transparent 55%), #0a0a0b',
+};
+function applySystemWallpaper(){
+  const bg=document.querySelector('.bg');if(!bg)return;
+  let s=null;try{s=JSON.parse(localStorage.getItem('ibsaud_erp_v1')||'null')}catch(e){}
+  const w=s&&s.settings&&s.settings.wallpaper;
+  if(!w)return; // ما فيه إعداد محفوظ → نُبقي الخلفية الافتراضية من الـ CSS
+  const OV='linear-gradient(rgba(7,7,10,.60),rgba(7,7,10,.82))';
+  if(w.type==='url'&&w.url){bg.style.background=`${OV}, url("${w.url}") center/cover no-repeat fixed`;}
+  else if(w.type==='image'){let val=w.value;if(!val&&w.id&&s.settings.wallpapers){const f=s.settings.wallpapers.find(x=>x.id===w.id);val=f&&f.value;}if(val)bg.style.background=`${OV}, url("${val}") center/cover no-repeat fixed`;}
+  else if(w.type==='preset'){bg.style.background=WALL_PRESETS[w.key]||'#07070a';bg.style.backgroundAttachment='fixed';}
+  else if(w.type==='none'){bg.style.background='#07070a';}
+}
+// تحديث فوري لو تغيّرت الخلفية من النظام في تبويب آخر، أو عند العودة للصفحة
+window.addEventListener('storage',e=>{if(e.key==='ibsaud_erp_v1')applySystemWallpaper()});
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)applySystemWallpaper()});
+
 // الإقلاع — يفتح مباشرة بلا تسجيل دخول
+applySystemWallpaper();
 setMode('news');
 refreshIcons();
 </script>
