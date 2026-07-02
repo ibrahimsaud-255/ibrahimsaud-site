@@ -1,55 +1,8 @@
 import Reveal from "@/components/Reveal";
 import { podcastGear } from "@/lib/site";
+import GearImage from "@/components/GearImage";
 
 const arabicNum = (n: number) => n.toLocaleString("ar-EG");
-
-function GearMedia({
-  sketchfab,
-  image,
-  name,
-}: {
-  sketchfab?: string;
-  image?: string;
-  name: string;
-}) {
-  if (sketchfab) {
-    return (
-      <div className="relative aspect-[4/3] w-full bg-ink-soft">
-        <iframe
-          title={name}
-          src={`https://sketchfab.com/models/${sketchfab}/embed?autospin=0.5&autostart=1&preload=1&transparent=1&ui_hint=0&ui_infos=0&ui_controls=1&ui_stop=0`}
-          className="absolute inset-0 h-full w-full"
-          frameBorder="0"
-          allow="autoplay; fullscreen; xr-spatial-tracking"
-          allowFullScreen
-        />
-        <span className="pointer-events-none absolute right-3 top-3 rounded-full bg-ink/80 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
-          ✋ اسحب للتدوير
-        </span>
-      </div>
-    );
-  }
-  if (image) {
-    return (
-      <div className="relative aspect-[4/3] w-full bg-white">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={image}
-          alt={name}
-          className="absolute inset-0 h-full w-full object-contain"
-        />
-      </div>
-    );
-  }
-  return (
-    <div className="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 bg-ink-soft text-center">
-      <span className="text-5xl">🎛️</span>
-      <span className="text-xs font-bold text-cream/50">
-        معاينة قريباً
-      </span>
-    </div>
-  );
-}
 
 export default function PodcastGear() {
   const hero = podcastGear.find((g) => g.hero);
@@ -68,7 +21,7 @@ export default function PodcastGear() {
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-cream/70">
               الأجهزة التي نصوّر بها حلقاتك وإعلاناتك — كاميرات بثّ 4K، مايكات بثّ،
-              مكسر، إضاءة RGB، وتيليبرومبتر. استعرض بعضها ثلاثي الأبعاد.
+              مكسر، إضاءة RGB، وتيليبرومبتر.
             </p>
           </div>
         </Reveal>
@@ -78,7 +31,7 @@ export default function PodcastGear() {
           <Reveal>
             <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50 md:grid md:grid-cols-2">
               <div className="relative bg-white">
-                <GearMedia image={hero.image} name={hero.name} />
+                <GearImage src={hero.image} name={hero.name} />
                 {hero.qty > 1 && (
                   <span className="absolute right-3 top-3 rounded-full bg-ink/85 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
                     ×{arabicNum(hero.qty)}
@@ -137,11 +90,7 @@ export default function PodcastGear() {
             <Reveal key={g.id} delay={i * 80}>
               <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50">
                 <div className="relative">
-                  <GearMedia
-                    sketchfab={g.sketchfab}
-                    image={g.image}
-                    name={g.name}
-                  />
+                  <GearImage src={g.image} name={g.name} />
                   {g.qty > 1 && (
                     <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-line bg-ink/80 px-3 py-1 text-xs font-bold text-cream/80 backdrop-blur">
                       ×{arabicNum(g.qty)}

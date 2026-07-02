@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Brands from "@/components/Brands";
 import Works from "@/components/Works";
 import PlaygroundServices from "@/components/PlaygroundServices";
+import AudiencePersonas from "@/components/AudiencePersonas";
 import Podcast from "@/components/Podcast";
 import StudioTour from "@/components/StudioTour";
 import Contact from "@/components/Contact";
@@ -19,6 +20,7 @@ export default function Home() {
         <Podcast />
         <StudioTour />
         <PlaygroundServices />
+        <AudiencePersonas />
         <Works />
         <Contact />
       </main>
