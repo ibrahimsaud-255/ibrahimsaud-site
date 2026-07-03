@@ -311,42 +311,11 @@ export const programs: Program[] = [
     href: "https://www.youtube.com/watch?v=1XHrhbIouVM",
   },
   {
-    title: "رقمنة — التقنية والذكاء الاصطناعي",
-    desc: "برنامج من ١٥ حلقة عن التقنية والذكاء الاصطناعي، مع المهندس أحمد الزيادات.",
-    meta: "١٥ حلقة",
-    year: "٢٠٢٤",
-    ytId: "inCmiqVSnIQ",
-    href: "https://www.youtube.com/watch?v=inCmiqVSnIQ&list=PL3BjsAHgaCzbaadRYhtrDqcMLaBT5nBVF",
-  },
-  {
-    title: "آخر فقرة — شرح كتب",
-    desc: "شرح كتب حلقة حلقة: «صناعة المستهلك» و«متلازمة التيك توك».",
-    meta: "موسمان",
-    year: "٢٠٢٣",
-    ytId: "iU9dl6OCejQ",
-    href: "https://www.youtube.com/watch?v=iU9dl6OCejQ&list=PL3BjsAHgaCzbr5W9nN8YL6rDf4tkvG2Kn",
-  },
-  {
     title: "بودكاست يا غلام",
     desc: "بودكاست حواري — تقديم وإعداد، بالتعاون مع قناة فلق والمدونة استديو.",
     year: "٢٠٢٣",
     ytId: "h9WQT7gMP6E",
     href: "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
-  },
-  {
-    title: "في الخاطر — برنامج ساخر",
-    desc: "برنامج قصير ساخر يتكلّم عن أشياء «في الخاطر».",
-    meta: "٤ حلقات",
-    year: "٢٠٢٢",
-    ytId: "38fVZn6OX1U",
-    href: "https://www.youtube.com/watch?v=38fVZn6OX1U&list=PL3BjsAHgaCzaYHMoLnjODgHrlaXFCizSe",
-  },
-  {
-    title: "قِوت — إنتاج تجريبي",
-    desc: "برنامج أنتجنا منه حلقتين ومقاطع تشويقية.",
-    year: "٢٠٢٢",
-    ytId: "FrTmum7RIbw",
-    href: "https://www.youtube.com/watch?v=FrTmum7RIbw&list=PL3BjsAHgaCzYb3XwijX4iIQj5unA4RrmL",
   },
 ];
 
