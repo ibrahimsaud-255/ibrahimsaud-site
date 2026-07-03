@@ -2,13 +2,13 @@
 
 import { useCallback, useEffect, useState } from "react";
 import {
-  works,
   audiences,
   adPackages,
   waLink,
   type Audience,
   type Work,
 } from "@/lib/site";
+import { useWorks } from "@/lib/siteData";
 import Reveal from "./Reveal";
 import { toEmbed } from "@/lib/embed";
 
@@ -157,10 +157,11 @@ function SegmentIcon({
    البوابة الرئيسية: خياران — شركات وجهات / متاجر إلكترونية
    ============================================================ */
 function Gateway({ onPick }: { onPick: (a: Audience) => void }) {
+  const worksData = useWorks();
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-2">
       {audiences.map((seg, i) => {
-        const count = works.filter((w) => w.audience === seg.id).length;
+        const count = worksData.filter((w) => w.audience === seg.id).length;
         return (
           <Reveal key={seg.id} delay={i * 100}>
             <button
@@ -391,10 +392,11 @@ function Segment({
   onBack: () => void;
   onPlay: (w: Work) => void;
 }) {
+  const worksData = useWorks();
   const seg = audiences.find((a) => a.id === id);
   if (!seg) return null;
 
-  const items = works.filter((w) => w.audience === id);
+  const items = worksData.filter((w) => w.audience === id);
   const groups = ORDER.map((cat) => ({
     cat,
     items: items.filter((w) => w.category === cat),

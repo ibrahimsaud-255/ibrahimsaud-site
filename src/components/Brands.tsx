@@ -1,6 +1,9 @@
-import { brands } from "@/lib/site";
+"use client";
+
+import { useBrands } from "@/lib/siteData";
 
 export default function Brands() {
+  const brands = useBrands();
   if (!brands.length) return null;
   // نكرّر القائمة مرتين عشان الحركة تكون مستمرة بدون فجوة
   const items = [...brands, ...brands];

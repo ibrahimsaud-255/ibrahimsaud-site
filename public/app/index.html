@@ -696,10 +696,11 @@ const APPS=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
   {id:'calendar',name:'التقويم',icon:'calendar-days'},
   {id:'projects',name:'المشروع',icon:'clapperboard'},
+  {id:'sitework',name:'الأعمال (الموقع)',icon:'film'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,blog:renderBlog,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -715,6 +716,7 @@ const LAUNCH=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
   {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
+  {id:'sitework',name:'الأعمال (الموقع)',icon:'film',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
@@ -1258,6 +1260,162 @@ function checkHabitReminders(){
   let changed=false;
   H.list.forEach(h=>{if(!h.reminder)return;if(H.reminded[day][h.id])return;if(hm>=h.reminder&&!habitDone(h.id,day)){H.reminded[day][h.id]=true;changed=true;beep(2);notifyMe('تذكير عادة: '+h.name,h.desc||'حان وقت إنجاز هذه العادة اليوم');}});
   if(changed)save();
+}
+
+/* ===== معرض الأعمال + الشعارات (يُدار داخلياً ويُنشر على الموقع العام) ===== */
+let SITEWORKS=null, SITEBRANDS=null, SW_LOADING=false, SW_ERR=null;
+const SW_CATS=['أعمال سينمائية','تغطية فعاليات','إعلانات منتجات','مقابلات الشارع'];
+const SW_AUD=[['companies','الشركات والجهات'],['stores','المتاجر الإلكترونية'],['','عمل خاص (بدون قسم)']];
+const SEED_WORKS=[
+ {id:'healthon-open',client:'جامعة الملك سعود — هاكاثون هيلثون',title:'هاكاثون هيلثون — الفيلم الافتتاحي',category:'تغطية فعاليات',audience:'companies',roles:['إخراج','تصوير','مونتاج','موشن'],description:'الفيلم الافتتاحي لهاكاثون هيلثون بجامعة الملك سعود، مع هوية بصرية متحركة تفتح الحدث — من الفكرة حتى التسليم.',video_url:'https://youtu.be/WL-GJ4ZT7Cg',videos:[],bts:null,logo:null,thumb:'https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/هيلثون.jpg',featured:true,sort:10},
+ {id:'healthon-close',client:'جامعة الملك سعود — هاكاثون هيلثون',title:'هاكاثون هيلثون — الفيلم الختامي',category:'تغطية فعاليات',audience:'companies',roles:['إخراج','تصوير','مونتاج'],description:'الفيلم الختامي الذي يلخّص إنجاز الهاكاثون، إضافة لبوسترات وبرومو ولقطات مشاركين.',video_url:'https://youtu.be/7Vmq3eTWQwc',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:20},
+ {id:'rinad-tasis',client:'ريناد المجد',title:'فيلم يوم التأسيس',category:'أعمال سينمائية',audience:'companies',roles:['كتابة النص','تصوير درون','تمثيل','تعليق صوتي','مونتاج'],description:'فيلم سينمائي ليوم التأسيس بلقطات درون وتعليق صوتي ونص كامل — صنعته من الفكرة حتى التسليم، وكنت فيه الممثل والمعلّق والكاتب والمنتج.',video_url:'https://www.youtube.com/watch?v=EOOlRJgeT6Y',videos:[],bts:null,logo:'/LOGO_RMG.png',thumb:'https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/يوم%20التأسيس.jpg',featured:true,sort:30},
+ {id:'feeh-breaking-bad',client:'متجر فيه ستور (feeh store)',title:'إعلان تمثيلي — على طريقة بريكنج باد',category:'أعمال سينمائية',audience:'companies',roles:['فكرة','إخراج','تمثيل (بطولة)','مونتاج'],description:'إعلان درامي لمتجر تجميعات الكمبيوتر بأسلوب «بريكنج باد»: شخصية رئيسية تبيع الأجهزة من سيارتها وتُتمّ صفقاتها — كتبت الفكرة، وأخرجت، وكنت الممثل الأساسي.',video_url:'https://www.youtube.com/watch?v=HTojPu3baG8',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:40},
+ {id:'wedding-film',client:'مناسبة خاصة',title:'فيلم زواج',category:'أعمال سينمائية',audience:null,roles:['تصوير','مونتاج'],description:'توثيق سينمائي لمناسبة زواج — تصوير ومونتاج يحفظ لحظات اليوم بأسلوب راقٍ.',video_url:'https://youtu.be/IIArrpuGomk',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:50},
+ {id:'feeh-campaign',client:'متجر فيه ستور (feeh store)',title:'الفيديو الرئيسي لحملة الموقع الجديد',category:'إعلانات منتجات',audience:'companies',roles:['فكرة','إخراج','تصوير','مونتاج'],description:'الفيديو الرئيسي لإطلاق الموقع الجديد، يبرز ميزة «اجمع جهازك بنفسك» ضمن حملة متكاملة.',video_url:'https://www.youtube.com/watch?v=Bg_9L6TKduc',videos:[],bts:null,logo:null,thumb:null,featured:true,sort:60},
+ {id:'tad-main',client:'متجر TAD',title:'حملة شاحن السفر — الفيديو الرئيسي',category:'إعلانات منتجات',audience:'stores',roles:['فكرة','نص','تصوير','مونتاج'],description:'الفيديو الرئيسي لحملة شاحن السفر — مقطع مصوّر من المغرب استُخدم في التسويق.',video_url:'https://youtu.be/GcA8sjlQduI',videos:[],bts:null,logo:null,thumb:'https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/TAD.jpg',featured:false,sort:70},
+ {id:'tad-short-1',client:'متجر TAD',title:'شاحن السفر — مقطع قصير',category:'إعلانات منتجات',audience:'stores',roles:['فكرة','تصوير','مونتاج'],description:'مقطع قصير تعريفي بمنتج شاحن السفر، جاهز للنشر على المنصات.',video_url:'https://www.youtube.com/shorts/hzGpY3rvj0w',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:80},
+ {id:'tad-short-2',client:'متجر TAD',title:'شاحن السفر — مقطع قصير ٢',category:'إعلانات منتجات',audience:'stores',roles:['فكرة','تصوير','مونتاج'],description:'مقطع قصير ثانٍ ضمن حملة شاحن السفر، بزاوية مختلفة.',video_url:'https://www.youtube.com/shorts/VG-Wk9eKcMo',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:90},
+ {id:'tad-bts',client:'متجر TAD',title:'شاحن السفر — كواليس التصوير',category:'إعلانات منتجات',audience:'stores',roles:['تصوير','توثيق'],description:'كواليس تصوير حملة شاحن السفر من المغرب — لقطات من خلف الكاميرا.',video_url:'https://youtu.be/2Og0FzpWbX4',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:100},
+ {id:'blvd-1',client:'متجر فيه ستور (feeh store)',title:'تغطية موسم الرياضات الإلكترونية (EWC)',category:'مقابلات الشارع',audience:'stores',roles:['فكرة','تقديم','تصوير','مونتاج'],description:'تغطية لموسم الرياضات الإلكترونية من بوليفارد الرياض — تقديم وتصوير ومونتاج.',video_url:'https://www.youtube.com/shorts/y9EnZUF3BH8',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:110},
+ {id:'blvd-2',client:'متجر فيه ستور (feeh store)',title:'البوليفارد — مقابلات شارع',category:'مقابلات الشارع',audience:'stores',roles:['تقديم','تصوير','مونتاج'],description:'مقابلات شارع مع الزوّار في موسم الرياضات الإلكترونية.',video_url:'https://www.youtube.com/shorts/5g_2DYu7Gu8',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:120},
+ {id:'blvd-3',client:'متجر فيه ستور (feeh store)',title:'البوليفارد — لقاء لينوفو',category:'مقابلات الشارع',audience:'stores',roles:['تقديم','تصوير','مونتاج'],description:'مقطع مع لينوفو ضمن تغطية البوليفارد.',video_url:'https://www.youtube.com/shorts/8I_ULf59_K8',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:130},
+ {id:'blvd-4',client:'متجر فيه ستور (feeh store)',title:'البوليفارد — فلوق الجولة',category:'مقابلات الشارع',audience:'stores',roles:['تقديم','تصوير','مونتاج'],description:'فلوق جولة في الفعاليات، ولقاء مع صانع المحتوى التقني فيصل السيف.',video_url:'https://www.youtube.com/shorts/O-6Qm1vUET0',videos:[],bts:null,logo:null,thumb:null,featured:false,sort:140}
+];
+const SEED_BRANDS=[
+ {id:'br_rmg',name:'ريناد المجد',logo:'/LOGO_RMG.png',sort:10},
+ {id:'br_tga',name:'الهيئة العامة للنقل',logo:'/tga.png',sort:20},
+ {id:'br_ejada',name:'إجادة التقنية',logo:'/ejada.png',sort:30},
+ {id:'br_feeh',name:'فيه ستور',logo:'/feeh-store.webp',sort:40},
+ {id:'br_kwentra',name:'وكونترا',logo:'/LOGO_kwentra.png',sort:50},
+ {id:'br_khair',name:'جمعية خير لتحفيظ القرآن',logo:'/khair-quran.png',sort:60},
+ {id:'br_drift',name:'درفت تايم',logo:'/LOGO_3_drift_time.png',sort:70}
+];
+async function swLoad(force){
+  if(SW_LOADING)return;SW_LOADING=true;SW_ERR=null;if(force)renderSiteWorks();
+  try{
+    const w=await sb.from('site_works').select('*').order('sort',{ascending:true});if(w.error)throw w.error;SITEWORKS=w.data||[];
+    const b=await sb.from('site_brands').select('*').order('sort',{ascending:true});if(b.error)throw b.error;SITEBRANDS=b.data||[];
+  }catch(e){SW_ERR=(e&&e.message)||'تعذّر الاتصال';}
+  SW_LOADING=false;if(CUR==='sitework')renderSiteWorks();
+}
+function swThumb(w){if(w.thumb)return w.thumb;const u=w.video_url||'';const m=u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);return m?('https://img.youtube.com/vi/'+m[1]+'/hqdefault.jpg'):''}
+function renderSiteWorks(){
+  const main=document.getElementById('main');
+  if(SITEWORKS===null){if(!SW_LOADING&&!SW_ERR)swLoad();if(!SW_ERR){main.innerHTML=`<div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}}
+  if(SW_ERR){main.innerHTML=`<div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1><button class="btn btn-ghost" onclick="swLoad(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>
+    <div class="card"><div class="badge-note"><i data-lucide="database"></i> <div><b>لتفعيل إدارة الأعمال:</b> افتح Supabase ← SQL Editor ← New query، وشغّل ملف <b>supabase/site_works.sql</b> مرة واحدة (ينشئ جدولَي الأعمال والشعارات). ثم اضغط «إعادة المحاولة».<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(SW_ERR)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
+  const works=SITEWORKS||[],brands=SITEBRANDS||[];
+  main.innerHTML=`
+    <div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${works.length?'':`<button class="btn btn-ghost" onclick="swImport('works')"><i data-lucide="download"></i> استيراد الأعمال الحالية</button>`}
+        <button class="btn btn-gold" onclick="swWorkModal()"><i data-lucide="plus"></i> عمل جديد</button></div></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="globe"></i> <div>ما تضيفه هنا يظهر مباشرةً في قسم «الأعمال» بالموقع العام. الصورة المصغّرة تُشتق من رابط يوتيوب تلقائياً ما لم ترفع صورة. القسم يحدّد أين يظهر العمل: الشركات أو المتاجر.</div></div>
+    <div class="grid">
+    ${works.length?works.map(w=>{const th=swThumb(w);const aud=(SW_AUD.find(a=>a[0]===(w.audience||''))||['','—'])[1];return `
+      <div class="card" style="padding:0;overflow:hidden">
+        <div style="position:relative;aspect-ratio:16/9;background:#0006">${th?`<img src="${esc(th)}" loading="lazy" style="width:100%;height:100%;object-fit:cover">`:`<div style="display:grid;place-items:center;height:100%;color:var(--muted)"><i data-lucide="video-off"></i></div>`}
+          ${w.featured?`<span class="pill done" style="position:absolute;top:8px;inset-inline-start:8px"><i class="inl" data-lucide="star"></i> مميّز</span>`:''}
+          ${w.logo?`<img src="${esc(w.logo)}" style="position:absolute;bottom:8px;inset-inline-end:8px;height:32px;background:#fff;border-radius:7px;padding:3px">`:''}
+        </div>
+        <div style="padding:13px">
+          <div style="font-weight:800">${esc(w.title||'')}</div>
+          <div style="font-size:12px;color:var(--muted);margin:3px 0 9px">${esc(w.client||'')} · ${esc(w.category||'')} · ${esc(aud)}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn btn-ghost btn-sm" onclick="swWorkModal('${w.id}')"><i data-lucide="pencil"></i> تعديل</button>
+            ${w.video_url?`<a class="btn btn-ghost btn-sm" href="${esc(w.video_url)}" target="_blank" rel="noopener"><i data-lucide="play"></i> معاينة</a>`:''}
+            <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelWork('${w.id}')"><i data-lucide="trash-2"></i></button>
+          </div>
+        </div></div>`}).join(''):`<div class="card"><p style="color:var(--muted)">لا أعمال بعد. أضف عملاً جديداً أو استورد الأعمال الحالية.</p></div>`}
+    </div>
+    <div class="page-head" style="margin-top:30px"><h2 style="margin:0;font-size:19px"><i data-lucide="badge-check"></i> شعارات الشركات (شريط «موثوق من»)</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${brands.length?'':`<button class="btn btn-ghost" onclick="swImport('brands')"><i data-lucide="download"></i> استيراد الشعارات الحالية</button>`}
+        <button class="btn btn-gold" onclick="swBrandModal()"><i data-lucide="plus"></i> شعار جديد</button></div></div>
+    <div class="grid">
+    ${brands.length?brands.map(b=>`<div class="card" style="display:flex;align-items:center;gap:12px">
+      <img src="${esc(b.logo)}" loading="lazy" style="height:40px;max-width:110px;object-fit:contain;background:#fff;border-radius:7px;padding:4px">
+      <div style="flex:1;font-weight:700">${esc(b.name||'')}</div>
+      <button class="btn btn-ghost btn-sm" onclick="swBrandModal('${b.id}')"><i data-lucide="pencil"></i></button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelBrand('${b.id}')"><i data-lucide="trash-2"></i></button>
+    </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا شعارات بعد.</p></div>`}
+    </div>`;
+  applyWallpaper();refreshIcons();
+}
+function swPickImage(inputId,pvId,fmt,maxW){
+  const inp=document.getElementById(inputId),f=inp&&inp.files&&inp.files[0];if(!f)return;
+  const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const s=Math.min(1,(maxW||400)/img.width);const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);let url;try{url=c.toDataURL(fmt==='webp'?'image/webp':'image/png',0.85)}catch(e){url=c.toDataURL('image/png')}const v=document.getElementById(pvId+'_val');if(v)v.value=url;const pv=document.getElementById(pvId);if(pv){pv.src=url;pv.style.display='block'}};img.src=rd.result};rd.readAsDataURL(f);
+}
+function swClearImg(pvId){const v=document.getElementById(pvId+'_val');if(v)v.value='';const pv=document.getElementById(pvId);if(pv){pv.src='';pv.style.display='none'}}
+function swWorkModal(id){
+  const w=id?{...(SITEWORKS||[]).find(x=>x.id===id)}:{id:'',client:'',title:'',category:SW_CATS[0],audience:'companies',roles:[],description:'',video_url:'',videos:[],logo:'',thumb:'',featured:false,sort:((SITEWORKS||[]).length+1)*10};
+  const catOpts=SW_CATS.map(c=>`<option ${w.category===c?'selected':''}>${esc(c)}</option>`).join('');
+  const audOpts=SW_AUD.map(a=>`<option value="${a[0]}" ${(w.audience||'')===a[0]?'selected':''}>${esc(a[1])}</option>`).join('');
+  openModal(id?'تعديل عمل':'عمل جديد',`
+    <div class="row2"><div class="field"><label>عنوان العمل</label><input id="sw_title" value="${esc(w.title)}" placeholder="مثال: فيلم يوم التأسيس"></div>
+    <div class="field"><label>العميل/الجهة</label><input id="sw_client" value="${esc(w.client)}" placeholder="اسم الشركة أو المتجر"></div></div>
+    <div class="row2"><div class="field"><label>التصنيف</label><select id="sw_cat">${catOpts}</select></div>
+    <div class="field"><label>القسم (أين يظهر)</label><select id="sw_aud">${audOpts}</select></div></div>
+    <div class="field"><label>الأدوار (افصلها بفاصلة)</label><input id="sw_roles" value="${esc((w.roles||[]).join('، '))}" placeholder="إخراج، تصوير، مونتاج"></div>
+    <div class="field"><label>الوصف</label><textarea id="sw_desc" rows="3">${esc(w.description||'')}</textarea></div>
+    <div class="field"><label>رابط الفيديو الأساسي</label><input id="sw_video" value="${esc(w.video_url||'')}" placeholder="https://youtu.be/... أو رابط تيك توك/فيميو"></div>
+    <div class="field"><label>روابط فيديو إضافية (سطر لكل رابط — اختياري)</label><textarea id="sw_videos" rows="2" placeholder="رابط لكل سطر">${esc((w.videos||[]).join('\n'))}</textarea></div>
+    <div class="row2">
+      <div class="field"><label>شعار العميل (اختياري)</label>
+        <input type="file" accept="image/*" id="sw_logo_file" onchange="swPickImage('sw_logo_file','sw_logo_pv','png',300)">
+        <input type="hidden" id="sw_logo_pv_val" value="${esc(w.logo||'')}">
+        <img id="sw_logo_pv" src="${esc(w.logo||'')}" style="${w.logo?'':'display:none;'}max-height:56px;margin-top:8px;background:#fff;border-radius:8px;padding:4px">
+        <div><button type="button" class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="swClearImg('sw_logo_pv')">إزالة الشعار</button></div>
+      </div>
+      <div class="field"><label>صورة مصغّرة مخصّصة (اختياري)</label>
+        <input type="file" accept="image/*" id="sw_thumb_file" onchange="swPickImage('sw_thumb_file','sw_thumb_pv','webp',800)">
+        <input type="hidden" id="sw_thumb_pv_val" value="${esc(w.thumb||'')}">
+        <img id="sw_thumb_pv" src="${esc(w.thumb||'')}" style="${w.thumb?'':'display:none;'}max-height:64px;margin-top:8px;border-radius:8px">
+        <div style="font-size:12px;color:var(--muted);margin-top:4px">فارغة = تُستخدم صورة يوتيوب تلقائياً.</div>
+      </div>
+    </div>
+    <div class="row2"><div class="field"><label>مميّز</label><select id="sw_feat"><option value="0" ${!w.featured?'selected':''}>عادي</option><option value="1" ${w.featured?'selected':''}>مميّز (بشارة)</option></select></div>
+    <div class="field"><label>الترتيب (الأصغر أولاً)</label><input type="number" id="sw_sort" value="${Number(w.sort||0)}"></div></div>`,
+  ()=>swSaveWork(id), id?()=>swDelWork(id):null);
+}
+async function swSaveWork(id){
+  const g=i=>document.getElementById(i);const title=g('sw_title').value.trim();if(!title){alert('أدخل عنوان العمل');return}
+  const row={id:id||('w_'+uid()),client:g('sw_client').value.trim(),title,category:g('sw_cat').value,audience:g('sw_aud').value||null,
+    roles:g('sw_roles').value.split(/[،,]/).map(s=>s.trim()).filter(Boolean),description:g('sw_desc').value.trim(),
+    video_url:g('sw_video').value.trim()||null,videos:g('sw_videos').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    logo:g('sw_logo_pv_val').value||null,thumb:g('sw_thumb_pv_val').value||null,featured:g('sw_feat').value==='1',sort:Number(g('sw_sort').value||0)};
+  const btn=document.getElementById('mSave');if(btn){btn.disabled=true;btn.textContent='…جارٍ الحفظ'}
+  const {error}=await sb.from('site_works').upsert(row);
+  if(error){alert('تعذّر الحفظ: '+error.message);if(btn){btn.disabled=false;btn.textContent='حفظ'}return}
+  closeModal();await swLoad(true);
+}
+async function swDelWork(id){if(!confirm('حذف هذا العمل من الموقع نهائياً؟'))return;const {error}=await sb.from('site_works').delete().eq('id',id);if(error){alert('تعذّر الحذف: '+error.message);return}closeModal();await swLoad(true);}
+function swBrandModal(id){
+  const b=id?{...(SITEBRANDS||[]).find(x=>x.id===id)}:{id:'',name:'',logo:'',sort:((SITEBRANDS||[]).length+1)*10};
+  openModal(id?'تعديل شعار':'شعار جديد',`
+    <div class="field"><label>اسم الشركة/الجهة</label><input id="sbr_name" value="${esc(b.name||'')}"></div>
+    <div class="field"><label>الشعار (PNG بخلفية شفافة أفضل)</label>
+      <input type="file" accept="image/*" id="sbr_logo_file" onchange="swPickImage('sbr_logo_file','sbr_logo_pv','png',320)">
+      <input type="hidden" id="sbr_logo_pv_val" value="${esc(b.logo||'')}">
+      <img id="sbr_logo_pv" src="${esc(b.logo||'')}" style="${b.logo?'':'display:none;'}max-height:56px;margin-top:8px;background:#fff;border-radius:8px;padding:4px"></div>
+    <div class="field"><label>الترتيب</label><input type="number" id="sbr_sort" value="${Number(b.sort||0)}"></div>`,
+  ()=>swSaveBrand(id), id?()=>swDelBrand(id):null);
+}
+async function swSaveBrand(id){
+  const g=i=>document.getElementById(i);const logo=g('sbr_logo_pv_val').value;if(!logo){alert('ارفع الشعار أولاً');return}
+  const row={id:id||('b_'+uid()),name:g('sbr_name').value.trim(),logo,sort:Number(g('sbr_sort').value||0)};
+  const {error}=await sb.from('site_brands').upsert(row);
+  if(error){alert('تعذّر الحفظ: '+error.message);return}
+  closeModal();await swLoad(true);
+}
+async function swDelBrand(id){if(!confirm('حذف هذا الشعار؟'))return;const {error}=await sb.from('site_brands').delete().eq('id',id);if(error){alert('تعذّر الحذف: '+error.message);return}closeModal();await swLoad(true);}
+async function swImport(kind){
+  if(!confirm('استيراد البيانات الحالية من الموقع؟ (آمن — لن تُكرَّر إن استوردتها سابقاً)'))return;
+  const tbl=kind==='works'?'site_works':'site_brands',data=kind==='works'?SEED_WORKS:SEED_BRANDS;
+  const {error}=await sb.from(tbl).upsert(data);
+  if(error){alert('تعذّر الاستيراد: '+error.message);return}
+  await swLoad(true);
 }
 
 /* ===== PROJECTS (board of projects) ===== */
