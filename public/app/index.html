@@ -698,9 +698,10 @@ const APPS=[
   {id:'projects',name:'المشروع',icon:'clapperboard'},
   {id:'sitework',name:'الأعمال (الموقع)',icon:'film'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
+  {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -718,6 +719,7 @@ const LAUNCH=[
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
   {id:'sitework',name:'الأعمال (الموقع)',icon:'film',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
+  {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
   {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
@@ -1417,6 +1419,83 @@ async function swImport(kind){
   if(error){alert('تعذّر الاستيراد: '+error.message);return}
   await swLoad(true);
 }
+
+/* ===== القائمة البريدية (اشتراك + إرسال المدونة عبر Resend) ===== */
+let NL={subs:null,loading:false,err:null,_posts:null};
+async function nlLoad(force){
+  if(NL.loading)return;NL.loading=true;NL.err=null;if(force&&CUR==='newsletter')renderNewsletter();
+  try{const r=await sb.from('subscribers').select('*').order('created_at',{ascending:false});if(r.error)throw r.error;NL.subs=r.data||[];}
+  catch(e){NL.err=(e&&e.message)||'تعذّر الاتصال';}
+  NL.loading=false;if(CUR==='newsletter')renderNewsletter();
+}
+async function nlSend(payload){
+  const {data,error}=await sb.functions.invoke('newsletter-send',{body:payload});
+  if(error){let m=error.message||'خطأ';try{const j=await error.context.json();if(j&&j.error)m=j.error}catch(_){}throw new Error(m)}
+  if(data&&data.error)throw new Error(data.error);
+  return data||{};
+}
+function nlToHtml(txt){if(/<[a-z][\s\S]*>/i.test(txt))return txt;const e=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));return txt.split(/\n{2,}/).map(p=>'<p>'+e(p).replace(/\n/g,'<br>')+'</p>').join('')}
+async function nlSendPostRow(post){
+  try{const res=await nlSend({subject:post.title,contentHtml:post.body_html||'',coverUrl:post.cover_url||undefined,url:'https://ibrahimsaud.com/blog/',testOnly:false});
+    alert('تم إرسال المقال للمشتركين: '+(res.sent||0)+' ✓'+(res.failed?(' — فشل '+res.failed):''));}
+  catch(e){alert('تعذّر الإرسال للمشتركين: '+(e.message||e)+'\nتقدر ترسله لاحقاً من «القائمة البريدية».');}
+}
+function renderNewsletter(){
+  const main=document.getElementById('main');
+  if(NL.subs===null&&!NL.err){if(!NL.loading)nlLoad();main.innerHTML=`<div class="page-head"><h1><i data-lucide="mail"></i> القائمة البريدية</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}
+  if(NL.err){main.innerHTML=`<div class="page-head"><h1><i data-lucide="mail"></i> القائمة البريدية</h1><button class="btn btn-ghost" onclick="nlLoad(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>
+    <div class="card"><div class="badge-note"><i data-lucide="database"></i> <div><b>لتفعيل القائمة البريدية:</b><br>١) شغّل ملف <b>supabase/newsletter.sql</b> في Supabase ← SQL Editor.<br>٢) انشر دالتَي الإرسال: <code>supabase functions deploy newsletter-send</code> و<code>supabase functions deploy newsletter-unsub --no-verify-jwt</code> (تستخدمان مفتاح Resend المضبوط مسبقاً).<br>ثم اضغط «إعادة المحاولة».<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(NL.err)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
+  const subs=NL.subs||[];const active=subs.filter(s=>!s.unsubscribed).length;const unsub=subs.length-active;
+  main.innerHTML=`
+    <div class="page-head"><h1><i data-lucide="mail"></i> القائمة البريدية</h1></div>
+    <div class="stats" style="margin-bottom:20px">
+      <div class="stat"><span class="ic"><i data-lucide="users"></i></span><div class="v">${active}</div><div class="l">مشترك نشط</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="user-x"></i></span><div class="v">${unsub}</div><div class="l">ألغوا الاشتراك</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="mailbox"></i></span><div class="v">${subs.length}</div><div class="l">إجمالي</div></div>
+    </div>
+    <div class="grid">
+      <div class="card" style="grid-column:span 3;min-width:320px"><h3><i data-lucide="send"></i> إرسال رسالة / تدوينة</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px"><button class="btn btn-ghost btn-sm" onclick="nlPickPost()"><i data-lucide="newspaper"></i> تحميل من تدوينة</button></div>
+        <div class="field"><label>العنوان (الموضوع)</label><input id="nl_subject" placeholder="عنوان الرسالة"></div>
+        <div class="field"><label>المحتوى</label><textarea id="nl_html" rows="8" placeholder="اكتب المحتوى هنا… (يدعم HTML، أو نص عادي بأسطر)"></textarea></div>
+        <div class="row2"><div class="field"><label>صورة غلاف (رابط — اختياري)</label><input id="nl_cover" placeholder="https://…"></div>
+        <div class="field"><label>رابط «اقرأ على الموقع» (اختياري)</label><input id="nl_url" placeholder="https://ibrahimsaud.com/blog/"></div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          <button class="btn btn-ghost" onclick="nlDoSend(true)"><i data-lucide="flask-conical"></i> إرسال تجريبي لي</button>
+          <button class="btn btn-gold" onclick="nlDoSend(false)"><i data-lucide="send"></i> إرسال للجميع (${active})</button></div>
+        <div id="nl_status" class="msg" style="margin-top:10px"></div>
+        <div class="badge-note" style="margin-top:10px"><i data-lucide="info"></i> <div>الإرسال للمشتركين الخارجيين يتطلّب <b>دومين موثّق في Resend</b>. جرّب «إرسال تجريبي لي» أولاً للتأكد. كل رسالة تحتوي رابط إلغاء اشتراك تلقائياً.</div></div>
+      </div>
+      <div class="card" style="grid-column:span 1;min-width:260px"><h3><i data-lucide="list"></i> المشتركون</h3>
+        ${subs.length?subs.slice(0,60).map(s=>`<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line)">
+          <span style="flex:1;font-size:13px;direction:ltr;text-align:right;${s.unsubscribed?'text-decoration:line-through;color:var(--muted)':''}">${esc(s.email)}</span>
+          <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="nlDelSub('${s.id}')"><i data-lucide="x"></i></button>
+        </div>`).join(''):'<p style="color:var(--muted)">لا مشتركين بعد. النموذج في الموقع يجمعهم تلقائياً.</p>'}
+        ${subs.length>60?`<p style="color:var(--muted);font-size:12px;margin-top:8px">…و${subs.length-60} غيرهم</p>`:''}
+      </div>
+    </div>`;
+  applyWallpaper();refreshIcons();
+}
+async function nlPickPost(){
+  let posts=[];try{const r=await sb.from('posts').select('id,title,body_html,cover_url,status,published_at').eq('status','published').order('published_at',{ascending:false});posts=r.data||[]}catch(e){alert('تعذّر جلب المقالات: '+(e.message||e));return}
+  if(!posts.length){alert('لا مقالات منشورة بعد. انشر مقالاً من «المدونة» أولاً.');return}
+  NL._posts=posts;
+  openModal('اختر تدوينة',posts.map((p,i)=>`<button type="button" class="btn btn-ghost" style="display:block;width:100%;text-align:right;margin-bottom:6px" onclick="nlUsePost(${i})"><i data-lucide="file-text"></i> ${esc(p.title||'بدون عنوان')}</button>`).join(''),()=>closeModal());
+}
+function nlUsePost(i){const p=(NL._posts||[])[i];if(!p)return;const g=id=>document.getElementById(id);if(g('nl_subject'))g('nl_subject').value=p.title||'';if(g('nl_html'))g('nl_html').value=p.body_html||'';if(g('nl_cover'))g('nl_cover').value=p.cover_url||'';if(g('nl_url'))g('nl_url').value='https://ibrahimsaud.com/blog/';closeModal();}
+async function nlDoSend(testOnly){
+  const g=id=>(document.getElementById(id)||{}).value||'';
+  const subject=g('nl_subject').trim();const raw=g('nl_html').trim();const cover=g('nl_cover').trim();const url=g('nl_url').trim();
+  if(!subject||!raw){alert('اكتب العنوان والمحتوى، أو حمّل تدوينة');return}
+  const active=(NL.subs||[]).filter(s=>!s.unsubscribed).length;
+  if(!testOnly&&!confirm('إرسال «'+subject+'» إلى '+active+' مشترك؟'))return;
+  const st=document.getElementById('nl_status');if(st){st.className='msg';st.textContent='…جارٍ الإرسال'}
+  try{const res=await nlSend({subject,contentHtml:nlToHtml(raw),coverUrl:cover||undefined,url:url||undefined,testOnly});
+    if(st){st.className='msg ok';st.textContent=testOnly?'تم إرسال نسخة تجريبية لبريدك ✓':('تم الإرسال بنجاح: '+(res.sent||0)+' ✓'+(res.failed?(' — فشل '+res.failed):''))}
+    if(!testOnly)setTimeout(()=>nlLoad(true),800);
+  }catch(e){if(st){st.className='msg err';st.textContent='تعذّر الإرسال: '+(e.message||e)}}
+}
+async function nlDelSub(id){if(!confirm('حذف هذا المشترك؟'))return;const {error}=await sb.from('subscribers').delete().eq('id',id);if(error){alert('تعذّر الحذف: '+error.message);return}await nlLoad(true);}
 
 /* ===== PROJECTS (board of projects) ===== */
 let CUR_PROJ=null;
@@ -2443,10 +2522,11 @@ async function blogPublish(){
   const fm=BLOG.formatted||blogLocalFormat(body);const finalTitle=title||fm.title||'بدون عنوان';
   const btn=document.getElementById('b_publish');if(btn)btn.disabled=true;if(msg){msg.className='msg';msg.innerHTML='جارٍ النشر…'}
   const d=blogDates();
-  const{error}=await sb.from('posts').insert({title:finalTitle,excerpt:fm.excerpt||'',body_html:fm.html,cover_url:BLOG.cover||'',greg_date:d.greg,hijri_date:d.hijri,reading_min:blogReadingMin(fm.html),status:'published',published_at:new Date().toISOString()});
+  const{data:newPost,error}=await sb.from('posts').insert({title:finalTitle,excerpt:fm.excerpt||'',body_html:fm.html,cover_url:BLOG.cover||'',greg_date:d.greg,hijri_date:d.hijri,reading_min:blogReadingMin(fm.html),status:'published',published_at:new Date().toISOString()}).select().single();
   if(error){if(btn)btn.disabled=false;if(msg){msg.className='msg err';msg.textContent='تعذّر النشر: '+error.message}return}
   if(msg){msg.className='msg ok';msg.textContent='تم نشر المقال'}BLOG.cover='';BLOG.formatted=null;
   try{const{data}=await sb.from('posts').select('*').order('published_at',{ascending:false});BLOG.posts=data||[]}catch(_){}
+  if(newPost&&confirm('تم نشر المقال. هل ترسله الآن لكل المشتركين في القائمة البريدية؟')){nlSendPostRow(newPost);}
   setTimeout(()=>blogRender(),700);
 }
 async function blogDeletePost(id){if(!confirm('حذف المقال نهائياً؟'))return;await sb.from('posts').delete().eq('id',id);BLOG.posts=BLOG.posts.filter(p=>p.id!==id);blogRender();}
