@@ -8,7 +8,6 @@ const links = [
   { href: "#studio", label: "الاستوديو" },
   { href: "/ad-packages/", label: "باقات الإعلانات" },
   { href: "/studio-rental/", label: "احجز الاستوديو" },
-  { href: "#audiences", label: "مَن أخدمهم" },
   { href: "#works", label: "الأعمال" },
   { href: "/blog/", label: "المدونة" },
 ];
