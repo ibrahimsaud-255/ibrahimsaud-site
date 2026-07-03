@@ -1,8 +1,6 @@
 import Reveal from "@/components/Reveal";
 import { studioRental, studioRentalNote, waLink } from "@/lib/site";
 
-const arPrice = (n: number) => n.toLocaleString("ar-EG");
-
 export default function StudioRental() {
   return (
     <section className="px-5 py-16">
@@ -39,13 +37,8 @@ export default function StudioRental() {
                 </div>
                 <p className="mt-1 text-sm text-cream/60">{p.tagline}</p>
 
-                <div className="mt-4 flex items-baseline gap-2">
-                  <span className="text-4xl font-black text-gold">
-                    {arPrice(p.price)}
-                  </span>
-                  <span className="text-sm font-bold text-cream/70">
-                    ريال {p.unit}
-                  </span>
+                <div className="mt-4 text-sm font-bold text-gold">
+                  السعر عند الطلب
                 </div>
 
                 <ul className="mt-5 space-y-2.5">
@@ -62,7 +55,7 @@ export default function StudioRental() {
 
                 <a
                   href={waLink(
-                    `السلام عليكم، أبي أحجز الاستوديو — «${p.name}» (${p.price} ريال ${p.unit}) 🎥`,
+                    `السلام عليكم، أبي أحجز الاستوديو — «${p.name}» 🎥`,
                   )}
                   target="_blank"
                   rel="noopener noreferrer"
