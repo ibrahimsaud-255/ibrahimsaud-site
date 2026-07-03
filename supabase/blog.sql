@@ -26,6 +26,9 @@ create table if not exists public.posts (
 );
 create index if not exists posts_published_idx on public.posts(published_at desc);
 
+-- نص المقال الخام (قبل التنسيق) — يُحفظ ليمكن تعديل المسودة/المقال لاحقاً
+alter table public.posts add column if not exists raw_text text default '';
+
 alter table public.posts enable row level security;
 
 -- الجميع (anon) يقرؤون المقالات المنشورة فقط
