@@ -3,14 +3,13 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import Reveal from "@/components/Reveal";
-import StudioRental from "@/components/StudioRental";
 import PodcastGear from "@/components/PodcastGear";
 import { waLink } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "احجز الاستوديو — سجّل وامشِ | إبراهيم سعود",
   description:
-    "احجز استوديو مجهّز بالكامل بالساعة أو نصف يوم أو يوم كامل: كاميرات 4K، إضاءة، وصوت احترافي. صوّر محتواك واستلم اللقطات الخام وأكمل المونتاج بنفسك — بسعر مناسب.",
+    "استوديو مجهّز بالكامل: كاميرات بثّ 4K، مايكات، مكسر، وإضاءة RGB. صوّر محتواك واستلم اللقطات الخام وأكمل المونتاج بنفسك. راسلني لترتيب الحجز.",
 };
 
 export default function StudioRentalPage() {
@@ -22,22 +21,18 @@ export default function StudioRentalPage() {
           <div className="mx-auto max-w-6xl text-center">
             <Reveal>
               <p className="text-sm font-bold tracking-widest text-gold">
-                تأجير الاستوديو
+                الأستديو
               </p>
               <h1 className="mx-auto mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                استوديو جاهز — تصوّر وتستلم لقطاتك
+                استوديو سَعي — المكان والمعدّات
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-cream/70">
-                احجز المكان بمعدّاته الكاملة بالوقت اللي يناسبك. صوّر حلقتك أو
-                محتواك، واستلم اللقطات الخام، وأكمل المونتاج بنفسك — بأسعار واضحة
-                وبدون مبالغة.
+                شاهد أجواء الأستديو والمعدّات الاحترافية التي نصوّر بها حلقاتك
+                وإعلاناتك — كاميرات بثّ 4K، مايكات، مكسر، وإضاءة سينمائية.
               </p>
             </Reveal>
           </div>
         </section>
-
-        {/* باقات الحجز */}
-        <StudioRental />
 
         {/* استعراض المعدّات */}
         <PodcastGear />

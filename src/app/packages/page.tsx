@@ -4,17 +4,20 @@ import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import Reveal from "@/components/Reveal";
 import PodcastGear from "@/components/PodcastGear";
+import GearImage from "@/components/GearImage";
 import {
   site,
   waLink,
-  podcastPackages,
+  podcastRecordingPrice,
   packageDeliverables,
 } from "@/lib/site";
 
+const arPrice = (n: number) => n.toLocaleString("ar-EG");
+
 export const metadata: Metadata = {
-  title: "باقات تسجيل البودكاست — استوديو سَعي | إبراهيم سعود",
+  title: "تسجيل حلقات البودكاست — استوديو سَعي | إبراهيم سعود",
   description:
-    "باقات واضحة لتسجيل حلقات البودكاست في استوديو مجهّز: حلقة بمقدّم وضيف، أو حلقة بأربعة أشخاص. تشمل التصوير متعدد الكاميرات والمخرجات الجاهزة للنشر.",
+    "سجّل حلقة بودكاست كاملة في استوديو مجهّز بسعر ثابت واضح. تشمل التصوير متعدد الكاميرات وكل المخرجات الجاهزة للنشر: الفيديو الكامل، ١٠ مقاطع قصيرة، وتصاميم الحلقة.",
 };
 
 export default function PackagesPage() {
@@ -29,91 +32,88 @@ export default function PackagesPage() {
                 استوديو سَعي للبودكاست
               </p>
               <h1 className="mx-auto mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                باقات تسجيل حلقات البودكاست
+                سجّل حلقة بودكاست كاملة
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-cream/70">
-                طريقة واضحة وسهلة لتسجيل حلقتك: اختر عدد الأشخاص، ونتكفّل بالمكان
-                والمعدّات والتصوير والمخرجات الجاهزة للنشر.
+                استوديو مجهّز بالكامل وتصوير متعدّد الكاميرات، وتستلم حلقتك مع كل
+                مخرجاتها جاهزة للنشر — بسعر ثابت وواضح.
               </p>
             </Reveal>
           </div>
         </section>
 
-        {/* الباقتان */}
-        <section className="px-5 pb-8">
-          <div className="mx-auto grid max-w-5xl gap-6 md:grid-cols-2">
-            {podcastPackages.map((p, i) => (
-              <Reveal key={p.id} delay={i * 90}>
-                <div className="flex h-full flex-col rounded-3xl border border-line bg-ink-card p-7 transition hover:border-gold/50">
-                  <div className="flex items-center justify-between gap-3">
-                    <h2 className="text-2xl font-black text-cream">{p.name}</h2>
-                    {p.badge && (
-                      <span className="rounded-full bg-gold px-3 py-1 text-xs font-bold text-ink">
-                        {p.badge}
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-1 text-sm text-cream/60">{p.tagline}</p>
-                  <p className="mt-4 inline-flex w-fit items-center gap-2 rounded-full border border-line px-4 py-1.5 text-sm font-bold text-gold">
-                    👥 {p.persons}
+        {/* السعر الثابت */}
+        <section className="px-5 pb-4">
+          <div className="mx-auto max-w-md">
+            <Reveal>
+              <div className="relative overflow-hidden rounded-3xl border border-gold/50 bg-ink-card p-8 text-center">
+                <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_50%_0%,var(--color-gold),transparent_55%)]" />
+                <div className="relative">
+                  <p className="text-sm font-bold text-cream/70">
+                    تسجيل الحلقة الكاملة
                   </p>
-
-                  <h3 className="mt-6 text-sm font-bold tracking-wide text-cream/80">
-                    المكان والمعدّات
-                  </h3>
-                  <ul className="mt-3 space-y-2.5">
-                    {p.setup.map((s) => (
-                      <li
-                        key={s}
-                        className="flex gap-2.5 text-sm leading-relaxed text-cream/75"
-                      >
-                        <span className="mt-1 text-gold">●</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-
+                  <div className="mt-2 flex items-baseline justify-center gap-2">
+                    <span className="text-5xl font-black text-gold">
+                      {arPrice(podcastRecordingPrice)}
+                    </span>
+                    <span className="text-lg font-bold text-cream/70">ريال</span>
+                  </div>
+                  <p className="mt-3 text-sm text-cream/60">
+                    سعر ثابت شامل الاستوديو والتصوير وكل المخرجات أدناه.
+                  </p>
                   <a
                     href={waLink(
-                      `السلام عليكم، أبي أحجز باقة «${p.name}» لتسجيل حلقة بودكاست 🎙️`,
+                      "السلام عليكم، أبي أحجز تسجيل حلقة بودكاست كاملة 🎙️",
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-gold px-6 py-3 text-sm font-bold text-ink transition hover:bg-gold-soft"
+                    className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full bg-gold px-6 py-3.5 text-sm font-bold text-ink transition hover:bg-gold-soft"
                   >
-                    احجز هذه الباقة عبر واتساب
+                    احجز حلقتك عبر واتساب
                   </a>
                 </div>
-              </Reveal>
-            ))}
+              </div>
+            </Reveal>
           </div>
         </section>
 
-        {/* استعراض المعدّات ثلاثي الأبعاد */}
+        {/* استعراض الأستديو والمعدّات */}
         <PodcastGear />
 
         {/* المخرجات المشتركة */}
         <section className="px-5 py-16">
           <div className="mx-auto max-w-5xl">
             <Reveal>
-              <div className="rounded-3xl border border-line bg-ink-soft p-7 sm:p-9">
-                <h2 className="text-2xl font-black text-cream">
-                  المخرجات — تشمل كل باقة
-                </h2>
-                <p className="mt-2 text-sm text-cream/60">
-                  بعد التصوير، تستلم حلقتك كاملة مع كل ما تحتاجه للنشر.
+              <div className="text-center">
+                <p className="text-sm font-bold tracking-widest text-gold">
+                  المخرجات
                 </p>
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
-                  {packageDeliverables.map((d) => (
-                    <div
-                      key={d}
-                      className="rounded-2xl border border-line bg-ink-card p-5 text-sm leading-relaxed text-cream/80"
-                    >
-                      <span className="text-2xl text-gold">✓</span>
-                      <p className="mt-2">{d}</p>
+                <h2 className="mx-auto mt-3 max-w-2xl text-3xl font-black leading-tight sm:text-4xl">
+                  وش تستلم بعد التصوير
+                </h2>
+                <p className="mx-auto mt-3 max-w-2xl text-sm text-cream/60">
+                  تستلم حلقتك كاملة مع كل ما تحتاجه للنشر — كله ضمن السعر الثابت.
+                </p>
+              </div>
+              <div className="mt-8 grid gap-6 sm:grid-cols-3">
+                {packageDeliverables.map((d, i) => (
+                  <Reveal key={d.title} delay={i * 90}>
+                    <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:-translate-y-1 hover:border-gold/50">
+                      <GearImage src={d.image} name={d.title} accent="#f5a623" />
+                      <div className="flex flex-1 flex-col p-6">
+                        <span className="grid size-9 place-items-center rounded-xl bg-gold/15 text-gold">
+                          ✓
+                        </span>
+                        <h3 className="mt-3 text-lg font-black text-cream">
+                          {d.title}
+                        </h3>
+                        <p className="mt-2 text-sm leading-relaxed text-cream/70">
+                          {d.desc}
+                        </p>
+                      </div>
                     </div>
-                  ))}
-                </div>
+                  </Reveal>
+                ))}
               </div>
             </Reveal>
 

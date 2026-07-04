@@ -339,11 +339,32 @@ export type PodcastPackage = {
   setup: string[]; // المكان والمعدّات
 };
 
-// مخرجات مشتركة لكل حلقة (تُعرض مرة واحدة لأنها تنطبق على الباقتين)
-export const packageDeliverables: string[] = [
-  "فيديو مسجّل كامل للحلقة بجودة عالية",
-  "١٠ مقاطع قصيرة (مقتطفات) جاهزة للنشر",
-  "تصاميم الحلقة: صورة الثمنيل + صور مقتطفات (كاروسيل) للضيف والمقدّم + صورة إعلان عن الضيف",
+// السعر الثابت لتسجيل حلقة بودكاست كاملة (بالريال السعودي)
+export const podcastRecordingPrice = 2499;
+
+// مخرجات تسجيل الحلقة — كل مخرج يُعرض ببطاقة بارزة بصورته المعبّرة.
+// image: صورة معبّرة داخل public/packages (يبدّلها إبراهيم بصورة أنسب لاحقاً).
+export type PackageDeliverable = {
+  title: string;
+  desc: string;
+  image?: string;
+};
+export const packageDeliverables: PackageDeliverable[] = [
+  {
+    title: "فيديو مسجّل كامل للحلقة",
+    desc: "الحلقة كاملة بجودة عالية، جاهزة للنشر على يوتيوب والمنصات.",
+    image: "/packages/deliverable-video.jpg",
+  },
+  {
+    title: "١٠ مقاطع قصيرة (مقتطفات)",
+    desc: "عشرة مقاطع عمودية جاهزة للريلز والتيك توك من أبرز لحظات الحلقة.",
+    image: "/packages/deliverable-clips.jpg",
+  },
+  {
+    title: "تصاميم الحلقة كاملة",
+    desc: "صورة الثمنيل + كاروسيل مقتطفات للضيف والمقدّم + صورة إعلان عن الضيف.",
+    image: "/packages/deliverable-designs.jpg",
+  },
 ];
 
 export const podcastPackages: PodcastPackage[] = [
@@ -387,6 +408,8 @@ export type PodcastGearItem = {
   desc: string;
   image?: string; // صورة المنتج (PNG شفاف يُفضّل)
   link?: string; // رابط المواصفات الرسمية
+  amazonUrl?: string; // رابط شراء أمازون (رابط صانع المحتوى/الأفلييت)
+  accent?: string; // لون مميّز للبطاقة (توهّج خلف الصورة الشفافة) — hex
   specs?: string[]; // أبرز المواصفات
   hero?: boolean; // إبراز البطاقة (عرض أكبر) — للكاميرا الأساسية
   note?: string;
@@ -423,6 +446,7 @@ export const podcastGear: PodcastGearItem[] = [
     qty: 2,
     desc: "مايكروفون بثّ ديناميكي بنمط Cardioid وخرج XLR — صوت إذاعي دافئ وعزل ممتاز لضوضاء الغرفة. يحتاج واجهة صوت (RØDECaster أو AI-1 أو ما شابه).",
     image: "/gear/rode-podmic.png",
+    accent: "#f0a500",
     note: "يوجد منه اثنان في الاستوديو (مقدّم + ضيف).",
   },
   {
@@ -433,6 +457,7 @@ export const podcastGear: PodcastGearItem[] = [
     qty: 1,
     desc: "حلّ إنتاج متكامل للبودكاست والبثّ وصناعة المحتوى: يجمع المايكات، يتحكّم بالمستويات والمؤثّرات لحظياً، ويسجّل كل صوت في مسار منفصل لمونتاج أنظف.",
     image: "/gear/rodecaster-pro-ii.png",
+    accent: "#a855f7",
     link: "https://rode.com/en/interfaces-and-mixers/rodecaster-series/rodecaster-pro-ii",
   },
   {
@@ -443,6 +468,7 @@ export const podcastGear: PodcastGearItem[] = [
     qty: 1,
     desc: "تيليبرومبتر بشاشة مدمجة يوضع أمام الكاميرا لقراءة النص مع النظر مباشرة إلى العدسة — أداء طبيعي وتواصل بصري دون إمساك ورق. يدعم السحب والإفلات وعرض الشاشة، ويعمل مع الكاميرات وكاميرات الويب والجوال ومع Stream Deck.",
     image: "/gear/elgato-prompter.png",
+    accent: "#6366f1",
     link: "https://www.elgato.com/us/en/p/prompter",
     specs: [
       "شاشة مدمجة عالية الدقة أمام العدسة",
@@ -459,6 +485,7 @@ export const podcastGear: PodcastGearItem[] = [
     qty: 2,
     desc: "أعمدة إضاءة RGB كاملة الألوان بدقّة لونية عالية (CRI 97+ / TLCI 99+) — تصنع الأجواء اللونية في الخلفية وتضيف عمقاً سينمائياً للمشهد. درجة حرارة لونية من 2700K إلى 6500K مع ٣٧ مؤثّراً ضوئياً وتحكّم عبر تطبيق البلوتوث.",
     image: "/gear/godox-tl30.png",
+    accent: "#22d3ee",
     link: "https://www.godox.com/product-c/TL30.html",
     specs: [
       "ألوان كاملة RGB بدقّة CRI 97+ / TLCI 99+",
@@ -475,6 +502,7 @@ export const podcastGear: PodcastGearItem[] = [
     qty: 1,
     desc: "كشّاف LED محمول كامل الألوان مع حامل مكتبي — لإضافة لمسات لونية ومؤثّرات (غروب/أجواء) أو إبراز تفاصيل في الكادر. يأتي مع ٢٠ فلتر Gobo و٤ ألوان وبطارية 7500mAh.",
     image: "/gear/neewer-fl10.png",
+    accent: "#3b82f6",
     link: "https://neewer.com",
     specs: [
       "10W بدرجة 6300K ودقّة لونية CRI95+",

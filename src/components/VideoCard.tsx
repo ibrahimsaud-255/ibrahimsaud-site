@@ -7,7 +7,13 @@ import { toEmbed, toThumb } from "@/lib/embed";
 const AR_DIGITS = ["١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩", "١٠"];
 const arNum = (n: number) => AR_DIGITS[n - 1] ?? String(n);
 
-export default function VideoCard({ work }: { work: Work }) {
+export default function VideoCard({
+  work,
+  accent,
+}: {
+  work: Work;
+  accent?: string;
+}) {
   // اجمع روابط الفيديو: المصفوفة الجديدة أو الرابط المفرد القديم
   const urls = work.videos?.length
     ? work.videos
@@ -42,9 +48,19 @@ export default function VideoCard({ work }: { work: Work }) {
   };
 
   return (
-    <article className="group relative h-full overflow-hidden rounded-2xl border border-line bg-ink-card transition duration-300 hover:-translate-y-1 hover:border-gold/50 hover:shadow-2xl hover:shadow-black/40">
+    <article
+      className="group relative h-full overflow-hidden rounded-2xl border bg-ink-card transition duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-black/40"
+      style={{ borderColor: accent ? `${accent}66` : "var(--color-line)" }}
+    >
       {/* منطقة الفيديو / المعاينة */}
-      <div className="relative aspect-video w-full overflow-hidden bg-ink-soft">
+      <div
+        className="relative aspect-video w-full overflow-hidden bg-ink-soft"
+        style={
+          accent
+            ? { background: `radial-gradient(circle at 50% 40%, ${accent}26, #0d0d10 72%)` }
+            : undefined
+        }
+      >
         {playing && embed.kind === "iframe" && (
           <iframe
             key={embed.src}
@@ -97,7 +113,10 @@ export default function VideoCard({ work }: { work: Work }) {
             )}
 
             {hasVideo ? (
-              <span className="relative flex size-16 items-center justify-center rounded-full bg-gold/90 text-2xl text-ink shadow-lg transition group-hover:scale-110">
+              <span
+                className="relative flex size-16 items-center justify-center rounded-full text-2xl text-ink shadow-lg transition group-hover:scale-110"
+                style={{ background: accent ?? "rgba(245,166,35,0.9)" }}
+              >
                 ▶
               </span>
             ) : (
@@ -154,16 +173,18 @@ export default function VideoCard({ work }: { work: Work }) {
         <h3 className="mt-2 text-xl font-extrabold text-cream">{work.title}</h3>
         <p className="mt-2 text-sm leading-relaxed text-cream/70">{work.desc}</p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {work.roles.map((r) => (
-            <span
-              key={r}
-              className="rounded-full border border-line bg-ink-soft px-3 py-1 text-[11px] text-cream/60"
-            >
-              {r}
-            </span>
-          ))}
-        </div>
+        {work.roles.length > 0 && (
+          <div className="mt-4 flex flex-wrap gap-2">
+            {work.roles.map((r) => (
+              <span
+                key={r}
+                className="rounded-full border border-line bg-ink-soft px-3 py-1 text-[11px] text-cream/60"
+              >
+                {r}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
     </article>
   );

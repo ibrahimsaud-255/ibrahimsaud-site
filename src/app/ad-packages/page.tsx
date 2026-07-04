@@ -6,7 +6,13 @@ import Reveal from "@/components/Reveal";
 import AdPackages from "@/components/AdPackages";
 import VideoCard from "@/components/VideoCard";
 import type { Work } from "@/lib/site";
-import { adSampleVideos, waLink } from "@/lib/site";
+import { adPackages, adSampleVideos, waLink } from "@/lib/site";
+
+const PKG_HEX: Record<string, string> = {
+  red: "#e11d48",
+  blue: "#2563eb",
+  yellow: "#eab308",
+};
 
 export const metadata: Metadata = {
   title: "باقات الفيديوهات الإعلانية — أسعار واضحة | إبراهيم سعود",
@@ -14,16 +20,26 @@ export const metadata: Metadata = {
     "باقات فيديو إعلاني بأسعار واضحة: الإعلان الواحد، المراجعة الكاملة، وباقة الـ٣ إعلانات. من الفكرة والسكربت حتى التصوير والمونتاج والتسليم جاهزاً للنشر.",
 };
 
-// حوّل روابط الأمثلة إلى بطاقات أعمال لإعادة استخدام مشغّل الفيديو.
-const sampleWorks: Work[] = adSampleVideos.map((url, i) => ({
-  id: `ad-sample-${i}`,
-  client: "نموذج من أعمالي",
-  title: `إعلان — نموذج ${["أول", "ثاني", "ثالث"][i] ?? i + 1}`,
-  category: "فيديو إعلاني",
-  roles: ["فكرة", "تصوير", "مونتاج"],
-  desc: "نموذج من الإعلانات التي أنتجتها — فكرة وتصوير ومونتاج كامل.",
-  videoUrl: url,
-}));
+// فيديو شرح لكل باقة (ليست نماذج أعمال) — كل بطاقة بلون باقتها.
+const explainers: { work: Work; accent?: string }[] = adSampleVideos.map(
+  (url, i) => {
+    const pkg = adPackages[i];
+    return {
+      accent: pkg ? PKG_HEX[pkg.color] : undefined,
+      work: {
+        id: `ad-explainer-${i}`,
+        client: "شرح الباقة",
+        title: pkg ? pkg.name : `الباقة ${i + 1}`,
+        category: "فيديو شرح",
+        roles: [],
+        desc: pkg
+          ? `${pkg.tagline} — شاهد شرح ما تشمله الباقة ومتى تناسبك.`
+          : "شرح تفصيلي لمحتوى الباقة وما تشمله.",
+        videoUrl: url,
+      },
+    };
+  },
+);
 
 export default function AdPackagesPage() {
   return (
@@ -59,14 +75,14 @@ export default function AdPackagesPage() {
                   شاهد قبل ما تطلب
                 </p>
                 <h2 className="mx-auto mt-3 max-w-2xl text-3xl font-black leading-tight sm:text-4xl">
-                  نماذج من الإعلانات التي أنتجتها
+                  شرح كل باقة بالفيديو
                 </h2>
               </div>
             </Reveal>
             <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {sampleWorks.map((w, i) => (
-                <Reveal key={w.id} delay={i * 90}>
-                  <VideoCard work={w} />
+              {explainers.map(({ work, accent }, i) => (
+                <Reveal key={work.id} delay={i * 90}>
+                  <VideoCard work={work} accent={accent} />
                 </Reveal>
               ))}
             </div>

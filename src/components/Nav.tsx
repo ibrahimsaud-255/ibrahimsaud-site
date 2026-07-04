@@ -4,11 +4,8 @@ import { useEffect, useState } from "react";
 import { site, waLink } from "@/lib/site";
 
 const links = [
-  { href: "#podcast", label: "البودكاست" },
-  { href: "#studio", label: "الاستوديو" },
-  { href: "/ad-packages/", label: "باقات الإعلانات" },
-  { href: "/studio-rental/", label: "احجز الاستوديو" },
-  { href: "#works", label: "الأعمال" },
+  { href: "/#works", label: "الأعمال" },
+  { href: "/studio-rental/", label: "الأستديو" },
   { href: "/blog/", label: "المدونة" },
 ];
 

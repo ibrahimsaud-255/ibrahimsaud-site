@@ -26,6 +26,24 @@ export default function PodcastGear() {
           </div>
         </Reveal>
 
+        {/* أجواء الأستديو — صور المكان */}
+        <Reveal>
+          <div className="mt-10 grid gap-3 sm:grid-cols-3">
+            {["studio-1", "studio-2", "studio-3", "studio-4", "studio-5", "studio-6"].map(
+              (s) => (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  key={s}
+                  src={`/studio/${s}.jpg`}
+                  alt="من داخل الأستديو"
+                  loading="lazy"
+                  className="aspect-video w-full rounded-2xl border border-line object-cover transition hover:border-gold/40"
+                />
+              ),
+            )}
+          </div>
+        </Reveal>
+
         {/* الكاميرا الأساسية — بطاقة بارزة */}
         {hero && (
           <Reveal>
@@ -69,16 +87,28 @@ export default function PodcastGear() {
                     ℹ️ {hero.note}
                   </p>
                 )}
-                {hero.link && (
-                  <a
-                    href={hero.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-5 inline-flex w-fit items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
-                  >
-                    المواصفات الكاملة من المصنّع ↗
-                  </a>
-                )}
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {hero.amazonUrl && (
+                    <a
+                      href={hero.amazonUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-fit items-center gap-2 rounded-full bg-[#ff9900] px-5 py-2.5 text-sm font-black text-ink transition hover:brightness-110"
+                    >
+                      🛒 اشترِ من أمازون
+                    </a>
+                  )}
+                  {hero.link && (
+                    <a
+                      href={hero.link}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
+                    >
+                      المواصفات الكاملة من المصنّع ↗
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </Reveal>
@@ -90,7 +120,7 @@ export default function PodcastGear() {
             <Reveal key={g.id} delay={i * 80}>
               <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50">
                 <div className="relative">
-                  <GearImage src={g.image} name={g.name} />
+                  <GearImage src={g.image} name={g.name} accent={g.accent} />
                   {g.qty > 1 && (
                     <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-line bg-ink/80 px-3 py-1 text-xs font-bold text-cream/80 backdrop-blur">
                       ×{arabicNum(g.qty)}
@@ -127,16 +157,28 @@ export default function PodcastGear() {
                       ℹ️ {g.note}
                     </p>
                   )}
-                  {g.link && (
-                    <a
-                      href={g.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-4 inline-flex w-fit items-center gap-2 text-sm font-bold text-gold transition hover:text-gold-soft"
-                    >
-                      المواصفات الكاملة ↗
-                    </a>
-                  )}
+                  <div className="mt-auto flex flex-col gap-2.5 pt-5">
+                    {g.amazonUrl && (
+                      <a
+                        href={g.amazonUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#ff9900] px-5 py-3 text-sm font-black text-ink transition hover:brightness-110"
+                      >
+                        🛒 اشترِ من أمازون
+                      </a>
+                    )}
+                    {g.link && (
+                      <a
+                        href={g.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex w-fit items-center gap-2 text-sm font-bold text-gold transition hover:text-gold-soft"
+                      >
+                        المواصفات الكاملة ↗
+                      </a>
+                    )}
+                  </div>
                 </div>
               </div>
             </Reveal>
