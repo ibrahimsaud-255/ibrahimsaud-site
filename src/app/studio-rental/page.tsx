@@ -3,6 +3,7 @@ import Nav from "@/components/Nav";
 import Footer from "@/components/Footer";
 import WhatsAppFab from "@/components/WhatsAppFab";
 import Reveal from "@/components/Reveal";
+import StudioTour from "@/components/StudioTour";
 import PodcastGear from "@/components/PodcastGear";
 import { waLink } from "@/lib/site";
 
@@ -33,6 +34,9 @@ export default function StudioRentalPage() {
             </Reveal>
           </div>
         </section>
+
+        {/* جولة الأستديو التفاعلية — اضغط النقاط لعرض التفاصيل */}
+        <StudioTour />
 
         {/* استعراض المعدّات */}
         <PodcastGear />

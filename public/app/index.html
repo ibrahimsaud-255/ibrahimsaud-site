@@ -2472,7 +2472,7 @@ function blogRender(){
   const d=blogDates();
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>المدونة</h1><a class="btn btn-ghost btn-sm" href="../blog/" target="_blank"><i data-lucide="external-link"></i> عرض المدونة</a></div>
-    <div class="badge-note"><i data-lucide="sparkles"></i> <div>اكتب مقالك بحرية وارفع صورته، ثم «رتّب بالذكاء» — الذكاء <b>ينظّم الصياغة والعناوين والترتيب فقط دون تغيير محتواك</b>. عاين الشكل كاملاً ثم انشر. يُؤرّخ تلقائياً (ميلادي + هجري).</div></div>
+    <div class="badge-note"><i data-lucide="pen-line"></i> <div>اكتب مقالك بحرية وارفع صورته — يُنسَّق الشكل تلقائياً (فقرات وعناوين وقوائم). عاين المقال ثم احفظه كمسودة أو انشره. يُؤرّخ تلقائياً (ميلادي + هجري).</div></div>
     <div class="row2" style="align-items:start">
       <div class="card">
         <h3 style="margin-top:0"><i data-lucide="pen-line"></i> ${BLOG.form.id?('تعديل مقال'+(BLOG.form.status==='draft'?' (مسودة)':'')):'مقال جديد'}
@@ -2484,8 +2484,6 @@ function blogRender(){
           <img id="b_coverPrev" class="${BLOG.cover?'':'hidden'}" src="${esc(BLOG.cover)}" style="margin-top:10px;max-height:200px;width:100%;object-fit:cover;border-radius:12px;border:1px solid var(--line)">
         </div>
         <div class="field"><label>نص المقال (اكتبه كما يحلو لك — الذكاء يرتّب الشكل فقط)</label><textarea id="b_body" rows="12" oninput="blogBodyChanged()" placeholder="الصق أو اكتب مقالك هنا. افصل الفقرات بسطر فارغ، وابدأ القوائم بـ - أو ١. والعناوين بـ #">${esc(BLOG.form.body)}</textarea></div>
-        <div class="toolbar"><button class="btn btn-gold" id="b_fmt" onclick="blogFormat()"><i data-lucide="sparkles"></i> رتّب بالذكاء الاصطناعي</button></div>
-        <div class="msg" id="b_fmtMsg"></div>
         <div class="badge-note" style="font-size:12.5px;margin-bottom:12px"><i data-lucide="calendar-days"></i> <div>يُؤرّخ عند النشر: <b>${esc(d.greg)}</b> · <b>${esc(d.hijri)} هـ</b></div></div>
         <div style="display:flex;gap:9px;flex-wrap:wrap">
           <button class="btn btn-ghost" id="b_draft" onclick="blogSave('draft')"><i data-lucide="save"></i> حفظ كمسودة</button>
@@ -2529,7 +2527,7 @@ async function blogFormat(){
 }
 function blogResetEditor(){BLOG.form={id:null,title:'',body:'',status:''};BLOG.cover='';BLOG.formatted=null;blogRender();}
 function blogEditPost(id){const p=BLOG.posts.find(x=>x.id===id);if(!p)return;
-  BLOG.form={id:p.id,title:p.title||'',body:p.raw_text||blogStripHtml(p.body_html||''),status:p.status||'published'};
+  BLOG.form={id:p.id,title:p.title||'',body:blogStripHtml(p.body_html||''),status:p.status||'published'};
   BLOG.cover=p.cover_url||'';BLOG.formatted={html:p.body_html||'',title:p.title||'',excerpt:p.excerpt||''};
   blogRender();document.getElementById('main').scrollIntoView({behavior:'smooth',block:'start'});}
 function blogStripHtml(html){const t=document.createElement('div');t.innerHTML=html||'';t.querySelectorAll('h2,h3,p,li,blockquote,br').forEach(el=>{if(el.tagName==='BR')el.replaceWith('\n');else el.append('\n')});return (t.textContent||'').replace(/\n{3,}/g,'\n\n').trim();}
@@ -2540,7 +2538,7 @@ async function blogSave(status){
   const isPub=status==='published';const wasNew=!BLOG.form.id;const wasDraft=BLOG.form.status==='draft';
   const btns=['b_publish','b_draft'].map(i=>document.getElementById(i));btns.forEach(b=>b&&(b.disabled=true));
   if(msg){msg.className='msg';msg.innerHTML=isPub?'جارٍ النشر…':'جارٍ حفظ المسودة…'}
-  const row={title:finalTitle,excerpt:fm.excerpt||'',body_html:fm.html,raw_text:body,cover_url:BLOG.cover||'',reading_min:blogReadingMin(fm.html),status};
+  const row={title:finalTitle,excerpt:fm.excerpt||'',body_html:fm.html,cover_url:BLOG.cover||'',reading_min:blogReadingMin(fm.html),status};
   if(isPub){const d=blogDates();row.greg_date=d.greg;row.hijri_date=d.hijri;row.published_at=new Date().toISOString();}
   let res;
   if(BLOG.form.id){res=await sb.from('posts').update(row).eq('id',BLOG.form.id).select().single();}

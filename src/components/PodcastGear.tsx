@@ -26,24 +26,6 @@ export default function PodcastGear() {
           </div>
         </Reveal>
 
-        {/* أجواء الأستديو — صور المكان */}
-        <Reveal>
-          <div className="mt-10 grid gap-3 sm:grid-cols-3">
-            {["studio-1", "studio-2", "studio-3", "studio-4", "studio-5", "studio-6"].map(
-              (s) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  key={s}
-                  src={`/studio/${s}.jpg`}
-                  alt="من داخل الأستديو"
-                  loading="lazy"
-                  className="aspect-video w-full rounded-2xl border border-line object-cover transition hover:border-gold/40"
-                />
-              ),
-            )}
-          </div>
-        </Reveal>
-
         {/* الكاميرا الأساسية — بطاقة بارزة */}
         {hero && (
           <Reveal>

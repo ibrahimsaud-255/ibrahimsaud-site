@@ -31,7 +31,7 @@ export default function Nav() {
           scrolled ? "glass-nav mx-3 md:mx-auto" : "border border-transparent"
         }`}
       >
-        <a href="#top" className="flex items-center">
+        <a href="/" className="flex items-center">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png"
