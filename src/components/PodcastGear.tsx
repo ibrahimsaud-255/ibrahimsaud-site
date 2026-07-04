@@ -30,8 +30,8 @@ export default function PodcastGear() {
         {hero && (
           <Reveal>
             <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50 md:grid md:grid-cols-2">
-              <div className="relative bg-white">
-                <GearImage src={hero.image} name={hero.name} />
+              <div className="relative">
+                <GearImage src={hero.image} name={hero.name} accent={hero.accent} />
                 {hero.qty > 1 && (
                   <span className="absolute right-3 top-3 rounded-full bg-ink/85 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
                     ×{arabicNum(hero.qty)}

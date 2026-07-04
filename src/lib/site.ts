@@ -423,7 +423,8 @@ export const podcastGear: PodcastGearItem[] = [
     type: "كاميرا بثّ مباشر 4K (الكاميرا الأساسية)",
     qty: 2,
     desc: "الكاميرا الأساسية في الاستوديو — كاميرا بثّ احترافية بدقة 4K مبنية للتشغيل المتواصل ٢٤/٧. عدسة مخصّصة بفتحة ضخمة F1.05 مع مستشعر CMOS مقاس 1/1.3\" و٥٠ ميجابكسل: صورة نقية حتى في الإضاءة المنخفضة، ألوان واقعية، وخلفية ناعمة (Bokeh). تتصل بالكمبيوتر مباشرة عبر USB دون كرت التقاط، وفيها ضبط ذكي بالـ AI وخلفية خضراء وتحسين بشرة وتصحيح ألوان.",
-    image: "/gear/venusliv-air.jpg",
+    image: "/gear/venusliv-air.webp",
+    accent: "#14b8a6",
     link: "https://www.hollyland.com/product/venusliv-air",
     hero: true,
     specs: [
