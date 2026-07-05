@@ -112,6 +112,117 @@ const IDEA_SCHEMA = {
 
 const GROQ_MODEL = Deno.env.get("GROQ_MODEL") || "llama-3.3-70b-versatile";
 
+// أسلوب «معادلة الانتشار» — يُقرأ من site_settings (key: spread_style) ويُحقن في التوليد.
+// deno-lint-ignore no-explicit-any
+async function getSpreadStyle(admin: any): Promise<string> {
+  try {
+    const { data } = await admin.from("site_settings").select("value").eq("key", "spread_style").maybeSingle();
+    const t = data?.value?.text;
+    return typeof t === "string" && t.trim().length > 100 ? t.trim() : "";
+  } catch (_) { return ""; }
+}
+
+// استدعاء النموذج وإرجاع كائن واحد (للسكربتات المفردة)
+async function callLLMObj(prompt: string, key: string, temperature = 0.8): Promise<Record<string, unknown>> {
+  const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + key, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: GROQ_MODEL,
+      messages: [{ role: "user", content: prompt }],
+      response_format: { type: "json_object" },
+      temperature,
+    }),
+  });
+  if (!r.ok) throw new Error("groq " + r.status + ": " + (await r.text()).slice(0, 1200));
+  const data = await r.json();
+  const txt = data?.choices?.[0]?.message?.content;
+  if (!txt) throw new Error("رد فارغ من Groq");
+  return JSON.parse(txt) as Record<string, unknown>;
+}
+
+// جلب نص صفحة منتج (للوضع «منتج») — يقرأ العنوان والوصف والنص الظاهر
+async function fetchProductPage(url: string): Promise<string> {
+  try {
+    const r = await fetch(url, {
+      headers: { "User-Agent": "Mozilla/5.0 (compatible; ContentRadar/1.0)" },
+      signal: AbortSignal.timeout(12000),
+    });
+    if (!r.ok) return "";
+    const html = await r.text();
+    const title = (html.match(/<title[^>]*>(.*?)<\/title>/is)?.[1] || "").trim();
+    const metaDesc = (html.match(/<meta[^>]+name=["']description["'][^>]+content=["']([^"']*)["']/is)?.[1] ||
+      html.match(/<meta[^>]+property=["']og:description["'][^>]+content=["']([^"']*)["']/is)?.[1] || "").trim();
+    const ogTitle = (html.match(/<meta[^>]+property=["']og:title["'][^>]+content=["']([^"']*)["']/is)?.[1] || "").trim();
+    const body = html
+      .replace(/<script[\s\S]*?<\/script>/gi, " ")
+      .replace(/<style[\s\S]*?<\/style>/gi, " ")
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z#0-9]+;/gi, " ")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 2600);
+    return [ogTitle || title, metaDesc, body].filter(Boolean).join("\n").slice(0, 3200);
+  } catch (_) { return ""; }
+}
+
+// سكربت تصوير كامل بأسلوب معادلة الانتشار — من فكرة/خبر
+function scriptPrompt(style: string, srcTitle: string, srcText: string, extra: string) {
+  return `${style}
+
+—————
+مهمتك الآن: اكتب **سكربت فيديو قصير كامل قابل للتصوير** (30–60 ثانية) بأسلوب معادلة الانتشار أعلاه، بلهجة سعودية بيضاء، اعتماداً على المصدر التالي فقط (ممنوع اختراع أرقام أو معلومات غير موجودة فيه):
+
+العنوان: ${srcTitle}
+المحتوى:
+${srcText}
+${extra ? "\nتوجيه إضافي من إبراهيم: " + extra : ""}
+
+اكتب السكربت بأسطر فعلية بهذا الشكل الدقيق:
+🎬 العنوان على الشاشة: (3–6 كلمات)
+
+🖼️ أول فريم (الهوك المرئي): [وصف اللقطة]
+
+🎣 الهوك الصوتي: (الجملة الافتتاحية — أقل من 3 ثوانٍ نطقاً)
+📝 الهوك الكتابي: (نص يظهر على الشاشة)
+
+⚡ حرق الأحداث: [لقطات سريعة]
+
+📜 السكربت (كل سطر: الجملة + بين قوسين نوعها A-Roll أو Voice Over + وصف اللقطة):
+(الجُمل مرتبة تصاعدياً، حدث جديد كل 5 ثوانٍ، جمل انتقالية بين الشرائح)
+
+💥 الـPay Off: (النتيجة/المفاجأة في النهاية)
+
+🔁 التفاعل: (جملة CTA واحدة قصيرة بعد الـPay Off)
+
+أرجِع JSON فقط: {"script":{"title":"عنوان مختصر للنص","body":"السكربت كاملاً بالتنسيق أعلاه مع أسطر فعلية"}}`;
+}
+
+// سكربت إعلان منتج بأسلوب معادلة الانتشار — من رابط/وصف + فكرة إبراهيم
+function productPrompt(style: string, pageText: string, pastedDesc: string, idea: string) {
+  return `${style}
+
+—————
+مهمتك الآن: اكتب **سكربت إعلان منتج كامل قابل للتصوير** (20–45 ثانية) بأسلوب معادلة الانتشار أعلاه، بلهجة سعودية بيضاء.
+
+معلومات المنتج (من صفحة المنتج):
+${pageText || "—"}
+
+وصف المنتج (ألصقه إبراهيم):
+${pastedDesc || "—"}
+
+فكرة إبراهيم والزاوية التي يريد الطرح منها (هذا هو الأساس — أعد صياغته باحتراف ضمن الأسلوب):
+${idea}
+
+قواعد صارمة:
+- افهم المنتج من المعلومات أعلاه فقط. ممنوع اختراع مواصفات أو أرقام أو ادعاءات غير موجودة.
+- ابنِ الإعلان على فكرة إبراهيم وزاويته، وطوّرها بأسلوب المعادلة (هوك ← احتياج ← تضخيم ← الحل=المنتج ← Pay Off ← CTA).
+- اكتب بأسطر فعلية بنفس تنسيق السكربت القابل للتصوير:
+🎬 العنوان على الشاشة / 🖼️ أول فريم / 🎣 الهوك الصوتي (+ ٣ هوكات بديلة مرقمة) / 📝 الهوك الكتابي / ⚡ حرق الأحداث / 📜 السكربت (كل سطر: الجملة + A-Roll أو Voice Over + وصف اللقطة) / 💥 الـPay Off / 🔁 التفاعل.
+
+أرجِع JSON فقط: {"script":{"title":"عنوان مختصر","body":"السكربت كاملاً بالتنسيق أعلاه"}}`;
+}
+
 async function callLLM(prompt: string, key: string, temperature = 0.85) {
   const r = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
@@ -360,10 +471,55 @@ Deno.serve(async (req) => {
     if (!GROQ_KEY) return json({ error: "مفتاح Groq غير مضبوط (GROQ_API_KEY)." }, 500);
 
     const body = await req.json().catch(() => ({}));
-    const mode = ["story", "marketing", "ad"].includes(body.mode) ? body.mode : "news";
+    const mode = ["story", "marketing", "ad", "script", "product", "save_style", "get_style"].includes(body.mode) ? body.mode : "news";
     const count = Math.min(Math.max(Number(body.count) || 5, 1), 8);
 
     const admin = createClient(SUPABASE_URL, SERVICE_KEY);
+
+    // ===== أسلوب المعادلة: قراءة/حفظ =====
+    if (mode === "get_style") {
+      const style = await getSpreadStyle(admin);
+      return json({ style });
+    }
+    if (mode === "save_style") {
+      const text = String(body.text || "").trim();
+      if (text.length < 100) return json({ error: "النص قصير جداً." }, 400);
+      const { error } = await admin.from("site_settings").upsert({ key: "spread_style", value: { text }, updated_at: new Date().toISOString() });
+      if (error) return json({ error: error.message }, 500);
+      return json({ ok: true });
+    }
+
+    // ===== سكربت قابل للتصوير من فكرة/خبر (بأسلوب المعادلة) =====
+    if (mode === "script") {
+      const style = await getSpreadStyle(admin);
+      if (!style) return json({ error: "أسلوب المعادلة غير محفوظ — شغّل supabase/radar_v2.sql أولاً." }, 400);
+      const srcTitle = String(body.title || "").trim();
+      const srcText = String(body.text || "").trim();
+      const extra = String(body.extra || "").trim();
+      if (!srcText) return json({ error: "أرسل نص المصدر." }, 400);
+      const out = await callLLMObj(scriptPrompt(style, srcTitle, srcText.slice(0, 3200), extra), GROQ_KEY, 0.75);
+      const script = (out.script || out) as Record<string, unknown>;
+      if (!script?.body) return json({ error: "تنسيق رد غير متوقع من النموذج" }, 502);
+      return json({ script: { title: String(script.title || srcTitle || "سكربت"), body: String(script.body) } });
+    }
+
+    // ===== إعلان منتج بأسلوب المعادلة (رابط + وصف + فكرة إبراهيم) =====
+    if (mode === "product") {
+      const style = await getSpreadStyle(admin);
+      if (!style) return json({ error: "أسلوب المعادلة غير محفوظ — شغّل supabase/radar_v2.sql أولاً." }, 400);
+      const url = String(body.url || "").trim();
+      const pastedDesc = String(body.desc || "").trim();
+      const idea = String(body.idea || "").trim();
+      if (!idea) return json({ error: "اكتب فكرتك وزاوية الطرح أولاً." }, 400);
+      if (!url && !pastedDesc) return json({ error: "أضف رابط المنتج أو الصق وصفه." }, 400);
+      let pageText = "";
+      if (url && /^https?:\/\//i.test(url)) pageText = await fetchProductPage(url);
+      if (!pageText && !pastedDesc) return json({ error: "تعذّر قراءة صفحة المنتج — الصق وصف المنتج يدوياً." }, 422);
+      const out = await callLLMObj(productPrompt(style, pageText, pastedDesc, idea), GROQ_KEY, 0.8);
+      const script = (out.script || out) as Record<string, unknown>;
+      if (!script?.body) return json({ error: "تنسيق رد غير متوقع من النموذج" }, 502);
+      return json({ script: { title: String(script.title || "إعلان منتج"), body: String(script.body) }, page_found: !!pageText });
+    }
 
     let ideas: Record<string, unknown>[];
     if (mode === "story") {
