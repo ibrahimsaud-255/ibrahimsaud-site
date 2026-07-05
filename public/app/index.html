@@ -1264,9 +1264,9 @@ function checkHabitReminders(){
   if(changed)save();
 }
 
-/* ===== معرض الأعمال + الشعارات (يُدار داخلياً ويُنشر على الموقع العام) ===== */
-let SITEWORKS=null, SITEBRANDS=null, SW_LOADING=false, SW_ERR=null;
-const SW_CATS=['أعمال سينمائية','تغطية فعاليات','إعلانات منتجات','مقابلات الشارع'];
+/* ===== معرض الأعمال + الشعارات + الخدمات + إعدادات الموقع (يُدار داخلياً ويُنشر على الموقع العام) ===== */
+let SITEWORKS=null, SITEBRANDS=null, SITESERVICES=null, SITESETTINGS=null, SW_LOADING=false, SW_ERR=null;
+const SW_CATS=['أعمال سينمائية','تغطية فعاليات','إعلانات منتجات','مقابلات الشارع','تصميم جرافيك','هوية بصرية'];
 const SW_AUD=[['companies','الشركات والجهات'],['stores','المتاجر الإلكترونية'],['','عمل خاص (بدون قسم)']];
 const SEED_WORKS=[
  {id:'healthon-open',client:'جامعة الملك سعود — هاكاثون هيلثون',title:'هاكاثون هيلثون — الفيلم الافتتاحي',category:'تغطية فعاليات',audience:'companies',roles:['إخراج','تصوير','مونتاج','موشن'],description:'الفيلم الافتتاحي لهاكاثون هيلثون بجامعة الملك سعود، مع هوية بصرية متحركة تفتح الحدث — من الفكرة حتى التسليم.',video_url:'https://youtu.be/WL-GJ4ZT7Cg',videos:[],bts:null,logo:null,thumb:'https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/هيلثون.jpg',featured:true,sort:10},
@@ -1298,10 +1298,12 @@ async function swLoad(force){
   try{
     const w=await sb.from('site_works').select('*').order('sort',{ascending:true});if(w.error)throw w.error;SITEWORKS=w.data||[];
     const b=await sb.from('site_brands').select('*').order('sort',{ascending:true});if(b.error)throw b.error;SITEBRANDS=b.data||[];
+    try{const s=await sb.from('site_services').select('*').order('sort',{ascending:true});SITESERVICES=s.error?[]:(s.data||[]);}catch(_){SITESERVICES=[]}
+    try{const st=await sb.from('site_settings').select('*');SITESETTINGS={};(st.data||[]).forEach(r=>{SITESETTINGS[r.key]=r.value});}catch(_){SITESETTINGS={}}
   }catch(e){SW_ERR=(e&&e.message)||'تعذّر الاتصال';}
   SW_LOADING=false;if(CUR==='sitework')renderSiteWorks();
 }
-function swThumb(w){if(w.thumb)return w.thumb;const u=w.video_url||'';const m=u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);return m?('https://img.youtube.com/vi/'+m[1]+'/hqdefault.jpg'):''}
+function swThumb(w){if(w.thumb)return w.thumb;if(w.images&&w.images.length)return w.images[0];const u=w.video_url||'';const m=u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);return m?('https://img.youtube.com/vi/'+m[1]+'/hqdefault.jpg'):''}
 function renderSiteWorks(){
   const main=document.getElementById('main');
   if(SITEWORKS===null){if(!SW_LOADING&&!SW_ERR)swLoad();if(!SW_ERR){main.innerHTML=`<div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}}
@@ -1342,27 +1344,163 @@ function renderSiteWorks(){
       <button class="btn btn-ghost btn-sm" onclick="swBrandModal('${b.id}')"><i data-lucide="pencil"></i></button>
       <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelBrand('${b.id}')"><i data-lucide="trash-2"></i></button>
     </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا شعارات بعد.</p></div>`}
+    </div>
+
+    <div class="page-head" style="margin-top:30px"><h2 style="margin:0;font-size:19px"><i data-lucide="layout-grid"></i> خدمات الموقع (تبويبات قسم «خدماتي»)</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        ${(SITESERVICES&&SITESERVICES.length)?'':`<button class="btn btn-ghost" onclick="swImportServices()"><i data-lucide="download"></i> استيراد الخدمات الافتراضية</button>`}
+        <button class="btn btn-gold" onclick="swServiceModal()"><i data-lucide="plus"></i> خدمة جديدة</button></div></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="info"></i> <div>هذه التبويبات تظهر في قسم «خدماتي» بالموقع: اسم التبويب، عنوان كبير، وصف، وصورة مربعة. لو القائمة فارغة يستخدم الموقع النسخة الافتراضية المدمجة.</div></div>
+    <div class="grid">
+    ${(SITESERVICES||[]).length?(SITESERVICES||[]).map(s=>`<div class="card" style="display:flex;align-items:center;gap:12px">
+      ${s.image?`<img src="${esc(s.image)}" loading="lazy" style="width:52px;height:52px;object-fit:cover;border-radius:10px">`:`<div style="width:52px;height:52px;border-radius:10px;background:#0006;display:grid;place-items:center;color:var(--muted)"><i data-lucide="image"></i></div>`}
+      <div style="flex:1;min-width:0"><div style="font-weight:800">${esc(s.title||'')}</div><div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.headline||'')}</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="swServiceModal('${s.id}')"><i data-lucide="pencil"></i></button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelService('${s.id}')"><i data-lucide="trash-2"></i></button>
+    </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا خدمات مخصّصة بعد — الموقع يعرض الافتراضية.</p></div>`}
+    </div>
+
+    <div class="page-head" style="margin-top:30px"><h2 style="margin:0;font-size:19px"><i data-lucide="settings-2"></i> إعدادات واجهة الموقع</h2></div>
+    <div class="card">
+      <div class="row2">
+        <div class="field"><label>صورة الوجه الدائرية (واجهة الموقع)</label>
+          <input type="file" accept="image/*" id="st_photo_file" onchange="swUploadSetting('st_photo_file','hero_photo','st_photo_pv')">
+          <img id="st_photo_pv" src="${esc((SITESETTINGS&&SITESETTINGS.hero_photo&&SITESETTINGS.hero_photo.url)||'')}" style="${(SITESETTINGS&&SITESETTINGS.hero_photo&&SITESETTINGS.hero_photo.url)?'':'display:none;'}width:72px;height:72px;object-fit:cover;border-radius:50%;margin-top:8px;border:2px solid var(--gold,#e7b24c)">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">فارغة = يستخدم الموقع الصورة الافتراضية المدمجة.</div>
+        </div>
+        <div class="field"><label>صورة خلفية الواجهة (Artboard)</label>
+          <input type="file" accept="image/*" id="st_bg_file" onchange="swUploadSetting('st_bg_file','hero_bg','st_bg_pv')">
+          <img id="st_bg_pv" src="${esc((SITESETTINGS&&SITESETTINGS.hero_bg&&SITESETTINGS.hero_bg.url)||'')}" style="${(SITESETTINGS&&SITESETTINGS.hero_bg&&SITESETTINGS.hero_bg.url)?'':'display:none;'}max-height:72px;border-radius:10px;margin-top:8px">
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">تظهر خلف الواجهة بشفافية أنيقة.</div>
+        </div>
+      </div>
+      <div style="font-weight:800;margin:14px 0 8px"><i class="inl" data-lucide="share-2"></i> روابط مواقع التواصل (تظهر كأيقونات رسمية في الموقع)</div>
+      <div class="row2">
+        <div class="field"><label>تيك توك</label><input id="st_tiktok" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.tiktok)||'')}" placeholder="https://www.tiktok.com/@..."></div>
+        <div class="field"><label>يوتيوب</label><input id="st_youtube" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.youtube)||'')}" placeholder="https://www.youtube.com/@..."></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>إنستقرام</label><input id="st_instagram" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.instagram)||'')}" placeholder="https://www.instagram.com/..."></div>
+        <div class="field"><label>إكس (تويتر)</label><input id="st_x" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.x)||'')}" placeholder="https://x.com/..."></div>
+      </div>
+      <div class="row2">
+        <div class="field"><label>لينكدإن</label><input id="st_linkedin" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.linkedin)||'')}" placeholder="https://www.linkedin.com/in/..."></div>
+        <div class="field"><label>سناب شات</label><input id="st_snapchat" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.snapchat)||'')}" placeholder="https://www.snapchat.com/add/..."></div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:6px">
+        <button class="btn btn-gold" onclick="swSaveSocials()"><i data-lucide="save"></i> حفظ روابط التواصل</button>
+        <span id="st_soc_status" style="color:var(--muted);font-size:12px"></span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-top:10px">ملاحظة: الحقل الفارغ يرجع للقيمة الافتراضية المدمجة في الموقع. واتساب يظهر تلقائياً من رقمك.</div>
     </div>`;
   applyWallpaper();refreshIcons();
 }
+
+/* ===== رفع ملف إلى التخزين العام (bucket: blog-images) ===== */
+async function swStorageUpload(file,prefix){return await blogUpload(file,prefix)}
+async function swUploadSetting(inputId,key,pvId){
+  const inp=document.getElementById(inputId),f=inp&&inp.files&&inp.files[0];if(!f)return;
+  try{
+    const url=await swStorageUpload(f,'site/'+key);
+    const {error}=await sb.from('site_settings').upsert({key,value:{url},updated_at:new Date().toISOString()});
+    if(error)throw error;
+    SITESETTINGS=SITESETTINGS||{};SITESETTINGS[key]={url};
+    const pv=document.getElementById(pvId);if(pv){pv.src=url;pv.style.display='block'}
+    alert('تم الحفظ — ينعكس على الموقع مباشرة');
+  }catch(e){alert('تعذّر الرفع: '+(e.message||e))}
+}
+async function swSaveSocials(){
+  const g=i=>document.getElementById(i).value.trim();
+  const socials={tiktok:g('st_tiktok'),youtube:g('st_youtube'),instagram:g('st_instagram'),x:g('st_x'),linkedin:g('st_linkedin'),snapchat:g('st_snapchat')};
+  Object.keys(socials).forEach(k=>{if(!socials[k])delete socials[k]});
+  const st=document.getElementById('st_soc_status');if(st)st.textContent='…جارٍ الحفظ';
+  const {error}=await sb.from('site_settings').upsert({key:'socials',value:socials,updated_at:new Date().toISOString()});
+  if(error){if(st)st.textContent='تعذّر الحفظ: '+error.message;return}
+  SITESETTINGS=SITESETTINGS||{};SITESETTINGS.socials=socials;
+  if(st)st.textContent='تم الحفظ ✓';
+}
+
+/* ===== خدمات الموقع ===== */
+const SEED_SERVICES=[
+ {id:'filming',title:'التصوير',headline:'نلتقط ونُخرج',description:'تصوير احترافي في موقعك أو في الاستوديو — إضاءة سينمائية، لقطات B-Roll، وتصوير درون جوي يرفع مستوى أي عمل.',image:null,accent:'#f87171',sort:10},
+ {id:'editing',title:'المونتاج',headline:'نقصّ ونحرّر',description:'قص وإيقاع وموسيقى تناسب الفكرة والسياق — نسخة رئيسية ونسخ قصيرة جاهزة للنشر على كل المنصات.',image:null,accent:'#38bdf8',sort:20},
+ {id:'motion',title:'الموشن',headline:'حركة وانسيابية',description:'موشن جرافيك وهوية بصرية متحركة — الحركة عنصر أساسي في أي منتج مرئي، ونجيد توظيفها في مكانها الصحيح.',image:null,accent:'#e7b24c',sort:30},
+ {id:'podcast',title:'البودكاست',headline:'نسجّل وننشر',description:'استوديو مجهّز بالكامل لتسجيل حلقاتك: تصوير متعدد الكاميرات، هندسة صوت، مونتاج كامل، ومقاطع قصيرة للمنصات.',image:null,accent:'#a78bfa',sort:40},
+ {id:'script',title:'كتابة النص',headline:'نكتب ما يبيع',description:'سكربت إعلاني مبني على منتجك وجمهورك بلهجة تناسب السوق السعودي والخليجي — مع تعليق صوتي احترافي يوصّل رسالتك.',image:null,accent:'#4ade80',sort:50},
+ {id:'tech',title:'تقنية الأعمال',headline:'أنظمة تخدم عملك',description:'أوظّف التقنية والذكاء الاصطناعي في تطوير أعمالك: أنظمة إدارة، أتمتة، ومواقع تعكس هويتك وتشتغل لك.',image:null,accent:'#22d3ee',sort:60}
+];
+async function swImportServices(){
+  if(!confirm('استيراد الخدمات الافتراضية الست؟ تقدر تعدّلها بعدين.'))return;
+  const {error}=await sb.from('site_services').upsert(SEED_SERVICES);
+  if(error){alert('تعذّر الاستيراد: '+error.message);return}
+  await swLoad(true);
+}
+function swServiceModal(id){
+  const s=id?{...(SITESERVICES||[]).find(x=>x.id===id)}:{id:'',title:'',headline:'',description:'',image:'',accent:'#e7b24c',sort:((SITESERVICES||[]).length+1)*10};
+  openModal(id?'تعديل خدمة':'خدمة جديدة',`
+    <div class="row2"><div class="field"><label>اسم التبويب</label><input id="sv_title" value="${esc(s.title||'')}" placeholder="مثال: التصوير"></div>
+    <div class="field"><label>العنوان الكبير</label><input id="sv_head" value="${esc(s.headline||'')}" placeholder="مثال: نلتقط ونُخرج"></div></div>
+    <div class="field"><label>الوصف</label><textarea id="sv_desc" rows="3">${esc(s.description||'')}</textarea></div>
+    <div class="row2">
+      <div class="field"><label>الصورة المربعة</label>
+        <input type="file" accept="image/*" id="sv_img_file" onchange="swSvcPickImage()">
+        <input type="hidden" id="sv_img_val" value="${esc(s.image||'')}">
+        <img id="sv_img_pv" src="${esc(s.image||'')}" style="${s.image?'':'display:none;'}width:72px;height:72px;object-fit:cover;border-radius:10px;margin-top:8px">
+        <span id="sv_img_st" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div class="field"><label>اللون المميز (hex)</label><input id="sv_accent" value="${esc(s.accent||'#e7b24c')}" placeholder="#e7b24c">
+        <label style="margin-top:10px">الترتيب</label><input type="number" id="sv_sort" value="${Number(s.sort||0)}"></div>
+    </div>`,
+  ()=>swSaveService(id), id?()=>swDelService(id):null);
+}
+async function swSvcPickImage(){
+  const inp=document.getElementById('sv_img_file'),f=inp&&inp.files&&inp.files[0];if(!f)return;
+  const st=document.getElementById('sv_img_st');if(st)st.textContent='…جارٍ الرفع';
+  try{const url=await swStorageUpload(f,'site/services');document.getElementById('sv_img_val').value=url;const pv=document.getElementById('sv_img_pv');pv.src=url;pv.style.display='block';if(st)st.textContent='تم الرفع ✓'}
+  catch(e){if(st)st.textContent='تعذّر الرفع: '+(e.message||e)}
+}
+async function swSaveService(id){
+  const g=i=>document.getElementById(i);const title=g('sv_title').value.trim();if(!title){alert('أدخل اسم التبويب');return}
+  const row={id:id||('sv_'+uid()),title,headline:g('sv_head').value.trim(),description:g('sv_desc').value.trim(),image:g('sv_img_val').value||null,accent:g('sv_accent').value.trim()||null,sort:Number(g('sv_sort').value||0)};
+  const {error}=await sb.from('site_services').upsert(row);
+  if(error){alert('تعذّر الحفظ: '+error.message);return}
+  closeModal();await swLoad(true);
+}
+async function swDelService(id){if(!confirm('حذف هذه الخدمة؟'))return;const {error}=await sb.from('site_services').delete().eq('id',id);if(error){alert('تعذّر الحذف: '+error.message);return}closeModal();await swLoad(true);}
 function swPickImage(inputId,pvId,fmt,maxW){
   const inp=document.getElementById(inputId),f=inp&&inp.files&&inp.files[0];if(!f)return;
   const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const s=Math.min(1,(maxW||400)/img.width);const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);let url;try{url=c.toDataURL(fmt==='webp'?'image/webp':'image/png',0.85)}catch(e){url=c.toDataURL('image/png')}const v=document.getElementById(pvId+'_val');if(v)v.value=url;const pv=document.getElementById(pvId);if(pv){pv.src=url;pv.style.display='block'}};img.src=rd.result};rd.readAsDataURL(f);
 }
 function swClearImg(pvId){const v=document.getElementById(pvId+'_val');if(v)v.value='';const pv=document.getElementById(pvId);if(pv){pv.src='';pv.style.display='none'}}
 function swWorkModal(id){
-  const w=id?{...(SITEWORKS||[]).find(x=>x.id===id)}:{id:'',client:'',title:'',category:SW_CATS[0],audience:'companies',roles:[],description:'',video_url:'',videos:[],logo:'',thumb:'',featured:false,sort:((SITEWORKS||[]).length+1)*10};
-  const catOpts=SW_CATS.map(c=>`<option ${w.category===c?'selected':''}>${esc(c)}</option>`).join('');
+  const w=id?{...(SITEWORKS||[]).find(x=>x.id===id)}:{id:'',client:'',title:'',category:SW_CATS[0],audience:'companies',roles:[],description:'',kind:'video',images:[],tags:[],link:'',video_url:'',videos:[],logo:'',thumb:'',featured:false,sort:((SITEWORKS||[]).length+1)*10};
+  const allCats=[...new Set([...SW_CATS,...(SITEWORKS||[]).map(x=>x.category).filter(Boolean)])];
+  const catList=allCats.map(c=>`<option value="${esc(c)}">`).join('');
   const audOpts=SW_AUD.map(a=>`<option value="${a[0]}" ${(w.audience||'')===a[0]?'selected':''}>${esc(a[1])}</option>`).join('');
+  const kind=w.kind==='gallery'?'gallery':'video';
   openModal(id?'تعديل عمل':'عمل جديد',`
     <div class="row2"><div class="field"><label>عنوان العمل</label><input id="sw_title" value="${esc(w.title)}" placeholder="مثال: فيلم يوم التأسيس"></div>
     <div class="field"><label>العميل/الجهة</label><input id="sw_client" value="${esc(w.client)}" placeholder="اسم الشركة أو المتجر"></div></div>
-    <div class="row2"><div class="field"><label>التصنيف</label><select id="sw_cat">${catOpts}</select></div>
-    <div class="field"><label>القسم (أين يظهر)</label><select id="sw_aud">${audOpts}</select></div></div>
+    <div class="row2">
+      <div class="field"><label>نوع العمل</label><select id="sw_kind" onchange="swKindToggle()"><option value="video" ${kind==='video'?'selected':''}>فيديو</option><option value="gallery" ${kind==='gallery'?'selected':''}>معرض صور (تصميم/جرافيك)</option></select></div>
+      <div class="field"><label>التصنيف (اكتب تصنيفاً جديداً أو اختر)</label><input id="sw_cat" list="sw_cats_dl" value="${esc(w.category||'')}" placeholder="مثال: تصميم جرافيك"><datalist id="sw_cats_dl">${catList}</datalist></div>
+    </div>
+    <div class="row2"><div class="field"><label>القسم (أين يظهر)</label><select id="sw_aud">${audOpts}</select></div>
+    <div class="field"><label>تاجات (افصلها بفاصلة — تظهر على البطاقة)</label><input id="sw_tags" value="${esc((w.tags||[]).join('، '))}" placeholder="موشن، هوية بصرية"></div></div>
     <div class="field"><label>الأدوار (افصلها بفاصلة)</label><input id="sw_roles" value="${esc((w.roles||[]).join('، '))}" placeholder="إخراج، تصوير، مونتاج"></div>
     <div class="field"><label>الوصف</label><textarea id="sw_desc" rows="3">${esc(w.description||'')}</textarea></div>
-    <div class="field"><label>رابط الفيديو الأساسي</label><input id="sw_video" value="${esc(w.video_url||'')}" placeholder="https://youtu.be/... أو رابط تيك توك/فيميو"></div>
-    <div class="field"><label>روابط فيديو إضافية (سطر لكل رابط — اختياري)</label><textarea id="sw_videos" rows="2" placeholder="رابط لكل سطر">${esc((w.videos||[]).join('\n'))}</textarea></div>
+    <div id="sw_video_wrap" style="${kind==='gallery'?'display:none':''}">
+      <div class="field"><label>رابط الفيديو الأساسي</label><input id="sw_video" value="${esc(w.video_url||'')}" placeholder="https://youtu.be/... أو رابط تيك توك/فيميو"></div>
+      <div class="field"><label>روابط فيديو إضافية (سطر لكل رابط — اختياري)</label><textarea id="sw_videos" rows="2" placeholder="رابط لكل سطر">${esc((w.videos||[]).join('\n'))}</textarea></div>
+    </div>
+    <div id="sw_gallery_wrap" style="${kind==='gallery'?'':'display:none'}">
+      <div class="field"><label>صور العمل (ترفع عدة صور — تظهر كمعرض في صفحة العمل)</label>
+        <input type="file" accept="image/*" multiple id="sw_imgs_file" onchange="swPickWorkImages()">
+        <span id="sw_imgs_st" style="font-size:12px;color:var(--muted)"></span>
+        <div id="sw_imgs_list" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px"></div>
+      </div>
+    </div>
+    <div class="field"><label>رابط خارجي للعمل (اختياري)</label><input id="sw_link" value="${esc(w.link||'')}" placeholder="https://..."></div>
     <div class="row2">
       <div class="field"><label>شعار العميل (اختياري)</label>
         <input type="file" accept="image/*" id="sw_logo_file" onchange="swPickImage('sw_logo_file','sw_logo_pv','png',300)">
@@ -1380,12 +1518,40 @@ function swWorkModal(id){
     <div class="row2"><div class="field"><label>مميّز</label><select id="sw_feat"><option value="0" ${!w.featured?'selected':''}>عادي</option><option value="1" ${w.featured?'selected':''}>مميّز (بشارة)</option></select></div>
     <div class="field"><label>الترتيب (الأصغر أولاً)</label><input type="number" id="sw_sort" value="${Number(w.sort||0)}"></div></div>`,
   ()=>swSaveWork(id), id?()=>swDelWork(id):null);
+  SW_IMGS=[...(w.images||[])];swRenderWorkImgs();
+}
+let SW_IMGS=[];
+function swKindToggle(){
+  const k=document.getElementById('sw_kind').value;
+  document.getElementById('sw_video_wrap').style.display=k==='gallery'?'none':'';
+  document.getElementById('sw_gallery_wrap').style.display=k==='gallery'?'':'none';
+}
+function swRenderWorkImgs(){
+  const box=document.getElementById('sw_imgs_list');if(!box)return;
+  box.innerHTML=SW_IMGS.map((u,i)=>`<div style="position:relative">
+    <img src="${esc(u)}" style="width:64px;height:64px;object-fit:cover;border-radius:8px">
+    <button type="button" onclick="SW_IMGS.splice(${i},1);swRenderWorkImgs()" style="position:absolute;top:-6px;inset-inline-start:-6px;width:20px;height:20px;border-radius:50%;border:none;background:var(--bad,#e11d48);color:#fff;cursor:pointer;font-size:11px;line-height:1">✕</button>
+  </div>`).join('');
+}
+async function swPickWorkImages(){
+  const inp=document.getElementById('sw_imgs_file'),files=[...(inp&&inp.files||[])];if(!files.length)return;
+  const st=document.getElementById('sw_imgs_st');
+  for(let i=0;i<files.length;i++){
+    if(st)st.textContent=`…رفع ${i+1} من ${files.length}`;
+    try{const url=await swStorageUpload(files[i],'works');SW_IMGS.push(url);swRenderWorkImgs();}
+    catch(e){if(st)st.textContent='تعذّر الرفع: '+(e.message||e);return}
+  }
+  if(st)st.textContent='تم رفع الصور ✓';inp.value='';
 }
 async function swSaveWork(id){
   const g=i=>document.getElementById(i);const title=g('sw_title').value.trim();if(!title){alert('أدخل عنوان العمل');return}
-  const row={id:id||('w_'+uid()),client:g('sw_client').value.trim(),title,category:g('sw_cat').value,audience:g('sw_aud').value||null,
+  const kind=g('sw_kind').value==='gallery'?'gallery':'video';
+  const cat=g('sw_cat').value.trim();if(!cat){alert('أدخل التصنيف');return}
+  const row={id:id||('w_'+uid()),client:g('sw_client').value.trim(),title,category:cat,audience:g('sw_aud').value||null,
     roles:g('sw_roles').value.split(/[،,]/).map(s=>s.trim()).filter(Boolean),description:g('sw_desc').value.trim(),
-    video_url:g('sw_video').value.trim()||null,videos:g('sw_videos').value.split('\n').map(s=>s.trim()).filter(Boolean),
+    kind,images:SW_IMGS,tags:g('sw_tags').value.split(/[،,]/).map(s=>s.trim()).filter(Boolean),link:g('sw_link').value.trim()||null,
+    video_url:kind==='gallery'?null:(g('sw_video').value.trim()||null),
+    videos:kind==='gallery'?[]:g('sw_videos').value.split('\n').map(s=>s.trim()).filter(Boolean),
     logo:g('sw_logo_pv_val').value||null,thumb:g('sw_thumb_pv_val').value||null,featured:g('sw_feat').value==='1',sort:Number(g('sw_sort').value||0)};
   const btn=document.getElementById('mSave');if(btn){btn.disabled=true;btn.textContent='…جارٍ الحفظ'}
   const {error}=await sb.from('site_works').upsert(row);

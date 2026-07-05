@@ -17,6 +17,8 @@ export const site = {
     instagram: "", // ← أضف لو تبي
     youtube: "https://www.youtube.com/@Sa3y_Podcast",
     x: "",
+    linkedin: "",
+    snapchat: "",
   },
   // ===== بودكاست سَعي (أصبح قسماً داخل الموقع بدل موقع منفصل) =====
   podcast: {
@@ -40,6 +42,76 @@ export function waLink(message: string) {
   const text = encodeURIComponent(message);
   return `https://wa.me/${site.whatsapp}?text=${text}`;
 }
+
+// ===== تبويبات الخدمات (تصميم «مدونة ستوديو») =====
+// تظهر كتبويبات: عنوان كبير + وصف + صورة مربعة يسار.
+// image: صورة مربعة داخل public/services (ارفعها لاحقاً — يوجد بديل تلقائي).
+// تُدار أيضاً من النظام الداخلي (جدول site_services) — هذه نسخة احتياطية.
+export type ServiceTab = {
+  id: string;
+  title: string; // اسم التبويب
+  headline: string; // العنوان الكبير
+  description: string;
+  image?: string; // صورة مربعة
+  accent?: string; // لون العنوان
+};
+
+export const serviceTabs: ServiceTab[] = [
+  {
+    id: "filming",
+    title: "التصوير",
+    headline: "نلتقط ونُخرج",
+    description:
+      "تصوير احترافي في موقعك أو في الاستوديو — إضاءة سينمائية، لقطات B-Roll، وتصوير درون جوي يرفع مستوى أي عمل.",
+    image: "/services/filming.jpg",
+    accent: "#f87171",
+  },
+  {
+    id: "editing",
+    title: "المونتاج",
+    headline: "نقصّ ونحرّر",
+    description:
+      "قص وإيقاع وموسيقى تناسب الفكرة والسياق — نسخة رئيسية ونسخ قصيرة جاهزة للنشر على كل المنصات.",
+    image: "/services/editing.jpg",
+    accent: "#38bdf8",
+  },
+  {
+    id: "motion",
+    title: "الموشن",
+    headline: "حركة وانسيابية",
+    description:
+      "موشن جرافيك وهوية بصرية متحركة — الحركة عنصر أساسي في أي منتج مرئي، ونجيد توظيفها في مكانها الصحيح.",
+    image: "/services/motion.jpg",
+    accent: "#e7b24c",
+  },
+  {
+    id: "podcast",
+    title: "البودكاست",
+    headline: "نسجّل وننشر",
+    description:
+      "استوديو مجهّز بالكامل لتسجيل حلقاتك: تصوير متعدد الكاميرات، هندسة صوت، مونتاج كامل، ومقاطع قصيرة للمنصات.",
+    image: "/services/podcast.jpg",
+    accent: "#a78bfa",
+  },
+  {
+    id: "script",
+    title: "كتابة النص",
+    headline: "نكتب ما يبيع",
+    description:
+      "سكربت إعلاني مبني على منتجك وجمهورك بلهجة تناسب السوق السعودي والخليجي — مع تعليق صوتي احترافي يوصّل رسالتك.",
+    image: "/services/script.jpg",
+    accent: "#4ade80",
+  },
+  {
+    id: "tech",
+    title: "تقنية الأعمال",
+    headline: "أنظمة تخدم عملك",
+    description:
+      "أوظّف التقنية والذكاء الاصطناعي في تطوير أعمالك: أنظمة إدارة، أتمتة، ومواقع تعكس هويتك وتشتغل لك.",
+    image: "/services/tech.jpg",
+    accent: "#22d3ee",
+  },
+];
 
 // ===== الخدمات =====
 export const services = [
@@ -111,6 +183,10 @@ export type Work = {
   audience?: Audience;
   roles: string[];
   desc: string;
+  kind?: "video" | "gallery"; // نوع العمل: فيديو أو معرض تصاميم/صور
+  images?: string[]; // صور المعرض (لأعمال التصميم)
+  link?: string; // رابط خارجي للعمل (اختياري)
+  tags?: string[]; // تاجات حرّة تظهر على البطاقة
   videoUrl?: string; // رابط فيديو واحد (اختياري — للتوافق القديم)
   videos?: string[]; // عدة روابط فيديو لنفس العمل
   bts?: string; // رابط فيديو الكواليس (اختياري)

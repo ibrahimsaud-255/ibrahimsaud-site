@@ -1,5 +1,6 @@
 import { site, waLink } from "@/lib/site";
 import Reveal from "./Reveal";
+import SocialIcons from "./SocialIcons";
 
 export default function Contact() {
   return (
@@ -42,33 +43,14 @@ export default function Contact() {
                 </a>
               </div>
 
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-cream/60">
+              <div className="mt-10">
+                <SocialIcons size="lg" />
                 <a
                   href={`mailto:${site.email}`}
-                  className="transition hover:text-gold"
+                  className="mt-6 inline-block text-sm text-cream/60 transition hover:text-gold"
                 >
                   ✉️ {site.email}
                 </a>
-                {site.social.tiktok && (
-                  <a
-                    href={site.social.tiktok}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transition hover:text-gold"
-                  >
-                    🎵 تيك توك
-                  </a>
-                )}
-                {site.social.youtube && (
-                  <a
-                    href={site.social.youtube}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="transition hover:text-gold"
-                  >
-                    ▶ يوتيوب سَعي
-                  </a>
-                )}
               </div>
             </div>
           </div>
