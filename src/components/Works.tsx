@@ -76,7 +76,7 @@ function WorkCard({ work, delay }: { work: Work; delay: number }) {
             <img
               src={work.logo}
               alt={work.client}
-              className="absolute bottom-3 rtl:right-3 ltr:left-3 h-9 rounded-lg bg-white/95 p-1.5 shadow-lg"
+              className="absolute bottom-3 rtl:right-3 ltr:left-3 h-9 w-auto object-contain"
               loading="lazy"
             />
           )}

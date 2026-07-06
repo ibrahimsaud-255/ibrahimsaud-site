@@ -186,7 +186,7 @@ export default function WorkDetail() {
         </div>
         {work.logo && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={work.logo} alt={work.client} className="h-16 rounded-xl bg-white/95 p-2 shadow-lg" />
+          <img src={work.logo} alt={work.client} className="h-16 w-auto object-contain" />
         )}
       </div>
 
