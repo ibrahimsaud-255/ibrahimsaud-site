@@ -699,9 +699,10 @@ const APPS=[
   {id:'sitework',name:'الأعمال (الموقع)',icon:'film'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
+  {id:'autopub',name:'النشر التلقائي',icon:'send'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,guests:renderGuests,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -720,6 +721,7 @@ const LAUNCH=[
   {id:'sitework',name:'الأعمال (الموقع)',icon:'film',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
+  {id:'autopub',name:'النشر التلقائي',icon:'send',c:'#8b5cf6,#6d28d9'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
   {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
@@ -1585,6 +1587,73 @@ async function swImport(kind){
   if(error){alert('تعذّر الاستيراد: '+error.message);return}
   await swLoad(true);
 }
+
+/* ===== النشر التلقائي (تيك توك ← يوتيوب شورتس عبر GitHub Actions) ===== */
+let PQ={items:null,loading:false,err:null};
+async function pqLoad(force){
+  if(PQ.loading)return;PQ.loading=true;PQ.err=null;if(force&&CUR==='autopub')renderAutoPub();
+  try{const r=await sb.from('publish_queue').select('*').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;PQ.items=r.data||[];}
+  catch(e){PQ.err=(e&&e.message)||'تعذّر الاتصال';}
+  PQ.loading=false;if(CUR==='autopub')renderAutoPub();
+}
+const PQ_STATUS={pending:['بالانتظار','scheduled'],processing:['جارٍ النشر','scheduled'],done:['تم النشر ✓','done'],error:['خطأ','overdue']};
+function renderAutoPub(){
+  const main=document.getElementById('main');
+  if(PQ.items===null&&!PQ.err){if(!PQ.loading)pqLoad();main.innerHTML=`<div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}
+  if(PQ.err){main.innerHTML=`<div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1><button class="btn btn-ghost" onclick="pqLoad(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>
+    <div class="card"><div class="badge-note"><i data-lucide="database"></i> <div><b>لتفعيل النشر التلقائي:</b><br>١) شغّل ملف <b>supabase/publish_queue.sql</b> في Supabase ← SQL Editor.<br>٢) اتبع دليل <b>docs/AUTOPUBLISH_SETUP.md</b> لإضافة مفاتيح يوتيوب وأسرار GitHub (مرة واحدة).<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(PQ.err)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
+  const items=PQ.items||[];
+  main.innerHTML=`
+    <div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1>
+      <button class="btn btn-ghost" onclick="pqLoad(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="zap"></i> <div>الصق رابط مقطع تيك توك ← GitHub Actions ينشره على <b>يوتيوب شورتس</b> تلقائياً خلال ≈٣٠ دقيقة (مجاناً — بدل اشتراك repurpose.io). أول مرة؟ اتبع <b>docs/AUTOPUBLISH_SETUP.md</b>.</div></div>
+    <div class="card" style="margin-bottom:18px">
+      <div class="field"><label>رابط المقطع (تيك توك)</label><input id="pq_url" placeholder="https://www.tiktok.com/@ibrahimsaud/video/..."></div>
+      <div class="row2">
+        <div class="field"><label>عنوان المقطع</label><input id="pq_title" placeholder="يظهر عنواناً للشورت"></div>
+        <div class="field"><label>الوصف/الكابشن (اختياري)</label><input id="pq_caption" placeholder="وصف + هاشتاقات"></div>
+      </div>
+      <div class="field"><label>المنصات</label>
+        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+          <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" id="pq_yt" checked style="width:auto"> يوتيوب شورتس</label>
+          <span style="color:var(--muted);font-size:12px">لينكدإن وإنستقرام — مراحل قادمة</span>
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="pqAdd()"><i data-lucide="plus"></i> أضف للطابور</button>
+      <span id="pq_msg" style="color:var(--muted);font-size:12px;margin-inline-start:8px"></span>
+    </div>
+    <div class="grid">
+    ${items.length?items.map(q=>{const st=PQ_STATUS[q.status]||[q.status,'scheduled'];const res=q.results||{};return `
+      <div class="card">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+          <span class="pill ${st[1]}">${esc(st[0])}</span>
+          <span style="font-size:12px;color:var(--muted)">${new Date(q.created_at).toLocaleString('ar-SA')}</span>
+        </div>
+        <div style="font-weight:800">${esc(q.title||'بدون عنوان')}</div>
+        <div style="font-size:12px;color:var(--muted);margin:4px 0 10px;direction:ltr;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.video_url)}</div>
+        ${res.youtube?`<a class="btn btn-ghost btn-sm" href="${esc(res.youtube)}" target="_blank" rel="noopener"><i data-lucide="youtube"></i> شاهد الشورت</a>`:''}
+        ${res.error?`<div style="color:var(--bad);font-size:12px;margin-bottom:8px">⚠️ ${esc(res.error)}</div>`:''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
+          ${q.status==='error'?`<button class="btn btn-ghost btn-sm" onclick="pqRetry('${q.id}')"><i data-lucide="rotate-ccw"></i> أعد المحاولة</button>`:''}
+          <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="pqDel('${q.id}')"><i data-lucide="trash-2"></i></button>
+        </div>
+      </div>`}).join(''):`<div class="card"><p style="color:var(--muted)">الطابور فاضي — أضف أول مقطع فوق.</p></div>`}
+    </div>`;
+  applyWallpaper();refreshIcons();
+}
+async function pqAdd(){
+  const url=document.getElementById('pq_url').value.trim();
+  if(!url||!/^https?:\/\//.test(url)){alert('الصق رابط المقطع أولاً');return}
+  const msg=document.getElementById('pq_msg');if(msg)msg.textContent='…جارٍ الإضافة';
+  const row={id:'pq_'+uid(),video_url:url,title:document.getElementById('pq_title').value.trim(),
+    caption:document.getElementById('pq_caption').value.trim(),
+    platforms:document.getElementById('pq_yt').checked?['youtube']:[],status:'pending'};
+  const {error}=await sb.from('publish_queue').insert(row);
+  if(error){if(msg)msg.textContent='تعذّر: '+error.message;return}
+  await pqLoad(true);
+}
+async function pqRetry(id){await sb.from('publish_queue').update({status:'pending',results:{}}).eq('id',id);await pqLoad(true)}
+async function pqDel(id){if(!confirm('حذف من الطابور؟'))return;await sb.from('publish_queue').delete().eq('id',id);await pqLoad(true)}
 
 /* ===== القائمة البريدية (اشتراك + إرسال المدونة عبر Resend) ===== */
 let NL={subs:null,loading:false,err:null,_posts:null};
