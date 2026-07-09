@@ -56,6 +56,17 @@ export default function Podcast() {
         <div className="mt-8 grid grid-cols-1 gap-5 text-right sm:grid-cols-2 lg:grid-cols-3">
           {programs.map((p, i) => (
             <Reveal key={p.title} delay={(i % 3) * 80}>
+              <div className="relative h-full">
+              {p.github && (
+                <a
+                  href={p.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="absolute left-3 top-3 z-10 rounded-full bg-black/65 px-3 py-1 text-xs font-bold text-cream backdrop-blur-sm transition hover:bg-gold hover:text-ink"
+                >
+                  GitHub ↗
+                </a>
+              )}
               <a
                 href={p.href}
                 target="_blank"
@@ -91,10 +102,12 @@ export default function Podcast() {
                   </p>
                   <p className="mt-3 text-xs font-bold text-gold">
                     {[p.year, p.meta].filter(Boolean).join(" · ")}
-                    {p.year || p.meta ? " · " : ""}مشاهدة ↗
+                    {p.year || p.meta ? " · " : ""}
+                    {p.cta ?? "مشاهدة"} ↗
                   </p>
                 </div>
               </a>
+              </div>
             </Reveal>
           ))}
         </div>

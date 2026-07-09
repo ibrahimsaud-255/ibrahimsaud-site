@@ -374,6 +374,8 @@ export type Program = {
   active?: boolean; // true = البرنامج قائم الآن (تظهر شارة «قائم الآن»)
   ytId: string;
   href: string;
+  github?: string; // رابط المستودع (للتطبيقات مفتوحة المصدر)
+  cta?: string; // نص الدعوة أسفل البطاقة — الافتراضي «مشاهدة»
 };
 
 export const programs: Program[] = [
@@ -392,6 +394,16 @@ export const programs: Program[] = [
     year: "٢٠٢٣",
     ytId: "h9WQT7gMP6E",
     href: "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
+  },
+  {
+    title: "تطبيق مِرصاد",
+    desc: "تطبيق ويب لتنظيم جلسات التصوير — «كول شيت» متكامل بلوحة كان بان، وقارئ تيليبرومتر، وملاحظات زمنية تُصدَّر تلقائياً إلى فاينل كت. من تطوير حاتم النجار، مستضاف هنا على الموقع.",
+    meta: "تطبيق ويب مجاني",
+    year: "٢٠٢٦",
+    ytId: "77tL-XDIPhk",
+    href: "/mersad/",
+    github: "https://github.com/HatemAlNajjar/Mersad-1.0",
+    cta: "جرّب التطبيق",
   },
 ];
 
