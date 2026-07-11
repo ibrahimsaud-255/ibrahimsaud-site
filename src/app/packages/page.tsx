@@ -5,6 +5,7 @@ import WhatsAppFab from "@/components/WhatsAppFab";
 import Reveal from "@/components/Reveal";
 import PodcastGear from "@/components/PodcastGear";
 import GearImage from "@/components/GearImage";
+import LivePrice from "@/components/LivePrice";
 import {
   site,
   waLink,
@@ -54,7 +55,7 @@ export default function PackagesPage() {
                   </p>
                   <div className="mt-2 flex items-baseline justify-center gap-2">
                     <span className="text-5xl font-black text-gold">
-                      {arPrice(podcastRecordingPrice)}
+                      <LivePrice fallback={podcastRecordingPrice} />
                     </span>
                     <span className="text-lg font-bold text-cream/70">ريال</span>
                   </div>

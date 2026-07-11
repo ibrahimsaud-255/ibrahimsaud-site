@@ -1,7 +1,31 @@
+"use client";
+
+// باقات تأجير الاستوديو — الأسماء والأسعار والشارات والنص تُدار من النظام الداخلي
+// («محتوى الموقع» → «الأسعار والباقات»، مفتاح prices.rental بمعرّف الباقة).
+// إظهار الأسعار اختياري (showRentalPrices) — الافتراضي «السعر عند الطلب».
+
 import Reveal from "@/components/Reveal";
 import { studioRental, studioRentalNote, waLink } from "@/lib/site";
+import { useContent } from "@/lib/cms";
+
+const arPrice = (n: number) => n.toLocaleString("ar-EG");
+
+type Override = {
+  name?: string;
+  price?: number;
+  unit?: string;
+  tagline?: string;
+  badge?: string;
+};
 
 export default function StudioRental() {
+  const c = useContent("prices", {
+    rental: {} as Record<string, Override>,
+    rentalNote: studioRentalNote as string,
+    showRentalPrices: false,
+  });
+  const list = studioRental.map((p) => ({ ...p, ...(c.rental[p.id] || {}) }));
+
   return (
     <section className="px-5 py-16">
       <div className="mx-auto max-w-5xl">
@@ -14,13 +38,13 @@ export default function StudioRental() {
               سجّل وامشِ — والمونتاج عليك
             </h2>
             <p className="mx-auto mt-4 max-w-2xl text-cream/70">
-              {studioRentalNote}
+              {c.rentalNote}
             </p>
           </div>
         </Reveal>
 
         <div className="mt-10 grid gap-6 md:grid-cols-3">
-          {studioRental.map((p, i) => (
+          {list.map((p, i) => (
             <Reveal key={p.id} delay={i * 90}>
               <div
                 className={`flex h-full flex-col rounded-3xl border bg-ink-card p-7 transition hover:-translate-y-1 ${
@@ -37,9 +61,20 @@ export default function StudioRental() {
                 </div>
                 <p className="mt-1 text-sm text-cream/60">{p.tagline}</p>
 
-                <div className="mt-4 text-sm font-bold text-gold">
-                  السعر عند الطلب
-                </div>
+                {c.showRentalPrices ? (
+                  <div className="mt-4 flex items-baseline gap-2">
+                    <span className="text-3xl font-black text-gold">
+                      {arPrice(p.price)}
+                    </span>
+                    <span className="text-sm font-bold text-cream/70">
+                      ريال {p.unit}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mt-4 text-sm font-bold text-gold">
+                    السعر عند الطلب
+                  </div>
+                )}
 
                 <ul className="mt-5 space-y-2.5">
                   {p.includes.map((f) => (

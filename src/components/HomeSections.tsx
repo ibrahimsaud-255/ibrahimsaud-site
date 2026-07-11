@@ -13,6 +13,7 @@ import Newsletter from "./Newsletter";
 import Contact from "./Contact";
 import About from "./About";
 import Process from "./Process";
+import StudioRental from "./StudioRental";
 
 const SECTIONS: Record<string, React.ComponentType> = {
   brands: Brands,
@@ -24,9 +25,10 @@ const SECTIONS: Record<string, React.ComponentType> = {
   contact: Contact,
   about: About,
   process: Process,
+  rental: StudioRental,
 };
 
-// «عني» و«كيف نشتغل» مطفآن افتراضياً — فعّلهما من اللوحة متى شئت
+// «عني» و«كيف نشتغل» و«باقات التأجير» مطفأة افتراضياً — فعّلها من اللوحة متى شئت
 const layoutFallback = {
   sections: [
     { id: "brands", on: true },
@@ -36,6 +38,7 @@ const layoutFallback = {
     { id: "works", on: true },
     { id: "about", on: false },
     { id: "process", on: false },
+    { id: "rental", on: false },
     { id: "newsletter", on: true },
     { id: "contact", on: true },
   ],

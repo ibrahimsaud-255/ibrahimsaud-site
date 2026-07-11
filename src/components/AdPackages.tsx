@@ -1,5 +1,11 @@
+"use client";
+
+// باقات الإعلانات — الأسماء والأسعار والشارات تُدار من النظام الداخلي
+// («محتوى الموقع» → «الأسعار والباقات»، مفتاح prices.ads بمعرّف الباقة).
+
 import Reveal from "@/components/Reveal";
 import { adPackages, waLink } from "@/lib/site";
+import { useContent } from "@/lib/cms";
 
 const COLORS: Record<string, string> = {
   red: "#e11d48",
@@ -9,11 +15,15 @@ const COLORS: Record<string, string> = {
 
 const arPrice = (n: number) => n.toLocaleString("ar-EG");
 
+type Override = { name?: string; price?: number; tagline?: string; badge?: string };
+
 export default function AdPackages() {
+  const c = useContent("prices", { ads: {} as Record<string, Override> });
+  const list = adPackages.map((p) => ({ ...p, ...(c.ads[p.id] || {}) }));
   return (
     <section className="px-5 pb-8">
       <div className="mx-auto grid max-w-6xl gap-6 md:grid-cols-3">
-        {adPackages.map((p, i) => {
+        {list.map((p, i) => {
           const c = COLORS[p.color];
           return (
             <Reveal key={p.id} delay={i * 90}>

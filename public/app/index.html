@@ -1431,8 +1431,19 @@ const CMS_DEF={
  about:{label:'عني',title:'إبراهيم سعود',paragraphs:['تقنية أعمال وبودكاست — أوظّف التقنية في تطوير الأعمال والأنظمة، وأنتج البودكاست والمحتوى المرئي الذي يبني الحضور.','مقدّم ومنتج بودكاست *سَعي*، وأبني أنظمة وأدوات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). اشتغلت مع جامعة الملك سعود في هاكاثون *هيلثون*، ومع علامات تجارية في السعودية والخليج بأكثر من ٣٠ عملاً مرئياً.','فلسفتي بسيطة: التقنية والمحتوى الناجح وراهما قصة وتجهيز ونظام — وهذا ما أصنعه لك.'],photo:'/profile.jpg',ventures:[{title:'منصة حروف ودروس',desc:'منصة تعليمية تساعد المعلّم وتولّد له أسئلة عالية الجودة — منتج تقني قيد الإطلاق.',href:'https://ibrahimsaud.com/app/',tag:'منتج تقني'}]},
  process:{label:'كيف نشتغل',title:'ما أسلّمك فيديو وأمشي. أصنع لك قصة كاملة.',sub:'تجهيزات، كواليس، نسخة طويلة ونسخ قصيرة، ومحتوى ننشره قبل وبعد الإطلاق — لأن الناس تتعلّق بالرحلة، مو بس بالنتيجة.',steps:[{n:'01',title:'نفهم منتجك',desc:'نتفق على الهدف، الجمهور، والرسالة — قبل أي كاميرا.'},{n:'02',title:'نكتب القصة',desc:'سكربت ومعالجة بصرية تخدم البيع، مو بس تكون «حلوة».'},{n:'03',title:'نصوّر وننتج',desc:'تصوير، تعليق صوتي، مونتاج — وكواليس نوثّقها للحملة.'},{n:'04',title:'نسلّم ونطلق',desc:'نسخة رئيسية + نسخ قصيرة للنشر، مع خطة محتوى قبل وبعد.'}]},
  contact:{title:'عندك فكرة، نظام، أو بودكاست؟ *نبدأها سوا.*',sub:'راسلني على واتساب واحكِ لي عن مشروعك — تقنية أعمال، بودكاست، أو إنتاج محتوى — وأرجع لك بخطة وعرض سعر.',cta1:{label:'تواصل عبر واتساب',waMsg:'السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋'},cta2:{label:'اطلب الخدمة',waMsg:'السلام عليكم، أبي أستفسر عن خدماتك (تقنية أعمال / بودكاست / إنتاج). التفاصيل: '}},
- layout:{sections:[{id:'brands',on:true},{id:'podcast',on:true},{id:'studio',on:true},{id:'services',on:true},{id:'works',on:true},{id:'about',on:false},{id:'process',on:false},{id:'newsletter',on:true},{id:'contact',on:true}]},
- theme:{gold:'#e7b24c',goldSoft:'#f3cd83'}
+ layout:{sections:[{id:'brands',on:true},{id:'podcast',on:true},{id:'studio',on:true},{id:'services',on:true},{id:'works',on:true},{id:'about',on:false},{id:'process',on:false},{id:'rental',on:false},{id:'newsletter',on:true},{id:'contact',on:true}]},
+ theme:{gold:'#e7b24c',goldSoft:'#f3cd83'},
+ prices:{podcastPrice:2499,
+  ads:{
+   single:{name:'باقة الإعلان الواحد',price:750,tagline:'إعلان واحد احترافي من الفكرة حتى التسليم',badge:''},
+   review:{name:'باقة المراجعة الكاملة',price:1000,tagline:'مراجعة كاملة لمنتجك أو خدمتك تبني الثقة وتبيع',badge:''},
+   triple:{name:'باقة الـ٣ إعلانات',price:1500,tagline:'ثلاثة إعلانات بسعر موفّر — لحملة متكاملة',badge:'الأوفر'}},
+  rental:{
+   'hour':{name:'ساعة تصوير',price:150,unit:'للساعة',tagline:'ابدأ بأقل تكلفة — ادفع بالساعة',badge:''},
+   'half-day':{name:'نصف يوم — ٤ ساعات',price:500,unit:'للجلسة',tagline:'وقت مريح لتصوير محتوى متعدّد',badge:'الأنسب'},
+   'full-day':{name:'يوم كامل — ٨ ساعات',price:900,unit:'لليوم',tagline:'للإنتاج المكثّف وتصوير حلقات/إعلانات متعدّدة',badge:''}},
+  rentalNote:'تصوّر في الاستوديو المجهّز وتستلم اللقطات الخام كاملة، وتكمل المونتاج بنفسك. مناسب لصنّاع المحتوى والبودكاست والإعلانات.',
+  showRentalPrices:false}
 };
 const CMS_SECTIONS=[
  {key:'hero',name:'الواجهة الرئيسية (الهيرو)',icon:'sparkles',desc:'الشارة، العنوان الكبير، النبذة، الأزرار الثلاثة، والتصنيفات'},
@@ -1441,9 +1452,10 @@ const CMS_SECTIONS=[
  {key:'process',name:'قسم «كيف نشتغل»',icon:'list-ordered',desc:'العناوين وخطوات العمل (فعّله من «أقسام الصفحة»)'},
  {key:'contact',name:'قسم «تواصل معي»',icon:'message-circle',desc:'عنوان الدعوة، النص، ونصوص أزرار الواتساب'},
  {key:'site',name:'الهوية والتواصل',icon:'id-card',desc:'رقم الواتساب، الإيميل، النبذة (الفوتر)، ورسالة الزر العائم'},
+ {key:'prices',name:'الأسعار والباقات',icon:'banknote',desc:'سعر تسجيل الحلقة، باقات الإعلانات الثلاث، وباقات تأجير الاستوديو'},
  {key:'theme',name:'ألوان الهوية',icon:'palette',desc:'اللون الذهبي الأساسي والفاتح لكل الموقع'},
 ];
-const CMS_SEC_NAMES={brands:'شريط الشعارات (موثوق من)',podcast:'بودكاست سَعي',studio:'جولة الاستوديو',services:'الخدمات',works:'الأعمال',about:'عني',process:'كيف نشتغل',newsletter:'النشرة البريدية',contact:'تواصل معي'};
+const CMS_SEC_NAMES={brands:'شريط الشعارات (موثوق من)',podcast:'بودكاست سَعي',studio:'جولة الاستوديو',services:'الخدمات',works:'الأعمال',about:'عني',process:'كيف نشتغل',rental:'باقات تأجير الاستوديو',newsletter:'النشرة البريدية',contact:'تواصل معي'};
 function cmsMerge(d,s){if(s==null)return d;if(Array.isArray(s)||typeof s!=='object')return s;const o={...(d||{})};for(const k in s){o[k]=(d&&d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])&&s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))?cmsMerge(d[k],s[k]):s[k]}return o}
 function cmsVal(k){return cmsMerge(cmsMerge(CMS_DEF[k],(SITESETTINGS||{})[k]),(SITEDRAFTS||{})[k])}
 function cmsDraftKeys(){return CMS_SECTIONS.map(s=>s.key).filter(k=>SITEDRAFTS&&SITEDRAFTS[k]!=null)}
@@ -1576,6 +1588,32 @@ function cmsModal(key){
       ${cmsField('cm_fab','رسالة زر الواتساب العائم',v.fabMsg)}`,
     async()=>{
       const obj={whatsapp:cmsG('cm_wa').replace(/\D/g,''),email:cmsG('cm_em'),bio:cmsG('cm_bio'),fabMsg:cmsG('cm_fab')};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='prices'){
+    const grp=(pfx,id,p,unit)=>`
+      <div style="border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px">
+        <div class="row2">${cmsField(pfx+id+'_name','اسم الباقة',p.name)}${cmsField(pfx+id+'_price','السعر (ريال)',p.price)}</div>
+        ${unit?`<div class="row2">${cmsField(pfx+id+'_unit','وحدة السعر (للساعة/للجلسة…)',p.unit)}${cmsField(pfx+id+'_badge','شارة (مثل: الأنسب — فارغة = بدون)',p.badge)}</div>`
+              :cmsField(pfx+id+'_badge','شارة (مثل: الأوفر — فارغة = بدون)',p.badge)}
+        ${cmsField(pfx+id+'_tag','السطر التعريفي',p.tagline)}
+      </div>`;
+    openModal('الأسعار والباقات',`
+      <div style="font-weight:800;margin:2px 0 8px"><i class="inl" data-lucide="mic"></i> تسجيل حلقة البودكاست</div>
+      ${cmsField('cm_pod_price','سعر تسجيل الحلقة الكاملة (ريال)',v.podcastPrice)}
+      <div style="font-weight:800;margin:16px 0 8px"><i class="inl" data-lucide="clapperboard"></i> باقات الفيديوهات الإعلانية</div>
+      ${['single','review','triple'].map(id=>grp('cm_ad_',id,v.ads[id]||{},false)).join('')}
+      <div style="font-weight:800;margin:16px 0 8px"><i class="inl" data-lucide="video"></i> باقات تأجير الاستوديو</div>
+      <label style="display:flex;align-items:center;gap:8px;margin:0 0 10px;cursor:pointer;font-size:13.5px">
+        <input type="checkbox" id="cm_show_rp" ${v.showRentalPrices?'checked':''}> إظهار أسعار التأجير في الموقع (بدون تعليم: تظهر «السعر عند الطلب»)</label>
+      ${['hour','half-day','full-day'].map(id=>grp('cm_rn_',id,v.rental[id]||{},true)).join('')}
+      ${cmsArea('cm_rn_note','النص التعريفي لقسم التأجير',v.rentalNote,2)}`,
+    async()=>{
+      const pick=(pfx,id,unit)=>{const o={name:cmsG(pfx+id+'_name'),price:Number(cmsG(pfx+id+'_price')||0),tagline:cmsG(pfx+id+'_tag'),badge:cmsG(pfx+id+'_badge').trim()};if(unit)o.unit=cmsG(pfx+id+'_unit');return o};
+      const obj={podcastPrice:Number(cmsG('cm_pod_price')||0),
+        ads:{single:pick('cm_ad_','single'),review:pick('cm_ad_','review'),triple:pick('cm_ad_','triple')},
+        rental:{'hour':pick('cm_rn_','hour',true),'half-day':pick('cm_rn_','half-day',true),'full-day':pick('cm_rn_','full-day',true)},
+        rentalNote:cmsG('cm_rn_note'),showRentalPrices:document.getElementById('cm_show_rp').checked};
       if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
     });
   }else if(key==='layout'){
