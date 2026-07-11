@@ -1,23 +1,33 @@
 "use client";
 
-// الواجهة الرئيسية — صورة وجه دائرية في المنتصف فوق خلفية الهوية،
-// الصورة والخلفية تُدار من النظام الداخلي (site_settings → hero_photo / hero_bg)
-// مع نسخ احتياطية داخل public/identity.
+// الواجهة الرئيسية — صورة وجه دائرية في المنتصف فوق خلفية الهوية.
+// الصورة والخلفية تُدار من النظام الداخلي (site_settings → hero_photo / hero_bg)،
+// والنصوص والأزرار من «محتوى الموقع» (مفتاح hero) — النصوص هنا نسخة احتياطية.
 
-import { waLink } from "@/lib/site";
+import { site } from "@/lib/site";
 import { useSettings } from "@/lib/siteData";
+import { useContent, goldParts, waHref } from "@/lib/cms";
 import Reveal from "./Reveal";
 
-// محاور العمل — تظهر كخيارات تحت العنوان
-const categories = [
-  { label: "🎙️ بودكاست سَعي", href: "#podcast" },
-  { label: "🎥 الاستوديو", href: "#studio" },
-  { label: "⚙️ الخدمات", href: "#services" },
-  { label: "🎬 الأعمال", href: "#works" },
-];
+const heroFallback = {
+  badge: "تقنية أعمال · بودكاست · إنتاج محتوى",
+  title: "تقنية *أعمال*، وبودكاست.",
+  sub: "أنا إبراهيم سعود — أوظّف التقنية في تطوير أعمالك وأنظمتك، وأنتج البودكاست والمحتوى المرئي الذي يبني حضورك، من فكرة وتصوير ومونتاج إلى منتج نهائي في استوديو مجهّز بالكامل.",
+  cta1: { label: "ابدأ مشروعك معي", waMsg: "السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋" },
+  cta2: { label: "🎬 شاهد أعمالي", href: "#works" },
+  cta3: { label: "🎥 جولة في الاستوديو", href: "#studio" },
+  categories: [
+    { label: "🎙️ بودكاست سَعي", href: "#podcast" },
+    { label: "🎥 الاستوديو", href: "#studio" },
+    { label: "⚙️ الخدمات", href: "#services" },
+    { label: "🎬 الأعمال", href: "#works" },
+  ],
+};
 
 export default function Hero() {
   const settings = useSettings();
+  const c = useContent("hero", heroFallback);
+  const info = useContent("site", { whatsapp: site.whatsapp as string });
   const photo =
     ((settings.hero_photo as { url?: string } | undefined)?.url as string) ||
     "/identity/profile.jpg";
@@ -69,45 +79,51 @@ export default function Hero() {
         <Reveal delay={60}>
           <span className="mt-7 inline-flex items-center gap-2 rounded-full border border-line bg-ink-card/60 px-4 py-1.5 text-sm text-cream/80">
             <span className="size-2 rounded-full bg-gold" />
-            تقنية أعمال · بودكاست · إنتاج محتوى
+            {c.badge}
           </span>
         </Reveal>
 
         <Reveal delay={120}>
           <h1 className="mt-6 text-5xl font-black leading-[1.1] tracking-tight sm:text-7xl">
-            تقنية <span className="gold-text">أعمال</span>، وبودكاست.
+            {goldParts(c.title).map((p, i) =>
+              p.gold ? (
+                <span key={i} className="gold-text">
+                  {p.text}
+                </span>
+              ) : (
+                <span key={i}>{p.text}</span>
+              ),
+            )}
           </h1>
         </Reveal>
 
         <Reveal delay={200}>
           <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-cream/75">
-            أنا إبراهيم سعود — أوظّف التقنية في تطوير أعمالك وأنظمتك، وأنتج
-            البودكاست والمحتوى المرئي الذي يبني حضورك، من فكرة وتصوير ومونتاج إلى
-            منتج نهائي في استوديو مجهّز بالكامل.
+            {c.sub}
           </p>
         </Reveal>
 
         <Reveal delay={280}>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
             <a
-              href={waLink("السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋")}
+              href={waHref(info.whatsapp, c.cta1.waMsg)}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
             >
-              ابدأ مشروعك معي
+              {c.cta1.label}
             </a>
             <a
-              href="#works"
+              href={c.cta2.href}
               className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
             >
-              🎬 شاهد أعمالي
+              {c.cta2.label}
             </a>
             <a
-              href="#studio"
+              href={c.cta3.href}
               className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
             >
-              🎥 جولة في الاستوديو
+              {c.cta3.label}
             </a>
           </div>
         </Reveal>
@@ -115,13 +131,13 @@ export default function Hero() {
         {/* خيارات التصنيفات */}
         <Reveal delay={360}>
           <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5">
-            {categories.map((c) => (
+            {c.categories.map((cat) => (
               <a
-                key={c.label}
-                href={c.href}
+                key={cat.label}
+                href={cat.href}
                 className="rounded-full border border-line bg-ink-card/50 px-5 py-2.5 text-sm font-bold text-cream/80 transition hover:border-gold/60 hover:bg-ink-card hover:text-gold"
               >
-                {c.label}
+                {cat.label}
               </a>
             ))}
           </div>

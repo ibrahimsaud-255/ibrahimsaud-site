@@ -5,6 +5,7 @@
 
 import { site } from "@/lib/site";
 import { useSettings } from "@/lib/siteData";
+import { useContent } from "@/lib/cms";
 
 type IconName =
   | "tiktok"
@@ -58,6 +59,7 @@ export default function SocialIcons({
   className?: string;
 }) {
   const settings = useSettings();
+  const info = useContent("site", { whatsapp: site.whatsapp as string });
   const socials =
     (settings.socials as Record<string, string> | undefined) || {};
 
@@ -69,7 +71,7 @@ export default function SocialIcons({
     x: socials.x ?? site.social.x,
     linkedin: socials.linkedin ?? site.social.linkedin,
     snapchat: socials.snapchat ?? site.social.snapchat,
-    whatsapp: `https://wa.me/${site.whatsapp}`,
+    whatsapp: `https://wa.me/${info.whatsapp}`,
   };
   (Object.keys(merged) as IconName[]).forEach((k) => {
     if (merged[k]) links.push({ name: k, href: merged[k] });

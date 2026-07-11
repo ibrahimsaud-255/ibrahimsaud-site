@@ -1,9 +1,19 @@
-import { waLink } from "@/lib/site";
+"use client";
+
+// زر واتساب العائم — الرقم والرسالة يُداران من النظام الداخلي («محتوى الموقع»).
+
+import { site } from "@/lib/site";
+import { useContent, waHref } from "@/lib/cms";
 
 export default function WhatsAppFab() {
+  const info = useContent("site", {
+    whatsapp: site.whatsapp as string,
+    fabMsg: "السلام عليكم، أبي أطلب فيديو إعلاني 🎬",
+  });
+
   return (
     <a
-      href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
+      href={waHref(info.whatsapp, info.fabMsg)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="تواصل عبر واتساب"

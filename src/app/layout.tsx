@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Tajawal } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
+import PreviewBanner from "@/components/PreviewBanner";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -63,6 +64,7 @@ export default function RootLayout({
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <body className={`${tajawal.variable} antialiased`}>
+        <PreviewBanner />
         {children}
         <Analytics />
       </body>

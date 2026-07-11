@@ -3315,10 +3315,11 @@ document.addEventListener('DOMContentLoaded', function() {
   <div class="login-card">
     <div class="login-logo">🎬</div>
     <div class="login-title">مِرصاد</div>
-    <div id="loginModeSub" class="login-sub">سجّل دخولك لمزامنة تصاويرك على جميع أجهزتك</div>
+    <div id="loginModeSub" class="login-sub">الدخول موحّد مع نظام إبراهيم سعود — سجّل دخولك هناك ويفتح مرصاد تلقائياً</div>
+    <a href="../app/" class="login-btn" style="display:flex;align-items:center;justify-content:center;text-decoration:none;color:#0a0a0c">الدخول عبر نظام إبراهيم سعود</a>
     <label for="loginUser" class="sr-only">اسم المستخدم</label>
-    <input id="loginUser" class="login-input" type="text" placeholder="اسم المستخدم" autocomplete="username" aria-label="اسم المستخدم">
-    <div style="position:relative;width:100%">
+    <input id="loginUser" class="login-input" type="text" placeholder="اسم المستخدم" autocomplete="username" aria-label="اسم المستخدم" style="display:none">
+    <div style="position:relative;width:100%;display:none">
       <label for="loginPass" class="sr-only">كلمة المرور</label>
       <input id="loginPass" class="login-input" type="password" placeholder="كلمة المرور" autocomplete="current-password" style="padding-left:44px" aria-label="كلمة المرور">
       <button type="button" onclick="togglePassView()" style="position:absolute;left:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;color:var(--subtext);line-height:1" aria-label="إظهار/إخفاء كلمة المرور">
@@ -3334,10 +3335,9 @@ document.addEventListener('DOMContentLoaded', function() {
       <div style="margin-top:8px;font-weight:700">⚠️ تنبيه ثانٍ!</div>
       <div>جميع البيانات المكتوبة داخل التطبيق مرئية لي. إذا كنت تريد كتابة بيانات خاصة، انسخ التطبيق من GitHub وارفعه على خادم خاص بك بحيث يصبح مستقلاً تماماً.</div>
     </div>
-    <button id="loginSubmitBtn" class="login-btn" onclick="signInLocal()" disabled style="opacity:0.6">جارٍ التحميل...</button>
+    <button id="loginSubmitBtn" class="login-btn" onclick="signInLocal()" disabled style="opacity:0.6;display:none">جارٍ التحميل...</button>
     <div id="loginError" style="color:var(--red);font-size:13px;margin-top:-8px;display:none"></div>
-    <button class="login-migrate-btn" onclick="toggleAuthMode()">إنشاء حساب جديد</button>
-    <div style="text-align:center;font-family:var(--font-display);font-size:13px;color:var(--subtext);margin-top:16px;opacity:0.7;padding:0 8px">برمجهُ وأهداهُ للمصورين: حاتم النجار</div>
+    <button class="login-migrate-btn" onclick="toggleAuthMode()" style="display:none">إنشاء حساب جديد</button>
   </div>
 </div>
 
@@ -6142,7 +6142,7 @@ function _isTamraFolder() {
   return folder?.name?.trim() === 'تمرة';
 }
 function _isHatemFolder() {
-  return _getFolderName() === 'قناة حاتم';
+  return _getFolderName() === 'قناتي';
 }
 function _getFolderName() {
   if (!cur || !cur.folderId) return '';
@@ -6151,11 +6151,11 @@ function _getFolderName() {
 function _getRuknList() {
   const name = _getFolderName();
   if (name === 'تمرة') return ['الشرح البودكاستي','اشرح لي في دقيقة','الإعلانات','الشرح المباشر','اسأل واستثمر','مزايا التطبيق','في المكتب'];
-  if (name === 'قناة حاتم') return ['تأملات','أدلة','معيشة','كتب','غيرها'];
+  if (name === 'قناتي') return ['تأملات','أدلة','معيشة','كتب','غيرها'];
   return [];
 }
 function _getRuknLabel() {
-  return _getFolderName() === 'قناة حاتم' ? 'السلسلة' : 'الركن';
+  return _getFolderName() === 'قناتي' ? 'السلسلة' : 'الركن';
 }
 
 function buildSegmentHTML(seg) {
@@ -10503,7 +10503,7 @@ async function changeDisplayName(e) {
 
 // ── Init ──
 (async () => {
-  const savedTheme = localStorage.getItem('sm_theme') || 'light';
+  const savedTheme = localStorage.getItem('sm_theme') || 'dark';
   applyTheme(savedTheme);
 
   // Check for project share link — works without login

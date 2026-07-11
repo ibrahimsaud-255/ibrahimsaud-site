@@ -5,6 +5,7 @@
 // يُدار المحتوى من لوحة التحكم الداخلية (public/app/index.html → «الأعمال»).
 
 import { useEffect, useState } from "react";
+import { isPreview } from "./cms";
 import {
   works as staticWorks,
   brands as staticBrands,
@@ -182,16 +183,24 @@ export type SiteSettings = Record<string, unknown>;
 let settingsCache: Promise<SiteSettings | null> | null = null;
 function fetchSettings(): Promise<SiteSettings | null> {
   if (!settingsCache) {
-    settingsCache = rest<{ key: string; value: unknown }>(
-      "site_settings?select=key,value",
+    // في وضع المعاينة (?preview=1) تُقدَّم المسودة draft على المنشور value —
+    // عمود draft يُنشأ بملف supabase/site_cms.sql؛ لو غير موجود نرجع للمنشور فقط.
+    const build = (rows: { key: string; value: unknown; draft?: unknown }[]) => {
+      if (!rows || !rows.length) return null;
+      const preview = isPreview();
+      const out: SiteSettings = {};
+      for (const r of rows) out[r.key] = preview ? (r.draft ?? r.value) : r.value;
+      return out;
+    };
+    settingsCache = rest<{ key: string; value: unknown; draft?: unknown }>(
+      "site_settings?select=key,value,draft",
     )
-      .then((rows) => {
-        if (!rows || !rows.length) return null;
-        const out: SiteSettings = {};
-        for (const r of rows) out[r.key] = r.value;
-        return out;
-      })
-      .catch(() => null);
+      .then(build)
+      .catch(() =>
+        rest<{ key: string; value: unknown }>("site_settings?select=key,value")
+          .then(build)
+          .catch(() => null),
+      );
   }
   return settingsCache;
 }

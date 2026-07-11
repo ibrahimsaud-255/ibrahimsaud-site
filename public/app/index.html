@@ -696,7 +696,7 @@ const APPS=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
   {id:'calendar',name:'التقويم',icon:'calendar-days'},
   {id:'projects',name:'المشروع',icon:'clapperboard'},
-  {id:'sitework',name:'الأعمال (الموقع)',icon:'film'},
+  {id:'sitework',name:'الموقع الإلكتروني',icon:'globe'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
   {id:'autopub',name:'النشر التلقائي',icon:'send'},
@@ -718,7 +718,7 @@ const LAUNCH=[
   {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
   {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
-  {id:'sitework',name:'الأعمال (الموقع)',icon:'film',c:'#e11d48,#9f1239'},
+  {id:'sitework',name:'الموقع الإلكتروني',icon:'globe',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
   {id:'autopub',name:'النشر التلقائي',icon:'send',c:'#8b5cf6,#6d28d9'},
@@ -1268,7 +1268,7 @@ function checkHabitReminders(){
 }
 
 /* ===== معرض الأعمال + الشعارات + الخدمات + إعدادات الموقع (يُدار داخلياً ويُنشر على الموقع العام) ===== */
-let SITEWORKS=null, SITEBRANDS=null, SITESERVICES=null, SITESETTINGS=null, SW_LOADING=false, SW_ERR=null;
+let SITEWORKS=null, SITEBRANDS=null, SITESERVICES=null, SITESETTINGS=null, SITEDRAFTS=null, SW_LOADING=false, SW_ERR=null, SW_TAB='content';
 const SW_CATS=['أعمال سينمائية','تغطية فعاليات','إعلانات منتجات','مقابلات الشارع','تصميم جرافيك','هوية بصرية'];
 const SW_AUD=[['companies','الشركات والجهات'],['stores','المتاجر الإلكترونية'],['','عمل خاص (بدون قسم)']];
 const SEED_WORKS=[
@@ -1302,7 +1302,7 @@ async function swLoad(force){
     const w=await sb.from('site_works').select('*').order('sort',{ascending:true});if(w.error)throw w.error;SITEWORKS=w.data||[];
     const b=await sb.from('site_brands').select('*').order('sort',{ascending:true});if(b.error)throw b.error;SITEBRANDS=b.data||[];
     try{const s=await sb.from('site_services').select('*').order('sort',{ascending:true});SITESERVICES=s.error?[]:(s.data||[]);}catch(_){SITESERVICES=[]}
-    try{const st=await sb.from('site_settings').select('*');SITESETTINGS={};(st.data||[]).forEach(r=>{SITESETTINGS[r.key]=r.value});}catch(_){SITESETTINGS={}}
+    try{const st=await sb.from('site_settings').select('*');SITESETTINGS={};SITEDRAFTS={};(st.data||[]).forEach(r=>{SITESETTINGS[r.key]=r.value;if(r.draft!=null)SITEDRAFTS[r.key]=r.draft});}catch(_){SITESETTINGS={};SITEDRAFTS={}}
   }catch(e){SW_ERR=(e&&e.message)||'تعذّر الاتصال';}
   SW_LOADING=false;if(CUR==='sitework')renderSiteWorks();
 }
@@ -1314,7 +1314,14 @@ function renderSiteWorks(){
     <div class="card"><div class="badge-note"><i data-lucide="database"></i> <div><b>لتفعيل إدارة الأعمال:</b> افتح Supabase ← SQL Editor ← New query، وشغّل ملف <b>supabase/site_works.sql</b> مرة واحدة (ينشئ جدولَي الأعمال والشعارات). ثم اضغط «إعادة المحاولة».<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(SW_ERR)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
   const works=SITEWORKS||[],brands=SITEBRANDS||[];
   main.innerHTML=`
-    <div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1>
+    ${swCssHTML()}
+    <div class="page-head"><h1><i data-lucide="globe"></i> الموقع الإلكتروني</h1></div>
+    ${swBarHTML()}
+    <div class="sw-tabs">${SW_TABS.map(t=>`<button class="sw-tab${SW_TAB===t[0]?' on':''}" onclick="swGo('${t[0]}')"><i data-lucide="${t[2]}"></i>${t[1]}</button>`).join('')}</div>
+    ${SW_TAB==='content'?cmsTabHTML():''}
+    ${SW_TAB==='preview'?swPreviewHTML():''}
+    ${SW_TAB!=='works'?'':`
+    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="film"></i> الأعمال (تظهر في قسم «الأعمال» بالموقع)</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${works.length?'':`<button class="btn btn-ghost" onclick="swImport('works')"><i data-lucide="download"></i> استيراد الأعمال الحالية</button>`}
         <button class="btn btn-gold" onclick="swWorkModal()"><i data-lucide="plus"></i> عمل جديد</button></div></div>
@@ -1347,9 +1354,9 @@ function renderSiteWorks(){
       <button class="btn btn-ghost btn-sm" onclick="swBrandModal('${b.id}')"><i data-lucide="pencil"></i></button>
       <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelBrand('${b.id}')"><i data-lucide="trash-2"></i></button>
     </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا شعارات بعد.</p></div>`}
-    </div>
-
-    <div class="page-head" style="margin-top:30px"><h2 style="margin:0;font-size:19px"><i data-lucide="layout-grid"></i> خدمات الموقع (تبويبات قسم «خدماتي»)</h2>
+    </div>`}
+    ${SW_TAB!=='services'?'':`
+    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="layout-grid"></i> خدمات الموقع (تبويبات قسم «خدماتي»)</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${(SITESERVICES&&SITESERVICES.length)?'':`<button class="btn btn-ghost" onclick="swImportServices()"><i data-lucide="download"></i> استيراد الخدمات الافتراضية</button>`}
         <button class="btn btn-gold" onclick="swServiceModal()"><i data-lucide="plus"></i> خدمة جديدة</button></div></div>
@@ -1361,9 +1368,10 @@ function renderSiteWorks(){
       <button class="btn btn-ghost btn-sm" onclick="swServiceModal('${s.id}')"><i data-lucide="pencil"></i></button>
       <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelService('${s.id}')"><i data-lucide="trash-2"></i></button>
     </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا خدمات مخصّصة بعد — الموقع يعرض الافتراضية.</p></div>`}
-    </div>
-
-    <div class="page-head" style="margin-top:30px"><h2 style="margin:0;font-size:19px"><i data-lucide="settings-2"></i> إعدادات واجهة الموقع</h2></div>
+    </div>`}
+    ${SW_TAB!=='look'?'':`
+    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="settings-2"></i> إعدادات واجهة الموقع</h2></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="zap"></i> <div>هذا التبويب يُحفظ <b>وينشر مباشرة</b> على الموقع (صور الواجهة وروابط التواصل) — بدون مسودة.</div></div>
     <div class="card">
       <div class="row2">
         <div class="field"><label>صورة الوجه الدائرية (واجهة الموقع)</label>
@@ -1395,9 +1403,231 @@ function renderSiteWorks(){
         <span id="st_soc_status" style="color:var(--muted);font-size:12px"></span>
       </div>
       <div style="font-size:12px;color:var(--muted);margin-top:10px">ملاحظة: الحقل الفارغ يرجع للقيمة الافتراضية المدمجة في الموقع. واتساب يظهر تلقائياً من رقمك.</div>
-    </div>`;
+    </div>`}`;
   applyWallpaper();refreshIcons();
 }
+
+/* ===== محرر محتوى الموقع (مسودة → معاينة → نشر) =====
+   كل قسم يُحفظ في site_settings.draft (مسودة لا يراها الزوار)،
+   المعاينة تفتح الموقع بـ ?preview=1 فيعرض المسودة،
+   وزر «نشر» ينسخ draft → value فيظهر للزوار فوراً بلا إعادة بناء.
+   يتطلب تشغيل supabase/site_cms.sql مرة واحدة (يضيف عمود draft). */
+const SW_TABS=[['content','محتوى الموقع','type'],['works','الأعمال والشعارات','film'],['services','الخدمات','layout-grid'],['look','واجهة الموقع','image'],['preview','المعاينة','eye']];
+function swGo(t){SW_TAB=t;renderSiteWorks()}
+function swCssHTML(){return `<style>
+  .sw-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 18px}
+  .sw-tab{display:flex;align-items:center;gap:7px;padding:9px 16px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--muted);font-weight:700;font-size:13.5px;cursor:pointer;font-family:inherit}
+  .sw-tab svg{width:16px;height:16px}
+  .sw-tab.on{background:rgba(231,178,76,.14);border-color:rgba(231,178,76,.45);color:var(--gold2,#f3cd83)}
+  .cms-card{display:flex;flex-direction:column;gap:8px}
+  .cms-card .t{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .cms-card .t b{font-size:15px}
+  .cms-card .d{color:var(--muted);font-size:12.5px;min-height:32px}
+  .cms-card .a{display:flex;gap:6px;flex-wrap:wrap}
+</style>`}
+const CMS_DEF={
+ site:{whatsapp:'966504895213',email:'ibrahimsaud25@gmail.com',bio:'إبراهيم سعود — تقنية أعمال وبودكاست',fabMsg:'السلام عليكم، أبي أطلب فيديو إعلاني 🎬'},
+ hero:{badge:'تقنية أعمال · بودكاست · إنتاج محتوى',title:'تقنية *أعمال*، وبودكاست.',sub:'أنا إبراهيم سعود — أوظّف التقنية في تطوير أعمالك وأنظمتك، وأنتج البودكاست والمحتوى المرئي الذي يبني حضورك، من فكرة وتصوير ومونتاج إلى منتج نهائي في استوديو مجهّز بالكامل.',cta1:{label:'ابدأ مشروعك معي',waMsg:'السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋'},cta2:{label:'🎬 شاهد أعمالي',href:'#works'},cta3:{label:'🎥 جولة في الاستوديو',href:'#studio'},categories:[{label:'🎙️ بودكاست سَعي',href:'#podcast'},{label:'🎥 الاستوديو',href:'#studio'},{label:'⚙️ الخدمات',href:'#services'},{label:'🎬 الأعمال',href:'#works'}]},
+ about:{label:'عني',title:'إبراهيم سعود',paragraphs:['تقنية أعمال وبودكاست — أوظّف التقنية في تطوير الأعمال والأنظمة، وأنتج البودكاست والمحتوى المرئي الذي يبني الحضور.','مقدّم ومنتج بودكاست *سَعي*، وأبني أنظمة وأدوات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). اشتغلت مع جامعة الملك سعود في هاكاثون *هيلثون*، ومع علامات تجارية في السعودية والخليج بأكثر من ٣٠ عملاً مرئياً.','فلسفتي بسيطة: التقنية والمحتوى الناجح وراهما قصة وتجهيز ونظام — وهذا ما أصنعه لك.'],photo:'/profile.jpg',ventures:[{title:'منصة حروف ودروس',desc:'منصة تعليمية تساعد المعلّم وتولّد له أسئلة عالية الجودة — منتج تقني قيد الإطلاق.',href:'https://ibrahimsaud.com/app/',tag:'منتج تقني'}]},
+ process:{label:'كيف نشتغل',title:'ما أسلّمك فيديو وأمشي. أصنع لك قصة كاملة.',sub:'تجهيزات، كواليس، نسخة طويلة ونسخ قصيرة، ومحتوى ننشره قبل وبعد الإطلاق — لأن الناس تتعلّق بالرحلة، مو بس بالنتيجة.',steps:[{n:'01',title:'نفهم منتجك',desc:'نتفق على الهدف، الجمهور، والرسالة — قبل أي كاميرا.'},{n:'02',title:'نكتب القصة',desc:'سكربت ومعالجة بصرية تخدم البيع، مو بس تكون «حلوة».'},{n:'03',title:'نصوّر وننتج',desc:'تصوير، تعليق صوتي، مونتاج — وكواليس نوثّقها للحملة.'},{n:'04',title:'نسلّم ونطلق',desc:'نسخة رئيسية + نسخ قصيرة للنشر، مع خطة محتوى قبل وبعد.'}]},
+ contact:{title:'عندك فكرة، نظام، أو بودكاست؟ *نبدأها سوا.*',sub:'راسلني على واتساب واحكِ لي عن مشروعك — تقنية أعمال، بودكاست، أو إنتاج محتوى — وأرجع لك بخطة وعرض سعر.',cta1:{label:'تواصل عبر واتساب',waMsg:'السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋'},cta2:{label:'اطلب الخدمة',waMsg:'السلام عليكم، أبي أستفسر عن خدماتك (تقنية أعمال / بودكاست / إنتاج). التفاصيل: '}},
+ layout:{sections:[{id:'brands',on:true},{id:'podcast',on:true},{id:'studio',on:true},{id:'services',on:true},{id:'works',on:true},{id:'about',on:false},{id:'process',on:false},{id:'newsletter',on:true},{id:'contact',on:true}]},
+ theme:{gold:'#e7b24c',goldSoft:'#f3cd83'}
+};
+const CMS_SECTIONS=[
+ {key:'hero',name:'الواجهة الرئيسية (الهيرو)',icon:'sparkles',desc:'الشارة، العنوان الكبير، النبذة، الأزرار الثلاثة، والتصنيفات'},
+ {key:'layout',name:'أقسام الصفحة الرئيسية',icon:'layout-list',desc:'أظهر/أخفِ أي قسم وغيّر ترتيبه — يشمل قسمَي «عني» و«كيف نشتغل» الاختياريين'},
+ {key:'about',name:'قسم «عني»',icon:'user-round',desc:'العنوان والفقرات والصورة والمشاريع (فعّله من «أقسام الصفحة»)'},
+ {key:'process',name:'قسم «كيف نشتغل»',icon:'list-ordered',desc:'العناوين وخطوات العمل (فعّله من «أقسام الصفحة»)'},
+ {key:'contact',name:'قسم «تواصل معي»',icon:'message-circle',desc:'عنوان الدعوة، النص، ونصوص أزرار الواتساب'},
+ {key:'site',name:'الهوية والتواصل',icon:'id-card',desc:'رقم الواتساب، الإيميل، النبذة (الفوتر)، ورسالة الزر العائم'},
+ {key:'theme',name:'ألوان الهوية',icon:'palette',desc:'اللون الذهبي الأساسي والفاتح لكل الموقع'},
+];
+const CMS_SEC_NAMES={brands:'شريط الشعارات (موثوق من)',podcast:'بودكاست سَعي',studio:'جولة الاستوديو',services:'الخدمات',works:'الأعمال',about:'عني',process:'كيف نشتغل',newsletter:'النشرة البريدية',contact:'تواصل معي'};
+function cmsMerge(d,s){if(s==null)return d;if(Array.isArray(s)||typeof s!=='object')return s;const o={...(d||{})};for(const k in s){o[k]=(d&&d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])&&s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))?cmsMerge(d[k],s[k]):s[k]}return o}
+function cmsVal(k){return cmsMerge(cmsMerge(CMS_DEF[k],(SITESETTINGS||{})[k]),(SITEDRAFTS||{})[k])}
+function cmsDraftKeys(){return CMS_SECTIONS.map(s=>s.key).filter(k=>SITEDRAFTS&&SITEDRAFTS[k]!=null)}
+function cmsStatus(k){
+  if(SITEDRAFTS&&SITEDRAFTS[k]!=null)return '<span class="pill unpaid" style="background:rgba(245,158,11,.16);color:#fcd34d">مسودة غير منشورة</span>';
+  if(SITESETTINGS&&SITESETTINGS[k]!=null)return '<span class="pill done">منشور</span>';
+  return '<span class="pill" style="background:rgba(155,155,163,.16);color:var(--muted)">النص الافتراضي</span>';
+}
+function swPreviewUrl(){return location.origin+'/?preview=1'}
+function swBarHTML(){
+  const n=cmsDraftKeys().length;
+  return `<div class="card" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px;padding:12px 16px">
+    ${n?`<span style="display:flex;align-items:center;gap:8px;font-weight:800;color:#fcd34d"><i data-lucide="pencil-line"></i> ${n} ${n===1?'قسم معدّل':'أقسام معدّلة'} بانتظار النشر</span>`
+       :`<span style="display:flex;align-items:center;gap:8px;color:var(--muted)"><i data-lucide="check-circle-2"></i> لا تعديلات معلّقة — الموقع مطابق لآخر نشر</span>`}
+    <div style="margin-inline-start:auto;display:flex;gap:8px;flex-wrap:wrap">
+      <a class="btn btn-ghost" href="${swPreviewUrl()}" target="_blank" rel="noopener"><i data-lucide="eye"></i> معاينة الموقع</a>
+      ${n?`<button class="btn btn-ghost" style="color:var(--bad)" onclick="cmsDiscardAll()"><i data-lucide="undo-2"></i> تجاهل المسودات</button>
+      <button class="btn btn-gold" onclick="cmsPublishAll()"><i data-lucide="rocket"></i> نشر التعديلات (${n})</button>`:''}
+    </div></div>`;
+}
+function cmsTabHTML(){
+  return `<div class="badge-note" style="margin-bottom:16px"><i data-lucide="workflow"></i> <div><b>دورة العمل:</b> عدّل أي قسم واحفظه ← يُحفظ <b>كمسودة</b> لا يراها الزوار ← افتح <b>«المعاينة»</b> لتشوف الشكل النهائي ← اضغط <b>«نشر التعديلات»</b> فتظهر للزوار فوراً. لو ظهر خطأ عند الحفظ أول مرة، شغّل ملف <b>supabase/site_cms.sql</b> في Supabase (يضيف عمود المسودة).</div></div>
+  <div class="grid">
+  ${CMS_SECTIONS.map(s=>`<div class="card cms-card">
+    <div class="t"><b><i class="inl" data-lucide="${s.icon}"></i> ${s.name}</b>${cmsStatus(s.key)}</div>
+    <div class="d">${s.desc}</div>
+    <div class="a">
+      <button class="btn btn-gold btn-sm" onclick="cmsModal('${s.key}')"><i data-lucide="pencil"></i> تعديل</button>
+      ${(SITEDRAFTS&&SITEDRAFTS[s.key]!=null)?`<button class="btn btn-ghost btn-sm" onclick="cmsPublishOne('${s.key}')"><i data-lucide="rocket"></i> نشر</button>
+      <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="cmsDiscardOne('${s.key}')"><i data-lucide="undo-2"></i> تراجع</button>`:''}
+    </div>
+  </div>`).join('')}
+  </div>`;
+}
+/* — الحفظ والنشر — */
+async function cmsSaveDraft(key,obj){
+  const {error}=await sb.from('site_settings').upsert({key,draft:obj,updated_at:new Date().toISOString()});
+  if(error){
+    const hint=/draft/.test(String(error.message))?'\n\n⚠️ عمود المسودة غير موجود بعد — شغّل ملف supabase/site_cms.sql في Supabase (SQL Editor) مرة واحدة ثم أعد المحاولة.':'';
+    alert('تعذّر حفظ المسودة: '+error.message+hint);return false;
+  }
+  SITEDRAFTS=SITEDRAFTS||{};SITEDRAFTS[key]=obj;return true;
+}
+async function cmsPublishOne(key){
+  if(!SITEDRAFTS||SITEDRAFTS[key]==null)return;
+  const {error}=await sb.from('site_settings').update({value:SITEDRAFTS[key],draft:null,published_at:new Date().toISOString()}).eq('key',key);
+  if(error){alert('تعذّر النشر: '+error.message);return}
+  SITESETTINGS[key]=SITEDRAFTS[key];delete SITEDRAFTS[key];renderSiteWorks();
+}
+async function cmsPublishAll(){
+  const keys=cmsDraftKeys();if(!keys.length)return;
+  if(!confirm('نشر تعديلات '+keys.length+' قسم على الموقع الحي الآن؟'))return;
+  for(const k of keys){
+    const {error}=await sb.from('site_settings').update({value:SITEDRAFTS[k],draft:null,published_at:new Date().toISOString()}).eq('key',k);
+    if(error){alert('تعذّر نشر «'+k+'»: '+error.message);renderSiteWorks();return}
+    SITESETTINGS[k]=SITEDRAFTS[k];delete SITEDRAFTS[k];
+  }
+  renderSiteWorks();alert('تم النشر ✓ — التعديلات ظاهرة الآن على الموقع (حدّث الصفحة عند الزائر)');
+}
+async function cmsDiscardOne(key){
+  if(!confirm('تجاهل مسودة هذا القسم والرجوع للمنشور؟'))return;
+  const {error}=await sb.from('site_settings').update({draft:null}).eq('key',key);
+  if(error){alert('تعذّر: '+error.message);return}
+  delete SITEDRAFTS[key];renderSiteWorks();
+}
+async function cmsDiscardAll(){
+  const keys=cmsDraftKeys();if(!keys.length)return;
+  if(!confirm('تجاهل كل المسودات ('+keys.length+') والرجوع للمنشور؟'))return;
+  for(const k of keys){await sb.from('site_settings').update({draft:null}).eq('key',k);delete SITEDRAFTS[k]}
+  renderSiteWorks();
+}
+/* — المحررات — */
+const cmsG=i=>document.getElementById(i).value;
+const cmsLines=t=>t.split('\n').map(x=>x.trim()).filter(Boolean);
+function cmsField(id,label,val,ph){return `<div class="field"><label>${label}</label><input id="${id}" value="${esc(val||'')}" placeholder="${esc(ph||'')}"></div>`}
+function cmsArea(id,label,val,rows,hint){return `<div class="field"><label>${label}</label><textarea id="${id}" rows="${rows||3}">${esc(val||'')}</textarea>${hint?`<div style="font-size:12px;color:var(--muted);margin-top:3px">${hint}</div>`:''}</div>`}
+function cmsModal(key){
+  const v=cmsVal(key);
+  if(key==='hero'){
+    openModal('الواجهة الرئيسية (الهيرو)',`
+      ${cmsField('cm_badge','سطر الشارة (فوق العنوان)',v.badge)}
+      ${cmsField('cm_title','العنوان الكبير — ضع النجمتين حول الكلمة الذهبية: *أعمال*',v.title)}
+      ${cmsArea('cm_sub','النبذة تحت العنوان',v.sub,3)}
+      <div class="row2">${cmsField('cm_c1l','نص الزر الذهبي (واتساب)',v.cta1.label)}${cmsField('cm_c1m','رسالة الواتساب عند الضغط',v.cta1.waMsg)}</div>
+      <div class="row2">${cmsField('cm_c2l','نص الزر الثاني',v.cta2.label)}${cmsField('cm_c2h','رابطه (مثل #works)',v.cta2.href)}</div>
+      <div class="row2">${cmsField('cm_c3l','نص الزر الثالث',v.cta3.label)}${cmsField('cm_c3h','رابطه (مثل #studio)',v.cta3.href)}</div>
+      ${cmsArea('cm_cats','التصنيفات (سطر لكل واحد: النص | الرابط)',v.categories.map(c=>c.label+' | '+c.href).join('\n'),4,'مثال: 🎙️ بودكاست سَعي | #podcast')}`,
+    async()=>{
+      const cats=cmsLines(cmsG('cm_cats')).map(l=>{const p=l.split('|');return{label:(p[0]||'').trim(),href:(p[1]||'#').trim()}}).filter(c=>c.label);
+      const obj={badge:cmsG('cm_badge'),title:cmsG('cm_title'),sub:cmsG('cm_sub'),
+        cta1:{label:cmsG('cm_c1l'),waMsg:cmsG('cm_c1m')},cta2:{label:cmsG('cm_c2l'),href:cmsG('cm_c2h')},cta3:{label:cmsG('cm_c3l'),href:cmsG('cm_c3h')},categories:cats};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='about'){
+    openModal('قسم «عني»',`
+      <div class="row2">${cmsField('cm_label','التسمية الصغيرة',v.label)}${cmsField('cm_title','العنوان',v.title)}</div>
+      ${cmsArea('cm_paras','الفقرات (افصل بين كل فقرة بسطر فارغ) — *كذا* يلوّنها ذهبياً',v.paragraphs.join('\n\n'),7)}
+      ${cmsField('cm_photo','رابط الصورة الجانبية',v.photo,'/profile.jpg')}
+      ${cmsArea('cm_vent','المشاريع (سطر لكل مشروع: الوسم | الاسم | الوصف | الرابط)',v.ventures.map(x=>[x.tag,x.title,x.desc,x.href].join(' | ')).join('\n'),3)}`,
+    async()=>{
+      const vent=cmsLines(cmsG('cm_vent')).map(l=>{const p=l.split('|').map(x=>x.trim());return{tag:p[0]||'',title:p[1]||'',desc:p[2]||'',href:p[3]||'#'}}).filter(x=>x.title);
+      const obj={label:cmsG('cm_label'),title:cmsG('cm_title'),paragraphs:cmsG('cm_paras').split(/\n\s*\n/).map(x=>x.trim()).filter(Boolean),photo:cmsG('cm_photo'),ventures:vent};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='process'){
+    openModal('قسم «كيف نشتغل»',`
+      ${cmsField('cm_label','التسمية الصغيرة',v.label)}
+      ${cmsField('cm_title','العنوان',v.title)}
+      ${cmsArea('cm_sub','النص التوضيحي',v.sub,2)}
+      ${cmsArea('cm_steps','الخطوات (سطر لكل خطوة: الرقم | العنوان | الوصف)',v.steps.map(s=>[s.n,s.title,s.desc].join(' | ')).join('\n'),5)}`,
+    async()=>{
+      const steps=cmsLines(cmsG('cm_steps')).map(l=>{const p=l.split('|').map(x=>x.trim());return{n:p[0]||'',title:p[1]||'',desc:p[2]||''}}).filter(s=>s.title);
+      const obj={label:cmsG('cm_label'),title:cmsG('cm_title'),sub:cmsG('cm_sub'),steps};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='contact'){
+    openModal('قسم «تواصل معي»',`
+      ${cmsField('cm_title','العنوان — *كذا* للجزء الذهبي',v.title)}
+      ${cmsArea('cm_sub','النص',v.sub,2)}
+      <div class="row2">${cmsField('cm_c1l','نص الزر الأول',v.cta1.label)}${cmsField('cm_c1m','رسالة واتساب الزر الأول',v.cta1.waMsg)}</div>
+      <div class="row2">${cmsField('cm_c2l','نص الزر الثاني',v.cta2.label)}${cmsField('cm_c2m','رسالة واتساب الزر الثاني',v.cta2.waMsg)}</div>`,
+    async()=>{
+      const obj={title:cmsG('cm_title'),sub:cmsG('cm_sub'),cta1:{label:cmsG('cm_c1l'),waMsg:cmsG('cm_c1m')},cta2:{label:cmsG('cm_c2l'),waMsg:cmsG('cm_c2m')}};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='site'){
+    openModal('الهوية والتواصل',`
+      <div class="row2">${cmsField('cm_wa','رقم الواتساب (صيغة دولية بلا +)',v.whatsapp,'9665xxxxxxxx')}${cmsField('cm_em','الإيميل',v.email)}</div>
+      ${cmsField('cm_bio','النبذة (تظهر في الفوتر)',v.bio)}
+      ${cmsField('cm_fab','رسالة زر الواتساب العائم',v.fabMsg)}`,
+    async()=>{
+      const obj={whatsapp:cmsG('cm_wa').replace(/\D/g,''),email:cmsG('cm_em'),bio:cmsG('cm_bio'),fabMsg:cmsG('cm_fab')};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }else if(key==='layout'){
+    window.CMS_LAY=JSON.parse(JSON.stringify(cmsVal('layout').sections));
+    cmsLayoutModal();
+  }else if(key==='theme'){
+    openModal('ألوان الهوية',`
+      <div class="row2">
+        <div class="field"><label>الذهبي الأساسي</label><input type="color" id="cm_gold" value="${esc(v.gold)}" style="height:44px;padding:4px"></div>
+        <div class="field"><label>الذهبي الفاتح (التدرجات)</label><input type="color" id="cm_golds" value="${esc(v.goldSoft)}" style="height:44px;padding:4px"></div>
+      </div>
+      <div class="badge-note"><i data-lucide="info"></i> <div>اللون يطبَّق على كل عناصر الموقع الذهبية (الأزرار، العناوين، التوهّج). جرّبه في المعاينة قبل النشر.</div></div>`,
+    async()=>{
+      const obj={gold:cmsG('cm_gold'),goldSoft:cmsG('cm_golds')};
+      if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
+    });
+  }
+}
+function cmsLayoutModal(){
+  const L=window.CMS_LAY;
+  openModal('أقسام الصفحة الرئيسية',`
+    <div class="badge-note" style="margin-bottom:10px"><i data-lucide="info"></i> <div>الهيرو ثابت دائماً في الأعلى. علّم القسم لإظهاره، واستخدم الأسهم للترتيب.</div></div>
+    ${L.map((s,i)=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px dashed var(--line)">
+      <label style="display:flex;align-items:center;gap:9px;flex:1;cursor:pointer;font-weight:700">
+        <input type="checkbox" ${s.on!==false?'checked':''} onchange="window.CMS_LAY[${i}].on=this.checked">
+        ${CMS_SEC_NAMES[s.id]||s.id}</label>
+      <button class="btn btn-ghost btn-sm" ${i===0?'disabled':''} onclick="cmsLayMove(${i},-1)" title="أعلى"><i data-lucide="chevron-up"></i></button>
+      <button class="btn btn-ghost btn-sm" ${i===L.length-1?'disabled':''} onclick="cmsLayMove(${i},1)" title="أسفل"><i data-lucide="chevron-down"></i></button>
+    </div>`).join('')}`,
+  async()=>{
+    if(await cmsSaveDraft('layout',{sections:window.CMS_LAY})){closeModal();renderSiteWorks()}
+  });
+}
+function cmsLayMove(i,d){const L=window.CMS_LAY;const j=i+d;if(j<0||j>=L.length)return;[L[i],L[j]]=[L[j],L[i]];cmsLayoutModal()}
+/* — تبويب المعاينة — */
+function swPreviewHTML(){
+  const url=swPreviewUrl();
+  return `<div class="card" style="padding:14px">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px">
+      <button class="btn btn-ghost btn-sm" onclick="swPvSize(390)"><i data-lucide="smartphone"></i> جوال</button>
+      <button class="btn btn-ghost btn-sm" onclick="swPvSize(820)"><i data-lucide="tablet"></i> تابلت</button>
+      <button class="btn btn-ghost btn-sm" onclick="swPvSize(0)"><i data-lucide="monitor"></i> كمبيوتر</button>
+      <button class="btn btn-ghost btn-sm" onclick="swPvReload()"><i data-lucide="refresh-cw"></i> تحديث</button>
+      <a class="btn btn-ghost btn-sm" href="${url}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> فتح في تبويب</a>
+      <span style="color:var(--muted);font-size:12px;margin-inline-start:auto">تعرض <b style="color:#fcd34d">المسودة</b> — الزوار لا يرونها حتى تنشر</span>
+    </div>
+    <div style="display:flex;justify-content:center;background:#000;border-radius:12px;padding:8px;overflow:auto">
+      <iframe id="swPvFrame" src="${url}" style="width:100%;height:72vh;border:0;border-radius:8px;background:#0a0a0c;transition:width .25s"></iframe>
+    </div></div>`;
+}
+function swPvSize(w){const f=document.getElementById('swPvFrame');if(f)f.style.width=w?w+'px':'100%'}
+function swPvReload(){const f=document.getElementById('swPvFrame');if(f)f.src=f.src}
 
 /* ===== رفع ملف إلى التخزين العام (bucket: blog-images) ===== */
 async function swStorageUpload(file,prefix){return await blogUpload(file,prefix)}

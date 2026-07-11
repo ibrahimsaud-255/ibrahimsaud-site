@@ -1,7 +1,14 @@
+"use client";
+
+// الفوتر — النبذة تُدار من النظام الداخلي («محتوى الموقع» → الهوية والتواصل).
+
 import { site } from "@/lib/site";
+import { useContent } from "@/lib/cms";
 import SocialIcons from "./SocialIcons";
 
 export default function Footer() {
+  const info = useContent("site", { bio: site.bio as string });
+
   return (
     <footer className="border-t border-line/60 px-5 py-14">
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-7">
@@ -16,7 +23,7 @@ export default function Footer() {
         <SocialIcons />
 
         <div className="flex flex-col items-center gap-1 text-center">
-          <p className="text-sm text-cream/50">{site.bio}</p>
+          <p className="text-sm text-cream/50">{info.bio}</p>
           <p className="text-sm text-cream/40">
             © {site.domain} — جميع الحقوق محفوظة
           </p>
