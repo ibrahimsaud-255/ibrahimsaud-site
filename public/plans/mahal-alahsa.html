@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<style id="thmanyah-font">
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:800 900;font-display:swap}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>دراسة جدوى محل الخدمات — الأحساء | إبراهيم سعود</title>
+<meta name="theme-color" content="#0a0a0b">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{--gold:#f5a623;--gold2:#ffc24d;--ink:#0a0a0b;--panel:#141416;--panel2:#1b1b1f;--line:#2c2c31;--cream:#f4f4f5;--mut:#9b9ba3;--green:#4ade80;--red:#f87171;--blue:#60a5fa}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--ink);color:var(--cream);font-family:'Thmanyah Sans','Tajawal',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  .glow{position:fixed;inset:0;pointer-events:none;background:radial-gradient(circle at 50% -10%,rgba(245,166,35,.14),transparent 55%)}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 22px;position:relative}
+  a{color:var(--gold2)}
+  header{text-align:center;padding:56px 22px 18px}
+  .eyebrow{display:inline-block;font-size:13px;font-weight:800;color:var(--gold);background:rgba(245,166,35,.12);border:1px solid var(--line);border-radius:30px;padding:6px 18px;margin-bottom:18px}
+  h1{font-size:34px;font-weight:900;line-height:1.3}h1 .g{color:var(--gold)}
+  header p{color:var(--mut);max-width:660px;margin:14px auto 0;font-size:15px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin:34px 0}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px 14px;text-align:center}
+  .kpi b{display:block;font-size:26px;font-weight:900;color:var(--gold2)}
+  .kpi span{color:var(--mut);font-size:13px}
+  .sec{text-align:center;margin:60px 0 4px;font-size:13px;font-weight:800;letter-spacing:2px;color:var(--gold)}
+  .sub{text-align:center;color:var(--mut);font-size:15px;margin-bottom:24px}
+  .panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:26px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+  h3{font-size:18px;font-weight:800;margin-bottom:10px}
+  p.t,li{color:var(--mut);font-size:14.5px;line-height:1.9}
+  ul{padding-right:20px}
+  .hl{color:var(--cream);font-weight:700}
+  .good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}.warn{color:var(--gold2);font-weight:700}
+  /* verdict cards */
+  .verdict{border-right:4px solid var(--gold);background:var(--panel);border-radius:14px;padding:20px 22px;margin-bottom:14px}
+  .verdict h4{font-size:16px;font-weight:800;margin-bottom:6px}
+  .verdict p{color:var(--mut);font-size:14px;line-height:1.8}
+  .verdict.g{border-right-color:var(--green)}.verdict.r{border-right-color:var(--red)}
+  /* tables */
+  table{width:100%;border-collapse:collapse;font-size:13.5px}
+  th{color:var(--gold);font-weight:800;text-align:right;padding:10px 8px;border-bottom:1px solid var(--line);white-space:nowrap}
+  td{padding:10px 8px;border-bottom:1px solid rgba(44,44,49,.6);color:var(--mut)}
+  tr.pick td{color:var(--cream);background:rgba(245,166,35,.07)}
+  .tag{display:inline-block;font-size:11px;font-weight:800;border-radius:12px;padding:2px 10px}
+  .tag.g{color:var(--green);background:rgba(74,222,128,.12)}.tag.y{color:var(--gold2);background:rgba(245,166,35,.12)}.tag.r{color:var(--red);background:rgba(248,113,113,.12)}
+  /* bars */
+  .bar{margin:12px 0}
+  .bar .lbl{display:flex;justify-content:space-between;font-size:13.5px;margin-bottom:5px}
+  .bar .lbl b{color:var(--cream)}.bar .lbl span{color:var(--gold2);font-weight:800}
+  .bar .track{height:12px;background:var(--panel2);border-radius:8px;overflow:hidden}
+  .bar .fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:8px}
+  /* calculator */
+  .calc{background:var(--panel);border:1px solid var(--gold);border-radius:22px;padding:28px;box-shadow:0 0 60px rgba(245,166,35,.08)}
+  .calc .row{margin-bottom:18px}
+  .calc label{display:flex;justify-content:space-between;font-size:14.5px;font-weight:700;margin-bottom:8px}
+  .calc label output{color:var(--gold2);font-weight:900}
+  input[type=range]{width:100%;accent-color:var(--gold);height:6px}
+  .switch{display:flex;align-items:center;gap:10px;font-size:14.5px;font-weight:700;cursor:pointer}
+  .switch input{width:20px;height:20px;accent-color:var(--gold)}
+  .results{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-top:22px}
+  .res{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:16px 10px;text-align:center}
+  .res b{display:block;font-size:22px;font-weight:900;color:var(--gold2)}
+  .res.neg b{color:var(--red)}.res.pos b{color:var(--green)}
+  .res span{font-size:12px;color:var(--mut)}
+  .note{font-size:12.5px;color:var(--mut);margin-top:14px;line-height:1.7}
+  /* sign preview */
+  .sign{background:#6b4a2b;background:linear-gradient(180deg,#7a5533,#5e4023);border-radius:12px;padding:26px 18px;text-align:center;border:2px solid #3d2a15;margin-top:14px}
+  .sign .brand{font-size:26px;font-weight:900;color:#111;background:transparent}
+  .sign .svc{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-top:12px}
+  .sign .svc span{color:#111;font-weight:800;font-size:14px;background:rgba(255,255,255,.14);border-radius:8px;padding:4px 12px}
+  /* timeline */
+  .tl{position:relative;padding-right:24px}
+  .tl::before{content:"";position:absolute;right:7px;top:6px;bottom:6px;width:2px;background:var(--line)}
+  .tl .step{position:relative;padding:0 0 22px 0}
+  .tl .step::before{content:"";position:absolute;right:-24px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--gold);border:3px solid var(--ink)}
+  .tl .step b{display:block;font-size:15px;margin-bottom:3px}
+  .tl .step span{color:var(--mut);font-size:13.5px;line-height:1.7;display:block}
+  footer{text-align:center;color:var(--mut);font-size:12.5px;padding:40px 0 50px;border-top:1px solid var(--line);margin-top:60px;line-height:2}
+  .back{display:inline-block;margin-top:10px;font-size:13px}
+</style>
+</head>
+<body>
+<div class="glow"></div>
+<div class="wrap">
+
+<header>
+  <span class="eyebrow">دراسة جدوى وخطة استراتيجية — يوليو 2026</span>
+  <h1>محل الخدمات العامة والطباعة والذكاء الاصطناعي <span class="g">— الأحساء</span></h1>
+  <p>مبنية على أرقامك الفعلية: عروض الأسعار الموجودة عندك، أسعار السوق الحالية، والأصول اللي تملكها. الهدف: فتح المحل بأقل تكلفة، والاستقرار في الأحساء بدخل يومي ثابت.</p>
+</header>
+
+<div class="kpis">
+  <div class="kpi"><b>20,000</b><span>ريال — رأس المال</span></div>
+  <div class="kpi"><b>9–12 ألف</b><span>الإيجار السنوي (تفاوض)</span></div>
+  <div class="kpi"><b id="kBE">~77</b><span>ريال مبيعات/يوم للتعادل</span></div>
+  <div class="kpi"><b>~13,500</b><span>ريال قيمة أصولك الجاهزة</span></div>
+</div>
+
+<!-- ================= الرأي ================= -->
+<div class="sec">رأيي الصريح</div>
+<p class="sub">أربعة قرارات تحسم المشروع قبل أي ريال يُصرف</p>
+
+<div class="verdict g">
+  <h4>١ — افتح المحل: القرار صحيح والأرقام معك ✓</h4>
+  <p>نقطة التعادل منخفضة جدًا (أقل من 80 ريال مبيعات باليوم)، تكاليفك الشخصية شبه معدومة بعد ترك شقة الرياض (توفر <span class="hl">840 ريال شهريًا</span> من نصيبك في إيجارها وكهربائها)، وأصولك الجاهزة (ماك ميني، ماك بوك، شاشة، كنب، كاميرات، رفوف) تغطي ما قيمته 13 ألف ريال ما راح تشتريه. المخاطرة الحقيقية الوحيدة هي عقد الإيجار — انظر النقطة ٢.</p>
+</div>
+<div class="verdict r">
+  <h4>٢ — عقد الإيجار لازم يكون باسمك أنت، حتى لو دفعت 12 ألف</h4>
+  <p>فكرة «سعد يبقى مستأجر وأنا أدفع» <span class="bad">تعطّل مشروعك قانونيًا</span>: الرخصة البلدية تتطلب عقد إيجار موثق في منصة إيجار باسمك أو باسم مؤسستك، وبدونها لا سجل تجاري على العنوان ولا لوحة ولا فوترة. الفرق بين 9 و12 ألف = <span class="hl">250 ريال شهريًا = 10 ريال يوميًا</span> — سيرة ذاتية واحدة كل خمسة أيام تغطيها. فاوض بوصالح على 9,000–10,500 بحجة أنك مستأجر طويل المدى وستحسّن العمارة، لكن لا تربط مشروعك كله بترتيب غير رسمي يخاف فيه المؤجر من طرف ثالث.</p>
+</div>
+<div class="verdict r">
+  <h4>٣ — أجّل الشقة (15 ألف) ستة أشهر على الأقل</h4>
+  <p>نصيبك 7,500 ريال سنويًا = <span class="bad">+625 ريال شهريًا يرفع تعادلك ~40%</span> مقابل استوديو لنشاط بلا دخل حاليًا. البودكاست يتأجل كم شهر عادي — أنت قلتها بنفسك. جرّب الحاسبة تحت وشغّل خيار الشقة وشف الفرق. القرار يُعاد تقييمه بعد 6 أشهر بأرقام فعلية من نظامك، ولو احتاج سعد مخزن فهذه مشكلته هو وحلها لا تكون على حسابك.</p>
+</div>
+<div class="verdict">
+  <h4>٤ — الطابعة: خذ عرض كانون C3326i الملونة (7,475 ريال) بدل شرط الـ 40 صفحة/دقيقة</h4>
+  <p>مطلبك (أبيض وأسود، 40+ صفحة/دقيقة، A3) يكلف جديد <span class="bad">13–17 ألف ريال</span> — يأكل ثلثين ميزانيتك لسرعة ما تحتاجها: 26 صفحة/دقيقة تنجز ملزمة 100 ورقة في أقل من 4 دقائق. عرضك الحالي على C3326i (6,500 + ضريبة = 7,475 مع الحبر) <span class="good">أرخص من سعر السوق بـ 1,300–2,000 ريال</span>، وتعطيك أسود <b>وألوان A3 ليزر</b> بجهاز واحد — يعني كروت وستكرات محلات الورد بجودة تجارية من اليوم الأول، وطابعة HP المنزلية تصير احتياط فقط. الجدول الكامل تحت.</p>
+</div>
+
+<!-- ================= السوق ================= -->
+<div class="sec">دراسة السوق</div>
+<p class="sub">ليش هذا الموقع بالذات يشتغل</p>
+
+<div class="grid2">
+  <div class="panel">
+    <h3>📍 الموقع — أصلك الأقوى</h3>
+    <ul>
+      <li><span class="hl">3 محلات ورد جوارك</span> + محل سعد: تحتاج كروت إهداء وستكرات وتغليف <b>يوميًا</b> — عملاء B2B خلف الباب، اربطهم بباقة شهرية ثابتة.</li>
+      <li><span class="hl">جامع مقابل المحل</span> وملاحقه: حركة مضمونة كل جمعة، وجمهور كبار سن يحتاج خدمات أبشر وحكومية — أعلن بلوحة واضحة تُقرأ من بعيد.</li>
+      <li><span class="hl">موقع مجرّب</span>: سعد توسّع من نفس العمارة — المكان يبيع.</li>
+      <li>المحل جاهز: <span class="hl">مكيف + كاميرات + رفوف حديد</span> — توفير 3–4 آلاف ريال تجهيزات.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h3>🌆 الأحساء — سوق ينمو</h3>
+    <ul>
+      <li><span class="hl">+1.1 مليون نسمة</span> في المحافظة وطفرة سياحية (موقع يونسكو، مشاريع صندوق التنمية السياحي).</li>
+      <li>المنافسة تقليدية: مكاتب نسخ وطباعة بطيئة، <span class="hl">لا أحد يقدّم خدمة AI + تصميم + طباعة في مكان واحد</span>.</li>
+      <li>أنت معك <span class="hl">9,300 متابع تيك توك و3,000 سناب</span> وخبرة صناعة محتوى — الانتشار محليًا شبه مجاني.</li>
+      <li>سمعتك الشخصية (الناس تسألك أصلًا في التقنية والمعاملات) = تسويق شفهي جاهز.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= الخدمات ================= -->
+<div class="sec">الخدمات والتسعير المقترح</div>
+<p class="sub">ستة مصادر دخل من اليوم الأول — رتبتها حسب الهامش</p>
+
+<div class="panel" style="overflow-x:auto">
+<table>
+  <tr><th>الخدمة</th><th>السعر المقترح</th><th>التكلفة عليك</th><th>الهامش</th><th>ملاحظة</th></tr>
+  <tr class="pick"><td>سيرة ذاتية بالذكاء الاصطناعي (عربي/إنجليزي)</td><td>50–80 ريال</td><td>~2 ريال</td><td><span class="tag g">~97%</span></td><td>مجرّبة: 3 سير = 130 ريال بجلسة</td></tr>
+  <tr><td>صور مناسبات بالـ AI (تصوير + معالجة لدعوات الزواج)</td><td>80–150 ريال</td><td>~5 ريال</td><td><span class="tag g">~95%</span></td><td>خدمة ما يقدمها أحد بالأحساء</td></tr>
+  <tr><td>خدمات حكومية وإلكترونية (أبشر، قوى، بلدي، فوترة)</td><td>20–50 ريال/معاملة</td><td>~0</td><td><span class="tag g">~100%</span></td><td>جمهور الجامع وكبار السن</td></tr>
+  <tr><td>تصميم (شعارات، إعلانات، ثيمات، كروت)</td><td>50–300 ريال</td><td>وقتك</td><td><span class="tag g">مرتفع</span></td><td>سريع جدًا بأدواتك</td></tr>
+  <tr><td>باقة B2B شهرية لمحلات الورد (كروت + ستكرات)</td><td>150–300 ريال/محل شهريًا</td><td>~30%</td><td><span class="tag y">~70%</span></td><td>4 محلات = دخل ثابت مضمون</td></tr>
+  <tr><td>طباعة وتصوير (أسود 0.5–1 ريال/ورقة، ملون 2–3)</td><td>حسب الكمية</td><td>~25–35%</td><td><span class="tag y">~65%</span></td><td>خدمة الجذب — تدخّل الناس للمحل</td></tr>
+  <tr><td>مقاطع إعلانية ومونتاج للمحلات</td><td>300–1,500 ريال</td><td>وقتك</td><td><span class="tag g">مرتفع</span></td><td>تبدأ من الشهر الثالث</td></tr>
+</table>
+<p class="note">قاعدة التشغيل: الطباعة والمعاملات تجيب الزبون للمحل، والسير الذاتية والتصميم والـ AI هي اللي تربّح. كل زبون طباعة اعرض عليه خدمة أعلى.</p>
+</div>
+
+<!-- ================= الطابعة ================= -->
+<div class="sec">قرار الطابعة</div>
+<p class="sub">عروضك الفعلية مقابل السوق (أسعار يوليو 2026 شاملة الضريبة تقريبًا)</p>
+
+<div class="panel" style="overflow-x:auto">
+<table>
+  <tr><th>الجهاز</th><th>النوع</th><th>السرعة</th><th>السعر</th><th>الحكم</th></tr>
+  <tr class="pick"><td>Canon iR C3326i + حبر <b>(عرضك من فيوتشر باور)</b></td><td>ليزر ملون A3</td><td>26 ص/د</td><td><b>7,475</b></td><td><span class="tag g">التوصية — أقل من السوق (8,740–9,500)</span></td></tr>
+  <tr><td>Konica Minolta bizhub 306i / Toshiba 2829A</td><td>ليزر أسود A3</td><td>28–30 ص/د</td><td>4,800–5,000</td><td><span class="tag y">الخيار الاقتصادي + تبقى بلا ألوان ليزر</span></td></tr>
+  <tr><td>HP OfficeJet 9730 <b>(عرضك من كون)</b></td><td>حبر ملون A3</td><td>بطيئة تجاريًا</td><td>966</td><td><span class="tag y">مكمّل للخيار الاقتصادي فقط</span></td></tr>
+  <tr><td>Canon iR 2945i / Toshiba 4528A (مطلبك 40+ ص/د)</td><td>ليزر أسود A3</td><td>45 ص/د</td><td>14,375–16,600</td><td><span class="tag r">يأكل 70% من الميزانية — مرفوض الآن</span></td></tr>
+  <tr><td>Konica bizhub 266i / Ricoh MP 2014AD</td><td>ليزر أسود A3</td><td>20–26 ص/د</td><td>2,990–3,565</td><td><span class="tag y">أرخص بداية ممكنة لو ضاقت الميزانية</span></td></tr>
+</table>
+<p class="note">ليش الملونة أولى من السرعة؟ لأن جيرانك (محلات الورد) يشترون <b>ألوان</b>: كروت، ستكرات، تغليف. الأسود وحده يخليك مكتب نسخ عادي. والسرعة 26 ص/د تعني ملزمة 100 ورقة في أقل من 4 دقائق — كافية لأول سنتين. لما يثبت الطلب على الملازم الكبيرة، أضف مونو 45 ص/د مستعملة من حراج بربع السعر.</p>
+</div>
+
+<!-- ================= رأس المال ================= -->
+<div class="sec">توزيع رأس المال — 20,000 ريال</div>
+<p class="sub">السيناريو الموصى به (كانون الملونة + إيجار 9,000)</p>
+
+<div class="grid2">
+  <div class="panel">
+    <h3>ما ستشتريه</h3>
+    <div class="bar"><div class="lbl"><b>كانون C3326i ملونة A3 (بالعرض الحالي)</b><span>7,475</span></div><div class="track"><div class="fill" style="width:87%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>إيجار 6 أشهر مقدم</b><span>4,500</span></div><div class="track"><div class="fill" style="width:52%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>بضاعة تأسيسية — روائع الكتب</b><span>3,500</span></div><div class="track"><div class="fill" style="width:41%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>نقل الأثاث والأجهزة من الرياض</b><span>1,200</span></div><div class="track"><div class="fill" style="width:14%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>اللوحة (إعادة استخدام الخشب + حروف)</b><span>1,000</span></div><div class="track"><div class="fill" style="width:12%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>قطاعة + مغلفة حرارية + أدوات تشغيل</b><span>900</span></div><div class="track"><div class="fill" style="width:10%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>تراخيص ورسوم (سجل، بلدية، مدى)</b><span>800</span></div><div class="track"><div class="fill" style="width:9%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>مكتب خدمة جديد</b><span>600</span></div><div class="track"><div class="fill" style="width:7%"></div></div></div>
+    <div class="bar"><div class="lbl"><b>الإجمالي</b><span style="color:var(--cream)">19,975 من 20,000</span></div><div class="track"><div class="fill" style="width:100%;background:linear-gradient(90deg,#4ade80,#86efac)"></div></div></div>
+    <p class="note">لو نجحت مفاوضة البضاعة أو اللوحة، كل ريال يوفَّر يروح احتياطي تشغيل. الخيار الاقتصادي (مونو 5,000 + HP 9730) يوفر ~1,500 إضافية احتياطًا لكن يفقدك ألوان الليزر.</p>
+  </div>
+  <div class="panel">
+    <h3>ما لن تشتريه — أصولك الجاهزة (~13,500 ريال)</h3>
+    <ul>
+      <li><span class="hl">أجهزة:</span> ماك ميني M2 + ماك بوك برو + شاشة — محطة العمل كاملة.</li>
+      <li><span class="hl">أثاث:</span> كنبتين للعملاء + كنب انتظار أصفر + طاولات خدمة + كرسي مكتب + رفوف سوداء + فرشة — منطقة الاستقبال كاملة.</li>
+      <li><span class="hl">تصوير:</span> 3 كاميرات احترافية + معدات بودكاست — للتسويق وخدمة صور المناسبات.</li>
+      <li><span class="hl">طابعة HP ملونة منزلية</span> — احتياط وطباعة خفيفة.</li>
+      <li><span class="hl">تجهيزات المحل:</span> مكيف + كاميرات مراقبة + رفوف حديد — موجودة من سعد.</li>
+      <li><span class="hl">نظام إدارة ERP</span> مبني ومدفوع مسبقًا — فوترة وعملاء ومتابعة يومية.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ================= الحاسبة ================= -->
+<div class="sec">الحاسبة التفاعلية</div>
+<p class="sub">حرّك الأرقام وشف التعادل والربح واسترداد رأس المال لحظيًا</p>
+
+<div class="calc">
+  <div class="row">
+    <label>الإيجار السنوي للمحل <output id="oRent">9,000 ريال</output></label>
+    <input type="range" id="rent" min="9000" max="15000" step="500" value="9000">
+  </div>
+  <div class="row">
+    <label>متوسط المبيعات اليومية <output id="oSales">150 ريال</output></label>
+    <input type="range" id="sales" min="50" max="500" step="10" value="150">
+  </div>
+  <div class="row">
+    <label>هامش الربح الإجمالي <output id="oMargin">75%</output></label>
+    <input type="range" id="margin" min="55" max="90" step="5" value="75">
+  </div>
+  <div class="row">
+    <label class="switch"><input type="checkbox" id="flat"> أضف شقة الاستوديو (نصيبك 7,500/سنة = 625 ريال شهريًا)</label>
+  </div>
+  <div class="results">
+    <div class="res"><b id="rFixed">—</b><span>تكاليف ثابتة شهرية</span></div>
+    <div class="res"><b id="rBE">—</b><span>مبيعات التعادل / يوم</span></div>
+    <div class="res" id="cProfit"><b id="rProfit">—</b><span>صافي الربح الشهري</span></div>
+    <div class="res"><b id="rPayback">—</b><span>استرداد الـ 20 ألف</span></div>
+  </div>
+  <p class="note">الثوابت المفترضة غير الإيجار: كهرباء 200 + إنترنت 250 + اشتراكات AI وأدوات 200 + متفرقات 100 = <b>750 ريال شهريًا</b>. الحساب على 26 يوم عمل. مصروفك الشخصي غير محسوب — سكنك مع الأهل يعطيك صبرًا ماليًا ما يملكه منافس.</p>
+</div>
+
+<div class="grid3" style="margin-top:16px">
+  <div class="panel" style="text-align:center"><h3 style="color:var(--red)">متحفظ — 100/يوم</h3><p class="t">ربح ~<b class="hl">450</b> شهريًا<br>استرداد بطيء — شهور التأسيس الأولى</p></div>
+  <div class="panel" style="text-align:center;border-color:var(--gold)"><h3 style="color:var(--gold2)">واقعي — 200/يوم</h3><p class="t">ربح ~<b class="hl">2,400</b> شهريًا<br>استرداد في <b class="hl">~8 أشهر</b></p></div>
+  <div class="panel" style="text-align:center"><h3 style="color:var(--green)">طموح — 350/يوم</h3><p class="t">ربح ~<b class="hl">5,300</b> شهريًا<br>استرداد في <b class="hl">~4 أشهر</b> — يفتح قرار الشقة</p></div>
+</div>
+<p class="note" style="text-align:center">200 ريال/يوم = سيرتان ذاتيتان + معاملة حكومية + 50 ريال طباعة. رقم واقعي جدًا مع 4 محلات ورد وجامع مقابلك.</p>
+
+<!-- ================= اللوحة ================= -->
+<div class="sec">اللوحة</div>
+<p class="sub">نفس اللون الخشبي — شعار أسود للتباين، وكلمات يفهمها اللي يمشي</p>
+
+<div class="grid2">
+  <div class="panel">
+    <h3>التوصية</h3>
+    <ul>
+      <li>كلمة «طابعة» تصف <b>جهازًا</b> — الناس تبحث عن فعل: <span class="hl">«طباعة وتصوير»</span>.</li>
+      <li>«ذكاء اصطناعي» وحدها غامضة لجمهور الجامع — اربطها بمخرَج: <span class="hl">«سير ذاتية وتصميم بالذكاء الاصطناعي»</span>.</li>
+      <li>أضف <span class="hl">«خدمات إلكترونية»</span> — هي الكلمة اللي تجيب كبار السن وأصحاب المعاملات، وهم أعلى جمهورك ولاءً.</li>
+      <li>أبقِ «خدمات طالب» — موسم الاختبارات والملازم ذهب.</li>
+      <li>4 كلمات كحد أقصى، خط أسود سميك على الخشبي = تباين ممتاز وقراءة من الشارع.</li>
+    </ul>
+  </div>
+  <div class="panel">
+    <h3>تصور مبدئي</h3>
+    <div class="sign">
+      <div class="brand">إبراهيم سعود <span style="font-size:13px;font-weight:700">| خدمات عامة</span></div>
+      <div class="svc"><span>طباعة وتصوير</span><span>خدمات إلكترونية</span><span>خدمات طالب</span><span>تصميم بالذكاء الاصطناعي</span></div>
+    </div>
+    <p class="note">جرّب النص النهائي على ملف PSD اللوحة الموجود عندك (مجلد المحل/اللوحة) قبل الطلب من منفذ اللوحات.</p>
+  </div>
+</div>
+
+<!-- ================= خطة 90 يوم ================= -->
+<div class="sec">خطة التنفيذ — 90 يومًا</div>
+<p class="sub">القائمة الكاملة (24 مهمة) في ملف CSV جاهز للاستيراد في نظامك</p>
+
+<div class="panel">
+  <div class="tl">
+    <div class="step"><b>الأسبوع 1–2 · التأسيس القانوني</b><span>سجل تجاري بنشاط الطباعة والخدمات ← <span class="warn">توقيع عقد الإيجار باسمك وتوثيقه في منصة إيجار (لا تتجاوز هذه)</span> ← رخصة بلدية ← حساب بنكي + مدى ← معروف والفوترة.</span></div>
+    <div class="step"><b>الأسبوع 3–4 · التجهيز</b><span>استلام كانون C3326i (ثبّت العرض قبل انتهاءه) ← رحلة نقل واحدة من الرياض (الأثاث + الأجهزة + بضاعة روائع الكتب بنفس الشاحنة) ← اللوحة ← إنترنت ← إدخال الأسعار في النظام.</span></div>
+    <div class="step"><b>الشهر 2 · الإطلاق</b><span>افتتاح تجريبي ← اتفاقيات الباقات الشهرية مع محلات الورد الأربعة (أول أسبوع) ← خرائط قوقل ← حملة سناب/تيك توك محلية بمحتوى «وش أقدر أسوي لك في 10 دقايق» ← واتساب أعمال.</span></div>
+    <div class="step"><b>الشهر 3+ · النمو</b><span>مراجعة أرقام النظام أسبوعيًا ← تفعيل خدمة المقاطع الإعلانية والمونتاج ← إعادة تقييم الشقة والاستوديو بأرقام فعلية ← دراسة تمويل بنك التنمية الاجتماعية للتوسع.</span></div>
+  </div>
+</div>
+
+<!-- ================= المخاطر ================= -->
+<div class="sec">المخاطر وكيف نطفيها</div>
+<p class="sub">أخطرها أولًا</p>
+
+<div class="grid2">
+  <div class="panel"><h3>⚖️ الترتيب غير الرسمي مع سعد</h3><p class="t"><span class="bad">الخطر الأكبر.</span> لو زعل بوصالح أو تغيرت ظروف سعد، مشروعك كله معلق بعقد ليس باسمك. <span class="hl">الحل:</span> عقد إيجار موثق باسمك مهما كلف التفاوض، واتفاقك مع سعد يبقى صداقة وتعاون تجاري (هو عميل B2B عندك) لا شراكة عقارية.</p></div>
+  <div class="panel"><h3>📉 بطء الدخل أول 3 أشهر</h3><p class="t">طبيعي لأي محل. <span class="hl">الحل:</span> تعادل منخفض (~77 ريال/يوم) + دفعة الإيجار الثانية بعد 6 أشهر + لا التزامات شخصية + باقات الورد الشهرية تعطيك أرضية دخل من الشهر الأول.</p></div>
+  <div class="panel"><h3>🔧 تعطل الطابعة الرئيسية</h3><p class="t">C3326i جهاز خدمة شغّال بالسوق وقطعه متوفرة. <span class="hl">الحل:</span> HP المنزلية احتياط للطوارئ + اتفاق صيانة مع مورد الجهاز نفسه (فيوتشر باور/وكيل شرقية) + لا تشتري مستعمل بلا ضمان في الجهاز الرئيسي.</p></div>
+  <div class="panel"><h3>🎯 التشتت بين المحل والإعلام</h3><p class="t">عندك 3 مشاريع (محل، بودكاست، حروف ودروس). <span class="hl">الحل:</span> أول 90 يوم للمحل فقط. البودكاست والمنصة يعيشون على فائض دخل المحل، مو العكس. المحتوى الوحيد المسموح: تسويق المحل نفسه.</p></div>
+</div>
+
+<footer>
+  المصادر: عروض أسعار فعلية (مؤسسة كون للحاسب 2026/07/09 — شركة فيوتشر باور 2026/07/09) · أسعار السوق من
+  <a href="https://rawand.com.sa/categories/635149/copier" target="_blank">راوند للتجارة</a> و<a href="https://www.tenaui.sa" target="_blank">Tenaui</a> ·
+  بيانات الأحساء: الهيئة العامة للإحصاء وصندوق التنمية السياحي · ملفات المشروع: مجلد «المحل» وخطة يوليو 2026.
+  <br>أُعدّت هذه الدراسة بمساعدة الذكاء الاصطناعي — الأرقام تقديرية وتحتاج تحديثًا بعروض نهائية قبل الشراء. هذه ليست استشارة مالية أو قانونية.
+  <br><a class="back" href="/plans/">← الرجوع لمركز الخطط</a>
+</footer>
+</div>
+
+<script>
+(function(){
+  const FIXED_OTHER = 750;            // كهرباء 200 + إنترنت 250 + اشتراكات 200 + متفرقات 100
+  const FLAT_MONTHLY = 625;           // نصيبه من شقة الاستوديو
+  const DAYS = 26, CAPITAL = 20000;
+  const $ = id => document.getElementById(id);
+  const fmt = n => Math.round(n).toLocaleString('en-US');
+  function calc(){
+    const rent = +$('rent').value, sales = +$('sales').value, m = +$('margin').value/100;
+    const flat = $('flat').checked;
+    $('oRent').textContent = fmt(rent)+' ريال';
+    $('oSales').textContent = fmt(sales)+' ريال';
+    $('oMargin').textContent = Math.round(m*100)+'%';
+    const fixed = rent/12 + FIXED_OTHER + (flat? FLAT_MONTHLY:0);
+    const be = fixed/(DAYS*m);
+    const profit = sales*DAYS*m - fixed;
+    $('rFixed').textContent = fmt(fixed);
+    $('rBE').textContent = fmt(be);
+    $('rProfit').textContent = (profit<0?'−':'')+fmt(Math.abs(profit));
+    $('cProfit').className = 'res '+(profit>=0?'pos':'neg');
+    $('rPayback').textContent = profit>0 ? fmt(CAPITAL/profit)+' شهر' : '—';
+    $('kBE') && ($('kBE').textContent = '~'+fmt(be));
+  }
+  ['rent','sales','margin','flat'].forEach(id=>$(id).addEventListener('input',calc));
+  calc();
+})();
+</script>
+</body>
+</html>
