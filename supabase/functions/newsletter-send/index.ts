@@ -10,7 +10,9 @@ const RESEND_API = "https://api.resend.com/emails";
 
 const CORS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, apikey, content-type",
+  // supabase-js يضيف x-client-info و x-supabase-api-version تلقائياً؛
+  // لازم تُسمح وإلا يحجب المتصفّح الطلب (Failed to send a request to the Edge Function).
+  "Access-Control-Allow-Headers": "authorization, apikey, content-type, x-client-info, x-supabase-api-version",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 const JSON_CORS = { ...CORS, "Content-Type": "application/json" };
