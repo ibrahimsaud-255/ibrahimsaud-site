@@ -1,10 +1,9 @@
 # النشر التلقائي — المرحلة ١ (تيك توك ← يوتيوب شورتس)
-# يفحص طابور النشر كل ٣٠ دقيقة، أو شغّله يدوياً من تبويب Actions.
+# يدوي فقط: شغّله من تبويب Actions ← Run workflow.
+# (الجدولة موقوفة مؤقتاً حتى تُضبط أسرار Supabase و YouTube.)
 name: Auto Publish
 
 on:
-  schedule:
-    - cron: "*/30 * * * *"
   workflow_dispatch:
 
 permissions:
