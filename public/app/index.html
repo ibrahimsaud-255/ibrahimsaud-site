@@ -3546,7 +3546,8 @@ function ensureBoardStyles(){if(document.getElementById('bdCSS'))return;const st
   .bd-tool.on{background:var(--gold);color:#1a1205}
   .bd-tool i{width:18px;height:18px}
   #bd_zlbl{font-weight:700;font-size:13px}
-  .bd-canvas{position:relative;overflow:hidden;height:calc(100vh - 172px);min-height:420px;background-color:var(--panel2);border:1px solid var(--line);border-radius:16px;background-image:radial-gradient(circle,rgba(150,150,165,.30) 1.3px,transparent 1.4px);touch-action:none;cursor:grab}
+  .bd-canvas{position:relative;overflow:hidden;height:calc(100vh - 172px);min-height:420px;background-color:var(--bd-bg);border:1px solid var(--line);border-radius:16px;background-image:radial-gradient(circle,var(--bd-dot) 1.3px,transparent 1.4px);touch-action:none;cursor:grab;--bd-bg:#15151c;--bd-dot:rgba(150,150,165,.30);--bd-glass:rgba(26,26,32,.66);--bd-glass-bd:rgba(255,255,255,.14);--bd-glass-ink:#f2f2f5;--bd-glass-btn:rgba(255,255,255,.08);--bd-glass-btnh:rgba(255,255,255,.17)}
+  .bd-canvas.bd-light{--bd-bg:#f3f4f8;--bd-dot:rgba(60,60,85,.26);--bd-glass:rgba(255,255,255,.7);--bd-glass-bd:rgba(0,0,0,.10);--bd-glass-ink:#1b1b24;--bd-glass-btn:rgba(0,0,0,.05);--bd-glass-btnh:rgba(0,0,0,.11)}
   .bd-world{position:absolute;top:0;left:0;width:0;height:0;transform-origin:0 0}
   .bd-edges{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}
   .bd-item{position:absolute;box-sizing:border-box;display:flex;align-items:center;justify-content:center;user-select:none;cursor:move;box-shadow:0 2px 12px rgba(0,0,0,.20)}
@@ -3561,7 +3562,18 @@ function ensureBoardStyles(){if(document.getElementById('bdCSS'))return;const st
   .bd-item.sel .bd-handle{display:block}
   .bd-knob{position:absolute;right:-13px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--gold);color:#1a1205;font-weight:900;display:none;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--panel);font-size:16px;line-height:1;z-index:3}
   .bd-item.sel .bd-knob{display:flex}
-  .bd-style{display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+  .bd-style{display:none;position:absolute;z-index:30;left:50%;top:12px;transform:translateX(-50%);align-items:center;gap:6px;flex-wrap:nowrap;max-width:calc(100% - 20px);overflow-x:auto;background:var(--bd-glass);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--bd-glass-bd);border-radius:14px;padding:7px 9px;box-shadow:0 12px 34px rgba(0,0,0,.34),0 2px 8px rgba(0,0,0,.22);scrollbar-width:none}
+  .bd-style::-webkit-scrollbar{display:none}
+  .bd-style .bd-lbl{color:var(--bd-glass-ink);opacity:.55}
+  .bd-style .bd-sep{background:var(--bd-glass-bd)}
+  .bd-style .bd-act{background:var(--bd-glass-btn);border:1px solid var(--bd-glass-bd);color:var(--bd-glass-ink)}
+  .bd-style .bd-act:hover{background:var(--bd-glass-btnh)}
+  .bd-style .bd-act.on{background:var(--gold);color:#1a1205;border-color:var(--gold)}
+  .bd-style .bd-act.del{color:#ff6b6b}
+  .bd-style .bd-sw{border:2px solid var(--bd-glass-bd)}
+  .bd-style .bd-sw.on{border-color:var(--bd-glass-ink);transform:scale(1.08)}
+  .bd-style .bd-size{background:var(--bd-glass-btn);border:1px solid var(--bd-glass-bd)}
+  .bd-style .bd-size span{background:var(--bd-glass-ink)}
   .bd-lbl{font-size:12px;color:var(--muted);font-weight:700}
   .bd-sw{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);cursor:pointer;padding:0}
   .bd-sw.on{border-color:var(--ink);transform:scale(1.08)}
@@ -3640,6 +3652,8 @@ function openBoard(id){
         <input type="file" id="bd_img" accept="image/*" class="hidden" onchange="boardUpload(event)">
       </div>
       <div class="bd-zoom">
+        <button class="bd-tool" id="bd_theme" title="الوضع الفاتح/الداكن" onclick="boardToggleTheme()"><i data-lucide="sun-moon"></i></button>
+        <span class="bd-sep" style="margin:0 3px"></span>
         <button class="bd-tool" title="تصغير" onclick="boardZoom(-1)"><i data-lucide="minus"></i></button>
         <button class="bd-tool" id="bd_zlbl" title="ملء الشاشة" onclick="boardFit()">100%</button>
         <button class="bd-tool" title="تكبير" onclick="boardZoom(1)"><i data-lucide="plus"></i></button>
@@ -3647,10 +3661,11 @@ function openBoard(id){
     </div>
     <div class="bd-canvas" id="bd_canvas" dir="ltr">
       <div class="bd-world" id="bd_world"><svg class="bd-edges" id="bd_svg"></svg></div>
+      <div class="bd-style" id="bd_style"></div>
       <div class="bd-hint" id="bd_hint"></div>
-    </div>
-    <div class="bd-style" id="bd_style"></div>`;
+    </div>`;
   const cv=document.getElementById('bd_canvas');
+  try{if(localStorage.getItem('bd_theme')==='light')cv.classList.add('bd-light')}catch(_){}
   cv.addEventListener('wheel',boardWheel,{passive:false});
   cv.addEventListener('pointerdown',boardPtrDown);
   cv.addEventListener('pointermove',boardPtrMove);
@@ -3677,7 +3692,7 @@ function bSnap(){try{BUNDO.push(JSON.stringify({items:BRD.items,edges:BRD.edges}
 function boardUndo(){if(!BUNDO.length)return;const s=JSON.parse(BUNDO.pop());BRD.items=s.items;BRD.edges=s.edges;BSEL.clear();saveBoard();boardPaint()}
 function boardRename(v){if(BRD){BRD.name=v;saveBoardView()}}
 /* view / transform */
-function applyView(){const w=document.getElementById('bd_world'),cv=document.getElementById('bd_canvas');if(!w)return;const v=BRD.view;w.style.transform=`translate(${v.x}px,${v.y}px) scale(${v.zoom})`;const l=document.getElementById('bd_zlbl');if(l)l.textContent=Math.round(v.zoom*100)+'%';if(cv){cv.style.backgroundSize=(26*v.zoom)+'px '+(26*v.zoom)+'px';cv.style.backgroundPosition=v.x+'px '+v.y+'px'}}
+function applyView(){const w=document.getElementById('bd_world'),cv=document.getElementById('bd_canvas');if(!w)return;const v=BRD.view;w.style.transform=`translate(${v.x}px,${v.y}px) scale(${v.zoom})`;const l=document.getElementById('bd_zlbl');if(l)l.textContent=Math.round(v.zoom*100)+'%';if(cv){cv.style.backgroundSize=(26*v.zoom)+'px '+(26*v.zoom)+'px';cv.style.backgroundPosition=v.x+'px '+v.y+'px'}positionStyleBar()}
 function bWorldFromScreen(sx,sy){return{x:(sx-BRD.view.x)/BRD.view.zoom,y:(sy-BRD.view.y)/BRD.view.zoom}}
 function bWorldPt(e){const r=document.getElementById('bd_canvas').getBoundingClientRect();return bWorldFromScreen(e.clientX-r.left,e.clientY-r.top)}
 function bViewCenter(){const r=document.getElementById('bd_canvas').getBoundingClientRect();return bWorldFromScreen(r.width/2,r.height/2)}
@@ -3707,6 +3722,23 @@ function boardDrawEdges(){const svg=document.getElementById('bd_svg');if(!svg)re
   svg.innerHTML=s;
 }
 /* selection */
+function boardToggleTheme(){const cv=document.getElementById('bd_canvas');if(!cv)return;const light=!cv.classList.contains('bd-light');cv.classList.toggle('bd-light',light);try{localStorage.setItem('bd_theme',light?'light':'dark')}catch(_){}}
+// يضع تولبار التعديل عائماً فوق العنصر المحدّد (يتبع التحديد/السحب/التكبير)
+function positionStyleBar(){
+  const bar=document.getElementById('bd_style'),cv=document.getElementById('bd_canvas');
+  if(!bar||!cv||bar.style.display==='none')return;
+  if(BMODE==='draw'){bar.style.top='';bar.style.bottom='14px';bar.style.left='50%';bar.style.transform='translateX(-50%)';return}
+  bar.style.bottom='';
+  let mnX=1/0,mnY=1/0,mxX=-1/0,mxY=-1/0;
+  [...BSEL].forEach(id=>{const it=bItem(id);if(!it||!it.w)return;mnX=Math.min(mnX,it.x);mnY=Math.min(mnY,it.y);mxX=Math.max(mxX,it.x+it.w);mxY=Math.max(mxY,it.y+it.h)});
+  if(mnX===1/0){bar.style.top='12px';bar.style.left='50%';bar.style.transform='translateX(-50%)';return}
+  const v=BRD.view,cx=((mnX+mxX)/2)*v.zoom+v.x,topY=mnY*v.zoom+v.y,botY=mxY*v.zoom+v.y;
+  const rect=cv.getBoundingClientRect(),bw=bar.offsetWidth||260,bh=bar.offsetHeight||46,gap=12;
+  const left=Math.max(bw/2+8,Math.min(rect.width-bw/2-8,cx));
+  let top=topY-gap-bh;
+  if(top<8){top=botY+gap;if(top+bh>rect.height-8)top=Math.max(8,(rect.height-bh)/2)}
+  bar.style.left=left+'px';bar.style.top=top+'px';bar.style.transform='translateX(-50%)';
+}
 function bMarkSel(){document.querySelectorAll('.bd-item').forEach(el=>el.classList.toggle('sel',BSEL.has(el.dataset.id)));refreshSelUI();boardDrawEdges()}
 function bSelectOnly(id){BSEL=new Set([id]);bMarkSel()}
 function bToggleSel(id){BSEL.has(id)?BSEL.delete(id):BSEL.add(id);bMarkSel()}
@@ -3716,12 +3748,12 @@ function refreshSelUI(){
   const pen=document.getElementById('bd_pen'),con=document.getElementById('bd_conn');
   if(pen)pen.classList.toggle('on',BMODE==='draw');if(con)con.classList.toggle('on',BMODE==='connect');
   const cv=document.getElementById('bd_canvas');if(cv)cv.style.cursor=BMODE==='draw'?'crosshair':'';
-  if(BMODE==='draw'){bar.style.display='flex';bar.innerHTML=`<span class="bd-lbl">قلم</span>${BPAL.slice(0,8).map(c=>`<button class="bd-sw${BPEN.color===c?' on':''}" style="background:${c}" onclick="penColor('${c}')"></button>`).join('')}<span class="bd-sep"></span>${[3,6,10,16].map(s=>`<button class="bd-size${BPEN.size===s?' on':''}" onclick="penSize(${s})"><span style="width:${Math.min(s,14)}px;height:${Math.min(s,14)}px"></span></button>`).join('')}<span class="bd-sep"></span><button class="bd-act" onclick="clearDraw()"><i data-lucide="eraser"></i> مسح الرسم</button><button class="bd-act on" onclick="boardMode('select')"><i data-lucide="check"></i> تم</button>`;refreshIcons();return}
+  if(BMODE==='draw'){bar.style.display='flex';bar.innerHTML=`<span class="bd-lbl">قلم</span>${BPAL.slice(0,8).map(c=>`<button class="bd-sw${BPEN.color===c?' on':''}" style="background:${c}" onclick="penColor('${c}')"></button>`).join('')}<span class="bd-sep"></span>${[3,6,10,16].map(s=>`<button class="bd-size${BPEN.size===s?' on':''}" onclick="penSize(${s})"><span style="width:${Math.min(s,14)}px;height:${Math.min(s,14)}px"></span></button>`).join('')}<span class="bd-sep"></span><button class="bd-act" onclick="clearDraw()"><i data-lucide="eraser"></i> مسح الرسم</button><button class="bd-act on" onclick="boardMode('select')"><i data-lucide="check"></i> تم</button>`;refreshIcons();positionStyleBar();return}
   const ids=[...BSEL];if(!ids.length){bar.style.display='none';bar.innerHTML='';return}
   const single=ids.length===1?bItem(ids[0]):null,isImg=single&&single.type==='image';
   bar.style.display='flex';
   bar.innerHTML=`${!isImg?`<span class="bd-lbl">تعبئة</span>${BPAL.map(c=>`<button class="bd-sw" style="background:${c}" onclick="setFill('${c}')"></button>`).join('')}<span class="bd-sep"></span><span class="bd-lbl">نص</span>${['#ffffff','#1a1205','#f5a623','#4dabf7','#ff6b6b'].map(c=>`<button class="bd-sw" style="background:${c}" onclick="setTextColor('${c}')"></button>`).join('')}<button class="bd-act" title="أصغر" onclick="fontStep(-2)">أ−</button><button class="bd-act" title="أكبر" onclick="fontStep(2)">أ+</button><span class="bd-sep"></span>`:''}${single&&!isImg?`<button class="bd-act" onclick="spawnChild('${single.id}')"><i data-lucide="git-fork"></i> فرع</button>`:''}<button class="bd-act" title="تكرار" onclick="dupSel()"><i data-lucide="copy"></i></button><button class="bd-act" title="للأمام" onclick="zOrder(1)"><i data-lucide="bring-to-front"></i></button><button class="bd-act" title="للخلف" onclick="zOrder(-1)"><i data-lucide="send-to-back"></i></button><button class="bd-act del" title="حذف" onclick="delSel()"><i data-lucide="trash-2"></i></button>`;
-  refreshIcons();
+  refreshIcons();positionStyleBar();
 }
 /* create */
 function bMk(type,x,y,shape){const b={id:uid(),type,x:Math.round(x),y:Math.round(y),z:bNextZ(),text:''};if(type==='note'){b.w=170;b.h=150;b.fill='#ffd43b';b.fontSize=17}else if(type==='text'){b.w=210;b.h=56;b.fontSize=22;b.color='var(--ink)'}else if(type==='shape'){b.w=150;b.h=120;b.fill='#4dabf7';b.shape=shape||'rect';b.fontSize=16;b.color='#fff'}return b}
@@ -3786,8 +3818,8 @@ function boardPtrMove(e){
   if(BGEST.type==='pinch'){const p=[...BPTRS.values()];if(p.length<2)return;const r=document.getElementById('bd_canvas').getBoundingClientRect();const nz=Math.min(3,Math.max(0.2,BGEST.z0*bDist(p[0],p[1])/BGEST.d0));const m=bMid(p[0],p[1]);const wx=(BGEST.mid.x-r.left-BGEST.vx)/BGEST.z0,wy=(BGEST.mid.y-r.top-BGEST.vy)/BGEST.z0;const v=BRD.view;v.zoom=nz;v.x=(m.x-r.left)-wx*nz;v.y=(m.y-r.top)-wy*nz;applyView();return}
   if(BGEST.type==='draw'){if(!BCUR)return;const p=bWorldPt(e);BCUR.points.push([Math.round(p.x),Math.round(p.y)]);boardDrawEdges();return}
   if(BGEST.type==='pan'){BRD.view.x=BGEST.vx+(e.clientX-BGEST.x);BRD.view.y=BGEST.vy+(e.clientY-BGEST.y);applyView();return}
-  if(BGEST.type==='drag'){const dx=(e.clientX-BGEST.x)/z,dy=(e.clientY-BGEST.y)/z;if(Math.abs(e.clientX-BGEST.x)+Math.abs(e.clientY-BGEST.y)>3)BGEST.moved=true;BGEST.items.forEach(sn=>{const it=bItem(sn.id);if(!it)return;it.x=Math.round(sn.x+dx);it.y=Math.round(sn.y+dy);const el=bItemEl(it.id);if(el){el.style.left=it.x+'px';el.style.top=it.y+'px'}});boardDrawEdges();return}
-  if(BGEST.type==='resize'){const dx=(e.clientX-BGEST.x)/z,dy=(e.clientY-BGEST.y)/z;const it=bItem(BGEST.id);if(!it)return;it.w=Math.max(40,Math.round(BGEST.w0+dx));it.h=Math.max(30,Math.round(BGEST.h0+dy));const el=bItemEl(it.id);if(el){el.style.width=it.w+'px';el.style.height=it.h+'px'}boardDrawEdges();return}
+  if(BGEST.type==='drag'){const dx=(e.clientX-BGEST.x)/z,dy=(e.clientY-BGEST.y)/z;if(Math.abs(e.clientX-BGEST.x)+Math.abs(e.clientY-BGEST.y)>3)BGEST.moved=true;BGEST.items.forEach(sn=>{const it=bItem(sn.id);if(!it)return;it.x=Math.round(sn.x+dx);it.y=Math.round(sn.y+dy);const el=bItemEl(it.id);if(el){el.style.left=it.x+'px';el.style.top=it.y+'px'}});boardDrawEdges();positionStyleBar();return}
+  if(BGEST.type==='resize'){const dx=(e.clientX-BGEST.x)/z,dy=(e.clientY-BGEST.y)/z;const it=bItem(BGEST.id);if(!it)return;it.w=Math.max(40,Math.round(BGEST.w0+dx));it.h=Math.max(30,Math.round(BGEST.h0+dy));const el=bItemEl(it.id);if(el){el.style.width=it.w+'px';el.style.height=it.h+'px'}boardDrawEdges();positionStyleBar();return}
 }
 function boardPtrUp(e){
   BPTRS.delete(e.pointerId);
