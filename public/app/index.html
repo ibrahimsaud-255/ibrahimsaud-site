@@ -792,6 +792,16 @@ const WALLS=[
   {key:'sand',name:'رمل دافئ',css:'linear-gradient(160deg, #15110a 0%, #0a0a0b 60%)'},
   {key:'mesh',name:'شبكة',css:'radial-gradient(620px 420px at 14% 18%, rgba(245,166,35,.13), transparent 60%), radial-gradient(720px 520px at 86% 82%, rgba(45,212,191,.11), transparent 60%), #0a0a0b'},
   {key:'royal',name:'ملكي',css:'radial-gradient(900px 600px at 100% 0%, rgba(168,85,247,.18), transparent 55%), #0a0a0b'},
+  {key:'ocean',name:'محيط',css:'radial-gradient(1100px 640px at 80% -10%, rgba(14,165,233,.20), transparent 58%), radial-gradient(800px 520px at 8% 100%, rgba(20,184,166,.13), transparent 55%), #0a0c10'},
+  {key:'ember',name:'جمر',css:'radial-gradient(1000px 620px at 85% -8%, rgba(239,68,68,.16), transparent 58%), radial-gradient(760px 480px at 4% 105%, rgba(245,166,35,.13), transparent 55%), #0c0908'},
+  {key:'forest',name:'غابة',css:'radial-gradient(1000px 640px at 20% -10%, rgba(34,197,94,.15), transparent 60%), linear-gradient(180deg,#0a0f0b,#0a0a0b 72%)'},
+  {key:'plum',name:'برقوق',css:'radial-gradient(1000px 640px at 100% 0%, rgba(217,70,239,.17), transparent 55%), radial-gradient(700px 500px at 0% 100%, rgba(99,102,241,.13), transparent 55%), #0b0910'},
+  {key:'slate',name:'رمادي',css:'linear-gradient(160deg,#12141a,#0a0a0b 66%)'},
+  {key:'dawn',name:'فجر (فاتح)',css:'radial-gradient(1100px 640px at 85% -10%, #ffd9c2, transparent 60%), radial-gradient(900px 560px at 0% 100%, #ffe3ef, transparent 55%), #fdf6f1'},
+  {key:'sky',name:'سماء (فاتح)',css:'radial-gradient(1100px 640px at 82% -12%, #cfe6ff, transparent 60%), linear-gradient(180deg,#eef6ff,#e6f0fb)'},
+  {key:'mist',name:'ضباب (فاتح)',css:'radial-gradient(1000px 620px at 80% -8%, #dce7f3, transparent 60%), linear-gradient(180deg,#eef2f7,#e7ecf3)'},
+  {key:'linen',name:'كتّان (فاتح)',css:'linear-gradient(160deg,#f8f2e9,#efe7db)'},
+  {key:'meadow',name:'مروج (فاتح)',css:'radial-gradient(1000px 620px at 18% -10%, #d6f0dd, transparent 60%), linear-gradient(180deg,#eef7f0,#e6f2ea)'},
 ];
 /* خلفيات النظام الجاهزة (آبل macOS) — قابلة للاختيار افتراضياً */
 const WALL_IMAGES=[
@@ -888,7 +898,7 @@ function wallpaperModal(){
   wpRenderBody();
 }
 function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
-function renderNav(){document.getElementById('nav').innerHTML=NAV.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
+function renderNav(){const items=WS_DEMO?NAV.filter(n=>n.id==='workspace'):NAV;document.getElementById('nav').innerHTML=items.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 /* طي/فتح القائمة على سطح المكتب */
 function toggleSidebarCollapse(){
@@ -3547,6 +3557,7 @@ function resetData(){if(confirm('مسح جميع البيانات نهائياً
 /* ===== MODAL ===== */
 /* ===== مساحة العمل (بديل Notion — لوحة + مهام الفريق + قوالب + ملفات + تطوّر) ===== */
 let WS_TAB='board', WS_ASSIGNEE='all', WS_CAL={y:null,m:null};
+let WS_DEMO=/[?&]demo=/.test(location.search);
 const WS_TYPES={campaign:{label:'حملة إعلانية',icon:'megaphone',color:'#f5a623'},design:{label:'تصميم',icon:'palette',color:'#a855f7'},event:{label:'فعالية',icon:'calendar-heart',color:'#ec4899'},post:{label:'منشور',icon:'image',color:'#3b82f6'},task:{label:'مهمة',icon:'check-square',color:'#64748b'}};
 const WS_STATUS=[{key:'todo',label:'قيد الانتظار'},{key:'doing',label:'قيد التنفيذ'},{key:'review',label:'مراجعة'},{key:'done',label:'منجز'}];
 const WS_CHAN={instagram:{label:'إنستقرام',color:'#e1306c'},tiktok:{label:'تيك توك',color:'#111'},snapchat:{label:'سناب',color:'#e6b800'},x:{label:'إكس',color:'#1d9bf0'},youtube:{label:'يوتيوب',color:'#ff0000'},general:{label:'عام',color:'#8a8a92'}};
@@ -3556,7 +3567,7 @@ const WS_TEMPLATES=[
   {type:'event',title:'تجهيز فعالية',notes:'التاريخ:\nالمكان:\nالمتطلبات:\nالمسؤول:'},
   {type:'post',title:'منشور جديد',notes:'المنصّة:\nالفكرة:\nالكابشن:\nالهاشتاقات:\nموعد النشر:'}
 ];
-function ws(){if(!S.workspace||typeof S.workspace!=='object')S.workspace=JSON.parse(JSON.stringify(def.workspace));const w=S.workspace;if(!Array.isArray(w.team))w.team=JSON.parse(JSON.stringify(def.workspace.team));['tasks','events','files'].forEach(k=>{if(!Array.isArray(w[k]))w[k]=[]});if(!w.brand)w.brand=JSON.parse(JSON.stringify(def.workspace.brand));if(!w.growth)w.growth={journey:[],resources:[]};if(!Array.isArray(w.growth.journey))w.growth.journey=[];if(!Array.isArray(w.growth.resources))w.growth.resources=[];return w}
+function ws(){if(!S.workspace||typeof S.workspace!=='object')S.workspace=JSON.parse(JSON.stringify(def.workspace));const w=S.workspace;if(!Array.isArray(w.team))w.team=JSON.parse(JSON.stringify(def.workspace.team));['tasks','events','files'].forEach(k=>{if(!Array.isArray(w[k]))w[k]=[]});if(!w.brand)w.brand=JSON.parse(JSON.stringify(def.workspace.brand));if(!w.growth)w.growth={journey:[],resources:[]};if(!Array.isArray(w.growth.journey))w.growth.journey=[];if(!Array.isArray(w.growth.resources))w.growth.resources=[];w.events.forEach(e=>{if(!e.start)e.start=e.date||today();if(!e.end)e.end=e.start});return w}
 function wsMember(id){return ws().team.find(m=>m.id===id)}
 function gcalUrl(t){const base=(t.due||today());const s=base.replace(/-/g,'');const e=new Date(base+'T00:00:00');e.setDate(e.getDate()+1);const ee=`${e.getFullYear()}${String(e.getMonth()+1).padStart(2,'0')}${String(e.getDate()).padStart(2,'0')}`;return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t.title||'مهمة')}&dates=${s}/${ee}&details=${encodeURIComponent(t.notes||'')}`}
 function chatgptUrl(t){return `https://chatgpt.com/?q=${encodeURIComponent('ساعدني في هذه المهمة: '+(t.title||'')+(t.notes?'\n'+t.notes:''))}`}
@@ -3588,40 +3599,74 @@ function ensureWorkspaceStyles(){if(document.getElementById('wsCSS'))return;cons
   .ws-jrow{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--panel);margin-bottom:8px}
   .ws-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);cursor:pointer;flex:none;display:grid;place-items:center}
   .ws-check.on{background:var(--good);border-color:var(--good);color:#fff}
+  /* Liquid Glass */
+  .ws-wrap{--fc-border-color:rgba(150,150,170,.16);--fc-page-bg-color:transparent;--fc-neutral-bg-color:rgba(150,150,170,.05);--fc-today-bg-color:rgba(245,166,35,.14);--fc-button-bg-color:rgba(150,150,170,.12);--fc-button-border-color:rgba(150,150,170,.18);--fc-button-hover-bg-color:rgba(150,150,170,.22);--fc-button-hover-border-color:rgba(150,150,170,.26);--fc-button-active-bg-color:var(--gold);--fc-button-active-border-color:var(--gold);--fc-button-text-color:var(--ink)}
+  .ws-wrap .card{background:rgba(16,16,22,.5);-webkit-backdrop-filter:blur(24px) saturate(1.5);backdrop-filter:blur(24px) saturate(1.5);border:1px solid rgba(255,255,255,.1);box-shadow:0 10px 34px rgba(0,0,0,.24)}
+  .ws-wrap .ws-tabs{border-bottom-color:rgba(150,150,170,.16)}
+  .ws-wrap .ws-mem,.ws-wrap .ws-res,.ws-wrap .ws-jrow{background:rgba(150,150,170,.06);border-color:rgba(255,255,255,.08)}
+  .ws-wrap .fc{color:var(--ink);font-family:inherit}
+  .ws-wrap .fc a{color:inherit;text-decoration:none}
+  .ws-wrap .fc .fc-toolbar-title{font-size:17px;font-weight:800}
+  .ws-wrap .fc .fc-button{font-weight:700;border-radius:10px;text-transform:none;box-shadow:none;padding:6px 12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+  .ws-wrap .fc .fc-button-primary:not(:disabled).fc-button-active{color:#1a1205}
+  .ws-wrap .fc .fc-daygrid-day-number{color:var(--ink);opacity:.7;font-weight:700;font-size:12.5px;padding:6px 8px}
+  .ws-wrap .fc .fc-col-header-cell-cushion{color:var(--muted);font-weight:700;font-size:12.5px;padding:9px 4px}
+  .ws-wrap .fc .fc-daygrid-day{transition:background .12s}
+  .ws-wrap .fc .fc-daygrid-day:hover{background:rgba(150,150,170,.06)}
+  .ws-wrap .fc-daygrid-event{border-radius:7px;padding:0;margin:1px 3px;box-shadow:0 2px 9px rgba(0,0,0,.2);overflow:hidden;min-height:22px;display:flex;align-items:center}
+  .ws-wrap .fc .fc-scrollgrid{border-radius:14px;overflow:hidden}
+  .ws-wrap .fc-theme-standard td,.ws-wrap .fc-theme-standard th{border-color:var(--fc-border-color)}
+  .ws-wrap .fc .fc-daygrid-day.fc-day-today{border-radius:0}
 `;document.head.appendChild(st)}
 function renderWorkspace(){
   ensureWorkspaceStyles();ws();
   const TABS=[['board','لوحة المساحة','layout-dashboard'],['tasks','المهام','list-checks'],['templates','القوالب','copy'],['files','الملفات والهوية','folder'],['growth','التطوّر المهني','graduation-cap']];
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><i data-lucide="layout-dashboard"></i> مساحة العمل</h1></div>
+    <div class="ws-wrap">
+    <div class="page-head"><h1><i data-lucide="layout-dashboard"></i> مساحة العمل</h1>${WS_DEMO?'':`<button class="btn btn-ghost btn-sm" onclick="wsShare()"><i data-lucide="share-2"></i> مشاركة مع العميل</button>`}</div>
     <div class="ws-tabs">${TABS.map(t=>`<button class="ws-tab${WS_TAB===t[0]?' on':''}" onclick="wsTab('${t[0]}')"><i data-lucide="${t[2]}"></i> ${t[1]}</button>`).join('')}</div>
-    <div id="ws_body"></div>`;
+    <div id="ws_body"></div>
+    </div>`;
   wsBody();refreshIcons();
+}
+function wsShare(){const url=location.origin+location.pathname+'?demo=1';const box=`<p style="color:var(--muted);margin:0 0 14px;font-size:13.5px">رابط تجريبي لمساحة العمل — يفتحه العميل ويحوس فيه بحرية (نسخة تجريبية ببياناتها الخاصة على جهازه، لا تؤثّر على بياناتك).</p>
+    <div class="field"><label>الرابط</label><input id="ws_share_url" value="${esc(url)}" readonly dir="ltr" onclick="this.select()"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-gold" onclick="navigator.clipboard.writeText('${esc(url)}').then(()=>{this.innerHTML='✓ تم النسخ'})"><i data-lucide="copy"></i> نسخ الرابط</button><a class="btn btn-ghost" href="${esc(url)}" target="_blank"><i data-lucide="external-link"></i> فتح التجربة</a></div>`;
+  openModal('مشاركة مساحة العمل',box,null,null);
 }
 function wsTab(t){WS_TAB=t;wsBody();refreshIcons()}
 function wsBody(){const b=document.getElementById('ws_body');if(!b)return;
   b.innerHTML=({board:wsBoardHtml,tasks:wsTasksHtml,templates:wsTemplatesHtml,files:wsFilesHtml,growth:wsGrowthHtml}[WS_TAB]||wsBoardHtml)();
-  refreshIcons();}
-/* ---- تبويب اللوحة ---- */
-function wsCalInit(){if(WS_CAL.y==null){const d=new Date();WS_CAL.y=d.getFullYear();WS_CAL.m=d.getMonth()}}
-function wsCalMove(d){wsCalInit();let m=WS_CAL.m+d,y=WS_CAL.y;if(m<0){m=11;y--}if(m>11){m=0;y++}WS_CAL.m=m;WS_CAL.y=y;wsBody()}
-function wsCalGrid(){
-  wsCalInit();const y=WS_CAL.y,m=WS_CAL.m,first=new Date(y,m,1),startDow=first.getDay(),days=new Date(y,m+1,0).getDate();
-  const mn=first.toLocaleDateString('ar',{month:'long',year:'numeric'}),tk=today(),ym=`${y}-${String(m+1).padStart(2,'0')}`;
-  const byDay={};ws().events.forEach(e=>{if((e.date||'').slice(0,7)===ym)(byDay[e.date]=byDay[e.date]||[]).push(e)});
-  const dow=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
-  let cells='';for(let i=0;i<startDow;i++)cells+='<div class="ws-day empty"></div>';
-  for(let d=1;d<=days;d++){const ds=`${ym}-${String(d).padStart(2,'0')}`;const evs=byDay[ds]||[];
-    cells+=`<div class="ws-day${ds===tk?' today':''}" onclick="wsEventModal('',\'${ds}\')"><span class="ws-day-n">${d}</span>${evs.slice(0,3).map(e=>{const ch=WS_CHAN[e.channel]||WS_CHAN.general;return `<div class="ws-ev" style="background:${ch.color}" onclick="event.stopPropagation();wsEventModal('${e.id}')">${esc(e.title)}</div>`}).join('')}${evs.length>3?`<div style="font-size:10px;color:var(--muted);margin-top:2px">+${evs.length-3}</div>`:''}</div>`;}
-  return `<div class="ws-cal-head"><button class="btn btn-ghost btn-sm" onclick="wsCalMove(-1)"><i data-lucide="chevron-right"></i></button><b style="font-size:16px">${mn}</b><button class="btn btn-ghost btn-sm" onclick="wsCalMove(1)"><i data-lucide="chevron-left"></i></button></div>
-    <div class="ws-grid7" style="margin-bottom:6px">${dow.map(d=>`<div class="ws-dow">${d}</div>`).join('')}</div>
-    <div class="ws-grid7">${cells}</div>`;
+  refreshIcons();if(WS_TAB==='board')wsMountCal();}
+/* ---- تبويب اللوحة: تقويم FullCalendar (أحداث ممتدّة + سحب + تمديد + صور) ---- */
+let WSFC=null;
+function wsAddDay(ds,n){const d=new Date(ds+'T00:00:00');d.setDate(d.getDate()+n);return wsDStr(d)}
+function wsDStr(d){const z=x=>String(x).padStart(2,'0');return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`}
+function wsMountCal(){
+  const el=document.getElementById('ws_fcal');if(!el)return;
+  if(WSFC){try{WSFC.destroy()}catch(_){}WSFC=null}
+  if(!window.FullCalendar){el.innerHTML='<p style="color:var(--muted)">التقويم غير متاح حالياً</p>';return}
+  const events=ws().events.map(e=>{const ch=WS_CHAN[e.channel]||WS_CHAN.general;return{id:e.id,title:e.title,start:e.start,end:wsAddDay(e.end||e.start,1),allDay:true,backgroundColor:ch.color,borderColor:'transparent',textColor:bAutoText(ch.color),extendedProps:{image:e.image||''}}});
+  WSFC=new FullCalendar.Calendar(el,{
+    initialView:'dayGridMonth',direction:'rtl',locale:'ar',height:'auto',firstDay:6,
+    headerToolbar:{start:'prev,next today',center:'title',end:'dayGridMonth,dayGridWeek'},
+    buttonText:{today:'اليوم',month:'شهر',week:'أسبوع'},
+    editable:true,eventStartEditable:true,eventDurationEditable:true,eventResizableFromStart:true,selectable:true,eventDisplay:'block',dayMaxEvents:3,
+    events,
+    eventContent:arg=>{const im=arg.event.extendedProps.image;const box=document.createElement('div');box.style.cssText='display:flex;align-items:center;gap:5px;padding:1px 5px;overflow:hidden;width:100%';if(im){const g=document.createElement('img');g.src=im;g.style.cssText='width:20px;height:20px;border-radius:5px;object-fit:cover;flex:none';box.appendChild(g)}const s=document.createElement('span');s.textContent=arg.event.title;s.style.cssText='overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600;font-size:12px';box.appendChild(s);return{domNodes:[box]}},
+    dateClick:info=>wsEventModal('',info.dateStr.slice(0,10)),
+    eventClick:info=>wsEventModal(info.event.id),
+    eventDrop:info=>wsSaveEvDates(info.event),
+    eventResize:info=>wsSaveEvDates(info.event)
+  });
+  WSFC.render();
 }
+function wsSaveEvDates(ev){const e=ws().events.find(x=>x.id===ev.id);if(!e||!ev.start)return;e.start=wsDStr(ev.start);const end=ev.end?new Date(ev.end.getTime()-86400000):new Date(ev.start);e.end=wsDStr(end);save()}
 function wsBoardHtml(){
   const w=ws();const tk=today();
   const soon=w.tasks.filter(t=>t.status!=='done'&&t.due).sort((a,b)=>(a.due||'').localeCompare(b.due||'')).slice(0,6);
   return `<div class="grid">
-    <div class="card" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><h3 style="margin:0"><i data-lucide="calendar-range"></i> التقويم التسويقي</h3><button class="btn btn-gold btn-sm" onclick="wsEventModal('','${tk}')"><i data-lucide="plus"></i> حدث</button></div>${wsCalGrid()}
+    <div class="card" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><h3 style="margin:0"><i data-lucide="calendar-range"></i> التقويم التسويقي</h3><button class="btn btn-gold btn-sm" onclick="wsEventModal('','${tk}')"><i data-lucide="plus"></i> حدث</button></div><div id="ws_fcal" style="margin-top:4px"></div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)">${Object.keys(WS_CHAN).map(k=>`<span style="display:inline-flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:3px;background:${WS_CHAN[k].color};display:inline-block"></span>${WS_CHAN[k].label}</span>`).join('')}</div>
     </div>
     <div class="card" style="grid-column:span 2;min-width:280px"><h3><i data-lucide="alarm-clock"></i> مهام قادمة</h3>
@@ -3745,14 +3790,18 @@ function wsResModal(id){const g=ws().growth;const r=id?{...g.resources.find(x=>x
   id?()=>{g.resources=g.resources.filter(x=>x.id!==id);save();closeModal();wsBody()}:null);
 }
 /* ---- الأحداث والأعضاء ---- */
-function wsEventModal(id,presetDate){const w=ws();const e=id?{...w.events.find(x=>x.id===id)}:{id:'',title:'',date:presetDate||today(),channel:'general',notes:''};
+function wsImgResize(file,cb){const rd=new FileReader();rd.onload=()=>{const img=new Image();img.onload=()=>{const max=680,s=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.max(1,Math.round(img.width*s));c.height=Math.max(1,Math.round(img.height*s));c.getContext('2d').drawImage(img,0,0,c.width,c.height);let url;try{url=c.toDataURL('image/webp',0.75)}catch(_){url=c.toDataURL('image/jpeg',0.82)}cb(url)};img.src=rd.result};rd.readAsDataURL(file)}
+function wsEvImg(input){const f=input.files[0];if(!f)return;if(f.size>8000000){alert('الصورة كبيرة (أقل من 8MB)');return}wsImgResize(f,url=>{const h=document.getElementById('we_img');if(h)h.value=url;const p=document.getElementById('we_img_prev');if(p){p.src=url;p.style.display='block'}})}
+function wsEventModal(id,presetDate){const w=ws();const e=id?{...w.events.find(x=>x.id===id)}:{id:'',title:'',start:presetDate||today(),end:presetDate||today(),channel:'general',notes:'',image:''};if(!e.start)e.start=e.date||today();if(!e.end)e.end=e.start;
   const chOpts=Object.keys(WS_CHAN).map(k=>`<option value="${k}" ${e.channel===k?'selected':''}>${WS_CHAN[k].label}</option>`).join('');
   openModal(id?'تعديل حدث':'حدث تسويقي',`
     <div class="field"><label>العنوان</label><input id="we_title" value="${esc(e.title)}" placeholder="مثال: إطلاق حملة الصيف"></div>
-    <div class="row2"><div class="field"><label>التاريخ</label><input type="date" id="we_date" value="${esc(e.date)}"></div>
-    <div class="field"><label>القناة</label><select id="we_chan">${chOpts}</select></div></div>
+    <div class="row2"><div class="field"><label>من تاريخ</label><input type="date" id="we_start" value="${esc(e.start)}"></div>
+    <div class="field"><label>إلى تاريخ</label><input type="date" id="we_end" value="${esc(e.end)}"></div></div>
+    <div class="field"><label>القناة</label><select id="we_chan">${chOpts}</select></div>
+    <div class="field"><label>صورة (اختياري)</label><input type="file" accept="image/*" onchange="wsEvImg(this)"><input type="hidden" id="we_img" value="${esc(e.image||'')}"><img id="we_img_prev" src="${esc(e.image||'')}" style="${e.image?'display:block':'display:none'};max-width:100%;max-height:170px;border-radius:10px;margin-top:8px;object-fit:cover"></div>
     <div class="field"><label>ملاحظات</label><textarea id="we_notes" rows="2">${esc(e.notes||'')}</textarea></div>`,
-  ()=>{const g=i=>document.getElementById(i).value;e.title=g('we_title').trim();e.date=g('we_date');e.channel=g('we_chan');e.notes=g('we_notes');if(!e.title||!e.date){alert('أدخل العنوان والتاريخ');return}if(id){const i=w.events.findIndex(x=>x.id===id);w.events[i]=e}else{e.id=uid();w.events.push(e)}save();closeModal();wsBody()},
+  ()=>{const g=i=>document.getElementById(i).value;e.title=g('we_title').trim();e.start=g('we_start');e.end=g('we_end')||e.start;if(e.end<e.start)e.end=e.start;e.channel=g('we_chan');e.notes=g('we_notes');e.image=g('we_img');if('date' in e)delete e.date;if(!e.title||!e.start){alert('أدخل العنوان وتاريخ البداية');return}if(id){const i=w.events.findIndex(x=>x.id===id);w.events[i]=e}else{e.id=uid();w.events.push(e)}save();closeModal();wsBody()},
   id?()=>{w.events=w.events.filter(x=>x.id!==id);save();closeModal();wsBody()}:null);
 }
 function wsMemberModal(id){const w=ws();const m=id?{...w.team.find(x=>x.id===id)}:{id:'',name:'',role:'',color:'#3b82f6'};
@@ -3797,7 +3846,7 @@ function ensureBoardStyles(){if(document.getElementById('bdCSS'))return;const st
   .bd-item.sel .bd-handle{display:block}
   .bd-knob{position:absolute;right:-13px;top:50%;transform:translateY(-50%);width:24px;height:24px;border-radius:50%;background:var(--gold);color:#1a1205;font-weight:900;display:none;align-items:center;justify-content:center;cursor:pointer;border:2px solid var(--panel);font-size:16px;line-height:1;z-index:3}
   .bd-item.sel .bd-knob{display:flex}
-  .bd-style{display:none;position:absolute;z-index:30;left:50%;top:12px;transform:translateX(-50%);align-items:center;gap:6px;flex-wrap:nowrap;max-width:calc(100% - 20px);overflow-x:auto;background:var(--bd-glass);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--bd-glass-bd);border-radius:14px;padding:7px 9px;box-shadow:0 12px 34px rgba(0,0,0,.34),0 2px 8px rgba(0,0,0,.22);scrollbar-width:none}
+  .bd-style{display:none;position:absolute;z-index:30;left:50%;bottom:16px;transform:translateX(-50%);align-items:center;gap:6px;flex-wrap:nowrap;max-width:calc(100% - 20px);overflow-x:auto;background:var(--bd-glass);-webkit-backdrop-filter:blur(20px) saturate(1.5);backdrop-filter:blur(20px) saturate(1.5);border:1px solid var(--bd-glass-bd);border-radius:14px;padding:7px 9px;box-shadow:0 12px 34px rgba(0,0,0,.34),0 2px 8px rgba(0,0,0,.22);scrollbar-width:none}
   .bd-style::-webkit-scrollbar{display:none}
   .bd-style .bd-lbl{color:var(--bd-glass-ink);opacity:.55}
   .bd-style .bd-sep{background:var(--bd-glass-bd)}
@@ -3960,19 +4009,9 @@ function boardDrawEdges(){const svg=document.getElementById('bd_svg');if(!svg)re
 function boardToggleTheme(){const cv=document.getElementById('bd_canvas');if(!cv)return;const light=!cv.classList.contains('bd-light');cv.classList.toggle('bd-light',light);try{localStorage.setItem('bd_theme',light?'light':'dark')}catch(_){}}
 // يضع تولبار التعديل عائماً فوق العنصر المحدّد (يتبع التحديد/السحب/التكبير)
 function positionStyleBar(){
-  const bar=document.getElementById('bd_style'),cv=document.getElementById('bd_canvas');
-  if(!bar||!cv||bar.style.display==='none')return;
-  if(BMODE==='draw'){bar.style.top='';bar.style.bottom='14px';bar.style.left='50%';bar.style.transform='translateX(-50%)';return}
-  bar.style.bottom='';
-  let mnX=1/0,mnY=1/0,mxX=-1/0,mxY=-1/0;
-  [...BSEL].forEach(id=>{const it=bItem(id);if(!it||!it.w)return;mnX=Math.min(mnX,it.x);mnY=Math.min(mnY,it.y);mxX=Math.max(mxX,it.x+it.w);mxY=Math.max(mxY,it.y+it.h)});
-  if(mnX===1/0){bar.style.top='12px';bar.style.left='50%';bar.style.transform='translateX(-50%)';return}
-  const v=BRD.view,cx=((mnX+mxX)/2)*v.zoom+v.x,topY=mnY*v.zoom+v.y,botY=mxY*v.zoom+v.y;
-  const rect=cv.getBoundingClientRect(),bw=bar.offsetWidth||260,bh=bar.offsetHeight||46,gap=12;
-  const left=Math.max(bw/2+8,Math.min(rect.width-bw/2-8,cx));
-  let top=topY-gap-bh;
-  if(top<8){top=botY+gap;if(top+bh>rect.height-8)top=Math.max(8,(rect.height-bh)/2)}
-  bar.style.left=left+'px';bar.style.top=top+'px';bar.style.transform='translateX(-50%)';
+  // تولبار ثابت مرسّى أسفل الكانفس، في المنتصف — واضح ومريح للاستخدام
+  const bar=document.getElementById('bd_style');if(!bar||bar.style.display==='none')return;
+  bar.style.top='';bar.style.left='50%';bar.style.bottom='16px';bar.style.transform='translateX(-50%)';
 }
 function bMarkSel(){document.querySelectorAll('.bd-item').forEach(el=>el.classList.toggle('sel',BSEL.has(el.dataset.id)));refreshSelUI();boardDrawEdges()}
 function bSelectOnly(id){BSEL=new Set([id]);bMarkSel()}
@@ -4092,8 +4131,24 @@ sb.auth.onAuthStateChange((event,session)=>{
   if(event==='PASSWORD_RECOVERY'){RECOVERY_MODE=true;showReset();return}
   if(event==='SIGNED_OUT'){USER=null;STATE_ID=null}
 });
+function enterDemo(){
+  WS_DEMO=true;const DK='ws_demo_v1';
+  try{const r=localStorage.getItem(DK);S=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(_){S=JSON.parse(JSON.stringify(def))}
+  ws();
+  if(!S.workspace.events.length){const t=today();S.workspace.events.push({id:uid(),title:'حملة الصيف',start:t,end:t,channel:'instagram',notes:'',image:''})}
+  save=function(){try{localStorage.setItem(DK,JSON.stringify(S))}catch(_){}};
+  const foot=document.querySelector('.nav-foot');if(foot)foot.style.display='none';
+  const fab=document.querySelector('.fab-desk');if(fab)fab.style.display='none';
+  const tg=document.querySelector('.logo-area .tagline');if(tg)tg.textContent='نسخة تجريبية — مساحة العمل';
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('appShell').classList.remove('hidden');
+  renderNav();initSidebarShell();applyBranding();
+  const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});
+  go('workspace');
+}
 async function bootstrap(){
   const params=new URLSearchParams(location.search);
+  if(params.get('demo')){return enterDemo()}
   const ft=params.get('ft');
   if(ft){return renderFreelancer(ft)}
   if(RECOVERY_MODE||/[#?&]type=recovery/.test(location.hash)||/[?&]type=recovery/.test(location.search)){RECOVERY_MODE=true;showReset();return}
