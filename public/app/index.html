@@ -430,6 +430,7 @@
   .prod-card:hover{border-color:rgba(245,166,35,.6);transform:translateY(-2px)}
   .prod-ic{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--goldsoft);color:var(--gold2);border:1px solid rgba(255,255,255,.12)}
   .prod-ic svg{width:23px;height:23px}
+  .prod-img{width:100%;aspect-ratio:4/3;border-radius:12px;background-size:cover;background-position:center;background-color:var(--panel2);border:1px solid rgba(255,255,255,.1)}
   .prod-name{font-weight:800;font-size:16px;line-height:1.45}
   .prod-desc{color:var(--muted);font-size:13px;line-height:1.7;flex:1}
   .prod-foot{display:flex;align-items:baseline;justify-content:space-between;gap:8px;border-top:1px solid rgba(255,255,255,.08);padding-top:12px;margin-top:auto}
@@ -2545,7 +2546,7 @@ function renderProducts(){
   if(!ps.length){body=emptyBox('package','لا توجد منتجات بعد.');}
   else if(view==='cards'){
     body=`<div class="grid">${ps.map(p=>`<div class="card prod-card">
-      <div class="prod-ic"><i data-lucide="package"></i></div>
+      ${p.image?`<div class="prod-img" style="background-image:url('${esc(p.image)}')"></div>`:`<div class="prod-ic"><i data-lucide="package"></i></div>`}
       <div class="prod-name">${esc(p.name)}</div>
       ${p.desc?`<div class="prod-desc">${esc(p.desc)}</div>`:'<div class="prod-desc"></div>'}
       <div class="prod-foot"><span class="prod-price">${money(p.price)} ${cur}</span>${p.unit?`<span class="prod-unit">/ ${esc(p.unit)}</span>`:''}</div>
@@ -2553,7 +2554,7 @@ function renderProducts(){
     </div>`).join('')}</div>`;
   } else {
     body=`<table><thead><tr><th>المنتج/الخدمة</th><th>الوحدة</th><th>السعر</th><th></th></tr></thead><tbody>
-    ${ps.map(p=>`<tr><td><b>${esc(p.name)}</b>${p.desc?`<div style="font-size:12px;color:var(--muted)">${esc(p.desc)}</div>`:''}</td><td>${esc(p.unit||'—')}</td><td>${money(p.price)} ${cur}</td>
+    ${ps.map(p=>`<tr><td><div style="display:flex;align-items:center;gap:10px">${p.image?`<img src="${esc(p.image)}" style="width:40px;height:40px;border-radius:8px;object-fit:cover;flex:none;border:1px solid var(--line)">`:''}<div><b>${esc(p.name)}</b>${p.desc?`<div style="font-size:12px;color:var(--muted)">${esc(p.desc)}</div>`:''}</div></div></td><td>${esc(p.unit||'—')}</td><td>${money(p.price)} ${cur}</td>
     <td style="white-space:nowrap"><button class="link-btn" onclick="productModal('${p.id}')">تعديل</button><button class="link-btn del" onclick="delItem('products','${p.id}',renderProducts)">حذف</button></td></tr>`).join('')}
     </tbody></table>`;
   }
