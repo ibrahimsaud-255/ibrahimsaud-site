@@ -3877,6 +3877,9 @@ const BSHAPES={rect:{n:'مستطيل',css:'border-radius:8px'},round:{n:'مرب�
 
 function ensureBoardStyles(){if(document.getElementById('bdCSS'))return;const st=document.createElement('style');st.id='bdCSS';st.textContent=`
   .bd-top{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+  #main:fullscreen{background:var(--bg);padding:16px;overflow:auto}
+  #main:-webkit-full-screen{background:var(--bg);padding:16px;overflow:auto}
+  #main:fullscreen .bd-canvas{height:calc(100vh - 92px)}
   .bd-title{flex:0 1 220px;min-width:140px;background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;color:var(--ink);font-weight:700;font-size:15px}
   .bd-tools,.bd-zoom{display:flex;gap:3px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:4px}
   .bd-zoom{margin-inline-start:auto}
@@ -3992,6 +3995,7 @@ function openBoard(id){
       </div>
       <div class="bd-zoom">
         <button class="bd-tool" id="bd_theme" title="الوضع الفاتح/الداكن" onclick="boardToggleTheme()"><i data-lucide="sun-moon"></i></button>
+        <button class="bd-tool" id="bd_full" title="ملء الشاشة" onclick="boardFullscreen()"><i data-lucide="maximize"></i></button>
         <span class="bd-sep" style="margin:0 3px"></span>
         <button class="bd-tool" title="تصغير" onclick="boardZoom(-1)"><i data-lucide="minus"></i></button>
         <button class="bd-tool" id="bd_zlbl" title="ملء الشاشة" onclick="boardFit()">100%</button>
@@ -4012,6 +4016,7 @@ function openBoard(id){
   cv.addEventListener('pointercancel',boardPtrUp);
   cv.addEventListener('dblclick',boardCanvasDbl);
   if(!window.__bdInit){window.__bdInit=1;document.addEventListener('keydown',boardKeys);document.addEventListener('paste',boardPaste)}
+  if(!window.__bdFs){window.__bdFs=1;document.addEventListener('fullscreenchange',()=>{const ic=document.querySelector('#bd_full i');if(ic){ic.setAttribute('data-lucide',document.fullscreenElement?'minimize':'maximize');refreshIcons()}});}
   boardPaint();boardHint('انقر مزدوجاً على أي مكان فارغ لإضافة ملاحظة');
 }
 /* helpers */
@@ -4062,6 +4067,7 @@ function boardDrawEdges(){const svg=document.getElementById('bd_svg');if(!svg)re
 }
 /* selection */
 function boardToggleTheme(){const cv=document.getElementById('bd_canvas');if(!cv)return;const light=!cv.classList.contains('bd-light');cv.classList.toggle('bd-light',light);try{localStorage.setItem('bd_theme',light?'light':'dark')}catch(_){}}
+function boardFullscreen(){const el=document.getElementById('main');if(!el)return;const fe=document.fullscreenElement||document.webkitFullscreenElement;if(fe){(document.exitFullscreen||document.webkitExitFullscreen||function(){}).call(document)}else{(el.requestFullscreen||el.webkitRequestFullscreen||function(){}).call(el)}}
 // يضع تولبار التعديل عائماً فوق العنصر المحدّد (يتبع التحديد/السحب/التكبير)
 function positionStyleBar(){
   // تولبار ثابت مرسّى أسفل الكانفس، في المنتصف — واضح ومريح للاستخدام
