@@ -4124,6 +4124,8 @@ function handleConnect(it){if(!BFROM){BFROM=it.id;bSelectOnly(it.id);boardHint('
 function bStartPinch(){const p=[...BPTRS.values()];BGEST={type:'pinch',d0:bDist(p[0],p[1])||1,z0:BRD.view.zoom,mid:bMid(p[0],p[1]),vx:BRD.view.x,vy:BRD.view.y}}
 function boardPtrDown(e){
   if(BEDIT)return;
+  // لا تُعامل الضغط على تولبار التعديل كضغط على اللوحة (يمنع إلغاء التحديد وإخفاء الأزرار)
+  if(e.target&&e.target.closest&&e.target.closest('.bd-style'))return;
   const cv=document.getElementById('bd_canvas');BPTRS.set(e.pointerId,{x:e.clientX,y:e.clientY});try{cv.setPointerCapture(e.pointerId)}catch(_){}
   if(BPTRS.size===2){bStartPinch();return}
   if(BMODE==='draw'){const p=bWorldPt(e);bSnap();BCUR={id:uid(),type:'draw',stroke:BPEN.color,sw:BPEN.size,points:[[Math.round(p.x),Math.round(p.y)]]};BRD.items.push(BCUR);BGEST={type:'draw'};boardDrawEdges();return}
