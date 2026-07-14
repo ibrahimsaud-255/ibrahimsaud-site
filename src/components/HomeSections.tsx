@@ -14,8 +14,10 @@ import Contact from "./Contact";
 import About from "./About";
 import Process from "./Process";
 import StudioRental from "./StudioRental";
+import HuroofPromo from "./HuroofPromo";
 
 const SECTIONS: Record<string, React.ComponentType> = {
+  huroof: HuroofPromo,
   brands: Brands,
   podcast: Podcast,
   studio: StudioTour,
@@ -36,6 +38,7 @@ const layoutFallback = {
     { id: "studio", on: true },
     { id: "services", on: true },
     { id: "works", on: true },
+    { id: "huroof", on: true },
     { id: "about", on: false },
     { id: "process", on: false },
     { id: "rental", on: false },

@@ -119,28 +119,15 @@ export default function Hero() {
             >
               {c.cta2.label}
             </a>
-            <a
-              href={c.cta3.href}
-              className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
-            >
-              {c.cta3.label}
-            </a>
           </div>
         </Reveal>
 
-        {/* خيارات التصنيفات */}
+        {/* سطر ثقة — هدف الصفحة واحد: بدء المحادثة */}
         <Reveal delay={360}>
-          <div className="mt-12 flex flex-wrap items-center justify-center gap-2.5">
-            {c.categories.map((cat) => (
-              <a
-                key={cat.label}
-                href={cat.href}
-                className="rounded-full border border-line bg-ink-card/50 px-5 py-2.5 text-sm font-bold text-cream/80 transition hover:border-gold/60 hover:bg-ink-card hover:text-gold"
-              >
-                {cat.label}
-              </a>
-            ))}
-          </div>
+          <p className="mt-6 text-sm text-cream/60">
+            ⚡ رد سريع عبر واتساب · استوديو مجهّز بالكامل · من الفكرة إلى المنتج
+            النهائي
+          </p>
         </Reveal>
       </div>
     </section>
