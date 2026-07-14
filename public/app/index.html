@@ -730,8 +730,10 @@ const APPS=[
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
   {id:'autopub',name:'النشر التلقائي',icon:'send'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
+  {id:'techco',name:'الأنظمة المباعة',icon:'building-2'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'mersad',name:'مرصاد',icon:'camera',href:'../mersad/'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -757,6 +759,8 @@ const LAUNCH=[
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
   {id:'autopub',name:'النشر التلقائي',icon:'send',c:'#8b5cf6,#6d28d9'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#facc15,#d97706'},
+  {id:'techco',name:'الأنظمة المباعة',icon:'building-2',c:'#06b6d4,#0e7490'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
   {id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/',c:'#f5a623,#b45309'},
   {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
@@ -3047,6 +3051,21 @@ async function loadGuests(force){
   }catch(e){GUESTS_ERR=(e&&e.message)||String(e);}
   GUESTS_LOADING=false;renderGuestsBody();
 }
+/* ===== لوحات خارجية مدموجة (حروف ودروس + الأنظمة المباعة) ===== */
+function renderExternalPanel(o){
+  document.getElementById('main').innerHTML=`
+    <div class="page-head"><h1><i data-lucide="${o.icon}"></i> ${o.title}</h1>
+      <div style="display:flex;gap:8px;align-items:center">
+        <button class="btn btn-ghost btn-sm" onclick="const f=document.getElementById('${o.frameId}');f.src=f.src"><i data-lucide="refresh-cw"></i> تحديث</button>
+        <a class="btn btn-ghost btn-sm" href="${o.url}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> فتح بتبويب مستقل</a>
+      </div></div>
+    <div class="badge-note"><i data-lucide="info"></i><div>${o.note}</div></div>
+    <iframe id="${o.frameId}" src="${o.url}" style="width:100%;height:76vh;border:0;border-radius:12px;background:#0a0a0c" allow="clipboard-read; clipboard-write"></iframe>`;
+  refreshIcons();
+}
+function renderHuroof(){renderExternalPanel({icon:'graduation-cap',title:'حروف ودروس — إدارة المنصة',frameId:'huroofFrame',url:'https://huroofduroos.com/admin',note:'لوحة إدارة منصة <b>حروف ودروس</b> كاملة: المشتركون، المعلمون، الاشتراكات والمدفوعات، التذاكر، الأسئلة والمحتوى. إذا لم يكتمل تسجيل الدخول داخل الإطار، استخدم <b>فتح بتبويب مستقل</b>.'})}
+function renderTechco(){renderExternalPanel({icon:'building-2',title:'الأنظمة المباعة — الشركة التقنية',frameId:'techcoFrame',url:'https://sa3ypodcast.com/admin/',note:'لوحة التحكم المركزية لأنظمة العملاء: إدارة العملاء (Tenants)، تفعيل وإيقاف التطبيقات لكل عميل، ومتابعة الاشتراكات.'})}
+
 function renderGuests(){
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1><i data-lucide="mic"></i> ضيوف سَعي</h1>
