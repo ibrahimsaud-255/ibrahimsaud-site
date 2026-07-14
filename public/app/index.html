@@ -33,6 +33,12 @@
     --good:#22c55e; --bad:#ef4444; --warn:#f59e0b; --info:#6366f1; --teal:#2dd4bf; --pink:#ec4899; --blue:#3b82f6;
     --radius:14px; --shadow:0 14px 40px rgba(0,0,0,.5);
   }
+  :root[data-theme="light"]{
+    --bg:#eceef2; --panel:#ffffff; --panel2:#f4f5f8; --panel3:#e9eaef; --line:#e2e3ea;
+    --ink:#1b1c24; --muted:#63656f; --goldsoft:rgba(245,166,35,.18);
+    --shadow:0 14px 40px rgba(20,22,40,.12);
+  }
+  :root[data-theme="light"] body{background:var(--bg);color:var(--ink)}
   *{box-sizing:border-box}
   html,body{margin:0;padding:0;height:100%}
   body{font-family:'Thmanyah Sans','Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
@@ -797,11 +803,16 @@ const WALLS=[
   {key:'forest',name:'غابة',css:'radial-gradient(1000px 640px at 20% -10%, rgba(34,197,94,.15), transparent 60%), linear-gradient(180deg,#0a0f0b,#0a0a0b 72%)'},
   {key:'plum',name:'برقوق',css:'radial-gradient(1000px 640px at 100% 0%, rgba(217,70,239,.17), transparent 55%), radial-gradient(700px 500px at 0% 100%, rgba(99,102,241,.13), transparent 55%), #0b0910'},
   {key:'slate',name:'رمادي',css:'linear-gradient(160deg,#12141a,#0a0a0b 66%)'},
-  {key:'dawn',name:'فجر (فاتح)',css:'radial-gradient(1100px 640px at 85% -10%, #ffd9c2, transparent 60%), radial-gradient(900px 560px at 0% 100%, #ffe3ef, transparent 55%), #fdf6f1'},
-  {key:'sky',name:'سماء (فاتح)',css:'radial-gradient(1100px 640px at 82% -12%, #cfe6ff, transparent 60%), linear-gradient(180deg,#eef6ff,#e6f0fb)'},
-  {key:'mist',name:'ضباب (فاتح)',css:'radial-gradient(1000px 620px at 80% -8%, #dce7f3, transparent 60%), linear-gradient(180deg,#eef2f7,#e7ecf3)'},
-  {key:'linen',name:'كتّان (فاتح)',css:'linear-gradient(160deg,#f8f2e9,#efe7db)'},
-  {key:'meadow',name:'مروج (فاتح)',css:'radial-gradient(1000px 620px at 18% -10%, #d6f0dd, transparent 60%), linear-gradient(180deg,#eef7f0,#e6f2ea)'},
+  {key:'twilight',name:'شفق أزرق',css:'radial-gradient(1100px 640px at 80% -12%, rgba(59,130,246,.16), transparent 58%), radial-gradient(760px 480px at 6% 104%, rgba(168,85,247,.12), transparent 55%), #0a0b10'},
+  {key:'rose',name:'وردي داكن',css:'radial-gradient(1000px 620px at 84% -8%, rgba(244,63,94,.14), transparent 58%), linear-gradient(180deg,#100a0c,#0a0a0b 70%)'},
+  {key:'teal',name:'زمرّدي',css:'radial-gradient(1000px 640px at 18% -10%, rgba(20,184,166,.15), transparent 60%), linear-gradient(180deg,#0a0f0f,#0a0a0b 72%)'},
+  // خلفيات فاتحة (تظهر فقط في النظام الفاتح)
+  {key:'dawn',name:'فجر',light:true,css:'radial-gradient(1100px 640px at 85% -10%, #ffdcc6, transparent 60%), radial-gradient(900px 560px at 0% 100%, #ffe6f0, transparent 55%), #fdf6f1'},
+  {key:'sky',name:'سماء',light:true,css:'radial-gradient(1100px 640px at 82% -12%, #d3e8ff, transparent 60%), linear-gradient(180deg,#eef6ff,#e6f0fb)'},
+  {key:'mist',name:'ضباب',light:true,css:'radial-gradient(1000px 620px at 80% -8%, #dfe9f4, transparent 60%), linear-gradient(180deg,#eff2f7,#e8edf3)'},
+  {key:'linen',name:'كتّان',light:true,css:'linear-gradient(160deg,#f8f2e9,#efe7db)'},
+  {key:'meadow',name:'مروج',light:true,css:'radial-gradient(1000px 620px at 18% -10%, #d9f1e0, transparent 60%), linear-gradient(180deg,#eff7f1,#e7f2eb)'},
+  {key:'lavender',name:'خزامى',light:true,css:'radial-gradient(1000px 620px at 84% -10%, #e7ddff, transparent 60%), linear-gradient(180deg,#f3eefb,#ece6f6)'},
 ];
 /* خلفيات النظام الجاهزة (آبل macOS) — قابلة للاختيار افتراضياً */
 const WALL_IMAGES=[
@@ -873,14 +884,21 @@ function wpRenderBody(){
   const body=document.getElementById('wpBody');if(!body)return;
   const cur=(S.settings&&S.settings.wallpaper)||{type:'preset',key:'none'};
   const mine=wpList();
+  const theme=(S.settings&&S.settings.theme)||'dark';
+  const gradients=WALLS.filter(w=>w.key==='none'||(theme==='light'?w.light:!w.light));
   body.innerHTML=`
+    <div class="wp-sec-title"><i data-lucide="sun-moon"></i> النظام (يحدّد الخلفيات المتاحة)</div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button type="button" class="wp-chip" onclick="setTheme('dark')" style="flex:1;background:linear-gradient(160deg,#1d1d20,#0a0a0b);color:#fff;border:2px solid ${theme==='dark'?'var(--gold)':'var(--line)'}"><i class="inl" data-lucide="moon"></i> داكن</button>
+      <button type="button" class="wp-chip" onclick="setTheme('light')" style="flex:1;background:linear-gradient(160deg,#ffffff,#e9eaef);color:#1b1c24;border:2px solid ${theme==='light'?'var(--gold)':'var(--line)'}"><i class="inl" data-lucide="sun"></i> فاتح</button>
+    </div>
     <div class="wp-sec-title"><i data-lucide="apple"></i> خلفيات النظام (آبل)</div>
     <div class="wp-grid">
       ${WALL_IMAGES.map(im=>{const active=cur.type==='url'&&cur.key===im.key;return `<div class="wp-chip img" onclick="wpPickUrl('${im.key}')" style="background-image:url('${im.url}');border:2px solid ${active?'var(--gold)':'var(--line)'}" title="${esc(im.name)}"><span>${active?'<i class="inl" data-lucide="check"></i> مُفعّلة':esc(im.name)}</span></div>`}).join('')}
     </div>
-    <div class="wp-sec-title"><i data-lucide="palette"></i> خلفيات متدرّجة</div>
+    <div class="wp-sec-title"><i data-lucide="palette"></i> خلفيات متدرّجة (${theme==='light'?'فاتحة':'داكنة'})</div>
     <div class="wp-grid">
-      ${WALLS.map(w=>`<button type="button" class="wp-chip" onclick="wpPick('${w.key}')" style="background:${w.css};border:2px solid ${cur.type==='preset'&&cur.key===w.key?'var(--gold)':'var(--line)'}">${w.name}</button>`).join('')}
+      ${gradients.map(w=>`<button type="button" class="wp-chip" onclick="wpPick('${w.key}')" style="background:${w.css};color:${w.light?'#1b1c24':'#fff'};border:2px solid ${cur.type==='preset'&&cur.key===w.key?'var(--gold)':'var(--line)'}">${w.name}</button>`).join('')}
     </div>
     <div class="wp-sec-title"><i data-lucide="images"></i> صوري المرفوعة ${mine.length?`<span style="color:var(--muted);font-weight:600">(${mine.length})</span>`:''}</div>
     ${mine.length?`<div class="wp-grid">
@@ -2551,7 +2569,9 @@ function productModal(id){
   openModal(id?'تعديل منتج':'منتج جديد',`
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
       <img id="pimgPrev" src="${esc(p.image||'')}" style="width:64px;height:64px;border-radius:12px;object-fit:cover;background:var(--panel2);border:1px solid var(--line);${p.image?'':'display:none'}">
-      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('p_imgfile').click()"><i data-lucide="image"></i> صورة المنتج</button><span id="pimgStatus" style="color:var(--muted);font-size:12px"></span>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('p_imgfile').click()"><i data-lucide="image"></i> صورة المنتج</button>
+      <button id="pimgRemove" class="btn btn-ghost btn-sm" onclick="prodRemoveImg()" style="color:var(--bad);${p.image?'':'display:none'}"><i data-lucide="trash-2"></i> حذف الصورة</button>
+      <span id="pimgStatus" style="color:var(--muted);font-size:12px"></span>
       <input type="file" id="p_imgfile" accept="image/*" class="hidden" onchange="prodUpload(event)"><input type="hidden" id="p_image" value="${esc(p.image||'')}"></div>
     <div class="field"><label>اسم المنتج/الخدمة</label><input id="p_name" value="${esc(p.name)}"></div>
     <div class="row2"><div class="field"><label>سعر البيع (${esc(S.settings.currency)})</label><input id="p_price" type="number" inputmode="decimal" value="${p.price}"></div>
@@ -2563,11 +2583,28 @@ function productModal(id){
     <div class="field"><label>وصف (اختياري)</label><textarea id="p_desc" rows="2">${esc(p.desc)}</textarea></div>`,
   ()=>{const g=i=>document.getElementById(i).value;p.name=g('p_name');p.price=Number(g('p_price')||0);p.cost=Number(g('p_cost')||0);p.barcode=g('p_barcode').trim();const stk=g('p_stock').trim();p.stock=stk===''?null:Number(stk);p.unit=g('p_unit');p.category=g('p_cat').trim();p.desc=g('p_desc');p.image=g('p_image');if(!p.name.trim()){alert('أدخل الاسم');return}if(!S.products)S.products=[];if(id){const i=S.products.findIndex(x=>x.id===id);S.products[i]=p}else{p.id=uid();S.products.push(p)}save();closeModal();back()},id?()=>delItem('products',id,back):null);
 }
-function prodUpload(ev){const f=ev.target.files[0];ev.target.value='';if(!f)return;const st=document.getElementById('pimgStatus');if(st)st.textContent='جارٍ الرفع…';
-  const ext=(f.name.split('.').pop()||'png').toLowerCase();const path=`${USER.id}/products/${uid()}.${ext}`;
-  sb.storage.from('product-images').upload(path,f,{upsert:false,contentType:f.type||'image/png'}).then(({error})=>{
-    if(error){if(st)st.textContent='';alert('تعذّر رفع الصورة: '+(error.message||error)+'\n\nأنشئ bucket عام باسم «product-images» في Supabase → Storage.');return}
-    const {data}=sb.storage.from('product-images').getPublicUrl(path);const h=document.getElementById('p_image');if(h)h.value=data.publicUrl;const pv=document.getElementById('pimgPrev');if(pv){pv.src=data.publicUrl;pv.style.display='block'}if(st)st.textContent='تم';});
+// ضغط الصورة في المتصفّح قبل الرفع (يصغّر الأبعاد ويحوّلها WebP) — يوفّر مساحة التخزين
+function compressImage(file,maxDim,quality,cb){
+  const rd=new FileReader();
+  rd.onload=()=>{const img=new Image();img.onload=()=>{
+    let w=img.width,h=img.height;const s=Math.min(1,maxDim/Math.max(w,h));w=Math.max(1,Math.round(w*s));h=Math.max(1,Math.round(h*s));
+    const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);
+    c.toBlob(b=>{if(b)cb(b,'webp');else c.toBlob(b2=>cb(b2,'jpeg'),'image/jpeg',quality)},'image/webp',quality);
+  };img.onerror=()=>cb(null);img.src=rd.result};
+  rd.onerror=()=>cb(null);rd.readAsDataURL(file);
+}
+function prodRemoveImg(){const h=document.getElementById('p_image');if(h)h.value='';const pv=document.getElementById('pimgPrev');if(pv){pv.src='';pv.style.display='none'}const rm=document.getElementById('pimgRemove');if(rm)rm.style.display='none';const st=document.getElementById('pimgStatus');if(st)st.textContent='حُذفت الصورة — احفظ لتأكيد.'}
+function prodUpload(ev){const f=ev.target.files[0];ev.target.value='';if(!f)return;const st=document.getElementById('pimgStatus');
+  if(f.size>12*1024*1024){alert('الصورة كبيرة جداً (الحد ١٢MB). اختر صورة أصغر.');return}
+  if(st)st.textContent='جارٍ الضغط…';
+  compressImage(f,1000,0.82,(blob)=>{
+    if(!blob){if(st)st.textContent='';alert('تعذّر معالجة الصورة');return}
+    if(st)st.textContent='جارٍ الرفع…';
+    const fmt=blob.type==='image/webp'?'webp':'jpg';const path=`${USER.id}/products/${uid()}.${fmt}`;
+    sb.storage.from('product-images').upload(path,blob,{upsert:false,contentType:blob.type||'image/webp'}).then(({error})=>{
+      if(error){if(st)st.textContent='';alert('تعذّر رفع الصورة: '+(error.message||error)+'\n\nأنشئ bucket عام باسم «product-images» في Supabase → Storage.');return}
+      const {data}=sb.storage.from('product-images').getPublicUrl(path);const h=document.getElementById('p_image');if(h)h.value=data.publicUrl;const pv=document.getElementById('pimgPrev');if(pv){pv.src=data.publicUrl;pv.style.display='block'}const rm=document.getElementById('pimgRemove');if(rm)rm.style.display='inline-flex';if(st)st.textContent='تم ✓ ('+Math.round(blob.size/1024)+'KB)';});
+  });
 }
 
 /* ===== SUBSCRIPTIONS & EXPENSES ===== */
@@ -3512,6 +3549,15 @@ function renderSettings(){
     <div class="page-head"><h1>الإعدادات</h1><button class="btn btn-gold" onclick="saveSettings()"><i data-lucide="save"></i> حفظ الإعدادات</button></div>
     <div class="set-grid">
 
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="sun-moon"></i> المظهر (النظام)</h3>
+        <p style="color:var(--muted);font-size:13px;margin:0 0 12px">اختر النظام الداكن أو الفاتح — وتتبدّل الخلفيات المتاحة تلقائياً حسب اختيارك.</p>
+        <div style="display:flex;gap:10px">
+          <button class="btn ${((s.theme||'dark')==='dark')?'btn-gold':'btn-ghost'}" onclick="setTheme('dark')" style="flex:1"><i data-lucide="moon"></i> داكن</button>
+          <button class="btn ${(s.theme==='light')?'btn-gold':'btn-ghost'}" onclick="setTheme('light')" style="flex:1"><i data-lucide="sun"></i> فاتح</button>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="wallpaperModal()" style="margin-top:12px;width:100%"><i data-lucide="image"></i> تخصيص الخلفية</button>
+      </div>
+
       <div class="card"><h3 style="margin-top:0"><i data-lucide="building-2"></i> هوية المؤسسة</h3>
         <div class="logo-upload" style="margin-bottom:16px"><img id="logoPrev" src="${s.logo||LOGO}" onerror="this.style.display='none'"><div><button class="btn btn-ghost btn-sm" onclick="document.getElementById('logoFile').click()"><i data-lucide="upload"></i> رفع شعار</button><div style="color:var(--muted);font-size:12px;margin-top:6px">يظهر في القائمة والفواتير</div></div></div>
         <input type="file" id="logoFile" accept="image/*" class="hidden" onchange="uploadLogo(event)">
@@ -3617,6 +3663,10 @@ function ensureWorkspaceStyles(){if(document.getElementById('wsCSS'))return;cons
   .ws-wrap .fc .fc-scrollgrid{border-radius:14px;overflow:hidden}
   .ws-wrap .fc-theme-standard td,.ws-wrap .fc-theme-standard th{border-color:var(--fc-border-color)}
   .ws-wrap .fc .fc-daygrid-day.fc-day-today{border-radius:0}
+  :root[data-theme="light"] .ws-wrap .card{background:rgba(255,255,255,.62);border-color:rgba(0,0,0,.08)}
+  :root[data-theme="light"] .ws-wrap .ws-mem,:root[data-theme="light"] .ws-wrap .ws-res,:root[data-theme="light"] .ws-wrap .ws-jrow{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08)}
+  :root[data-theme="light"] .ws-wrap{--fc-border-color:rgba(0,0,0,.1);--fc-neutral-bg-color:rgba(0,0,0,.03);--fc-today-bg-color:rgba(245,166,35,.16);--fc-button-bg-color:rgba(0,0,0,.06);--fc-button-border-color:rgba(0,0,0,.12);--fc-button-hover-bg-color:rgba(0,0,0,.12);--fc-button-hover-border-color:rgba(0,0,0,.16);--fc-button-text-color:var(--ink)}
+  :root[data-theme="light"] .ws-wrap .fc .fc-daygrid-day:hover{background:rgba(0,0,0,.04)}
 `;document.head.appendChild(st)}
 function renderWorkspace(){
   ensureWorkspaceStyles();ws();
@@ -4125,7 +4175,12 @@ function openModal(title,bodyHtml,onSave,onDelete){
   document.getElementById('mSave').onclick=onSave;if(onDelete)document.getElementById('mDel').onclick=onDelete;refreshIcons();
 }
 function closeModal(){document.getElementById('modalRoot').innerHTML=''}
-function applyBranding(){const sl=document.querySelector('.logo-area img');if(sl)sl.src=S.settings.logo||LOGO}
+function applyBranding(){const sl=document.querySelector('.logo-area img');if(sl)sl.src=S.settings.logo||LOGO;applyTheme()}
+function applyTheme(){const t=(S.settings&&S.settings.theme)||'dark';document.documentElement.setAttribute('data-theme',t)}
+function setTheme(t){if(!S.settings)S.settings={};S.settings.theme=t;
+  // لو الخلفية الحالية لا تناسب النظام الجديد، ارجع لـ«بدون» ليظهر لون النظام
+  const w=S.settings.wallpaper;if(w&&w.type==='preset'){const p=WALLS.find(x=>x.key===w.key);if(p&&!!p.light!==(t==='light'))S.settings.wallpaper={type:'preset',key:'none'}}
+  save();applyTheme();applyWallpaper();if(document.getElementById('wpBody'))wpRenderBody();if(CUR==='settings')renderSettings()}
 
 sb.auth.onAuthStateChange((event,session)=>{
   if(event==='PASSWORD_RECOVERY'){RECOVERY_MODE=true;showReset();return}
