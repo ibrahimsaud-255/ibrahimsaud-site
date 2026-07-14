@@ -3527,18 +3527,18 @@ async function aiSend(){
 }
 function aiSettingsModal(){
   const cfg=S.settings.ai||{};const t=cfg.tools||{};
-  const row=(k,lbl,write)=>`<label style="display:flex;align-items:center;gap:8px;padding:5px 0;font-size:13px${write?';color:var(--warn)':''}"><input type="checkbox" id="ait_${k}" ${t[k]?'checked':''}> ${lbl}${write?' <span style="font-size:11px">(تعديل)</span>':''}</label>`;
+  const row=(k,lbl,write)=>`<label style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px${write?';color:var(--warn)':''}"><span>${lbl}${write?' <span style="font-size:11px;opacity:.7">(تعديل)</span>':''}</span><input type="checkbox" id="ait_${k}" ${t[k]?'checked':''} style="width:18px;height:18px;accent-color:var(--gold);flex:none;cursor:pointer"></label>`;
   openModal('إعدادات المساعد والأدوات',`
     <div class="field"><label>مفتاح Groq API</label><input id="ai_key" value="${esc(cfg.groqKey||'')}" placeholder="gsk_..." dir="ltr"></div>
     <div style="font-size:12px;color:var(--muted);margin:-4px 2px 10px">مجاني من <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--gold2)">console.groq.com/keys</a> · يُحفظ في بياناتك الخاصة فقط.</div>
     <div class="field"><label>النموذج</label><select id="ai_model">
       <option value="llama-3.3-70b-versatile" ${cfg.model==='llama-3.3-70b-versatile'?'selected':''}>Llama 3.3 70B (الأقوى)</option>
       <option value="llama-3.1-8b-instant" ${cfg.model==='llama-3.1-8b-instant'?'selected':''}>Llama 3.1 8B (الأسرع)</option></select></div>
-    <div class="card" style="background:var(--panel2)"><div style="font-weight:700;margin-bottom:6px"><i class="inl" data-lucide="wrench"></i> الأدوات المتاحة للمساعد (قراءة)</div>
+    <div class="card" style="background:var(--panel2)"><div style="font-weight:800;margin-bottom:4px"><i class="inl" data-lucide="wrench"></i> الأدوات المتاحة للمساعد (قراءة)</div>
       ${row('business_summary','ملخص الأعمال')}${row('list_products','المنتجات والمخزون')}${row('search_contacts','بحث العملاء')}${row('list_invoices','الفواتير')}${row('list_suppliers','الموردون')}${row('sales_report','تقرير المبيعات')}
-      <hr style="border-color:var(--line);margin:10px 0">
-      <label style="display:flex;align-items:center;gap:8px;font-weight:700;color:var(--warn)"><input type="checkbox" id="ai_write" ${cfg.allowWrite?'checked':''}> تفعيل أدوات التعديل (السماح للمساعد بالكتابة)</label>
-      <div style="font-size:12px;color:var(--muted);margin:4px 0 8px">عند التفعيل يقدر المساعد يضيف/ينشئ حسب الأدوات المفعّلة أدناه.</div>
+      <div style="height:1px;background:var(--line);margin:14px 0"></div>
+      <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:800;color:var(--warn);cursor:pointer"><span>تفعيل أدوات التعديل <span style="font-size:12px;font-weight:600;opacity:.85">(السماح للمساعد بالكتابة)</span></span><input type="checkbox" id="ai_write" ${cfg.allowWrite?'checked':''} style="width:18px;height:18px;accent-color:var(--warn);flex:none;cursor:pointer"></label>
+      <div style="font-size:12.5px;color:var(--muted);margin:6px 0 4px">عند التفعيل يقدر المساعد يضيف/ينشئ حسب الأدوات المفعّلة أدناه.</div>
       ${row('create_product','إنشاء منتج',true)}${row('create_invoice','إنشاء فاتورة',true)}${row('add_supplier','إضافة مورّد',true)}
     </div>`,
   ()=>{const g=i=>document.getElementById(i);S.settings.ai=S.settings.ai||{};const a=S.settings.ai;a.groqKey=g('ai_key').value.trim();a.model=g('ai_model').value;a.allowWrite=g('ai_write').checked;a.tools=a.tools||{};['business_summary','list_products','search_contacts','list_invoices','list_suppliers','sales_report','create_product','create_invoice','add_supplier'].forEach(k=>{const el=g('ait_'+k);if(el)a.tools[k]=el.checked});save();closeModal();renderAI()});
