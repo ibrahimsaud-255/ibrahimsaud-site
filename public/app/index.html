@@ -566,7 +566,21 @@ const def={
     reminded:{}  // {'YYYY-MM-DD':{habitId:true}} — منع تكرار التنبيه
   },
   suppliers:[],
-  aiData:{folders:[],chats:[]}
+  aiData:{folders:[],chats:[]},
+  workspace:{
+    team:[
+      {id:'ib',name:'إبراهيم',role:'المالك',color:'#f5a623'},
+      {id:'hala',name:'هالا',role:'مدير إبداعي',color:'#a855f7'},
+      {id:'saad',name:'سعد',role:'ماركيتنج أوفيسر',color:'#3b82f6'},
+      {id:'ahmed',name:'أحمد',role:'مصمم',color:'#22c55e'},
+      {id:'rawd',name:'رود',role:'محلل بيانات',color:'#ef4444'}
+    ],
+    tasks:[],   // {id,title,assignee,type,status,due,priority,notes,date}
+    events:[],  // التقويم التسويقي {id,title,date,channel,notes}
+    files:[],   // {id,name,url,cat,note}
+    brand:{colors:['#f5a623','#0a0a0b','#ffffff'],fonts:['Thmanyah','Tajawal'],notes:''},
+    growth:{journey:[],resources:[]}  // journey:[{id,title,done,note}] · resources:[{id,title,url,tag}]
+  }
 };
 let S=load();
 function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(e){s=JSON.parse(JSON.stringify(def))}
@@ -689,6 +703,7 @@ function setFreelancerAppIcon(emoji,name){try{const c=document.createElement('ca
 
 /* ===== APPS / ROUTER ===== */
 const APPS=[
+  {id:'workspace',name:'مساحة العمل',icon:'layout-dashboard'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'ai',name:'المساعد الذكي',icon:'bot'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
@@ -709,12 +724,13 @@ const APPS=[
   {id:'autopub',name:'النشر التلقائي',icon:'send'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'mersad',name:'مرصاد',icon:'camera',href:'../mersad/'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
 const LAUNCH=[
   {id:'antar',name:'عنتر',icon:'sparkles',c:'#8b5cf6,#6366f1'},
+  {id:'workspace',name:'مساحة العمل',icon:'layout-dashboard',c:'#0ea5e9,#6366f1'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
   {id:'ai',name:'المساعد الذكي',icon:'bot',c:'#8b5cf6,#6366f1'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
@@ -3529,6 +3545,225 @@ function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileRe
 function resetData(){if(confirm('مسح جميع البيانات نهائياً؟')){localStorage.removeItem(KEY);S=load();save();go('home')}}
 
 /* ===== MODAL ===== */
+/* ===== مساحة العمل (بديل Notion — لوحة + مهام الفريق + قوالب + ملفات + تطوّر) ===== */
+let WS_TAB='board', WS_ASSIGNEE='all', WS_CAL={y:null,m:null};
+const WS_TYPES={campaign:{label:'حملة إعلانية',icon:'megaphone',color:'#f5a623'},design:{label:'تصميم',icon:'palette',color:'#a855f7'},event:{label:'فعالية',icon:'calendar-heart',color:'#ec4899'},post:{label:'منشور',icon:'image',color:'#3b82f6'},task:{label:'مهمة',icon:'check-square',color:'#64748b'}};
+const WS_STATUS=[{key:'todo',label:'قيد الانتظار'},{key:'doing',label:'قيد التنفيذ'},{key:'review',label:'مراجعة'},{key:'done',label:'منجز'}];
+const WS_CHAN={instagram:{label:'إنستقرام',color:'#e1306c'},tiktok:{label:'تيك توك',color:'#111'},snapchat:{label:'سناب',color:'#e6b800'},x:{label:'إكس',color:'#1d9bf0'},youtube:{label:'يوتيوب',color:'#ff0000'},general:{label:'عام',color:'#8a8a92'}};
+const WS_TEMPLATES=[
+  {type:'campaign',title:'حملة إعلانية جديدة',notes:'الهدف:\nالجمهور المستهدف:\nالميزانية:\nالقنوات:\nمؤشر النجاح (KPI):'},
+  {type:'design',title:'طلب تصميم',notes:'المقاس:\nالنص المطلوب:\nالمرجع/الستايل:\nالموعد النهائي:'},
+  {type:'event',title:'تجهيز فعالية',notes:'التاريخ:\nالمكان:\nالمتطلبات:\nالمسؤول:'},
+  {type:'post',title:'منشور جديد',notes:'المنصّة:\nالفكرة:\nالكابشن:\nالهاشتاقات:\nموعد النشر:'}
+];
+function ws(){if(!S.workspace||typeof S.workspace!=='object')S.workspace=JSON.parse(JSON.stringify(def.workspace));const w=S.workspace;if(!Array.isArray(w.team))w.team=JSON.parse(JSON.stringify(def.workspace.team));['tasks','events','files'].forEach(k=>{if(!Array.isArray(w[k]))w[k]=[]});if(!w.brand)w.brand=JSON.parse(JSON.stringify(def.workspace.brand));if(!w.growth)w.growth={journey:[],resources:[]};if(!Array.isArray(w.growth.journey))w.growth.journey=[];if(!Array.isArray(w.growth.resources))w.growth.resources=[];return w}
+function wsMember(id){return ws().team.find(m=>m.id===id)}
+function gcalUrl(t){const base=(t.due||today());const s=base.replace(/-/g,'');const e=new Date(base+'T00:00:00');e.setDate(e.getDate()+1);const ee=`${e.getFullYear()}${String(e.getMonth()+1).padStart(2,'0')}${String(e.getDate()).padStart(2,'0')}`;return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(t.title||'مهمة')}&dates=${s}/${ee}&details=${encodeURIComponent(t.notes||'')}`}
+function chatgptUrl(t){return `https://chatgpt.com/?q=${encodeURIComponent('ساعدني في هذه المهمة: '+(t.title||'')+(t.notes?'\n'+t.notes:''))}`}
+function ensureWorkspaceStyles(){if(document.getElementById('wsCSS'))return;const st=document.createElement('style');st.id='wsCSS';st.textContent=`
+  .ws-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:18px;border-bottom:1px solid var(--line)}
+  .ws-tab{display:inline-flex;align-items:center;gap:6px;padding:10px 15px;border:none;background:transparent;color:var(--muted);font-family:inherit;font-weight:700;font-size:14px;cursor:pointer;border-bottom:2.5px solid transparent;margin-bottom:-1px}
+  .ws-tab:hover{color:var(--ink)}
+  .ws-tab.on{color:var(--ink);border-bottom-color:var(--gold)}
+  .ws-tab i{width:16px;height:16px}
+  .ws-cal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+  .ws-grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+  .ws-dow{text-align:center;font-size:11.5px;color:var(--muted);font-weight:700;padding:2px 0}
+  .ws-day{min-height:84px;border:1px solid var(--line);border-radius:10px;padding:5px 6px;cursor:pointer;background:var(--panel);transition:.12s;overflow:hidden}
+  .ws-day:hover{border-color:var(--gold)}
+  .ws-day.empty{background:transparent;border-color:transparent;cursor:default}
+  .ws-day.today .ws-day-n{background:var(--gold);color:#1a1205;border-radius:6px;padding:0 6px}
+  .ws-day-n{font-size:12px;color:var(--muted);font-weight:700;display:inline-block}
+  .ws-ev{font-size:10.5px;color:#fff;border-radius:5px;padding:1px 5px;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer;font-weight:600}
+  .ws-mini{display:inline-flex;align-items:center;justify-content:center;width:28px;height:26px;border:1px solid var(--line);border-radius:7px;background:var(--panel2);color:var(--ink);cursor:pointer;text-decoration:none}
+  .ws-mini:hover{border-color:var(--gold)}
+  .ws-mini i{width:14px;height:14px}
+  .ws-mem{display:flex;align-items:center;gap:11px;padding:12px 14px;border:1px solid var(--line);border-radius:13px;background:var(--panel)}
+  .ws-dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
+  .ws-sw{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);cursor:pointer;position:relative}
+  .ws-sw .x{position:absolute;top:-6px;right:-6px;background:var(--bad);color:#fff;width:16px;height:16px;border-radius:50%;font-size:11px;line-height:16px;text-align:center;display:none}
+  .ws-sw:hover .x{display:block}
+  .ws-tagchip{display:inline-flex;align-items:center;gap:5px;padding:5px 11px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);font-size:13px;font-weight:700}
+  .ws-res{display:flex;align-items:center;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--panel);margin-bottom:8px}
+  .ws-jrow{display:flex;align-items:center;gap:11px;padding:11px 13px;border:1px solid var(--line);border-radius:11px;background:var(--panel);margin-bottom:8px}
+  .ws-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);cursor:pointer;flex:none;display:grid;place-items:center}
+  .ws-check.on{background:var(--good);border-color:var(--good);color:#fff}
+`;document.head.appendChild(st)}
+function renderWorkspace(){
+  ensureWorkspaceStyles();ws();
+  const TABS=[['board','لوحة المساحة','layout-dashboard'],['tasks','المهام','list-checks'],['templates','القوالب','copy'],['files','الملفات والهوية','folder'],['growth','التطوّر المهني','graduation-cap']];
+  document.getElementById('main').innerHTML=`
+    <div class="page-head"><h1><i data-lucide="layout-dashboard"></i> مساحة العمل</h1></div>
+    <div class="ws-tabs">${TABS.map(t=>`<button class="ws-tab${WS_TAB===t[0]?' on':''}" onclick="wsTab('${t[0]}')"><i data-lucide="${t[2]}"></i> ${t[1]}</button>`).join('')}</div>
+    <div id="ws_body"></div>`;
+  wsBody();refreshIcons();
+}
+function wsTab(t){WS_TAB=t;wsBody();refreshIcons()}
+function wsBody(){const b=document.getElementById('ws_body');if(!b)return;
+  b.innerHTML=({board:wsBoardHtml,tasks:wsTasksHtml,templates:wsTemplatesHtml,files:wsFilesHtml,growth:wsGrowthHtml}[WS_TAB]||wsBoardHtml)();
+  refreshIcons();}
+/* ---- تبويب اللوحة ---- */
+function wsCalInit(){if(WS_CAL.y==null){const d=new Date();WS_CAL.y=d.getFullYear();WS_CAL.m=d.getMonth()}}
+function wsCalMove(d){wsCalInit();let m=WS_CAL.m+d,y=WS_CAL.y;if(m<0){m=11;y--}if(m>11){m=0;y++}WS_CAL.m=m;WS_CAL.y=y;wsBody()}
+function wsCalGrid(){
+  wsCalInit();const y=WS_CAL.y,m=WS_CAL.m,first=new Date(y,m,1),startDow=first.getDay(),days=new Date(y,m+1,0).getDate();
+  const mn=first.toLocaleDateString('ar',{month:'long',year:'numeric'}),tk=today(),ym=`${y}-${String(m+1).padStart(2,'0')}`;
+  const byDay={};ws().events.forEach(e=>{if((e.date||'').slice(0,7)===ym)(byDay[e.date]=byDay[e.date]||[]).push(e)});
+  const dow=['أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة','سبت'];
+  let cells='';for(let i=0;i<startDow;i++)cells+='<div class="ws-day empty"></div>';
+  for(let d=1;d<=days;d++){const ds=`${ym}-${String(d).padStart(2,'0')}`;const evs=byDay[ds]||[];
+    cells+=`<div class="ws-day${ds===tk?' today':''}" onclick="wsEventModal('',\'${ds}\')"><span class="ws-day-n">${d}</span>${evs.slice(0,3).map(e=>{const ch=WS_CHAN[e.channel]||WS_CHAN.general;return `<div class="ws-ev" style="background:${ch.color}" onclick="event.stopPropagation();wsEventModal('${e.id}')">${esc(e.title)}</div>`}).join('')}${evs.length>3?`<div style="font-size:10px;color:var(--muted);margin-top:2px">+${evs.length-3}</div>`:''}</div>`;}
+  return `<div class="ws-cal-head"><button class="btn btn-ghost btn-sm" onclick="wsCalMove(-1)"><i data-lucide="chevron-right"></i></button><b style="font-size:16px">${mn}</b><button class="btn btn-ghost btn-sm" onclick="wsCalMove(1)"><i data-lucide="chevron-left"></i></button></div>
+    <div class="ws-grid7" style="margin-bottom:6px">${dow.map(d=>`<div class="ws-dow">${d}</div>`).join('')}</div>
+    <div class="ws-grid7">${cells}</div>`;
+}
+function wsBoardHtml(){
+  const w=ws();const tk=today();
+  const soon=w.tasks.filter(t=>t.status!=='done'&&t.due).sort((a,b)=>(a.due||'').localeCompare(b.due||'')).slice(0,6);
+  return `<div class="grid">
+    <div class="card" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px"><h3 style="margin:0"><i data-lucide="calendar-range"></i> التقويم التسويقي</h3><button class="btn btn-gold btn-sm" onclick="wsEventModal('','${tk}')"><i data-lucide="plus"></i> حدث</button></div>${wsCalGrid()}
+      <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px;font-size:12px;color:var(--muted)">${Object.keys(WS_CHAN).map(k=>`<span style="display:inline-flex;align-items:center;gap:5px"><span style="width:11px;height:11px;border-radius:3px;background:${WS_CHAN[k].color};display:inline-block"></span>${WS_CHAN[k].label}</span>`).join('')}</div>
+    </div>
+    <div class="card" style="grid-column:span 2;min-width:280px"><h3><i data-lucide="alarm-clock"></i> مهام قادمة</h3>
+      ${soon.length?soon.map(t=>{const m=wsMember(t.assignee),ty=WS_TYPES[t.type]||WS_TYPES.task;return `<div style="display:flex;align-items:center;gap:9px;padding:9px 0;border-bottom:1px solid var(--line);cursor:pointer" onclick="wsTaskModal('${t.id}')"><span style="width:9px;height:9px;border-radius:50%;background:${ty.color};flex:none"></span><span style="flex:1;font-size:13.5px">${esc(t.title)}</span>${m?`<span class="ws-dot" style="width:22px;height:22px;font-size:10px;background:${m.color}">${esc((m.name||'?')[0])}</span>`:''}${dueChip(t.due)}</div>`}).join(''):'<p style="color:var(--muted)">لا مهام قادمة. أضف مهمة من تبويب «المهام».</p>'}
+    </div>
+    <div class="card" style="min-width:240px"><h3><i data-lucide="zap"></i> روابط سريعة</h3>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <a href="https://calendar.google.com" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start"><i data-lucide="calendar"></i> Google Calendar</a>
+        <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="go('ai')"><i data-lucide="bot"></i> المساعد الذكي</button>
+        <a href="https://chatgpt.com" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start"><i data-lucide="message-square"></i> ChatGPT</a>
+        <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="go('newsletter')"><i data-lucide="mail"></i> البريد</button>
+      </div>
+    </div>
+    <div class="card" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="margin:0"><i data-lucide="users"></i> الفريق</h3><button class="btn btn-ghost btn-sm" onclick="wsMemberModal('')"><i data-lucide="user-plus"></i> إضافة عضو</button></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:12px">
+      ${w.team.map(m=>{const open=w.tasks.filter(t=>t.assignee===m.id&&t.status!=='done').length;return `<div class="ws-mem"><span class="ws-dot" style="background:${m.color}">${esc((m.name||'?')[0])}</span><div style="flex:1"><div style="font-weight:700">${esc(m.name)}</div><div style="font-size:12px;color:var(--muted)">${esc(m.role||'')}</div></div><div style="text-align:center"><div style="font-weight:800;color:var(--gold)">${open}</div><div style="font-size:10px;color:var(--muted)">مهمة</div></div><button class="btn btn-ghost btn-sm" onclick="wsMemberModal('${m.id}')"><i data-lucide="pencil"></i></button></div>`}).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+/* ---- تبويب المهام ---- */
+function wsTasksHtml(){
+  const w=ws();const chips=[['all','الكل']].concat(w.team.map(m=>[m.id,m.name]));
+  const list=w.tasks.filter(t=>WS_ASSIGNEE==='all'||t.assignee===WS_ASSIGNEE);
+  return `<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:14px">
+      <div style="display:flex;gap:7px;flex-wrap:wrap">${chips.map(c=>`<button class="ws-chip${WS_ASSIGNEE===c[0]?' on':''}" onclick="wsFilter('${c[0]}')">${esc(c[1])}</button>`).join('')}</div>
+      <button class="btn btn-gold" onclick="wsTaskModal('')"><i data-lucide="plus"></i> مهمة جديدة</button></div>
+    ${!list.length?emptyBox('list-checks','لا مهام هنا بعد. أضف مهمة أو ابدأ من «القوالب».'):
+    `<div class="kanban">${WS_STATUS.map(st=>{const items=list.filter(t=>(t.status||'todo')===st.key);return `<div class="kcol" ondragover="dover(event)" ondragleave="dleave(event)" ondrop="wsDrop(event,'${st.key}')">
+      <h4><span>${st.label}</span><span class="kbadge">${items.length}</span></h4>
+      ${items.map(wsTaskCard).join('')||'<p style="color:var(--muted);font-size:12px">اسحب هنا</p>'}
+    </div>`}).join('')}</div>`}`;
+}
+function wsTaskCard(t){const m=wsMember(t.assignee),ty=WS_TYPES[t.type]||WS_TYPES.task;
+  return `<div class="kitem" draggable="true" ondragstart="wsDrag(event,'${t.id}')" onclick="wsTaskModal('${t.id}')">
+    <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span style="font-size:10.5px;font-weight:700;color:#fff;background:${ty.color};border-radius:6px;padding:1px 7px">${ty.label}</span>${t.priority==='high'?'<span style="color:#ef4444;font-size:11px">● عاجل</span>':''}</div>
+    <div style="font-weight:600;font-size:13.5px;line-height:1.4">${esc(t.title)}</div>
+    <div style="display:flex;align-items:center;gap:6px;margin-top:7px;flex-wrap:wrap">${m?`<span class="ws-dot" style="width:20px;height:20px;font-size:10px;background:${m.color}">${esc((m.name||'?')[0])}</span><span style="font-size:11px;color:var(--muted)">${esc(m.name)}</span>`:''}${t.due?dueChip(t.due):''}</div>
+    <div style="display:flex;gap:5px;margin-top:9px" onclick="event.stopPropagation()"><a href="${gcalUrl(t)}" target="_blank" class="ws-mini" title="أضف لتقويم Google"><i data-lucide="calendar-plus"></i></a><a href="${chatgptUrl(t)}" target="_blank" class="ws-mini" title="افتح في ChatGPT"><i data-lucide="bot"></i></a></div>
+  </div>`;
+}
+function wsFilter(a){WS_ASSIGNEE=a;wsBody()}
+function wsDrag(ev,id){ev.dataTransfer.setData('wsid',id);ev.dataTransfer.effectAllowed='move'}
+function wsDrop(ev,status){ev.preventDefault();ev.currentTarget.classList.remove('dragover');const id=ev.dataTransfer.getData('wsid');const t=ws().tasks.find(x=>x.id===id);if(t&&t.status!==status){t.status=status;save();wsBody()}}
+function wsTaskModal(id,presetType){
+  const w=ws();const t=id?{...w.tasks.find(x=>x.id===id)}:{id:'',title:'',assignee:w.team[0]?.id||'',type:presetType||'task',status:'todo',due:'',priority:'none',notes:'',date:today()};
+  const memOpts=w.team.map(m=>`<option value="${m.id}" ${t.assignee===m.id?'selected':''}>${esc(m.name)} — ${esc(m.role||'')}</option>`).join('');
+  const typeOpts=Object.keys(WS_TYPES).map(k=>`<option value="${k}" ${t.type===k?'selected':''}>${WS_TYPES[k].label}</option>`).join('');
+  const stOpts=WS_STATUS.map(s=>`<option value="${s.key}" ${(t.status||'todo')===s.key?'selected':''}>${s.label}</option>`).join('');
+  openModal(id?'تعديل مهمة':'مهمة جديدة',`
+    <div class="field"><label>العنوان</label><input id="wt_title" value="${esc(t.title)}" placeholder="مثال: تصميم غلاف حملة رمضان"></div>
+    <div class="row2"><div class="field"><label>المسؤول</label><select id="wt_asg">${memOpts}</select></div>
+    <div class="field"><label>النوع</label><select id="wt_type">${typeOpts}</select></div></div>
+    <div class="row2"><div class="field"><label>الحالة</label><select id="wt_status">${stOpts}</select></div>
+    <div class="field"><label>الاستحقاق</label><input type="date" id="wt_due" value="${esc(t.due||'')}"></div></div>
+    <div class="field"><label>الأهمية</label><select id="wt_prio"><option value="none" ${t.priority!=='high'?'selected':''}>عادية</option><option value="high" ${t.priority==='high'?'selected':''}>عاجلة</option></select></div>
+    <div class="field"><label>تفاصيل / تشيك ليست</label><textarea id="wt_notes" rows="4">${esc(t.notes||'')}</textarea></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;t.title=g('wt_title').trim();if(!t.title){alert('أدخل عنوان المهمة');return}t.assignee=g('wt_asg');t.type=g('wt_type');t.status=g('wt_status');t.due=g('wt_due');t.priority=g('wt_prio');t.notes=g('wt_notes');if(id){const i=w.tasks.findIndex(x=>x.id===id);w.tasks[i]=t}else{t.id=uid();w.tasks.push(t)}save();closeModal();wsBody()},
+  id?()=>{if(confirm('حذف المهمة؟')){w.tasks=w.tasks.filter(x=>x.id!==id);save();closeModal();wsBody()}}:null);
+}
+/* ---- تبويب القوالب ---- */
+function wsTemplatesHtml(){
+  return `<p style="color:var(--muted);margin:0 0 16px">اختر قالباً لبدء مهمة جاهزة بحقولها. عدّلها ثم احفظها في «المهام».</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px">
+    ${WS_TEMPLATES.map((tp,i)=>{const ty=WS_TYPES[tp.type];return `<div class="card" style="cursor:pointer" onclick="wsUseTemplate(${i})"><h3 style="margin:0 0 6px"><i data-lucide="${ty.icon}" style="color:${ty.color}"></i> ${ty.label}</h3><p style="color:var(--muted);font-size:12.5px;white-space:pre-line;margin:0">${esc(tp.notes)}</p><div style="margin-top:12px"><span class="btn btn-ghost btn-sm"><i data-lucide="plus"></i> بدء مهمة</span></div></div>`}).join('')}
+    </div>`;
+}
+function wsUseTemplate(i){const tp=WS_TEMPLATES[i];if(!tp)return;wsTaskModal('',tp.type);setTimeout(()=>{const ti=document.getElementById('wt_title'),no=document.getElementById('wt_notes');if(ti&&!ti.value)ti.value=tp.title;if(no&&!no.value)no.value=tp.notes},30)}
+/* ---- تبويب الملفات والهوية ---- */
+function wsFilesHtml(){
+  const w=ws();const CATS={logo:'شعارات',content:'محتوى',brand:'هوية',other:'أخرى'};
+  return `<div class="grid">
+    <div class="card" style="grid-column:1/-1"><h3><i data-lucide="palette"></i> الهوية البصرية</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px">الألوان</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px">${w.brand.colors.map((c,i)=>`<div class="ws-sw" style="background:${c}" title="${c}"><span class="x" onclick="wsDelColor(${i})">×</span></div>`).join('')}<label class="ws-mini" style="width:34px;height:34px" title="أضف لوناً"><i data-lucide="plus"></i><input type="color" style="opacity:0;width:0;height:0;position:absolute" onchange="wsAddColor(this.value)"></label></div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:6px">الخطوط</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:16px">${w.brand.fonts.map((f,i)=>`<span class="ws-tagchip">${esc(f)}<span onclick="wsDelFont(${i})" style="cursor:pointer;color:var(--bad)">×</span></span>`).join('')}<button class="ws-mini" style="width:auto;padding:0 10px" onclick="wsAddFont()"><i data-lucide="plus"></i></button></div>
+      <div class="field"><label>ملاحظات الهوية (نبرة الصوت، إرشادات…)</label><textarea rows="3" onchange="ws().brand.notes=this.value;save()">${esc(w.brand.notes||'')}</textarea></div>
+    </div>
+    <div class="card" style="grid-column:1/-1"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><h3 style="margin:0"><i data-lucide="folder"></i> ملفات ومراجع</h3><button class="btn btn-gold btn-sm" onclick="wsFileModal('')"><i data-lucide="plus"></i> ملف/رابط</button></div>
+      ${!w.files.length?'<p style="color:var(--muted)">لا ملفات بعد. أضف روابط (Drive / Figma / صور الهوية…).</p>':
+      `<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px">${w.files.map(f=>`<div class="ws-res"><span style="width:34px;height:34px;border-radius:8px;background:var(--panel2);display:grid;place-items:center;flex:none"><i data-lucide="file"></i></span><div style="flex:1;min-width:0"><a href="${esc(f.url)}" target="_blank" style="font-weight:700;color:var(--ink);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(f.name)}</a><div style="font-size:11px;color:var(--muted)">${CATS[f.cat]||'أخرى'}</div></div><button class="ws-mini" onclick="wsDelFile('${f.id}')"><i data-lucide="trash-2"></i></button></div>`).join('')}</div>`}
+    </div>
+  </div>`;
+}
+function wsAddColor(c){ws().brand.colors.push(c);save();wsBody()}
+function wsDelColor(i){ws().brand.colors.splice(i,1);save();wsBody()}
+function wsAddFont(){const f=prompt('اسم الخط:');if(f&&f.trim()){ws().brand.fonts.push(f.trim());save();wsBody()}}
+function wsDelFont(i){ws().brand.fonts.splice(i,1);save();wsBody()}
+function wsDelFile(id){if(!confirm('حذف الملف؟'))return;const w=ws();w.files=w.files.filter(f=>f.id!==id);save();wsBody()}
+function wsFileModal(id){const w=ws();const f=id?{...w.files.find(x=>x.id===id)}:{id:'',name:'',url:'',cat:'other'};
+  openModal(id?'تعديل ملف':'إضافة ملف/رابط',`
+    <div class="field"><label>الاسم</label><input id="wf_name" value="${esc(f.name)}" placeholder="مثال: دليل الهوية"></div>
+    <div class="field"><label>الرابط (URL)</label><input id="wf_url" value="${esc(f.url)}" placeholder="https://…" dir="ltr"></div>
+    <div class="field"><label>التصنيف</label><select id="wf_cat">${['logo:شعارات','content:محتوى','brand:هوية','other:أخرى'].map(o=>{const[k,l]=o.split(':');return `<option value="${k}" ${f.cat===k?'selected':''}>${l}</option>`}).join('')}</select></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;f.name=g('wf_name').trim();f.url=g('wf_url').trim();f.cat=g('wf_cat');if(!f.name||!f.url){alert('أدخل الاسم والرابط');return}if(id){const i=w.files.findIndex(x=>x.id===id);w.files[i]=f}else{f.id=uid();w.files.push(f)}save();closeModal();wsBody()},
+  id?()=>{w.files=w.files.filter(x=>x.id!==id);save();closeModal();wsBody()}:null);
+}
+/* ---- تبويب التطوّر المهني ---- */
+function wsGrowthHtml(){
+  const g=ws().growth;
+  return `<div class="grid">
+    <div class="card" style="grid-column:span 2;min-width:280px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h3 style="margin:0"><i data-lucide="route"></i> رحلة التطوّر</h3><button class="btn btn-ghost btn-sm" onclick="wsAddJourney()"><i data-lucide="plus"></i> مرحلة</button></div>
+      ${!g.journey.length?'<p style="color:var(--muted)">أضف مراحل رحلتك المهنية وتتبّع إنجازها.</p>':g.journey.map(j=>`<div class="ws-jrow"><div class="ws-check${j.done?' on':''}" onclick="wsToggleJourney('${j.id}')">${j.done?'<i data-lucide=\'check\' style=\'width:14px\'></i>':''}</div><div style="flex:1"><div style="font-weight:700;${j.done?'text-decoration:line-through;color:var(--muted)':''}">${esc(j.title)}</div>${j.note?`<div style="font-size:12px;color:var(--muted)">${esc(j.note)}</div>`:''}</div><button class="ws-mini" onclick="wsDelJourney('${j.id}')"><i data-lucide="x"></i></button></div>`).join('')}
+    </div>
+    <div class="card" style="min-width:260px"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><h3 style="margin:0"><i data-lucide="book-open"></i> مصادر التعلّم</h3><button class="btn btn-ghost btn-sm" onclick="wsResModal('')"><i data-lucide="plus"></i></button></div>
+      ${!g.resources.length?'<p style="color:var(--muted)">أضف روابط دورات ومقالات ومصادر.</p>':g.resources.map(r=>`<div class="ws-res"><span style="width:30px;height:30px;border-radius:7px;background:var(--panel2);display:grid;place-items:center;flex:none"><i data-lucide="link"></i></span><div style="flex:1;min-width:0"><a href="${esc(r.url)}" target="_blank" style="font-weight:700;color:var(--ink);text-decoration:none;display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(r.title)}</a>${r.tag?`<div style="font-size:11px;color:var(--muted)">${esc(r.tag)}</div>`:''}</div><button class="ws-mini" onclick="wsDelRes('${r.id}')"><i data-lucide="trash-2"></i></button></div>`).join('')}
+    </div>
+  </div>`;
+}
+function wsAddJourney(){const t=prompt('عنوان المرحلة:');if(t&&t.trim()){ws().growth.journey.push({id:uid(),title:t.trim(),done:false,note:''});save();wsBody()}}
+function wsToggleJourney(id){const j=ws().growth.journey.find(x=>x.id===id);if(j){j.done=!j.done;save();wsBody()}}
+function wsDelJourney(id){const g=ws().growth;g.journey=g.journey.filter(x=>x.id!==id);save();wsBody()}
+function wsDelRes(id){if(!confirm('حذف المصدر؟'))return;const g=ws().growth;g.resources=g.resources.filter(x=>x.id!==id);save();wsBody()}
+function wsResModal(id){const g=ws().growth;const r=id?{...g.resources.find(x=>x.id===id)}:{id:'',title:'',url:'',tag:''};
+  openModal(id?'تعديل مصدر':'إضافة مصدر',`
+    <div class="field"><label>العنوان</label><input id="wr_title" value="${esc(r.title)}" placeholder="مثال: دورة تسويق الأداء"></div>
+    <div class="field"><label>الرابط</label><input id="wr_url" value="${esc(r.url)}" placeholder="https://…" dir="ltr"></div>
+    <div class="field"><label>وسم (اختياري)</label><input id="wr_tag" value="${esc(r.tag||'')}" placeholder="تسويق / تصميم / تحليل"></div>`,
+  ()=>{const gg=i=>document.getElementById(i).value;r.title=gg('wr_title').trim();r.url=gg('wr_url').trim();r.tag=gg('wr_tag').trim();if(!r.title||!r.url){alert('أدخل العنوان والرابط');return}if(id){const i=g.resources.findIndex(x=>x.id===id);g.resources[i]=r}else{r.id=uid();g.resources.push(r)}save();closeModal();wsBody()},
+  id?()=>{g.resources=g.resources.filter(x=>x.id!==id);save();closeModal();wsBody()}:null);
+}
+/* ---- الأحداث والأعضاء ---- */
+function wsEventModal(id,presetDate){const w=ws();const e=id?{...w.events.find(x=>x.id===id)}:{id:'',title:'',date:presetDate||today(),channel:'general',notes:''};
+  const chOpts=Object.keys(WS_CHAN).map(k=>`<option value="${k}" ${e.channel===k?'selected':''}>${WS_CHAN[k].label}</option>`).join('');
+  openModal(id?'تعديل حدث':'حدث تسويقي',`
+    <div class="field"><label>العنوان</label><input id="we_title" value="${esc(e.title)}" placeholder="مثال: إطلاق حملة الصيف"></div>
+    <div class="row2"><div class="field"><label>التاريخ</label><input type="date" id="we_date" value="${esc(e.date)}"></div>
+    <div class="field"><label>القناة</label><select id="we_chan">${chOpts}</select></div></div>
+    <div class="field"><label>ملاحظات</label><textarea id="we_notes" rows="2">${esc(e.notes||'')}</textarea></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;e.title=g('we_title').trim();e.date=g('we_date');e.channel=g('we_chan');e.notes=g('we_notes');if(!e.title||!e.date){alert('أدخل العنوان والتاريخ');return}if(id){const i=w.events.findIndex(x=>x.id===id);w.events[i]=e}else{e.id=uid();w.events.push(e)}save();closeModal();wsBody()},
+  id?()=>{w.events=w.events.filter(x=>x.id!==id);save();closeModal();wsBody()}:null);
+}
+function wsMemberModal(id){const w=ws();const m=id?{...w.team.find(x=>x.id===id)}:{id:'',name:'',role:'',color:'#3b82f6'};
+  openModal(id?'تعديل عضو':'عضو جديد',`
+    <div class="field"><label>الاسم</label><input id="wm_name" value="${esc(m.name)}"></div>
+    <div class="field"><label>الدور</label><input id="wm_role" value="${esc(m.role||'')}" placeholder="مثال: مصمم"></div>
+    <div class="field"><label>اللون</label><input type="color" id="wm_color" value="${esc(m.color||'#3b82f6')}" style="width:60px;height:38px;padding:2px"></div>`,
+  ()=>{const g=i=>document.getElementById(i).value;m.name=g('wm_name').trim();m.role=g('wm_role').trim();m.color=g('wm_color');if(!m.name){alert('أدخل الاسم');return}if(id){const i=w.team.findIndex(x=>x.id===id);w.team[i]=m}else{m.id=uid();w.team.push(m)}save();closeModal();wsBody()},
+  id&&w.team.length>1?()=>{if(confirm('حذف العضو؟ (لن تُحذف مهامه)')){w.team=w.team.filter(x=>x.id!==id);save();closeModal();wsBody()}}:null);
+}
+
 /* ===== الخرائط الذهنية / اللوحة الحرة (Freeform) ===== */
 let BRD=null,BSEL=new Set(),BMODE='select',BFROM=null,BTMP=null,BGEST=null,BEDIT=false,BCUR=null,BUNDO=[],BVT=null;
 const BPTRS=new Map();
