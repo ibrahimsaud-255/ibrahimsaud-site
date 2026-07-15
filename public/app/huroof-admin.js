@@ -21,7 +21,7 @@ function hdRefresh(){delete HD_CACHE[HD_TAB];renderHuroof()}
 function hdDate(d){return d?String(d).slice(0,10):'—'}
 function hdPill(txt,cls){return '<span class="pill '+(cls||'')+'">'+txt+'</span>'}
 function hdStatusPill(s){const m={active:['نشط','done'],expired:['منتهي','unpaid'],cancelled:['ملغي','unpaid'],open:['مفتوحة','unpaid'],closed:['مغلقة','done'],replied:['تم الرد','done'],pending_review:['بانتظار المراجعة','unpaid'],approved:['مقبول','done'],rejected:['مرفوض','unpaid']};const x=m[s]||[s||'—',''];return hdPill(x[0],x[1])}
-const HD_GRADES={1:'الأول',2:'الثاني',3:'الثالث',4:'الرابع',5:'الخامس',6:'السادس',7:'السابع',8:'الثامن',9:'التاسع',10:'العاشر',11:'الحادي عشر',12:'الثاني عشر'};
+const HD_GRADES={1:'الأول الابتدائي',2:'الثاني الابتدائي',3:'الثالث الابتدائي',4:'الرابع الابتدائي',5:'الخامس الابتدائي',6:'السادس الابتدائي',7:'الأول المتوسط',8:'الثاني المتوسط',9:'الثالث المتوسط',10:'الأول الثانوي',11:'الثاني الثانوي',12:'الثالث الثانوي'};
 const HD_SUBJECTS={arabic:'اللغة العربية',math:'الرياضيات',science:'العلوم',social:'الدراسات الاجتماعية',english:'اللغة الإنجليزية',islamic:'التربية الإسلامية',quran:'القرآن الكريم',art:'التربية الفنية',digital:'المهارات الرقمية',lifeskills:'المهارات الحياتية',hadith:'الحديث',finance:'المعرفة المالية',critical:'التفكير الناقد',ai:'الذكاء الاصطناعي',geo:'الجغرافيا',sustainability:'التنمية المستدامة',stats:'الإحصاء',rhetoric:'الدراسات البلاغية',marketing:'الحملات التسويقية',writing:'الكتابة الوظيفية',law:'مبادئ القانون',health:'الرعاية الصحية',chemistry:'الكيمياء',biology:'الأحياء',physics:'الفيزياء'};
 function hdSubj(id){return HD_SUBJECTS[id]||id||'—'}
 const HD_TABS=[
@@ -118,7 +118,7 @@ async function hdTabQuestions(){
     <div style="overflow-x:auto"><table><thead><tr><th>السؤال</th><th>الصف</th><th>المادة</th><th>الصعوبة</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>
     ${rows.map(q=>{const dl=diffL[q.difficulty]||[q.difficulty||'—','']; return `<tr>
       <td style="max-width:420px">${esc(q.question||'')}${q.options?`<div style="opacity:.55;font-size:.85em;margin-top:4px">${(q.options||[]).map((o,i)=>(i===q.correctIndex?'✓ ':'')+esc(o)).join(' · ')}</div>`:''}</td>
-      <td>${HD_GRADES[q.gradeNumber]?'ال'+HD_GRADES[q.gradeNumber]:q.gradeNumber||'—'}</td><td>${hdSubj(q.subjectId)}</td>
+      <td>${HD_GRADES[q.gradeNumber]||q.gradeNumber||'—'}</td><td>${hdSubj(q.subjectId)}</td>
       <td>${hdPill(dl[0],dl[1])}</td><td>${q.isActive?hdPill('مفعّل','done'):hdPill('معطّل','unpaid')}</td>
       <td style="white-space:nowrap">
         <button class="btn btn-ghost btn-sm" title="تعديل نص السؤال" onclick="hdQEdit('${q.id}')"><i data-lucide="pencil"></i></button>
