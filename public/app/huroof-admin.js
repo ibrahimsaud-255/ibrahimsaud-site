@@ -351,39 +351,68 @@ async function hdTicketReply(id){const inp=document.getElementById('hdTkInput'+i
   try{await hdApi('/admin/tickets/'+id+'/reply',{method:'POST',body:JSON.stringify({message:m})});inp.value='';alert('أُرسل الرد ✓');hdTicketOpen(id);hdTicketOpen(id)}catch(e){alert(e.message)}}
 async function hdTicketStatus(id,status){try{await hdApi('/admin/tickets/'+id+'/status',{method:'PATCH',body:JSON.stringify({status})});hdLoad('tickets')}catch(e){alert(e.message)}}
 /* ── أغلفة المواد والكتب ─────────────────────────────── */
+let HD_CV_PENDING=null;
 async function hdTabCovers(){
-  const d=await hdApi('/admin/covers');
+  const [bk,cv]=await Promise.all([hdApi('/admin/books'),hdApi('/admin/covers')]);
   if(HD_TAB!=='covers'||!hdEl())return;
-  const files=d.entries||[];
+  const have=new Set((cv.entries||[]).map(f=>f.replace(/\.png$/,'')));
+  const books=hdRows(bk).length?hdRows(bk):(bk.books||[]);
+  // بناء المصفوفة: صف → مادة → فصول من معرفات الكتب <subj>-g<n>-s<sem>
+  const grades={};
+  books.forEach(b=>{
+    const id=b.bookId||b.id||'';
+    const m=id.match(/^([a-z]+)-g(\d+)-s(\d)$/);
+    if(!m)return;
+    const [,subj,g,sem]=m;
+    grades[g]=grades[g]||{};
+    grades[g][subj]=grades[g][subj]||{sems:{}};
+    grades[g][subj].sems[sem]=id;
+  });
+  const gradeKeys=Object.keys(grades).sort((a,b)=>a-b);
+  let total=0,done=0;
+  const slot=(name,label)=>{
+    total++;
+    if(have.has(name)){done++;
+      return `<td style="text-align:center"><img src="https://huroofduroos.com/covers/${name}.png?t=${Date.now()}" title="${label} — اضغط للاستبدال" onclick="hdCoverPick('${name}')" style="width:52px;height:52px;object-fit:cover;border-radius:10px;border:2px solid #22c55e;cursor:pointer"></td>`}
+    return `<td style="text-align:center"><button class="btn btn-ghost btn-sm" onclick="hdCoverPick('${name}')" style="border:1px dashed rgba(255,255,255,.3)"><i data-lucide="image-plus"></i> رفع</button></td>`;
+  };
+  let body='';
+  gradeKeys.forEach(g=>{
+    const subjects=Object.keys(grades[g]).sort();
+    let rows='';
+    subjects.forEach(subj=>{
+      rows+=`<tr><td><b>${hdSubj(subj)}</b></td>
+        ${slot('subject-'+subj+'-g'+g,'بطاقة المادة')}
+        ${grades[g][subj].sems['1']?slot(grades[g][subj].sems['1'],'الفصل الأول'):'<td style="text-align:center;opacity:.3">—</td>'}
+        ${grades[g][subj].sems['2']?slot(grades[g][subj].sems['2'],'الفصل الثاني'):'<td style="text-align:center;opacity:.3">—</td>'}
+      </tr>`;
+    });
+    body+=`<details class="card" style="margin-bottom:10px" ${g==='1'?'open':''}>
+      <summary style="cursor:pointer;font-weight:800;padding:4px">الصف ${HD_GRADES[g]||g} <span style="opacity:.5;font-weight:400">(${subjects.length} مواد)</span></summary>
+      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>المادة</th><th style="text-align:center">بطاقة المادة</th><th style="text-align:center">الفصل الأول</th><th style="text-align:center">الفصل الثاني</th></tr></thead><tbody>${rows}</tbody></table></div>
+    </details>`;
+  });
+  const pct=total?Math.round(done/total*100):0;
   hdEl().innerHTML=`
-    <div class="badge-note"><i data-lucide="info"></i><div>
-      ارفع صورة مربعة (PNG) وتظهر فوراً في المنصة بدون أي إعادة نشر.<br>
-      <b>تسمية الملف:</b> غلاف مادة في شبكة الصف: <code>subject-المادة-الصف</code> مثل <code>subject-art-g1</code> ·
-      غلاف كتاب: <code>معرف-الكتاب</code> مثل <code>art-g1-s1</code>
-    </div></div>
-    <div class="card" style="margin-bottom:14px"><h3><i data-lucide="upload"></i> رفع غلاف</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <input id="hdCvName" placeholder="اسم الملف (مثل subject-math-g4)" style="flex:1;min-width:220px;direction:ltr">
-        <input type="file" id="hdCvFile" accept="image/png,image/jpeg" style="min-width:180px">
-        <button class="btn btn-gold btn-sm" onclick="hdCoverUpload()"><i data-lucide="upload"></i> رفع</button>
-      </div><div id="hdCvMsg" style="margin-top:8px;opacity:.85"></div></div>
-    <div class="card"><h3><i data-lucide="image"></i> الأغلفة المرفوعة (${files.length})</h3>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px">
-      ${files.map(f=>`<div style="text-align:center">
-        <img src="https://huroofduroos.com/covers/${f}?t=${Date.now()}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.12)">
-        <div style="font-size:.75em;opacity:.7;margin-top:4px;direction:ltr">${esc(f)}</div>
-      </div>`).join('')||'<div style="opacity:.6">لا توجد أغلفة بعد.</div>'}
-      </div></div>`;
+    <input type="file" id="hdCvHidden" accept="image/png,image/jpeg" style="display:none" onchange="hdCoverUpload(this)">
+    <div class="stats">
+      <div class="stat"><span class="ic" style="color:#22c55e"><i data-lucide="check-circle"></i></span><div class="v">${done}</div><div class="l">صورة مرفوعة</div></div>
+      <div class="stat"><span class="ic" style="color:#f59e0b"><i data-lucide="image-plus"></i></span><div class="v">${total-done}</div><div class="l">متبقية</div></div>
+      <div class="stat"><span class="ic" style="color:#f5c542"><i data-lucide="percent"></i></span><div class="v">${pct}%</div><div class="l">اكتمال الأغلفة</div></div>
+    </div>
+    <div class="badge-note"><i data-lucide="info"></i><div>كل مادة تحتاج <b>٣ صور مربعة</b>: بطاقة المادة (تظهر في شبكة الصف) + غلاف الفصل الأول + غلاف الفصل الثاني. اضغط <b>رفع</b> على أي خانة فارغة واختر الصورة — الاسم يتسمى تلقائياً وتظهر في المنصة فوراً. اضغط على صورة موجودة لاستبدالها.</div></div>
+    <div id="hdCvMsg" style="margin-bottom:10px;color:#34d399;font-weight:700"></div>
+    ${body}`;
 }
-async function hdCoverUpload(){
-  const name=document.getElementById('hdCvName').value.trim();
-  const file=document.getElementById('hdCvFile').files[0];
+function hdCoverPick(name){HD_CV_PENDING=name;document.getElementById('hdCvHidden').click()}
+async function hdCoverUpload(inp){
+  const file=inp.files[0];const name=HD_CV_PENDING;
+  if(!file||!name)return;
   const msg=document.getElementById('hdCvMsg');
-  if(!name||!file){msg.textContent='اكتب اسم الملف واختر الصورة.';return}
-  msg.textContent='جارٍ الرفع…';
+  msg.textContent='جارٍ رفع '+name+'…';
   try{
     const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file)});
     await hdApi('/admin/covers/'+encodeURIComponent(name),{method:'POST',body:JSON.stringify({dataBase64:b64})});
-    msg.textContent='✓ تم الرفع';hdLoad('covers');
+    msg.textContent='✓ تم رفع '+name;inp.value='';hdLoad('covers');
   }catch(e){msg.textContent='خطأ: '+e.message}
 }
