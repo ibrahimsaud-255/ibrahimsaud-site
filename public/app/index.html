@@ -30,15 +30,17 @@
   @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
   @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
   @font-face{font-family:"Thmanyah Serif";src:url("/fonts/thmanyah/thmanyahserifdisplay-Black.woff2") format("woff2");font-weight:800 900;font-display:swap}
+  /* هوية «ثمانية» الموحّدة — نفس رموز المنصة (lib/thmanyah.ts) والموقع (thmanyah.css):
+     محايدات قريبة من الأسود، ولون تمييز ذهبي مكتوم واحد. */
   :root{
-    --bg:#0a0a0b; --panel:#141416; --panel2:#1d1d20; --panel3:#26262b; --line:#2c2c31;
-    --ink:#f4f4f5; --muted:#9b9ba3; --gold:#f5a623; --gold2:#ffc24d; --goldsoft:rgba(245,166,35,.14);
+    --bg:#0A0A0A; --panel:#171717; --panel2:#1F1F1F; --panel3:#262626; --line:#262626;
+    --ink:#FAFAFA; --muted:#A1A1AA; --gold:#E8C766; --gold2:#F0D488; --goldsoft:rgba(232,199,102,.14);
     --good:#22c55e; --bad:#ef4444; --warn:#f59e0b; --info:#6366f1; --teal:#2dd4bf; --pink:#ec4899; --blue:#3b82f6;
     --radius:14px; --shadow:0 14px 40px rgba(0,0,0,.5);
   }
   :root[data-theme="light"]{
-    --bg:#eceef2; --panel:#ffffff; --panel2:#f4f5f8; --panel3:#e9eaef; --line:#e2e3ea;
-    --ink:#1b1c24; --muted:#63656f; --goldsoft:rgba(245,166,35,.18);
+    --bg:#FFFFFF; --panel:#ffffff; --panel2:#F4F4F5; --panel3:#E4E4E7; --line:#E4E4E7;
+    --ink:#0A0A0A; --muted:#52525B; --gold:#C8A33C; --gold2:#B8933A; --goldsoft:rgba(200,163,60,.16);
     --shadow:0 14px 40px rgba(20,22,40,.12);
   }
   :root[data-theme="light"] body{background:var(--bg);color:var(--ink)}

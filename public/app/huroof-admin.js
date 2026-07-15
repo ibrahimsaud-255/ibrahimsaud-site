@@ -22,7 +22,7 @@ function hdDate(d){return d?String(d).slice(0,10):'—'}
 function hdPill(txt,cls){return '<span class="pill '+(cls||'')+'">'+txt+'</span>'}
 function hdStatusPill(s){const m={active:['نشط','done'],expired:['منتهي','unpaid'],cancelled:['ملغي','unpaid'],open:['مفتوحة','unpaid'],closed:['مغلقة','done'],replied:['تم الرد','done'],pending_review:['بانتظار المراجعة','unpaid'],approved:['مقبول','done'],rejected:['مرفوض','unpaid']};const x=m[s]||[s||'—',''];return hdPill(x[0],x[1])}
 const HD_GRADES={1:'الأول الابتدائي',2:'الثاني الابتدائي',3:'الثالث الابتدائي',4:'الرابع الابتدائي',5:'الخامس الابتدائي',6:'السادس الابتدائي',7:'الأول المتوسط',8:'الثاني المتوسط',9:'الثالث المتوسط',10:'الأول الثانوي',11:'الثاني الثانوي',12:'الثالث الثانوي'};
-const HD_SUBJECTS={arabic:'اللغة العربية',math:'الرياضيات',science:'العلوم',social:'الدراسات الاجتماعية',english:'اللغة الإنجليزية',islamic:'التربية الإسلامية',quran:'القرآن الكريم',art:'التربية الفنية',digital:'المهارات الرقمية',lifeskills:'المهارات الحياتية',hadith:'الحديث',finance:'المعرفة المالية',critical:'التفكير الناقد',ai:'الذكاء الاصطناعي',geo:'الجغرافيا',sustainability:'التنمية المستدامة',stats:'الإحصاء',rhetoric:'الدراسات البلاغية',marketing:'الحملات التسويقية',writing:'الكتابة الوظيفية',law:'مبادئ القانون',health:'الرعاية الصحية',chemistry:'الكيمياء',biology:'الأحياء',physics:'الفيزياء'};
+const HD_SUBJECTS={arabic:'اللغة العربية',math:'الرياضيات',science:'العلوم',social:'الدراسات الاجتماعية',english:'اللغة الإنجليزية',islamic:'الدراسات الإسلامية',quran:'القرآن الكريم وتفسيره',art:'التربية الفنية',digital:'المهارات الرقمية',lifeskills:'المهارات الحياتية والأسرية',life:'المهارات الحياتية والأسرية',pe:'التربية البدنية',defense:'الدفاع عن النفس',history:'التاريخ',hadith:'الحديث',finance:'المعرفة المالية',financial:'المعرفة المالية',critical:'التفكير الناقد',criticalthinking:'التفكير الناقد',ai:'الذكاء الاصطناعي',geo:'الجغرافيا',sustainability:'التنمية المستدامة',stats:'الإحصاء والاحتمالات',statistics:'الإحصاء والاحتمالات',rhetoric:'البلاغة والإنشاء',marketing:'تخطيط الحملات التسويقية','admin-skills':'المهارات الإدارية',writing:'إنتاج النصوص',law:'مبادئ القانون',health:'الصحة والسلامة',chemistry:'الكيمياء',biology:'الأحياء',physics:'الفيزياء'};
 function hdSubj(id){return HD_SUBJECTS[id]||id||'—'}
 const HD_TABS=[
  ['overview','النظرة العامة','layout-dashboard'],
@@ -37,6 +37,7 @@ const HD_TABS=[
  ['content','المحتوى','book-open'],
  ['tickets','خدمة العملاء','life-buoy'],
  ['covers','أغلفة المواد','image'],
+ ['blog','المدونة','newspaper'],
 ];
 function renderHuroof(){
   document.getElementById('main').innerHTML=`
@@ -64,6 +65,7 @@ async function hdLoad(tab){
     else if(tab==='content')await hdTabContent();
     else if(tab==='tickets')await hdTabTickets();
     else if(tab==='covers')await hdTabCovers();
+    else if(tab==='blog')await hdTabBlog();
     refreshIcons();
   }catch(e){
     if(hdEl())hdEl().innerHTML=`<div class="card"><h3><i data-lucide="shield-alert"></i> تعذّر الوصول</h3><div style="opacity:.85;line-height:1.8">${esc(e.message)}</div></div>`;
@@ -357,38 +359,57 @@ async function hdTabCovers(){
   if(HD_TAB!=='covers'||!hdEl())return;
   const have=new Set((cv.entries||[]).map(f=>f.replace(/\.png$/,'')));
   const books=hdRows(bk).length?hdRows(bk):(bk.books||[]);
-  // بناء المصفوفة: صف → مادة → فصول من معرفات الكتب <subj>-g<n>-s<sem>
+  // المواد الفريدة + الكتب لكل صف من معرفات الكتب <subj>-g<n>-s<sem>
+  const subjSet=new Set();
   const grades={};
   books.forEach(b=>{
     const id=b.bookId||b.id||'';
-    const m=id.match(/^([a-z]+)-g(\d+)-s(\d)$/);
+    const m=id.match(/^([a-z][a-z-]*)-g(\d+)-s(\d)$/);
     if(!m)return;
     const [,subj,g,sem]=m;
-    grades[g]=grades[g]||{};
-    grades[g][subj]=grades[g][subj]||{sems:{}};
-    grades[g][subj].sems[sem]=id;
+    subjSet.add(subj);
+    grades[g]=grades[g]||[];
+    grades[g].push({id,subj,sem,title:b.title||b.name||''});
   });
+  const subjects=[...subjSet].sort();
   const gradeKeys=Object.keys(grades).sort((a,b)=>a-b);
   let total=0,done=0;
   const slot=(name,label)=>{
     total++;
     if(have.has(name)){done++;
-      return `<td style="text-align:center"><img src="https://huroofduroos.com/covers/${name}.png?t=${Date.now()}" title="${label} — اضغط للاستبدال" onclick="hdCoverPick('${name}')" style="width:52px;height:52px;object-fit:cover;border-radius:10px;border:2px solid #22c55e;cursor:pointer"></td>`}
-    return `<td style="text-align:center"><button class="btn btn-ghost btn-sm" onclick="hdCoverPick('${name}')" style="border:1px dashed rgba(255,255,255,.3)"><i data-lucide="image-plus"></i> رفع</button></td>`;
+      return `<div style="display:inline-flex;flex-direction:column;align-items:center;gap:5px">
+        <img src="https://huroofduroos.com/covers/${name}.png?t=${Date.now()}" title="${label} — اضغط للاستبدال" onclick="hdCoverPick('${name}')" style="width:52px;height:52px;object-fit:cover;border-radius:10px;border:2px solid #22c55e;cursor:pointer">
+        <button class="btn btn-ghost btn-sm" onclick="hdCoverDelete('${name}')" style="color:#ef4444;padding:2px 8px;font-size:11px"><i data-lucide="trash-2"></i> حذف</button>
+      </div>`}
+    return `<button class="btn btn-ghost btn-sm" onclick="hdCoverPick('${name}')" style="border:1px dashed rgba(255,255,255,.3)"><i data-lucide="image-plus"></i> رفع</button>`;
   };
-  let body='';
+  // صور الصفحة الرئيسية — بطاقات الكاروسيل الثلاث
+  const HOME=[['home-game','بطاقة: لعبة حروف ودروس'],['home-worksheets','بطاقة: أوراق العمل'],['home-tools','بطاقة: أدوات المعلم']];
+  let homeRows='';
+  HOME.forEach(([nm,lbl])=>{
+    homeRows+=`<tr><td><b>${lbl}</b></td><td style="text-align:center">${slot(nm,lbl)}</td></tr>`;
+  });
+  // صور الصفوف — صورة معبّرة لكل صف (تظهر في شاشة اختيار الصف)
+  let gradeRows='';
+  for(let n=1;n<=12;n++){
+    gradeRows+=`<tr><td><b>الصف ${HD_GRADES[n]||n}</b></td><td style="text-align:center">${slot('grade-'+n,'صورة الصف '+(HD_GRADES[n]||n))}</td></tr>`;
+  }
+  // صور المواد — صورة واحدة لكل مادة تظهر في كل المنصة
+  let subjRows='';
+  subjects.forEach(subj=>{
+    subjRows+=`<tr><td><b>${hdSubj(subj)}</b></td><td style="text-align:center">${slot('subject-'+subj,'صورة مادة '+hdSubj(subj))}</td></tr>`;
+  });
+  // أغلفة الكتب — غلاف مخصّص لكل كتاب (اختياري، يغلب على صورة المادة)
+  let bookBody='';
   gradeKeys.forEach(g=>{
-    const subjects=Object.keys(grades[g]).sort();
+    const list=grades[g].slice().sort((a,b)=>a.subj.localeCompare(b.subj)||a.sem-b.sem);
     let rows='';
-    subjects.forEach(subj=>{
-      rows+=`<tr><td><b>${hdSubj(subj)}</b></td>
-        ${slot('subject-'+subj+'-g'+g,'صورة المادة')}
-      </tr>`;
+    list.forEach(it=>{
+      rows+=`<tr><td><b>${hdSubj(it.subj)}</b> <span style="opacity:.6">— فصل ${it.sem}</span>${it.title?`<div style="opacity:.5;font-size:11px">${esc(it.title)}</div>`:''}</td>
+        <td style="text-align:center">${slot('book-'+it.id,'غلاف '+hdSubj(it.subj))}</td></tr>`;
     });
-    body+=`<details class="card" style="margin-bottom:10px" ${g==='1'?'open':''}>
-      <summary style="cursor:pointer;font-weight:800;padding:4px">الصف ${HD_GRADES[g]||g} <span style="opacity:.5;font-weight:400">(${subjects.length} مواد)</span></summary>
-      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>المادة</th><th style="text-align:center">صورة المادة (واحدة فقط)</th></tr></thead><tbody>${rows}</tbody></table></div>
-    </details>`;
+    bookBody+=`<details class="card" style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:800;padding:4px">الصف ${HD_GRADES[g]||g} <span style="opacity:.5;font-weight:400">(${list.length} كتاب)</span></summary>
+      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>الكتاب</th><th style="text-align:center">غلاف الكتاب</th></tr></thead><tbody>${rows}</tbody></table></div></details>`;
   });
   const pct=total?Math.round(done/total*100):0;
   hdEl().innerHTML=`
@@ -398,9 +419,19 @@ async function hdTabCovers(){
       <div class="stat"><span class="ic" style="color:#f59e0b"><i data-lucide="image-plus"></i></span><div class="v">${total-done}</div><div class="l">متبقية</div></div>
       <div class="stat"><span class="ic" style="color:#f5c542"><i data-lucide="percent"></i></span><div class="v">${pct}%</div><div class="l">اكتمال الأغلفة</div></div>
     </div>
-    <div class="badge-note"><i data-lucide="info"></i><div>كل مادة تحتاج <b>صورة مربعة واحدة فقط</b> — تظهر في شبكة الصف، وتُستخدم نفسها تلقائياً كخلفية لبطاقتي الفصل الأول والثاني مع اسم الفصل فوقها. اضغط <b>رفع</b> واختر الصورة وتظهر في المنصة فوراً، واضغط على صورة موجودة لاستبدالها.</div></div>
+    <div class="badge-note"><i data-lucide="info"></i><div><b>صورة المادة</b> تظهر في كل مكان يذكر المادة عبر المنصة (شبكة الصف، جدول الحصص، خلفية بطاقات الفصول). <b>غلاف الكتاب</b> اختياري لتخصيص كتاب بعينه ويغلب على صورة المادة. اضغط <b>رفع</b> لإضافة صورة، أو اضغط على صورة موجودة لاستبدالها، أو <b>حذف</b> للعودة للتصميم الافتراضي.</div></div>
     <div id="hdCvMsg" style="margin-bottom:10px;color:#34d399;font-weight:700"></div>
-    ${body}`;
+    <div class="card" style="margin-bottom:14px"><h3><i data-lucide="layout-grid"></i> بطاقات الصفحة الرئيسية <span style="opacity:.5;font-weight:400;font-size:13px">— صور كاروسيل القائمة الرئيسية الثلاث</span></h3>
+      <div style="overflow-x:auto"><table><thead><tr><th>البطاقة</th><th style="text-align:center">الصورة</th></tr></thead><tbody>${homeRows}</tbody></table></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h3><i data-lucide="graduation-cap"></i> صور الصفوف <span style="opacity:.5;font-weight:400;font-size:13px">— صورة معبّرة لكل صف (تظهر في شاشة اختيار الصف)</span></h3>
+      <div style="overflow-x:auto"><table><thead><tr><th>الصف</th><th style="text-align:center">صورة الصف</th></tr></thead><tbody>${gradeRows}</tbody></table></div>
+    </div>
+    <div class="card" style="margin-bottom:14px"><h3><i data-lucide="image"></i> صور المواد <span style="opacity:.5;font-weight:400;font-size:13px">— صورة واحدة لكل مادة</span></h3>
+      <div style="overflow-x:auto"><table><thead><tr><th>المادة</th><th style="text-align:center">صورة المادة</th></tr></thead><tbody>${subjRows}</tbody></table></div>
+    </div>
+    <h3 style="margin:6px 2px"><i data-lucide="book"></i> أغلفة الكتب <span style="opacity:.5;font-weight:400;font-size:13px">— غلاف مخصّص لكل كتاب (اختياري)</span></h3>
+    ${bookBody}`;
 }
 function hdCoverPick(name){HD_CV_PENDING=name;document.getElementById('hdCvHidden').click()}
 async function hdCoverUpload(inp){
@@ -413,4 +444,103 @@ async function hdCoverUpload(inp){
     await hdApi('/admin/covers/'+encodeURIComponent(name),{method:'POST',body:JSON.stringify({dataBase64:b64})});
     msg.textContent='✓ تم رفع '+name;inp.value='';hdLoad('covers');
   }catch(e){msg.textContent='خطأ: '+e.message}
+}
+async function hdCoverDelete(name){
+  if(!confirm('حذف هذه الصورة؟ ستعود المنصة للتصميم الافتراضي (الأيقونة واللون).'))return;
+  const msg=document.getElementById('hdCvMsg');
+  if(msg)msg.textContent='جارٍ حذف '+name+'…';
+  try{
+    await hdApi('/admin/covers/'+encodeURIComponent(name),{method:'DELETE'});
+    if(msg)msg.textContent='✓ حُذفت '+name;hdLoad('covers');
+  }catch(e){if(msg)msg.textContent='خطأ: '+e.message}
+}
+
+/* ── المدونة (مقالات حروف ودروس) ─────────────────────────── */
+let HD_BLOG=[]; let HD_BLOG_FORM=null;
+async function hdTabBlog(){
+  const r=await hdApi('/admin/articles').catch(()=>({articles:[]}));
+  if(HD_TAB!=='blog'||!hdEl())return;
+  HD_BLOG=(r.articles||[]).slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  if(HD_BLOG_FORM){hdBlogRenderForm();return;}
+  const pub=HD_BLOG.filter(a=>a.published).length;
+  const rows=HD_BLOG.map(a=>`<tr>
+    <td><b>${esc(a.title)}</b><div style="opacity:.5;font-size:11px">${esc(a.slug)}</div></td>
+    <td style="white-space:nowrap">${esc(a.date||'')}</td>
+    <td style="text-align:center">${a.published?'<span class="badge-note" style="display:inline-flex;background:rgba(34,197,94,.14);border-color:rgba(34,197,94,.3);color:#22c55e;padding:2px 8px;border-radius:6px;font-size:11px">منشور</span>':'<span style="opacity:.5;font-size:11px">مسودّة</span>'}</td>
+    <td style="text-align:center;white-space:nowrap">
+      <button class="btn btn-ghost btn-sm" onclick="hdBlogEdit('${encodeURIComponent(a.slug)}')"><i data-lucide="edit-2"></i> تحرير</button>
+      <button class="btn btn-ghost btn-sm" onclick="hdBlogDelete('${encodeURIComponent(a.slug)}')" style="color:#ef4444"><i data-lucide="trash-2"></i></button>
+    </td></tr>`).join('');
+  hdEl().innerHTML=`
+    <div class="stats">
+      <div class="stat"><span class="ic" style="color:#f5c542"><i data-lucide="newspaper"></i></span><div class="v">${HD_BLOG.length}</div><div class="l">إجمالي المقالات</div></div>
+      <div class="stat"><span class="ic" style="color:#22c55e"><i data-lucide="check-circle"></i></span><div class="v">${pub}</div><div class="l">منشورة</div></div>
+      <div class="stat"><span class="ic" style="color:#9b9ba3"><i data-lucide="file-text"></i></span><div class="v">${HD_BLOG.length-pub}</div><div class="l">مسودّات</div></div>
+    </div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button class="btn btn-gold btn-sm" onclick="hdBlogNew()"><i data-lucide="plus"></i> مقال جديد</button>
+      <button class="btn btn-ghost btn-sm" onclick="hdBlogImport()"><i data-lucide="download"></i> استيراد المقالات القديمة</button>
+    </div>
+    <div id="hdBlogMsg" style="margin-bottom:10px;color:#34d399;font-weight:700"></div>
+    <div class="card"><div style="overflow-x:auto"><table><thead><tr><th>العنوان</th><th>التاريخ</th><th style="text-align:center">الحالة</th><th style="text-align:center">إجراءات</th></tr></thead><tbody>${rows||'<tr><td colspan="4" style="text-align:center;opacity:.5;padding:20px">لا مقالات بعد — أنشئ مقالاً أو استورد القديمة</td></tr>'}</tbody></table></div></div>`;
+}
+function hdBlogRenderForm(){
+  const a=HD_BLOG_FORM;const isNew=!a.__existing;
+  hdEl().innerHTML=`
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+      <button class="btn btn-ghost btn-sm" onclick="hdBlogCancel()"><i data-lucide="arrow-right"></i> رجوع</button>
+      <h3 style="margin:0"><i data-lucide="${isNew?'plus':'edit-2'}"></i> ${isNew?'مقال جديد':'تحرير المقال'}</h3>
+    </div>
+    <div id="hdBlogMsg" style="margin-bottom:10px;color:#f87171;font-weight:700"></div>
+    <div class="card" style="display:grid;gap:12px">
+      <div><label style="font-weight:700;font-size:13px">العنوان</label><input id="bfTitle" value="${esc(a.title||'')}"></div>
+      <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px">
+        <div><label style="font-weight:700;font-size:13px">المعرّف (slug)</label><input id="bfSlug" value="${esc(a.slug||'')}" placeholder="يُولّد من العنوان إن تُرك فارغاً" dir="ltr"></div>
+        <div><label style="font-weight:700;font-size:13px">التاريخ</label><input id="bfDate" type="date" value="${esc(a.date||'')}" dir="ltr"></div>
+        <div><label style="font-weight:700;font-size:13px">دقائق القراءة</label><input id="bfRead" type="number" min="1" value="${esc(String(a.readTime||5))}" dir="ltr"></div>
+      </div>
+      <div><label style="font-weight:700;font-size:13px">الوصف المختصر</label><textarea id="bfDesc" rows="2">${esc(a.description||'')}</textarea></div>
+      <div><label style="font-weight:700;font-size:13px">رابط الصورة</label><input id="bfImage" value="${esc(a.image||'')}" dir="ltr" placeholder="/images/..."></div>
+      <div><label style="font-weight:700;font-size:13px">المحتوى (HTML)</label><textarea id="bfContent" rows="16" dir="rtl" style="font-family:monospace;font-size:13px;line-height:1.7">${esc(a.content||'')}</textarea></div>
+      <label style="display:flex;align-items:center;gap:8px;font-weight:700;font-size:13px"><input type="checkbox" id="bfPub" ${a.published!==false?'checked':''} style="width:auto"> منشور (يظهر على الموقع)</label>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-gold" onclick="hdBlogSave()"><i data-lucide="save"></i> حفظ</button>
+        <button class="btn btn-ghost" onclick="hdBlogCancel()">إلغاء</button>
+      </div>
+    </div>`;
+}
+function hdBlogNew(){HD_BLOG_FORM={slug:'',title:'',description:'',date:new Date().toISOString().slice(0,10),readTime:5,image:'',content:'',relatedSlugs:[],published:true};hdLoad('blog')}
+function hdBlogEdit(enc){const slug=decodeURIComponent(enc);const a=HD_BLOG.find(x=>x.slug===slug);if(!a)return;HD_BLOG_FORM=Object.assign({__existing:true},a);hdLoad('blog')}
+function hdBlogCancel(){HD_BLOG_FORM=null;hdLoad('blog')}
+async function hdBlogSave(){
+  const g=id=>document.getElementById(id);
+  const body={
+    slug:g('bfSlug').value.trim(), title:g('bfTitle').value.trim(),
+    description:g('bfDesc').value.trim(), date:g('bfDate').value.trim(),
+    readTime:Number(g('bfRead').value)||5, image:g('bfImage').value.trim(),
+    content:g('bfContent').value, published:g('bfPub').checked,
+    relatedSlugs:(HD_BLOG_FORM&&HD_BLOG_FORM.relatedSlugs)||[],
+  };
+  const msg=g('hdBlogMsg');
+  if(!body.title){if(msg)msg.textContent='العنوان مطلوب';return;}
+  if(msg){msg.style.color='#34d399';msg.textContent='جارٍ الحفظ…';}
+  try{await hdApi('/admin/articles',{method:'POST',body:JSON.stringify(body)});HD_BLOG_FORM=null;hdLoad('blog');}
+  catch(e){if(msg){msg.style.color='#f87171';msg.textContent='خطأ: '+e.message;}}
+}
+async function hdBlogDelete(enc){
+  const slug=decodeURIComponent(enc);
+  if(!confirm('حذف هذا المقال نهائياً؟'))return;
+  try{await hdApi('/admin/articles/'+encodeURIComponent(slug),{method:'DELETE'});hdLoad('blog');}catch(e){alert(e.message)}
+}
+async function hdBlogImport(){
+  const msg=document.getElementById('hdBlogMsg');
+  if(!confirm('استيراد المقالات القديمة من الموقع إلى نظام التحرير؟ (تُحدّث المتطابقة بالـ slug)'))return;
+  if(msg)msg.textContent='جارٍ الاستيراد…';
+  try{
+    const res=await fetch('./legacy-articles.json',{cache:'no-store'});
+    const articles=await res.json();
+    const out=await hdApi('/admin/articles/import',{method:'POST',body:JSON.stringify({articles})});
+    if(msg)msg.textContent=`✓ استُورد ${out.added} جديد و${out.updated} محدّث — الإجمالي ${out.total}`;
+    hdLoad('blog');
+  }catch(e){if(msg)msg.textContent='خطأ في الاستيراد: '+e.message}
 }
