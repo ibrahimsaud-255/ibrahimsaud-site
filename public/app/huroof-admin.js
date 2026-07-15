@@ -382,14 +382,12 @@ async function hdTabCovers(){
     let rows='';
     subjects.forEach(subj=>{
       rows+=`<tr><td><b>${hdSubj(subj)}</b></td>
-        ${slot('subject-'+subj+'-g'+g,'بطاقة المادة')}
-        ${grades[g][subj].sems['1']?slot(grades[g][subj].sems['1'],'الفصل الأول'):'<td style="text-align:center;opacity:.3">—</td>'}
-        ${grades[g][subj].sems['2']?slot(grades[g][subj].sems['2'],'الفصل الثاني'):'<td style="text-align:center;opacity:.3">—</td>'}
+        ${slot('subject-'+subj+'-g'+g,'صورة المادة')}
       </tr>`;
     });
     body+=`<details class="card" style="margin-bottom:10px" ${g==='1'?'open':''}>
       <summary style="cursor:pointer;font-weight:800;padding:4px">الصف ${HD_GRADES[g]||g} <span style="opacity:.5;font-weight:400">(${subjects.length} مواد)</span></summary>
-      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>المادة</th><th style="text-align:center">بطاقة المادة</th><th style="text-align:center">الفصل الأول</th><th style="text-align:center">الفصل الثاني</th></tr></thead><tbody>${rows}</tbody></table></div>
+      <div style="overflow-x:auto;margin-top:8px"><table><thead><tr><th>المادة</th><th style="text-align:center">صورة المادة (واحدة فقط)</th></tr></thead><tbody>${rows}</tbody></table></div>
     </details>`;
   });
   const pct=total?Math.round(done/total*100):0;
@@ -400,7 +398,7 @@ async function hdTabCovers(){
       <div class="stat"><span class="ic" style="color:#f59e0b"><i data-lucide="image-plus"></i></span><div class="v">${total-done}</div><div class="l">متبقية</div></div>
       <div class="stat"><span class="ic" style="color:#f5c542"><i data-lucide="percent"></i></span><div class="v">${pct}%</div><div class="l">اكتمال الأغلفة</div></div>
     </div>
-    <div class="badge-note"><i data-lucide="info"></i><div>كل مادة تحتاج <b>٣ صور مربعة</b>: بطاقة المادة (تظهر في شبكة الصف) + غلاف الفصل الأول + غلاف الفصل الثاني. اضغط <b>رفع</b> على أي خانة فارغة واختر الصورة — الاسم يتسمى تلقائياً وتظهر في المنصة فوراً. اضغط على صورة موجودة لاستبدالها.</div></div>
+    <div class="badge-note"><i data-lucide="info"></i><div>كل مادة تحتاج <b>صورة مربعة واحدة فقط</b> — تظهر في شبكة الصف، وتُستخدم نفسها تلقائياً كخلفية لبطاقتي الفصل الأول والثاني مع اسم الفصل فوقها. اضغط <b>رفع</b> واختر الصورة وتظهر في المنصة فوراً، واضغط على صورة موجودة لاستبدالها.</div></div>
     <div id="hdCvMsg" style="margin-bottom:10px;color:#34d399;font-weight:700"></div>
     ${body}`;
 }
