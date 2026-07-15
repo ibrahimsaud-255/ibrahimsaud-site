@@ -36,6 +36,7 @@ const HD_TABS=[
  ['waitlist','قائمة الانتظار','user-plus'],
  ['content','المحتوى','book-open'],
  ['tickets','خدمة العملاء','life-buoy'],
+ ['covers','أغلفة المواد','image'],
 ];
 function renderHuroof(){
   document.getElementById('main').innerHTML=`
@@ -62,6 +63,7 @@ async function hdLoad(tab){
     else if(tab==='waitlist')await hdTabWaitlist();
     else if(tab==='content')await hdTabContent();
     else if(tab==='tickets')await hdTabTickets();
+    else if(tab==='covers')await hdTabCovers();
     refreshIcons();
   }catch(e){
     if(hdEl())hdEl().innerHTML=`<div class="card"><h3><i data-lucide="shield-alert"></i> تعذّر الوصول</h3><div style="opacity:.85;line-height:1.8">${esc(e.message)}</div></div>`;
@@ -348,3 +350,40 @@ async function hdTicketOpen(id){
 async function hdTicketReply(id){const inp=document.getElementById('hdTkInput'+id);const m=inp.value.trim();if(!m)return;
   try{await hdApi('/admin/tickets/'+id+'/reply',{method:'POST',body:JSON.stringify({message:m})});inp.value='';alert('أُرسل الرد ✓');hdTicketOpen(id);hdTicketOpen(id)}catch(e){alert(e.message)}}
 async function hdTicketStatus(id,status){try{await hdApi('/admin/tickets/'+id+'/status',{method:'PATCH',body:JSON.stringify({status})});hdLoad('tickets')}catch(e){alert(e.message)}}
+/* ── أغلفة المواد والكتب ─────────────────────────────── */
+async function hdTabCovers(){
+  const d=await hdApi('/admin/covers');
+  if(HD_TAB!=='covers'||!hdEl())return;
+  const files=d.entries||[];
+  hdEl().innerHTML=`
+    <div class="badge-note"><i data-lucide="info"></i><div>
+      ارفع صورة مربعة (PNG) وتظهر فوراً في المنصة بدون أي إعادة نشر.<br>
+      <b>تسمية الملف:</b> غلاف مادة في شبكة الصف: <code>subject-المادة-الصف</code> مثل <code>subject-art-g1</code> ·
+      غلاف كتاب: <code>معرف-الكتاب</code> مثل <code>art-g1-s1</code>
+    </div></div>
+    <div class="card" style="margin-bottom:14px"><h3><i data-lucide="upload"></i> رفع غلاف</h3>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="hdCvName" placeholder="اسم الملف (مثل subject-math-g4)" style="flex:1;min-width:220px;direction:ltr">
+        <input type="file" id="hdCvFile" accept="image/png,image/jpeg" style="min-width:180px">
+        <button class="btn btn-gold btn-sm" onclick="hdCoverUpload()"><i data-lucide="upload"></i> رفع</button>
+      </div><div id="hdCvMsg" style="margin-top:8px;opacity:.85"></div></div>
+    <div class="card"><h3><i data-lucide="image"></i> الأغلفة المرفوعة (${files.length})</h3>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px;margin-top:10px">
+      ${files.map(f=>`<div style="text-align:center">
+        <img src="https://huroofduroos.com/covers/${f}?t=${Date.now()}" style="width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;border:1px solid rgba(255,255,255,.12)">
+        <div style="font-size:.75em;opacity:.7;margin-top:4px;direction:ltr">${esc(f)}</div>
+      </div>`).join('')||'<div style="opacity:.6">لا توجد أغلفة بعد.</div>'}
+      </div></div>`;
+}
+async function hdCoverUpload(){
+  const name=document.getElementById('hdCvName').value.trim();
+  const file=document.getElementById('hdCvFile').files[0];
+  const msg=document.getElementById('hdCvMsg');
+  if(!name||!file){msg.textContent='اكتب اسم الملف واختر الصورة.';return}
+  msg.textContent='جارٍ الرفع…';
+  try{
+    const b64=await new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(file)});
+    await hdApi('/admin/covers/'+encodeURIComponent(name),{method:'POST',body:JSON.stringify({dataBase64:b64})});
+    msg.textContent='✓ تم الرفع';hdLoad('covers');
+  }catch(e){msg.textContent='خطأ: '+e.message}
+}
