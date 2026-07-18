@@ -45,6 +45,7 @@ function planData(){
     if(it.cost==null) it.cost=0;
     if(it.spent==null) it.spent=0;
     if(it.deferred==null) it.deferred=false;
+    if(!Array.isArray(it.subs)) it.subs=[];   // مهام فرعية اختيارية
   }));
   if(S.projBudget==null){ S.projBudget=0; }   // الميزانية العامة اليدوية
   return S.projPlanV2;
@@ -137,16 +138,35 @@ function renderPlan(){
           const cost=Number(it.cost)||0, sp=Number(it.spent)||0;
           const ipct=cost?Math.min(Math.round(sp/cost*100),100):0;
           const iover=sp>cost && cost>0;
+          const subs=it.subs||[]; const subDone=subs.filter(s=>s.done).length;
+          const subPct=subs.length?Math.round(subDone/subs.length*100):0;
           return `
           <div style="padding:8px 4px;border-bottom:1px solid rgba(255,255,255,.05);${it.deferred?'opacity:.55':''}">
             <div style="display:flex;align-items:center;gap:10px">
-              <button onclick="planToggle(${pi},${ii})" class="btn ${it.done?'btn-gold':'btn-ghost'} btn-sm" style="min-width:34px;padding:6px"><i data-lucide="${it.done?'check':'circle'}"></i></button>
-              <span style="flex:1;${it.done?'text-decoration:line-through;opacity:.5':''}">${esc(it.t)}${it.deferred?' <span style="font-size:.72em;background:rgba(148,163,184,.2);color:#94a3b8;padding:1px 7px;border-radius:99px;margin-inline-start:4px">لاحقاً</span>':''}</span>
+              <button onclick="planToggle(${pi},${ii})" class="btn ${it.done?'btn-gold':'btn-ghost'} btn-sm" style="min-width:34px;padding:6px" title="${subs.length?'إتمام/إلغاء كل المهام الفرعية':'إتمام المهمة'}"><i data-lucide="${it.done?'check':'circle'}"></i></button>
+              <span style="flex:1;${it.done?'text-decoration:line-through;opacity:.5':''}">${esc(it.t)}${subs.length?` <span style="font-size:.72em;opacity:.6">(${subDone}/${subs.length})</span>`:''}${it.deferred?' <span style="font-size:.72em;background:rgba(148,163,184,.2);color:#94a3b8;padding:1px 7px;border-radius:99px;margin-inline-start:4px">لاحقاً</span>':''}</span>
+              <button class="btn btn-ghost btn-sm" title="إضافة مهمة فرعية" onclick="planAddSub(${pi},${ii})" style="opacity:.6"><i data-lucide="list-plus"></i></button>
               <button class="btn btn-ghost btn-sm" title="${it.deferred?'إرجاع للخطة الحالية':'تأجيل لاحقاً'}" onclick="planDefer(${pi},${ii})" style="opacity:.6"><i data-lucide="${it.deferred?'rotate-ccw':'clock'}"></i></button>
               <button class="btn btn-ghost btn-sm" title="التكلفة والمصروف" onclick="planEditCost(${pi},${ii})" style="opacity:.6"><i data-lucide="banknote"></i></button>
               <button class="btn btn-ghost btn-sm" onclick="planEdit(${pi},${ii})" style="opacity:.5"><i data-lucide="pencil"></i></button>
               <button class="btn btn-ghost btn-sm" onclick="planDel(${pi},${ii})" style="opacity:.5"><i data-lucide="x"></i></button>
             </div>
+            ${subs.length?`
+            <div style="margin:8px 0 0 44px;padding-inline-start:44px">
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                <div style="flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden">
+                  <div style="height:100%;width:${subPct}%;background:${subPct===100?'#22c55e':'#3b82f6'};transition:width .4s"></div>
+                </div>
+                <span style="font-size:.75em;white-space:nowrap;opacity:.7;color:${subPct===100?'#22c55e':'inherit'}">${subDone}/${subs.length} خطوة</span>
+              </div>
+              ${subs.map((s,si)=>`
+                <div style="display:flex;align-items:center;gap:8px;padding:3px 0">
+                  <button onclick="planSubToggle(${pi},${ii},${si})" class="btn ${s.done?'btn-gold':'btn-ghost'} btn-sm" style="min-width:26px;padding:3px"><i data-lucide="${s.done?'check':'circle'}" style="width:13px;height:13px"></i></button>
+                  <span style="flex:1;font-size:.9em;${s.done?'text-decoration:line-through;opacity:.5':''}">${esc(s.t)}</span>
+                  <button onclick="planSubDel(${pi},${ii},${si})" class="btn btn-ghost btn-sm" style="opacity:.4;padding:3px"><i data-lucide="x" style="width:13px;height:13px"></i></button>
+                </div>`).join('')}
+              <button class="btn btn-ghost btn-sm" onclick="planAddSub(${pi},${ii})" style="opacity:.5;font-size:.78em;padding:2px 8px;margin-top:2px"><i data-lucide="plus"></i> خطوة</button>
+            </div>`:''}
             ${cost>0?`
             <div style="display:flex;align-items:center;gap:10px;margin:6px 0 0 44px;padding-inline-start:44px">
               <div style="flex:1;height:5px;border-radius:99px;background:rgba(255,255,255,.06);overflow:hidden">
@@ -169,7 +189,30 @@ function planSetBudget(){
 }
 function planTogglePhase(pi){const p=planData()[pi];p.open=!p.open;save();renderPlan()}
 function planRenamePhase(pi){const p=planData()[pi];const t=prompt('اسم المرحلة:',p.phase);if(t===null)return;const v=t.trim();if(!v)return;p.phase=v;save();renderPlan()}
-function planToggle(pi,ii){const d=planData();d[pi].items[ii].done=!d[pi].items[ii].done;save();renderPlan()}
+// يُزامن حالة المهمة الأساسية مع مهامها الفرعية: تتم تلقائياً عند إتمام كل الخطوات
+function planSyncDone(it){ if(it.subs&&it.subs.length){ it.done = it.subs.every(s=>s.done); } }
+function planToggle(pi,ii){
+  const it=planData()[pi].items[ii];
+  if(it.subs&&it.subs.length){ const nv=!it.done; it.subs.forEach(s=>s.done=nv); it.done=nv; } // إتمام/إلغاء كل الخطوات دفعة
+  else it.done=!it.done;
+  save();renderPlan();
+}
+function planAddSub(pi,ii){
+  const t=prompt('المهمة الفرعية (خطوة لإنجاز المهمة):');if(!t)return;
+  const it=planData()[pi].items[ii];
+  it.subs.push({id:'s'+Date.now(),t:t.trim(),done:false});
+  planSyncDone(it);save();renderPlan();
+}
+function planSubToggle(pi,ii,si){
+  const it=planData()[pi].items[ii];
+  it.subs[si].done=!it.subs[si].done;
+  planSyncDone(it);save();renderPlan();
+}
+function planSubDel(pi,ii,si){
+  const it=planData()[pi].items[ii];
+  it.subs.splice(si,1);
+  planSyncDone(it);save();renderPlan();
+}
 function planDefer(pi,ii){const it=planData()[pi].items[ii];it.deferred=!it.deferred;save();renderPlan()}
 function planEditCost(pi,ii){
   const it=planData()[pi].items[ii];
