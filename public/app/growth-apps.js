@@ -46,6 +46,7 @@ function planData(){
     if(it.spent==null) it.spent=0;
     if(it.deferred==null) it.deferred=false;
   }));
+  if(S.projBudget==null){ S.projBudget=0; }   // الميزانية العامة اليدوية
   return S.projPlanV2;
 }
 function planMoney(n){ n=Number(n)||0; return n.toLocaleString('en-US')+' ر.س'; }
@@ -53,14 +54,16 @@ function renderPlan(){
   const data=planData();
   const all=data.flatMap(p=>p.items); const done=all.filter(i=>i.done).length;
   const pct=all.length?Math.round(done/all.length*100):0;
-  // حسابات الميزانية — النشط = غير المؤجّل، والمؤجّل يُعرض منفصلاً
+  // الميزانية العامة = رقم يدوي يحدده المستخدم؛ نحسب مقابله المصروف والمرصود
   const active=all.filter(i=>!i.deferred);
-  const budget=active.reduce((s,i)=>s+(Number(i.cost)||0),0);
-  const spent=active.reduce((s,i)=>s+(Number(i.spent)||0),0);
+  const budget=Number(S.projBudget)||0;                                   // الميزانية العامة اليدوية
+  const allocated=active.reduce((s,i)=>s+(Number(i.cost)||0),0);          // المرصود (مجموع أسعار المهام)
+  const spent=active.reduce((s,i)=>s+(Number(i.spent)||0),0);             // المصروف الفعلي
   const remain=budget-spent;
   const deferredCost=all.filter(i=>i.deferred).reduce((s,i)=>s+(Number(i.cost)||0),0);
   const bpct=budget?Math.min(Math.round(spent/budget*100),100):0;
-  const over=spent>budget;
+  const over=spent>budget && budget>0;
+  const allocOver=allocated>budget && budget>0;
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1><i data-lucide="target"></i> خطة المشروع</h1>
       <button class="btn btn-ghost btn-sm" onclick="planAddPhase()"><i data-lucide="plus"></i> مرحلة جديدة</button></div>
@@ -76,15 +79,15 @@ function renderPlan(){
     </div>
 
     <div class="card" style="margin-bottom:16px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <b style="font-size:1.1em"><i data-lucide="wallet"></i> ميزانية الإطلاق</b>
-        <span style="font-weight:900;font-size:1.15em;color:${over?'#ef4444':'#22c55e'}">${over?'تجاوز':'متبقٍّ'} ${planMoney(Math.abs(remain))}</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px;flex-wrap:wrap">
+        <b style="font-size:1.1em"><i data-lucide="wallet"></i> الميزانية العامة</b>
+        <button class="btn btn-ghost btn-sm" onclick="planSetBudget()" title="تعديل الميزانية العامة"><i data-lucide="pencil"></i> تعديل</button>
       </div>
+      <button onclick="planSetBudget()" style="width:100%;text-align:center;background:rgba(245,197,66,.08);border:1px dashed rgba(245,197,66,.35);border-radius:14px;padding:14px;cursor:pointer;margin-bottom:14px;color:inherit">
+        <div style="opacity:.6;font-size:.8em;margin-bottom:4px">إجمالي الميزانية المرصودة للإطلاق ${budget?'':'— اضغط للتحديد'}</div>
+        <div style="font-weight:900;font-size:1.7em" class="gradient-text-gold">${planMoney(budget)}</div>
+      </button>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px">
-        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:10px;text-align:center">
-          <div style="opacity:.55;font-size:.78em;margin-bottom:4px">المتوقع</div>
-          <div style="font-weight:800;font-size:1.05em">${planMoney(budget)}</div>
-        </div>
         <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:10px;text-align:center">
           <div style="opacity:.55;font-size:.78em;margin-bottom:4px">المصروف</div>
           <div style="font-weight:800;font-size:1.05em;color:#f5c542">${planMoney(spent)}</div>
@@ -93,34 +96,43 @@ function renderPlan(){
           <div style="opacity:.55;font-size:.78em;margin-bottom:4px">${over?'التجاوز':'المتبقي'}</div>
           <div style="font-weight:800;font-size:1.05em;color:${over?'#ef4444':'#22c55e'}">${planMoney(Math.abs(remain))}</div>
         </div>
+        <div style="background:rgba(255,255,255,.04);border-radius:12px;padding:10px;text-align:center">
+          <div style="opacity:.55;font-size:.78em;margin-bottom:4px">المرصود للمهام</div>
+          <div style="font-weight:800;font-size:1.05em;color:${allocOver?'#ef4444':'inherit'}">${planMoney(allocated)}</div>
+        </div>
       </div>
       <div style="height:12px;border-radius:99px;background:rgba(255,255,255,.08);overflow:hidden">
         <div style="height:100%;width:${bpct}%;border-radius:99px;background:${over?'#ef4444':'linear-gradient(90deg,#f5c542,#22c55e)'};transition:width .6s ease"></div>
       </div>
-      <div style="display:flex;justify-content:space-between;opacity:.6;font-size:.82em;margin-top:8px">
-        <span>صُرف ${bpct}% من الميزانية المتوقعة</span>
+      <div style="display:flex;justify-content:space-between;opacity:.6;font-size:.82em;margin-top:8px;gap:8px;flex-wrap:wrap">
+        <span>${budget?`صُرف ${bpct}% من الميزانية العامة`:'حدّد الميزانية العامة لتفعيل المؤشر'}</span>
         ${deferredCost?`<span><i data-lucide="clock"></i> مؤجّل: ${planMoney(deferredCost)}</span>`:''}
       </div>
+      ${allocOver?`<div style="margin-top:8px;font-size:.8em;color:#ef4444"><i data-lucide="alert-triangle"></i> المرصود للمهام يتجاوز الميزانية بـ ${planMoney(allocated-budget)}</div>`:''}
     </div>
 
     ${data.map((p,pi)=>{
+      const open=!!p.open;
       const pd=p.items.filter(i=>i.done).length;
       const ppct=p.items.length?Math.round(pd/p.items.length*100):0;
       const pBudget=p.items.filter(i=>!i.deferred).reduce((s,i)=>s+(Number(i.cost)||0),0);
       const pSpent=p.items.filter(i=>!i.deferred).reduce((s,i)=>s+(Number(i.spent)||0),0);
       return `<div class="card" style="margin-bottom:12px">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <h3 style="margin:0"><i data-lucide="${ppct===100?'check-circle':'circle-dashed'}"></i> ${esc(p.phase)} <span style="opacity:.5;font-size:.8em">(${pd}/${p.items.length})</span></h3>
+          <div onclick="planTogglePhase(${pi})" style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1;min-width:0">
+            <i data-lucide="chevron-${open?'down':'left'}" style="opacity:.7;flex:none"></i>
+            <h3 style="margin:0"><i data-lucide="${ppct===100?'check-circle':'circle-dashed'}"></i> ${esc(p.phase)} <span style="opacity:.5;font-size:.8em">(${pd}/${p.items.length})</span></h3>
+          </div>
           <div style="display:flex;gap:6px;align-items:center">
-            ${pBudget?`<span style="font-size:.82em;opacity:.7">${planMoney(pSpent)} / ${planMoney(pBudget)}</span>`:''}
-            <button class="btn btn-ghost btn-sm" onclick="planAddItem(${pi})"><i data-lucide="plus"></i></button>
-            <button class="btn btn-ghost btn-sm" onclick="planDelPhase(${pi})"><i data-lucide="trash-2"></i></button>
+            ${pBudget?`<span style="font-size:.82em;opacity:.7;white-space:nowrap">${planMoney(pSpent)} / ${planMoney(pBudget)}</span>`:''}
+            <button class="btn btn-ghost btn-sm" onclick="planAddItem(${pi})" title="مهمة جديدة"><i data-lucide="plus"></i></button>
+            <button class="btn btn-ghost btn-sm" onclick="planDelPhase(${pi})" title="حذف المرحلة"><i data-lucide="trash-2"></i></button>
           </div>
         </div>
-        <div style="height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin:8px 0 12px">
+        <div style="height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin:8px 0 ${open?'12px':'0'}">
           <div style="height:100%;width:${ppct}%;background:${ppct===100?'#22c55e':'#f5c542'};transition:width .4s"></div>
         </div>
-        ${p.items.map((it,ii)=>{
+        ${open?p.items.map((it,ii)=>{
           const cost=Number(it.cost)||0, sp=Number(it.spent)||0;
           const ipct=cost?Math.min(Math.round(sp/cost*100),100):0;
           const iover=sp>cost && cost>0;
@@ -144,15 +156,22 @@ function renderPlan(){
             <div style="margin:4px 0 0 44px;padding-inline-start:44px">
               <button class="btn btn-ghost btn-sm" onclick="planEditCost(${pi},${ii})" style="opacity:.45;font-size:.78em;padding:2px 8px"><i data-lucide="plus"></i> إضافة تكلفة</button>
             </div>`}
-          </div>`}).join('')}
+          </div>`}).join(''):''}
       </div>`}).join('')}`;
   refreshIcons();
 }
+function planSetBudget(){
+  const v=prompt('الميزانية العامة للإطلاق (بالريال):',Number(S.projBudget)||0);
+  if(v===null)return;
+  S.projBudget=Math.max(0,Number(v)||0);
+  save();renderPlan();
+}
+function planTogglePhase(pi){const p=planData()[pi];p.open=!p.open;save();renderPlan()}
 function planToggle(pi,ii){const d=planData();d[pi].items[ii].done=!d[pi].items[ii].done;save();renderPlan()}
 function planDefer(pi,ii){const it=planData()[pi].items[ii];it.deferred=!it.deferred;save();renderPlan()}
 function planEditCost(pi,ii){
   const it=planData()[pi].items[ii];
-  const c=prompt('التكلفة المتوقعة للمهمة (بالريال):',it.cost||0);
+  const c=prompt('سعر/تكلفة المهمة المتوقعة (بالريال):',it.cost||0);
   if(c===null)return;
   const s=prompt('المصروف الفعلي حتى الآن (بالريال):',it.spent||0);
   if(s===null)return;
@@ -160,7 +179,7 @@ function planEditCost(pi,ii){
   it.spent=Math.max(0,Number(s)||0);
   save();renderPlan();
 }
-function planAddItem(pi){const t=prompt('المهمة الجديدة:');if(!t)return;planData()[pi].items.push({id:'t'+Date.now(),t,done:false,cost:0,spent:0,deferred:false});save();renderPlan()}
+function planAddItem(pi){const t=prompt('المهمة الجديدة:');if(!t)return;const p=planData()[pi];p.items.push({id:'t'+Date.now(),t,done:false,cost:0,spent:0,deferred:false});p.open=true;save();renderPlan()}
 function planEdit(pi,ii){const it=planData()[pi].items[ii];const t=prompt('تعديل المهمة:',it.t);if(!t)return;it.t=t;save();renderPlan()}
 function planDel(pi,ii){if(!confirm('حذف المهمة؟'))return;planData()[pi].items.splice(ii,1);save();renderPlan()}
 function planAddPhase(){const t=prompt('اسم المرحلة الجديدة:');if(!t)return;planData().push({phase:t,items:[]});save();renderPlan()}
