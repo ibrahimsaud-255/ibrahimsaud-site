@@ -125,6 +125,7 @@ function renderPlan(){
           </div>
           <div style="display:flex;gap:6px;align-items:center">
             ${pBudget?`<span style="font-size:.82em;opacity:.7;white-space:nowrap">${planMoney(pSpent)} / ${planMoney(pBudget)}</span>`:''}
+            <button class="btn btn-ghost btn-sm" onclick="planRenamePhase(${pi})" title="تعديل اسم المرحلة"><i data-lucide="pencil"></i></button>
             <button class="btn btn-ghost btn-sm" onclick="planAddItem(${pi})" title="مهمة جديدة"><i data-lucide="plus"></i></button>
             <button class="btn btn-ghost btn-sm" onclick="planDelPhase(${pi})" title="حذف المرحلة"><i data-lucide="trash-2"></i></button>
           </div>
@@ -167,6 +168,7 @@ function planSetBudget(){
   save();renderPlan();
 }
 function planTogglePhase(pi){const p=planData()[pi];p.open=!p.open;save();renderPlan()}
+function planRenamePhase(pi){const p=planData()[pi];const t=prompt('اسم المرحلة:',p.phase);if(t===null)return;const v=t.trim();if(!v)return;p.phase=v;save();renderPlan()}
 function planToggle(pi,ii){const d=planData();d[pi].items[ii].done=!d[pi].items[ii].done;save();renderPlan()}
 function planDefer(pi,ii){const it=planData()[pi].items[ii];it.deferred=!it.deferred;save();renderPlan()}
 function planEditCost(pi,ii){
