@@ -258,7 +258,7 @@ const btn = document.getElementById('submitBtn');
 btn.disabled = true; btn.textContent='جاري الإرسال…';
 const data = Object.fromEntries(new FormData(form).entries());
 ['no_social'].forEach(k=>{ if(form.elements[k]) data[k]=form.elements[k].checked; });
-data.submitted_at = new Date().toISOString();
+// ملاحظة: created_at يُملأ تلقائياً في قاعدة البيانات — لا نرسل submitted_at (عمود غير موجود يُفشل الإدخال)
 try{
 // 1) حفظ بيانات الضيف في قاعدة البيانات
 const res = await fetch(SUPABASE_URL+'/rest/v1/'+SUPABASE_TABLE, {

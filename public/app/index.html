@@ -16,7 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="./huroof-admin.js?v=1"></script>
 <script src="./techco-admin.js?v=1"></script>
-<script src="./growth-apps.js?v=1"></script>
+<script src="./growth-apps.js?v=2"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
@@ -571,7 +571,8 @@ const def={
   habits:{
     list:[
       {id:'h_article',name:'كتابة مقال',desc:'مقال جديد للمدونة/الحساب',icon:'pen-line',color:'#3b82f6',reminder:'09:00',builtin:true},
-      {id:'h_reel',name:'فكرة مقطع (معادلة الانتشار)',desc:'اكتب فكرة مقطع بنموذج معادلة الانتشار',icon:'clapperboard',color:'#8b5cf6',reminder:'11:00',builtin:true,link:'./studio.html'}
+      {id:'h_reel',name:'فكرة مقطع (معادلة الانتشار)',desc:'اكتب فكرة مقطع بنموذج معادلة الانتشار',icon:'clapperboard',color:'#8b5cf6',reminder:'11:00',builtin:true,link:'./studio.html'},
+      {id:'h_idea',name:'كتابة فكرة',desc:'سجّل فكرة واحدة في بنك الأفكار — تُحتسب تلقائياً',icon:'lightbulb',color:'#f59e0b',reminder:'',builtin:true,linkedApp:'ideas'}
     ],
     log:{},      // {'YYYY-MM-DD':{habitId:true}}
     prayer:{},   // {'YYYY-MM-DD':{Fajr:'mosque'|'ontime'|'late', ...}}
@@ -603,6 +604,8 @@ function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.p
   if(!s.habits||typeof s.habits!=='object')s.habits=JSON.parse(JSON.stringify(def.habits));
   if(!Array.isArray(s.habits.list))s.habits.list=JSON.parse(JSON.stringify(def.habits.list));
   if(!s.habits.log)s.habits.log={};if(!s.habits.prayer)s.habits.prayer={};if(!s.habits.reminded)s.habits.reminded={};
+  // بذر العادات المدمجة الجديدة للمستخدمين الحاليين (مرة واحدة — يحترم الحذف اليدوي لاحقاً)
+  if(!s.habits.seededIdea){if(!s.habits.list.some(h=>h.id==='h_idea'))s.habits.list.push({id:'h_idea',name:'كتابة فكرة',desc:'سجّل فكرة واحدة في بنك الأفكار — تُحتسب تلقائياً',icon:'lightbulb',color:'#f59e0b',reminder:'',builtin:true,linkedApp:'ideas'});s.habits.seededIdea=true}
   return s;}
 function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])){a[k]=deepMerge(a[k]||{},b[k])}else a[k]=b[k]}return a}
 function save(){localStorage.setItem(KEY,JSON.stringify(S));scheduleCloudSave()}
@@ -715,9 +718,7 @@ function setFreelancerAppIcon(emoji,name){try{const c=document.createElement('ca
 
 /* ===== APPS / ROUTER ===== */
 const APPS=[
-  {id:'workspace',name:'مساحة العمل',icon:'layout-dashboard'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
-  {id:'ai',name:'المساعد الذكي',icon:'bot'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
   {id:'products',name:'المنتجات',icon:'package'},
@@ -736,12 +737,12 @@ const APPS=[
   {id:'autopub',name:'النشر التلقائي',icon:'send'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
-  {id:'techco',name:'الأنظمة المباعة',icon:'building-2'},
+  {id:'lab',name:'تحت التجربة',icon:'flask-conical'},
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'mersad',name:'مرصاد',icon:'camera',href:'../mersad/'},{id:'team',name:'الفريق',icon:'users'}];
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
 const LAUNCH=[
@@ -784,11 +785,18 @@ function lpTile(a){
   return a.href?`<a class="lp-tile" href="${a.href}"${a.href.startsWith('http')?' target="_blank" rel="noopener"':''}>${inner}</a>`
               :`<button class="lp-tile" type="button" onclick="go('${a.id}')">${inner}</button>`;
 }
+/* ===== «تحت التجربة» — حاوية التطبيقات قيد التجربة/غير الشخصية ===== */
+const LAB_DEFAULT=['workspace','ai','techco','mersad'];
+function labApps(){if(!Array.isArray(S.labApps))S.labApps=LAB_DEFAULT.slice();return S.labApps}
+function inLab(id){return labApps().includes(id)}
+const LAB_TILE={id:'lab',name:'تحت التجربة',icon:'flask-conical',c:'#a855f7,#6366f1'};
+function looseLaunch(){return LAUNCH.filter(a=>!inLab(a.id))}
+
 function launchpadHTML(){
   return `<div class="lp-wrap">
     <div class="lp-head"><h2><i data-lucide="layout-grid"></i> التطبيقات</h2>
       <button class="btn btn-ghost btn-sm" onclick="wallpaperModal()"><i data-lucide="image"></i> تخصيص الخلفية</button></div>
-    <div class="lp-grid">${LAUNCH.map(lpTile).join('')}</div>
+    <div class="lp-grid">${looseLaunch().map(lpTile).join('')}${lpTile(LAB_TILE)}</div>
   </div>`;
 }
 /* ===== سطح المكتب: صفحة التطبيقات المستقلة (هوية Liquid Glass) ===== */
@@ -799,10 +807,38 @@ function renderDesktop(){
         <div><h1>المكتب</h1><p>كل تطبيقات النظام في مكان واحد — اختر تطبيقاً للدخول إليه.</p></div>
         <button class="glass-btn" onclick="wallpaperModal()"><i data-lucide="image"></i> تخصيص الخلفية</button>
       </div>
-      <div class="lp-grid desk-grid">${LAUNCH.map(lpTile).join('')}</div>
+      <div class="lp-grid desk-grid">${looseLaunch().map(lpTile).join('')}${lpTile(LAB_TILE)}</div>
     </div>`;
   applyWallpaper();refreshIcons();
 }
+/* ===== صفحة «تحت التجربة» — تُفتح بلا تسجيل دخول جديد ===== */
+function renderLab(){
+  const ids=labApps();
+  const meta=id=>LAUNCH.find(a=>a.id===id)||{id,name:id,icon:'box',c:'#64748b,#475569'};
+  const tiles=ids.map(id=>lpTile(meta(id))).join('')||'<p style="color:var(--muted)">لا توجد تطبيقات هنا بعد — أضِف من الإدارة بالأسفل.</p>';
+  // إدارة العضوية: كل تطبيق يمكن نقله بين «تحت التجربة» و«المكتب»
+  const manageable=LAUNCH.filter(a=>a.id!=='lab');
+  const rows=manageable.map(a=>{const on=inLab(a.id);return `
+    <button class="btn ${on?'btn-gold':'btn-ghost'} btn-sm" style="justify-content:flex-start" onclick="labToggle('${a.id}')">
+      <i data-lucide="${on?'check-circle':'circle'}"></i> ${esc(a.name)}
+    </button>`}).join('');
+  document.getElementById('main').innerHTML=`
+    <div class="desk">
+      <div class="desk-head">
+        <div><h1><i data-lucide="flask-conical" style="width:26px;height:26px;vertical-align:-4px"></i> تحت التجربة</h1>
+          <p>نماذج وتطبيقات ما زالت قيد التجربة، أو لأعمال غير شخصية — مجمّعة هنا. الوصول متاح مباشرةً دون تسجيل دخول جديد.</p></div>
+        <button class="glass-btn" onclick="go('desktop')"><i data-lucide="layout-grid"></i> المكتب</button>
+      </div>
+      <div class="lp-grid desk-grid" style="margin-bottom:26px">${tiles}</div>
+      <div class="card" style="max-width:760px;margin-inline:auto">
+        <h3><i data-lucide="sliders-horizontal"></i> إدارة التطبيقات — فعّل ما تريد إظهاره داخل «تحت التجربة»</h3>
+        <div style="opacity:.7;font-size:13px;margin-bottom:10px">الذهبي = داخل «تحت التجربة». الرمادي = يظهر كتطبيق مستقل في المكتب.</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:8px">${rows}</div>
+      </div>
+    </div>`;
+  applyWallpaper();refreshIcons();
+}
+function labToggle(id){const l=labApps();const i=l.indexOf(id);if(i>-1)l.splice(i,1);else l.push(id);save();renderLab()}
 
 /* ===== WALLPAPER (خلفية الشاشة) ===== */
 const WALLS=[
@@ -929,7 +965,7 @@ function wallpaperModal(){
     ()=>closeModal());
   wpRenderBody();
 }
-function navName(id){const n=NAV.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
+function navName(id){const n=NAV.find(x=>x.id===id)||LAUNCH.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
 function renderNav(){const items=WS_DEMO?NAV.filter(n=>n.id==='workspace'):NAV;document.getElementById('nav').innerHTML=items.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
 function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
 /* طي/فتح القائمة على سطح المكتب */
@@ -1239,6 +1275,8 @@ function dayKey(d){const p=n=>String(n).padStart(2,'0');return d.getFullYear()+'
 function hb(){if(!S.habits)S.habits={list:[],log:{},prayer:{},reminded:{}};const h=S.habits;if(!h.log)h.log={};if(!h.prayer)h.prayer={};if(!h.reminded)h.reminded={};if(!Array.isArray(h.list))h.list=[];return h}
 function habitDone(id,day){day=day||localDay();const l=hb().log[day];return !!(l&&l[id])}
 function toggleHabit(id){const d=localDay();const l=hb().log;if(!l[d])l[d]={};if(l[d][id])delete l[d][id];else l[d][id]=true;save();if(CUR==='habits')renderHabits();else if(CUR==='home')renderHome()}
+// إنجاز تلقائي: تُستدعى من التطبيقات المرتبطة (مثل بنك الأفكار) لاحتساب العادة المرتبطة يوم اليوم
+function autoHabitByApp(app){const H=hb();const d=localDay();if(!H.log[d])H.log[d]={};let ch=false,name='';H.list.forEach(h=>{if(h.linkedApp===app&&!H.log[d][h.id]){H.log[d][h.id]=true;ch=true;name=h.name}});if(ch){save();if(CUR==='habits')renderHabits();else if(CUR==='home')renderHome();try{notifyMe('عادة أُنجزت ✓',name+' — احتُسبت تلقائياً')}catch(e){}}return ch}
 function habitStreak(id){const l=hb().log;const d=new Date();if(!habitDone(id,dayKey(d)))d.setDate(d.getDate()-1);let s=0;while(l[dayKey(d)]&&l[dayKey(d)][id]){s++;d.setDate(d.getDate()-1)}return s}
 function prayerGet(p,day){day=day||localDay();const r=hb().prayer[day];return (r&&r[p])||''}
 function setPrayer(p,lvl){const d=localDay();const pr=hb().prayer;if(!pr[d])pr[d]={};if(pr[d][p]===lvl)delete pr[d][p];else pr[d][p]=lvl;save();if(CUR==='habits')renderHabits();else if(CUR==='home')renderHome()}
@@ -1271,7 +1309,7 @@ function renderHabits(){
             <span class="inl" style="color:${h.color}">${iconHTML(h.icon,'circle',19)}</span>
             <div style="flex:1;min-width:0"><div style="font-weight:700">${esc(h.name)}</div><div style="font-size:12px;color:var(--muted)">${h.desc?esc(h.desc):''}${h.reminder?`${h.desc?' · ':''}<i class='inl' data-lucide='bell'></i> ${h.reminder}`:''}</div></div>
             ${st>0?`<span style="display:inline-flex;align-items:center;gap:3px;color:#f59e0b;font-weight:800;font-size:14px" title="أيام متتالية"><i data-lucide="flame" style="width:16px;height:16px"></i>${st}</span>`:''}
-            ${h.link?`<a class="btn btn-ghost btn-sm" href="${h.link}" title="افتح الأداة"><i data-lucide="external-link"></i></a>`:''}
+            ${h.linkedApp?`<button class="btn btn-ghost btn-sm" onclick="go('${h.linkedApp}')" title="افتح الأداة"><i data-lucide="external-link"></i></button>`:h.link?`<a class="btn btn-ghost btn-sm" href="${h.link}" title="افتح الأداة"><i data-lucide="external-link"></i></a>`:''}
             <button class="btn btn-ghost btn-sm" onclick="habitModal('${h.id}')" title="تعديل"><i data-lucide="settings"></i></button>
           </div>`}).join(''):'<p style="color:var(--muted)">لا عادات بعد. أضف أول عادة تلتزم بها.</p>'}
         <button class="btn btn-ghost btn-sm" onclick="habitModal()" style="margin-top:4px"><i data-lucide="plus"></i> أضف عادة</button>
