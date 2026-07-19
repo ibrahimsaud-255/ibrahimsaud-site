@@ -63,6 +63,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نلتقط ونُخرج",
     description:
       "تصوير احترافي في موقعك أو في الاستوديو — إضاءة سينمائية، لقطات B-Roll، وتصوير درون جوي يرفع مستوى أي عمل.",
+    image: "/services/filming-v3.jpg",
     accent: "#f87171",
   },
   {
@@ -71,7 +72,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نقصّ ونحرّر",
     description:
       "قص وإيقاع وموسيقى تناسب الفكرة والسياق — نسخة رئيسية ونسخ قصيرة جاهزة للنشر على كل المنصات.",
-    image: "/services/editing-v2.jpg",
+    image: "/services/editing-v3.jpg",
     accent: "#38bdf8",
   },
   {
@@ -80,7 +81,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نسجّل وننشر",
     description:
       "استوديو مجهّز بالكامل لتسجيل حلقاتك: تصوير متعدد الكاميرات، هندسة صوت، مونتاج كامل، ومقاطع قصيرة للمنصات.",
-    image: "/services/podcast-v2.jpg",
+    image: "/services/podcast-v3.jpg",
     accent: "#a78bfa",
   },
   {
@@ -97,7 +98,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "أنظمة تخدم عملك",
     description:
       "أوظّف التقنية والذكاء الاصطناعي في تطوير أعمالك: أنظمة إدارة، أتمتة، ومواقع تعكس هويتك وتشتغل لك.",
-    image: "/services/tech-v2.jpg",
+    image: "/services/tech-v3.jpg",
     accent: "#22d3ee",
   },
 ];

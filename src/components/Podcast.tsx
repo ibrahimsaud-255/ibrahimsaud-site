@@ -5,9 +5,9 @@ export default function Podcast() {
   return (
     <section
       id="podcast"
-      className="bg-glow border-t border-line/60 px-5 py-24"
+      className="bg-glow overflow-hidden border-t border-line/60 py-24"
     >
-      <div className="mx-auto max-w-6xl text-center">
+      <div className="mx-auto max-w-6xl px-5 text-center">
         <Reveal>
           {/* شعار بودكاست سَعي بدل العنوان النصي */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -50,43 +50,43 @@ export default function Podcast() {
             على يوتيوب.
           </p>
         </Reveal>
+      </div>
 
-        {/* شريط متحرك بالبرامج — يتوقف عند المرور بالفأرة */}
-        <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
-          <div className="loop-track flex w-max">
-            {[...programs, ...programs, ...programs, ...programs].map((p, i) => (
-              <a
-                key={`${p.title}-${i}`}
-                href={p.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-hidden={i >= programs.length}
-                tabIndex={i >= programs.length ? -1 : undefined}
-                className="group relative me-5 block aspect-video w-[300px] shrink-0 overflow-hidden rounded-2xl text-right sm:w-[380px]"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`https://img.youtube.com/vi/${p.ytId}/hqdefault.jpg`}
-                  alt={p.title}
-                  className="size-full object-cover transition duration-700 group-hover:scale-105"
-                />
+      {/* شريط متحرك بالبرامج — بعرض القسم كاملاً (بدون 100vw حتى لا تنسحب الصفحة) */}
+      <div className="relative mt-8 w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
+        <div className="loop-track flex w-max">
+          {[...programs, ...programs, ...programs, ...programs].map((p, i) => (
+            <a
+              key={`${p.title}-${i}`}
+              href={p.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-hidden={i >= programs.length}
+              tabIndex={i >= programs.length ? -1 : undefined}
+              className="group relative me-5 block aspect-video w-[300px] shrink-0 overflow-hidden rounded-2xl text-right sm:w-[380px]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={`https://img.youtube.com/vi/${p.ytId}/hqdefault.jpg`}
+                alt={p.title}
+                className="size-full object-cover transition duration-700 group-hover:scale-105"
+              />
 
-                {/* تدرّج بسيط من تحت ليظهر الكلام فوق الصورة */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+              {/* تدرّج بسيط من تحت ليظهر الكلام فوق الصورة */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
 
-                <div className="absolute inset-x-0 bottom-0 p-4">
-                  <h4 className="truncate text-lg font-extrabold text-white">
-                    {p.title}
-                  </h4>
-                  <p className="truncate text-xs text-white/65">
-                    {[p.active ? "قائم الآن" : null, p.year, p.meta]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </p>
-                </div>
-              </a>
-            ))}
-          </div>
+              <div className="absolute inset-x-0 bottom-0 p-4">
+                <h4 className="truncate text-lg font-extrabold text-white">
+                  {p.title}
+                </h4>
+                <p className="truncate text-xs text-white/65">
+                  {[p.active ? "قائم الآن" : null, p.year, p.meta]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </p>
+              </div>
+            </a>
+          ))}
         </div>
       </div>
     </section>
