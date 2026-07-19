@@ -84,14 +84,8 @@ export default function Contact() {
             </a>
           </div>
 
-          <div className="mt-9 flex flex-wrap items-center gap-5">
+          <div className="mt-9">
             <SocialIcons />
-            <a
-              href={`mailto:${info.email}`}
-              className="text-sm text-cream/60 transition hover:text-gold"
-            >
-              {info.email}
-            </a>
           </div>
         </div>
       </div>

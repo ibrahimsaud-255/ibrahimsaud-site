@@ -52,24 +52,21 @@ export default function Podcast() {
         </Reveal>
       </div>
 
-      {/* شريط متحرك بالبرامج — بعرض القسم كاملاً (بدون 100vw حتى لا تنسحب الصفحة) */}
-      <div className="relative mt-8 w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
-        <div dir="ltr" className="loop-track flex w-max">
-          {[...programs, ...programs, ...programs, ...programs].map((p, i) => (
+      {/* شبكة البرامج — ثابتة بدون حركة */}
+      <div className="mx-auto mt-8 grid max-w-6xl gap-5 px-5 sm:grid-cols-2 lg:grid-cols-3">
+        {programs.map((p, i) => (
+          <Reveal key={p.title} delay={(i % 3) * 80}>
             <a
-              key={`${p.title}-${i}`}
-              dir="rtl"
               href={p.href}
               target="_blank"
               rel="noopener noreferrer"
-              aria-hidden={i >= programs.length}
-              tabIndex={i >= programs.length ? -1 : undefined}
-              className="group relative me-5 block aspect-video w-[300px] shrink-0 overflow-hidden rounded-2xl text-right sm:w-[380px]"
+              className="group relative block aspect-video overflow-hidden rounded-2xl text-right"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={`https://img.youtube.com/vi/${p.ytId}/hqdefault.jpg`}
                 alt={p.title}
+                loading="lazy"
                 className="size-full object-cover transition duration-700 group-hover:scale-105"
               />
 
@@ -87,8 +84,8 @@ export default function Podcast() {
                 </p>
               </div>
             </a>
-          ))}
-        </div>
+          </Reveal>
+        ))}
       </div>
     </section>
   );
