@@ -35,7 +35,7 @@ export default function Hero() {
       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-ink" />
 
       {/* سطر صغير أسفل الصورة */}
-      <p className="absolute inset-x-0 bottom-10 text-center text-sm font-medium tracking-[0.25em] text-cream/70 sm:text-base">
+      <p className="absolute inset-x-0 bottom-10 text-center text-sm font-medium text-cream/75 sm:text-base">
         {c.tagline}
       </p>
     </section>

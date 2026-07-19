@@ -108,6 +108,25 @@ h1, h2, .font-serif-display {
   animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+/* Ken Burns — زحف بطيء فخم لصور الخلفية (قسم الخدمات) */
+@keyframes ken-burns {
+  from {
+    transform: scale(1.06) translate3d(0, 0, 0);
+  }
+  to {
+    transform: scale(1.2) translate3d(0, -2%, 0);
+  }
+}
+.ken-burns {
+  animation: ken-burns 16s ease-out forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ken-burns {
+    animation: none;
+    transform: scale(1.06);
+  }
+}
+
 /* Brands marquee (شريط الشعارات المتحرك) */
 @keyframes marquee {
   from {
