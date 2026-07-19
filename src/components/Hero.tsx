@@ -1,135 +1,35 @@
 "use client";
 
-// الواجهة الرئيسية — صورة وجه دائرية في المنتصف فوق خلفية الهوية.
-// الصورة والخلفية تُدار من النظام الداخلي (site_settings → hero_photo / hero_bg)،
-// والنصوص والأزرار من «محتوى الموقع» (مفتاح hero) — النصوص هنا نسخة احتياطية.
+// الواجهة الرئيسية — صورة واحدة فقط تملأ أول شاشة، بدون أي نصوص أو أزرار.
+// الصورة تُدار من النظام الداخلي (site_settings → hero_main) مع نسخة احتياطية محلية.
 
-import { site } from "@/lib/site";
 import { useSettings } from "@/lib/siteData";
-import { useContent, goldParts, waHref } from "@/lib/cms";
-import Reveal from "./Reveal";
-
-const heroFallback = {
-  badge: "تقنية أعمال · بودكاست · إنتاج محتوى",
-  title: "تقنية *أعمال*، وبودكاست.",
-  sub: "أنا إبراهيم سعود — أوظّف التقنية في تطوير أعمالك وأنظمتك، وأنتج البودكاست والمحتوى المرئي الذي يبني حضورك، من فكرة وتصوير ومونتاج إلى منتج نهائي في استوديو مجهّز بالكامل.",
-  cta1: { label: "ابدأ مشروعك معي", waMsg: "السلام عليكم إبراهيم، شفت موقعك وأبي أتواصل معك 👋" },
-  cta2: { label: "🎬 شاهد أعمالي", href: "#works" },
-  cta3: { label: "🎥 جولة في الاستوديو", href: "#studio" },
-  categories: [
-    { label: "🎙️ بودكاست سَعي", href: "#podcast" },
-    { label: "🎥 الاستوديو", href: "#studio" },
-    { label: "⚙️ الخدمات", href: "#services" },
-    { label: "🎬 الأعمال", href: "#works" },
-  ],
-};
 
 export default function Hero() {
   const settings = useSettings();
-  const c = useContent("hero", heroFallback);
-  const info = useContent("site", { whatsapp: site.whatsapp as string });
-  const photo =
-    ((settings.hero_photo as { url?: string } | undefined)?.url as string) ||
-    "/identity/profile.jpg";
-  const bg =
-    ((settings.hero_bg as { url?: string } | undefined)?.url as string) ||
-    "/identity/hero-bg.jpg";
+  const override = (settings.hero_main as { url?: string } | undefined)?.url;
+  const photo = override || "/identity/hero-wide.jpg";
 
   return (
     <section
       id="top"
-      className="bg-glow relative flex min-h-screen items-center overflow-hidden px-5 pt-28"
+      className="relative flex min-h-screen w-full items-center justify-center overflow-hidden bg-ink"
     >
-      {/* صورة خلفية الهوية (Artboard) — تظهر خلف كل شيء بشفافية أنيقة */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={bg}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute inset-0 size-full object-cover opacity-25"
-        onError={(e) => {
-          (e.target as HTMLImageElement).style.display = "none";
-        }}
+        src={photo}
+        srcSet={
+          override
+            ? undefined
+            : "/identity/hero-wide-1600.jpg 1600w, /identity/hero-wide.jpg 2560w"
+        }
+        sizes="100vw"
+        alt="إبراهيم سعود"
+        fetchPriority="high"
+        className="absolute inset-0 size-full object-cover object-center"
       />
-      {/* تظليل فوق الخلفية لوضوح النص */}
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(10,10,12,.35),rgba(10,10,12,.88)_75%)]" />
-
-      {/* خطوط زخرفية */}
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04] [background-image:linear-gradient(var(--color-cream)_1px,transparent_1px),linear-gradient(90deg,var(--color-cream)_1px,transparent_1px)] [background-size:64px_64px]" />
-      {/* توهج خلفي */}
-      <div className="pointer-events-none absolute left-1/2 top-1/3 size-[70%] -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(231,178,76,0.14),transparent_65%)] blur-3xl" />
-
-      <div className="relative z-10 mx-auto flex w-full max-w-3xl flex-col items-center pb-20 text-center">
-        {/* الصورة الدائرية */}
-        <Reveal>
-          <div className="relative">
-            <div className="pointer-events-none absolute -inset-3 rounded-full bg-[conic-gradient(from_180deg,rgba(231,178,76,.55),transparent_35%,rgba(231,178,76,.25)_60%,transparent_85%,rgba(231,178,76,.55))] blur-md" />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={photo}
-              alt="إبراهيم سعود"
-              className="relative size-36 rounded-full border-4 border-gold/80 object-cover shadow-[0_18px_60px_rgba(231,178,76,.25)] sm:size-44"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.display = "none";
-              }}
-            />
-          </div>
-        </Reveal>
-
-        <Reveal delay={60}>
-          <span className="mt-7 inline-flex items-center gap-2 rounded-full border border-line bg-ink-card/60 px-4 py-1.5 text-sm text-cream/80">
-            <span className="size-2 rounded-full bg-gold" />
-            {c.badge}
-          </span>
-        </Reveal>
-
-        <Reveal delay={120}>
-          <h1 className="mt-6 text-5xl font-black leading-[1.1] tracking-tight sm:text-7xl">
-            {goldParts(c.title).map((p, i) =>
-              p.gold ? (
-                <span key={i} className="gold-text">
-                  {p.text}
-                </span>
-              ) : (
-                <span key={i}>{p.text}</span>
-              ),
-            )}
-          </h1>
-        </Reveal>
-
-        <Reveal delay={200}>
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-cream/75">
-            {c.sub}
-          </p>
-        </Reveal>
-
-        <Reveal delay={280}>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-4">
-            <a
-              href={waHref(info.whatsapp, c.cta1.waMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
-            >
-              {c.cta1.label}
-            </a>
-            <a
-              href={c.cta2.href}
-              className="rounded-full border border-line px-8 py-3.5 text-base font-bold text-cream transition hover:border-gold hover:text-gold"
-            >
-              {c.cta2.label}
-            </a>
-          </div>
-        </Reveal>
-
-        {/* سطر ثقة — هدف الصفحة واحد: بدء المحادثة */}
-        <Reveal delay={360}>
-          <p className="mt-6 text-sm text-cream/60">
-            ⚡ رد سريع عبر واتساب · استوديو مجهّز بالكامل · من الفكرة إلى المنتج
-            النهائي
-          </p>
-        </Reveal>
-      </div>
+      {/* تدرّج خفيف أسفل الصورة ليندمج مع بقية الصفحة */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-b from-transparent to-ink" />
     </section>
   );
 }
