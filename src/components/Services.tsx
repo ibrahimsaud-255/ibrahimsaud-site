@@ -35,7 +35,7 @@ export default function Services() {
   return (
     <section
       id="services"
-      className="relative flex min-h-[92vh] items-end overflow-hidden border-t border-line/60 bg-ink"
+      className="relative flex min-h-[92vh] items-end overflow-hidden border-t border-line/60 bg-ink sm:items-center"
     >
       {/* الصور — تتبادل بتلاشٍ ناعم، والنشطة تزحف ببطء */}
       {tabs.map((t, i) =>
@@ -47,75 +47,80 @@ export default function Services() {
             alt=""
             aria-hidden
             loading={i === 0 ? undefined : "lazy"}
-            className={`absolute inset-0 size-full object-cover transition-opacity duration-[1200ms] ease-out ${
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = "none";
+            }}
+            className={`absolute inset-0 size-full object-cover object-[25%_50%] transition-opacity duration-[1200ms] ease-out sm:object-center ${
               i === active ? "ken-burns opacity-100" : "opacity-0"
             }`}
           />
         ) : null,
       )}
 
-      {/* تظليل يجعل النص مقروءاً ويحافظ على فخامة الصورة */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink via-ink/75 to-ink/25" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-ink/70 via-transparent to-transparent" />
+      {/* تظليل خفيف — يعتّم جهة النص فقط ويترك التوهّج على يسار الصورة ظاهراً */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-l from-ink via-ink/55 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-ink via-ink/70 to-transparent sm:h-1/3 sm:via-transparent" />
 
-      {/* الكلام — فوق الصورة، بسيط */}
-      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-14 pt-40 sm:pb-20 sm:pt-56">
-        <p className="text-sm font-bold tracking-widest text-gold">خدماتي</p>
-        <p className="mt-2 text-cream/60">
-          كل ما يحتاجه محتواك — من مكان واحد.
-        </p>
-
-        {/* عنوان ووصف الخدمة النشطة */}
-        <div key={cur.id} className="reveal in mt-6 max-w-2xl">
-          <h2
-            className="text-4xl font-black leading-tight [text-shadow:0_2px_30px_rgba(0,0,0,.9)] sm:text-6xl"
-            style={{ color: cur.accent || "var(--color-gold)" }}
-          >
-            {cur.headline}
-          </h2>
-          <p className="mt-4 max-w-xl text-lg leading-relaxed text-cream/85 [text-shadow:0_1px_18px_rgba(0,0,0,.9)]">
-            {cur.description}
+      {/* الكلام — على يمين الصورة، بعيداً عن العنصر المضيء */}
+      <div className="relative z-10 mx-auto w-full max-w-6xl px-5 pb-14 pt-40 sm:pb-16 sm:pt-16">
+        <div className="sm:max-w-md lg:max-w-lg">
+          <p className="text-sm font-bold tracking-widest text-gold">خدماتي</p>
+          <p className="mt-2 text-cream/60">
+            كل ما يحتاجه محتواك — من مكان واحد.
           </p>
-        </div>
 
-        {/* اختيار الخدمة — أسماء فقط، بلا صناديق */}
-        <div
-          className="mt-9 flex flex-wrap gap-x-6 gap-y-3"
-          role="tablist"
-          aria-label="الخدمات"
-        >
-          {tabs.map((t, i) => (
-            <button
-              key={t.id}
-              type="button"
-              role="tab"
-              aria-selected={i === active}
-              onClick={() => pick(i)}
-              className={`border-b-2 pb-1 text-sm font-extrabold transition sm:text-base ${
-                i === active
-                  ? "border-gold text-cream"
-                  : "border-transparent text-cream/50 hover:text-cream/90"
-              }`}
+          {/* عنوان ووصف الخدمة النشطة */}
+          <div key={cur.id} className="reveal in mt-6 max-w-2xl">
+            <h2
+              className="text-4xl font-black leading-tight [text-shadow:0_2px_30px_rgba(0,0,0,.9)] sm:text-6xl"
+              style={{ color: cur.accent || "var(--color-gold)" }}
             >
-              {t.title}
-            </button>
-          ))}
-        </div>
+              {cur.headline}
+            </h2>
+            <p className="mt-4 max-w-xl text-lg leading-relaxed text-cream/85 [text-shadow:0_1px_18px_rgba(0,0,0,.9)]">
+              {cur.description}
+            </p>
+          </div>
 
-        {/* دعوة للباقات */}
-        <div className="mt-10 flex flex-wrap items-center gap-3">
-          <a
-            href="/ad-packages/"
-            className="rounded-full bg-gold px-7 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
+          {/* اختيار الخدمة — أسماء فقط، بلا صناديق */}
+          <div
+            className="mt-9 flex flex-wrap gap-x-6 gap-y-3"
+            role="tablist"
+            aria-label="الخدمات"
           >
-            باقات الإعلانات وأسعارها
-          </a>
-          <a
-            href="/studio-rental/"
-            className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream backdrop-blur-sm transition hover:border-gold hover:text-gold"
-          >
-            احجز الاستوديو
-          </a>
+            {tabs.map((t, i) => (
+              <button
+                key={t.id}
+                type="button"
+                role="tab"
+                aria-selected={i === active}
+                onClick={() => pick(i)}
+                className={`border-b-2 pb-1 text-sm font-extrabold transition sm:text-base ${
+                  i === active
+                    ? "border-gold text-cream"
+                    : "border-transparent text-cream/50 hover:text-cream/90"
+                }`}
+              >
+                {t.title}
+              </button>
+            ))}
+          </div>
+
+          {/* دعوة للباقات */}
+          <div className="mt-10 flex flex-wrap items-center gap-3">
+            <a
+              href="/ad-packages/"
+              className="rounded-full bg-gold px-7 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
+            >
+              باقات الإعلانات وأسعارها
+            </a>
+            <a
+              href="/studio-rental/"
+              className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream backdrop-blur-sm transition hover:border-gold hover:text-gold"
+            >
+              احجز الاستوديو
+            </a>
+          </div>
         </div>
       </div>
     </section>

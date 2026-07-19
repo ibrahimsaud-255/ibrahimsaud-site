@@ -63,7 +63,6 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نلتقط ونُخرج",
     description:
       "تصوير احترافي في موقعك أو في الاستوديو — إضاءة سينمائية، لقطات B-Roll، وتصوير درون جوي يرفع مستوى أي عمل.",
-    image: "/services/filming.jpg",
     accent: "#f87171",
   },
   {
@@ -81,7 +80,6 @@ export const serviceTabs: ServiceTab[] = [
     headline: "حركة وانسيابية",
     description:
       "موشن جرافيك وهوية بصرية متحركة — الحركة عنصر أساسي في أي منتج مرئي، ونجيد توظيفها في مكانها الصحيح.",
-    image: "/services/motion.jpg",
     accent: "#e7b24c",
   },
   {
@@ -99,7 +97,6 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نكتب ما يبيع",
     description:
       "سكربت إعلاني مبني على منتجك وجمهورك بلهجة تناسب السوق السعودي والخليجي — مع تعليق صوتي احترافي يوصّل رسالتك.",
-    image: "/services/script.jpg",
     accent: "#4ade80",
   },
   {
@@ -374,6 +371,7 @@ export type Program = {
   active?: boolean; // true = البرنامج قائم الآن (تظهر شارة «قائم الآن»)
   ytId: string;
   href: string;
+  logo?: string; // شعار صغير يظهر بجانب اسم البرنامج في الشريط المتحرك
   github?: string; // رابط المستودع (للتطبيقات مفتوحة المصدر)
   cta?: string; // نص الدعوة أسفل البطاقة — الافتراضي «مشاهدة»
 };
@@ -386,13 +384,23 @@ export const programs: Program[] = [
     year: "٢٠٢٤ – الآن",
     active: true,
     ytId: "1XHrhbIouVM",
+    logo: "/sa3y-logo.png",
     href: "https://www.youtube.com/watch?v=1XHrhbIouVM",
+  },
+  {
+    title: "آخر فقرة",
+    desc: "برنامج معرفي — أقرأ الكتاب وأخرج لك بخلاصته في فصول مركّزة. السلسلة الأولى: متلازمة التيك توك.",
+    meta: "سلسلة: متلازمة التيك توك",
+    ytId: "Y0r0fbdu5Yw",
+    logo: "/logo-ibrahimsaud.png",
+    href: "https://www.youtube.com/watch?v=Y0r0fbdu5Yw&list=PLMG6-YZe45DwrG5mrSW9xBkjG6tNDsaPJ",
   },
   {
     title: "بودكاست يا غلام",
     desc: "بودكاست حواري — تقديم وإعداد، بالتعاون مع قناة فلق والمدونة استديو.",
     year: "٢٠٢٣",
     ytId: "h9WQT7gMP6E",
+    logo: "/logo-ibrahimsaud.png",
     href: "https://www.youtube.com/watch?v=h9WQT7gMP6E&list=PLWFi7GIBTmLJrXIWM6PlYEHOy-LDA4rRg",
   },
 ];

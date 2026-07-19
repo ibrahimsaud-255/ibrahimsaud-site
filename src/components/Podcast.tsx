@@ -3,7 +3,10 @@ import Reveal from "./Reveal";
 
 export default function Podcast() {
   return (
-    <section id="podcast" className="bg-glow border-t border-line/60 px-5 py-24">
+    <section
+      id="podcast"
+      className="bg-glow border-t border-line/60 px-5 py-24"
+    >
       <div className="mx-auto max-w-6xl text-center">
         <Reveal>
           {/* شعار بودكاست سَعي بدل العنوان النصي */}
@@ -11,12 +14,12 @@ export default function Podcast() {
           <img
             src="/sa3y-logo.png"
             alt="بودكاست سَعي"
-            className="mx-auto w-full max-w-[280px] sm:max-w-[340px]"
+            className="mx-auto w-full max-w-[190px] sm:max-w-[230px]"
           />
           <p className="mx-auto mt-6 max-w-2xl text-cream/70">
-            سَعي مكان تطلع منه بفائدة حقيقية — نحوّل الخبرة المتخصصة إلى كلام بسيط
-            يفيدك، ونروي قصة السعي خلف كل تجربة. أنتجناه وقدّمناه في استوديو مجهّز،
-            ومن نفس المكان نوفّر خدمات إنتاج لغيرنا.
+            سَعي مكان تطلع منه بفائدة حقيقية — نحوّل الخبرة المتخصصة إلى كلام
+            بسيط يفيدك، ونروي قصة السعي خلف كل تجربة. أنتجناه وقدّمناه في
+            استوديو مجهّز، ومن نفس المكان نوفّر خدمات إنتاج لغيرنا.
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a
@@ -48,30 +51,23 @@ export default function Podcast() {
             البرامج والبودكاست
           </h3>
           <p className="mx-auto mt-2 max-w-2xl text-sm text-cream/60">
-            من برامج تقنية ومعرفية إلى بودكاست حواري. اضغط أي بطاقة لمشاهدتها على
-            يوتيوب.
+            من برامج تقنية ومعرفية إلى بودكاست حواري. اضغط أي بطاقة لمشاهدتها
+            على يوتيوب.
           </p>
         </Reveal>
 
-        <div className="mt-8 grid grid-cols-1 gap-5 text-right sm:grid-cols-2 lg:grid-cols-3">
-          {programs.map((p, i) => (
-            <Reveal key={p.title} delay={(i % 3) * 80}>
-              <div className="relative h-full">
-              {p.github && (
-                <a
-                  href={p.github}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute left-3 top-3 z-10 rounded-full bg-black/65 px-3 py-1 text-xs font-bold text-cream backdrop-blur-sm transition hover:bg-gold hover:text-ink"
-                >
-                  GitHub ↗
-                </a>
-              )}
+        {/* شريط متحرك بالبرامج — يتوقف عند المرور بالفأرة */}
+        <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
+          <div className="marquee-track flex w-max [animation-duration:50s]">
+            {[...programs, ...programs].map((p, i) => (
               <a
+                key={`${p.title}-${i}`}
                 href={p.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group block h-full overflow-hidden rounded-2xl border border-line bg-ink-card transition hover:border-gold/50"
+                aria-hidden={i >= programs.length}
+                tabIndex={i >= programs.length ? -1 : undefined}
+                className="group me-5 block w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line bg-ink-card text-right transition hover:border-gold/60 sm:w-[360px]"
               >
                 <div className="relative aspect-video overflow-hidden bg-ink">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -80,38 +76,41 @@ export default function Podcast() {
                     alt={p.title}
                     className="size-full object-cover transition duration-500 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 grid place-items-center bg-black/30 text-4xl text-white/90 transition group-hover:bg-black/20">
-                    ▶
-                  </div>
+                  <span className="absolute inset-0 grid place-items-center bg-black/25 transition group-hover:bg-black/10">
+                    <span className="grid size-14 place-items-center rounded-full bg-red-600 text-xl text-white shadow-lg transition group-hover:scale-110">
+                      ▶
+                    </span>
+                  </span>
                   {p.active && (
                     <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
                       <span className="size-2 animate-pulse rounded-full bg-white" />
                       قائم الآن
                     </span>
                   )}
-                  {p.year && (
-                    <span className="absolute bottom-3 left-3 rounded-full bg-black/65 px-3 py-1 text-xs font-bold text-cream backdrop-blur-sm">
-                      {p.year}
-                    </span>
-                  )}
                 </div>
-                <div className="p-5">
-                  <h4 className="text-lg font-extrabold text-cream">{p.title}</h4>
-                  <p className="mt-1 text-sm leading-relaxed text-cream/65">
-                    {p.desc}
-                  </p>
-                  <p className="mt-3 text-xs font-bold text-gold">
-                    {[p.year, p.meta].filter(Boolean).join(" · ")}
-                    {p.year || p.meta ? " · " : ""}
-                    {p.cta ?? "مشاهدة"} ↗
-                  </p>
+
+                <div className="flex items-center gap-3 p-4">
+                  {p.logo && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={p.logo}
+                      alt=""
+                      className="size-11 shrink-0 rounded-full border border-line bg-ink object-contain p-1"
+                    />
+                  )}
+                  <div className="min-w-0">
+                    <h4 className="truncate font-extrabold text-cream">
+                      {p.title}
+                    </h4>
+                    <p className="truncate text-xs text-cream/55">
+                      {[p.year, p.meta].filter(Boolean).join(" · ") || "مشاهدة"}
+                    </p>
+                  </div>
                 </div>
               </a>
-              </div>
-            </Reveal>
-          ))}
+            ))}
+          </div>
         </div>
-
       </div>
     </section>
   );

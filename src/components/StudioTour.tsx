@@ -94,7 +94,7 @@ export default function StudioTour() {
           {/* بطاقة التفاصيل — الديسكتوب فقط (بجانب النقطة) */}
           {item && (
             <div
-              className={`absolute top-1/2 z-30 hidden max-w-[460px] -translate-y-1/2 overflow-hidden rounded-2xl border border-line bg-ink-card shadow-2xl sm:block ${
+              className={`absolute top-1/2 z-30 hidden w-[42%] max-w-[520px] -translate-y-1/2 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-white/10 sm:block ${
                 item.x < 50 ? "right-[4%]" : "left-[4%]"
               }`}
             >
@@ -102,30 +102,35 @@ export default function StudioTour() {
               <img
                 src={item.file}
                 alt={item.title}
-                className="block aspect-[16/10] w-full object-cover"
+                className="block aspect-[4/3] w-full object-cover"
               />
+
+              {/* تدرّج أسود من تحت الصورة ليظهر الكلام فوقها */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/75 to-transparent" />
+
               <button
                 onClick={() => setCur(-1)}
-                className="absolute left-2 top-2 grid size-8 place-items-center rounded-full bg-black/55 text-white"
+                className="absolute left-3 top-3 grid size-9 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/75"
                 aria-label="إغلاق"
               >
                 ✕
               </button>
-              <div className="p-5">
-                <h3 className="text-lg font-extrabold text-gold">
+
+              <div className="absolute inset-x-0 bottom-0 p-5">
+                <h3 className="text-xl font-extrabold text-gold">
                   {item.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-cream/85">
+                <p className="mt-2 text-sm leading-relaxed text-white/90">
                   {item.text}
                 </p>
                 <div className="mt-4 flex items-center justify-between">
-                  <span className="text-xs text-cream/50" dir="ltr">
+                  <span className="text-xs text-white/50" dir="ltr">
                     {cur + 1} / {studioTour.length}
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={prev}
-                      className="rounded-lg border border-line px-3 py-1.5 text-sm font-bold text-cream transition hover:border-gold"
+                      className="rounded-lg border border-white/25 px-3 py-1.5 text-sm font-bold text-white transition hover:border-gold hover:text-gold"
                     >
                       ‹ السابق
                     </button>
@@ -155,11 +160,22 @@ export default function StudioTour() {
 
       {/* نافذة العرض الكاملة على الجوال */}
       {item && (
-        <div className="fixed inset-0 z-[90] flex flex-col bg-black/95 backdrop-blur-sm sm:hidden">
-          <div className="flex items-center justify-between p-4">
+        <div className="fixed inset-0 z-[90] bg-black sm:hidden">
+          {/* الصورة تملأ الشاشة */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={item.file}
+            alt={item.title}
+            className="absolute inset-0 size-full object-cover"
+          />
+
+          {/* تدرّج أسود من تحت ليظهر الكلام فوق الصورة */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/70 to-black/25" />
+
+          <div className="absolute inset-x-0 top-0 flex items-center justify-between p-4">
             <button
               onClick={() => setCur(-1)}
-              className="grid size-10 place-items-center rounded-full bg-white/10 text-xl text-white"
+              className="grid size-10 place-items-center rounded-full bg-black/45 text-xl text-white backdrop-blur-sm"
               aria-label="إغلاق"
             >
               ✕
@@ -169,24 +185,15 @@ export default function StudioTour() {
             </span>
           </div>
 
-          <div className="flex flex-1 items-center justify-center px-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={item.file}
-              alt={item.title}
-              className="max-h-full w-full rounded-2xl object-contain"
-            />
-          </div>
-
-          <div className="p-5">
-            <h3 className="text-xl font-extrabold text-gold">{item.title}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-cream/85">
+          <div className="absolute inset-x-0 bottom-0 p-5">
+            <h3 className="text-2xl font-extrabold text-gold">{item.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-white/90">
               {item.text}
             </p>
             <div className="mt-5 flex gap-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
               <button
                 onClick={prev}
-                className="flex-1 rounded-xl border border-line py-3 text-sm font-bold text-cream transition active:border-gold"
+                className="flex-1 rounded-xl border border-white/30 py-3 text-sm font-bold text-white transition active:border-gold"
               >
                 ‹ السابق
               </button>
