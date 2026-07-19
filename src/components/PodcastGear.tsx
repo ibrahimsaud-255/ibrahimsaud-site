@@ -2,7 +2,75 @@ import Reveal from "@/components/Reveal";
 import { podcastGear } from "@/lib/site";
 import GearImage from "@/components/GearImage";
 
+// معدّات الاستوديو — كل بطاقة صورة واحدة، وتدرّج أسود من تحت، والكلام فوقه.
+// بسيط ومختصر: الماركة، الاسم، النوع، وسطر وصف واحد، ثم الأزرار.
+
 const arabicNum = (n: number) => n.toLocaleString("ar-EG");
+
+type Gear = (typeof podcastGear)[number];
+
+function GearCard({ g, hero = false }: { g: Gear; hero?: boolean }) {
+  return (
+    <div
+      className={`group relative overflow-hidden rounded-3xl border border-line transition hover:border-gold/50 ${
+        hero ? "md:[&>div:first-child]:aspect-[16/9]" : ""
+      }`}
+    >
+      <GearImage src={g.image} name={g.name} accent={g.accent} />
+
+      {/* تدرّج أسود من تحت ليظهر الكلام فوق الصورة */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+
+      {g.qty > 1 && (
+        <span className="absolute right-4 top-4 rounded-full bg-black/55 px-3 py-1 text-xs font-bold text-gold backdrop-blur-sm">
+          ×{arabicNum(g.qty)}
+        </span>
+      )}
+
+      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+        <span className="text-xs font-bold tracking-widest text-gold">
+          {g.brand}
+        </span>
+        <h3
+          className={`mt-1 font-black text-white ${hero ? "text-2xl sm:text-3xl" : "text-xl"}`}
+        >
+          {g.name}
+        </h3>
+        <p className="mt-0.5 text-sm font-bold text-white/60">{g.type}</p>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-white/75">
+          {g.desc}
+        </p>
+
+        {g.note && (
+          <p className="mt-2 text-xs font-bold text-gold/90">ℹ️ {g.note}</p>
+        )}
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          {g.amazonUrl && (
+            <a
+              href={g.amazonUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-[#ff9900] px-5 py-2.5 text-sm font-black text-ink transition hover:brightness-110"
+            >
+              🛒 اشترِ من أمازون
+            </a>
+          )}
+          {g.link && (
+            <a
+              href={g.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm font-bold text-white/70 transition hover:text-gold"
+            >
+              المواصفات ↗
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function PodcastGear() {
   const hero = podcastGear.find((g) => g.hero);
@@ -19,150 +87,21 @@ export default function PodcastGear() {
             <h2 className="mx-auto mt-3 max-w-2xl text-3xl font-black leading-tight sm:text-4xl">
               معدّات احترافية تصنع الفرق
             </h2>
-            <p className="mx-auto mt-4 max-w-2xl text-cream/70">
-              الأجهزة التي نصوّر بها حلقاتك وإعلاناتك — كاميرات بثّ 4K، مايكات بثّ،
-              مكسر، إضاءة RGB، وتيليبرومبتر.
-            </p>
           </div>
         </Reveal>
 
-        {/* الكاميرا الأساسية — بطاقة بارزة */}
         {hero && (
           <Reveal>
-            <div className="mt-10 overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50 md:grid md:grid-cols-2">
-              <div className="relative">
-                <GearImage src={hero.image} name={hero.name} accent={hero.accent} />
-                {hero.qty > 1 && (
-                  <span className="absolute right-3 top-3 rounded-full bg-ink/85 px-3 py-1 text-xs font-bold text-gold backdrop-blur">
-                    ×{arabicNum(hero.qty)}
-                  </span>
-                )}
-              </div>
-              <div className="flex flex-col p-6 sm:p-8">
-                <span className="text-xs font-bold tracking-widest text-gold">
-                  {hero.brand} · الكاميرا الأساسية
-                </span>
-                <h3 className="mt-1 text-2xl font-black text-cream">
-                  {hero.name}
-                </h3>
-                <p className="mt-0.5 text-sm font-bold text-cream/60">
-                  {hero.type}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-cream/75">
-                  {hero.desc}
-                </p>
-                {hero.specs && (
-                  <ul className="mt-4 grid gap-2">
-                    {hero.specs.map((s) => (
-                      <li
-                        key={s}
-                        className="flex gap-2 text-sm leading-relaxed text-cream/80"
-                      >
-                        <span className="mt-0.5 text-gold">✓</span>
-                        <span>{s}</span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-                {hero.note && (
-                  <p className="mt-4 inline-flex w-fit items-center gap-2 rounded-full bg-gold/10 px-3 py-1.5 text-xs font-bold text-gold">
-                    ℹ️ {hero.note}
-                  </p>
-                )}
-                <div className="mt-5 flex flex-wrap gap-3">
-                  {hero.amazonUrl && (
-                    <a
-                      href={hero.amazonUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-fit items-center gap-2 rounded-full bg-[#ff9900] px-5 py-2.5 text-sm font-black text-ink transition hover:brightness-110"
-                    >
-                      🛒 اشترِ من أمازون
-                    </a>
-                  )}
-                  {hero.link && (
-                    <a
-                      href={hero.link}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex w-fit items-center gap-2 rounded-full border border-line px-5 py-2.5 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
-                    >
-                      المواصفات الكاملة من المصنّع ↗
-                    </a>
-                  )}
-                </div>
-              </div>
+            <div className="mt-10">
+              <GearCard g={hero} hero />
             </div>
           </Reveal>
         )}
 
-        {/* بقية المعدّات */}
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {rest.map((g, i) => (
             <Reveal key={g.id} delay={i * 80}>
-              <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-ink-card transition hover:border-gold/50">
-                <div className="relative">
-                  <GearImage src={g.image} name={g.name} accent={g.accent} />
-                  {g.qty > 1 && (
-                    <span className="pointer-events-none absolute left-3 top-3 rounded-full border border-line bg-ink/80 px-3 py-1 text-xs font-bold text-cream/80 backdrop-blur">
-                      ×{arabicNum(g.qty)}
-                    </span>
-                  )}
-                </div>
-
-                <div className="flex flex-1 flex-col p-6">
-                  <span className="text-xs font-bold tracking-widest text-gold">
-                    {g.brand}
-                  </span>
-                  <h3 className="mt-1 text-xl font-black text-cream">{g.name}</h3>
-                  <p className="mt-0.5 text-sm font-bold text-cream/60">
-                    {g.type}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-cream/75">
-                    {g.desc}
-                  </p>
-                  {g.specs && (
-                    <ul className="mt-4 grid gap-2">
-                      {g.specs.map((s) => (
-                        <li
-                          key={s}
-                          className="flex gap-2 text-sm leading-relaxed text-cream/80"
-                        >
-                          <span className="mt-0.5 text-gold">✓</span>
-                          <span>{s}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {g.note && (
-                    <p className="mt-3 inline-flex w-fit items-center gap-2 rounded-full bg-gold/10 px-3 py-1.5 text-xs font-bold text-gold">
-                      ℹ️ {g.note}
-                    </p>
-                  )}
-                  <div className="mt-auto flex flex-col gap-2.5 pt-5">
-                    {g.amazonUrl && (
-                      <a
-                        href={g.amazonUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#ff9900] px-5 py-3 text-sm font-black text-ink transition hover:brightness-110"
-                      >
-                        🛒 اشترِ من أمازون
-                      </a>
-                    )}
-                    {g.link && (
-                      <a
-                        href={g.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex w-fit items-center gap-2 text-sm font-bold text-gold transition hover:text-gold-soft"
-                      >
-                        المواصفات الكاملة ↗
-                      </a>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <GearCard g={g} />
             </Reveal>
           ))}
         </div>

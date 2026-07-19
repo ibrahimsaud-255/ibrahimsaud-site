@@ -90,6 +90,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نكتب ما يبيع",
     description:
       "سكربت إعلاني مبني على منتجك وجمهورك بلهجة تناسب السوق السعودي والخليجي — مع تعليق صوتي احترافي يوصّل رسالتك.",
+    image: "/services/script-v3.jpg",
     accent: "#4ade80",
   },
   {

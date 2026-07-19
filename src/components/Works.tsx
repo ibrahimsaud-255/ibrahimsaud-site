@@ -20,20 +20,6 @@ export function workThumb(w: Work): string {
   return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : "";
 }
 
-const TAG_COLORS = [
-  "bg-rose-500/15 text-rose-300 border-rose-500/25",
-  "bg-sky-500/15 text-sky-300 border-sky-500/25",
-  "bg-amber-500/15 text-amber-300 border-amber-500/25",
-  "bg-emerald-500/15 text-emerald-300 border-emerald-500/25",
-  "bg-violet-500/15 text-violet-300 border-violet-500/25",
-  "bg-cyan-500/15 text-cyan-300 border-cyan-500/25",
-];
-const tagColor = (s: string) => {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 997;
-  return TAG_COLORS[h % TAG_COLORS.length];
-};
-
 function WorkCard({ work, delay }: { work: Work; delay: number }) {
   const th = workThumb(work);
   const tags = [work.category, ...(work.tags || [])].filter(Boolean);
@@ -41,73 +27,63 @@ function WorkCard({ work, delay }: { work: Work; delay: number }) {
     <Reveal delay={delay}>
       <a
         href={`/work/?id=${encodeURIComponent(work.id)}`}
-        className="group flex h-full flex-col overflow-hidden rounded-3xl glass-card transition hover:-translate-y-1.5 hover:border-gold/40"
+        className="group relative block aspect-video overflow-hidden rounded-3xl border border-line transition hover:-translate-y-1.5 hover:border-gold/40"
       >
-        {/* الصورة المصغّرة */}
-        <div className="relative aspect-video overflow-hidden bg-ink-soft">
-          {th ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={th}
-              alt={work.title}
-              loading="lazy"
-              className="size-full object-cover transition duration-500 group-hover:scale-105"
-            />
-          ) : (
-            <div className="grid size-full place-items-center text-cream/25">
-              <svg viewBox="0 0 24 24" className="size-10" fill="none" stroke="currentColor" strokeWidth={1.5} aria-hidden>
-                <rect x="3" y="5" width="18" height="14" rx="2" />
-                <path d="m3 15 5-5 5 5 3-3 5 5" />
-              </svg>
-            </div>
-          )}
-          {work.featured && (
-            <span className="absolute top-3 rtl:right-3 ltr:left-3 rounded-full bg-gold px-3 py-1 text-xs font-black text-ink shadow-lg">
-              ★ مميّز
-            </span>
-          )}
-          {work.kind === "gallery" && (work.images?.length || 0) > 1 && (
-            <span className="absolute bottom-3 rtl:left-3 ltr:right-3 rounded-full bg-ink/70 px-3 py-1 text-xs font-bold text-cream backdrop-blur">
-              {work.images!.length} صور
-            </span>
-          )}
+        {/* صورة العمل — هي البطاقة كاملة */}
+        {th ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={th}
+            alt={work.title}
+            loading="lazy"
+            className="size-full object-cover transition duration-700 group-hover:scale-105"
+          />
+        ) : (
+          <div className="grid size-full place-items-center bg-ink-soft text-cream/25">
+            <svg
+              viewBox="0 0 24 24"
+              className="size-10"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              aria-hidden
+            >
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path d="m3 15 5-5 5 5 3-3 5 5" />
+            </svg>
+          </div>
+        )}
+
+        {/* تدرّج أسود من تحت ليظهر الكلام فوق الصورة */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
+
+        {work.featured && (
+          <span className="absolute top-3 rounded-full bg-gold px-3 py-1 text-xs font-black text-ink shadow-lg ltr:left-3 rtl:right-3">
+            ★ مميّز
+          </span>
+        )}
+        {work.kind === "gallery" && (work.images?.length || 0) > 1 && (
+          <span className="absolute top-3 rounded-full bg-black/55 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm ltr:right-3 rtl:left-3">
+            {work.images!.length} صور
+          </span>
+        )}
+
+        {/* الكلام فوق الصورة */}
+        <div className="absolute inset-x-0 bottom-0 p-5">
           {work.logo && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={work.logo}
               alt={work.client}
-              className="absolute bottom-3 rtl:right-3 ltr:left-3 h-9 w-auto object-contain"
+              className="mb-2 h-7 w-auto object-contain"
               loading="lazy"
             />
           )}
-        </div>
-
-        {/* المعلومات */}
-        <div className="flex flex-1 flex-col gap-3 p-5">
-          <div>
-            <h3 className="text-lg font-black leading-snug text-cream">
-              {work.title}
-            </h3>
-            <p className="mt-1 text-sm text-cream/55">{work.client}</p>
-          </div>
-          <div className="flex flex-wrap gap-1.5">
-            {tags.slice(0, 3).map((t) => (
-              <span
-                key={t}
-                className={`rounded-full border px-2.5 py-0.5 text-[11px] font-bold ${tagColor(t)}`}
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-          <div className="mt-auto pt-1">
-            <span className="inline-flex items-center gap-2 rounded-full bg-cream px-5 py-2 text-sm font-black text-ink transition group-hover:bg-gold">
-              مشاهدة
-              <svg viewBox="0 0 24 24" className="size-3.5 rtl:rotate-180" fill="none" stroke="currentColor" strokeWidth={3} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-                <path d="M5 12h14M12 5l7 7-7 7" />
-              </svg>
-            </span>
-          </div>
+          <p className="text-xs font-bold text-gold">{tags[0]}</p>
+          <h3 className="mt-1 line-clamp-2 text-lg font-black leading-snug text-white">
+            {work.title}
+          </h3>
+          <p className="mt-0.5 truncate text-sm text-white/60">{work.client}</p>
         </div>
       </a>
     </Reveal>

@@ -54,10 +54,11 @@ export default function Podcast() {
 
       {/* شريط متحرك بالبرامج — بعرض القسم كاملاً (بدون 100vw حتى لا تنسحب الصفحة) */}
       <div className="relative mt-8 w-full overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
-        <div className="loop-track flex w-max">
+        <div dir="ltr" className="loop-track flex w-max">
           {[...programs, ...programs, ...programs, ...programs].map((p, i) => (
             <a
               key={`${p.title}-${i}`}
+              dir="rtl"
               href={p.href}
               target="_blank"
               rel="noopener noreferrer"

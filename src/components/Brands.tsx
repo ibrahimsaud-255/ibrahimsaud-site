@@ -9,7 +9,7 @@ export default function Brands() {
   const items = [...brands, ...brands];
 
   return (
-    <section className="border-y border-line/60 py-12">
+    <section className="border-b border-line/60 py-12">
       <div className="mx-auto mb-8 max-w-6xl px-5 text-center">
         <p className="text-sm font-bold tracking-widest text-gold">موثوق من</p>
         <h2 className="mt-2 text-xl font-black text-cream/90 sm:text-2xl">
@@ -18,7 +18,7 @@ export default function Brands() {
       </div>
 
       <div className="group relative overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_6%,#000_94%,transparent)]">
-        <div className="marquee-track flex w-max items-center gap-16">
+        <div dir="ltr" className="marquee-track flex w-max items-center gap-16">
           {items.map((b, i) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img

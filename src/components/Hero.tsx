@@ -32,7 +32,7 @@ export default function Hero() {
         className="absolute inset-0 size-full object-cover object-center"
       />
       {/* تدرّج أسفل الصورة ليندمج مع بقية الصفحة ويوضّح السطر */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-b from-transparent to-ink" />
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent via-ink/75 to-ink" />
 
       {/* سطر صغير أسفل الصورة */}
       <p className="absolute inset-x-0 bottom-10 text-center text-sm font-medium text-cream/75 sm:text-base">
