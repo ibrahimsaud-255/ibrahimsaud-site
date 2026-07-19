@@ -5,7 +5,7 @@
 
 import { site } from "@/lib/site";
 import { useContent, goldParts, waHref } from "@/lib/cms";
-import SocialIcons from "./SocialIcons";
+import SocialIcons, { SocialIcon } from "./SocialIcons";
 
 const contactFallback = {
   title: "عندك فكرة، نظام، أو بودكاست؟ *نبدأها سوا.*",
@@ -69,8 +69,9 @@ export default function Contact() {
               href={waHref(info.whatsapp, c.cta1.waMsg)}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gold px-7 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
+              className="inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-black text-white transition hover:brightness-110"
             >
+              <SocialIcon name="whatsapp" className="size-5" />
               {c.cta1.label}
             </a>
             <a

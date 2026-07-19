@@ -43,7 +43,7 @@ const LABELS: Record<IconName, string> = {
   whatsapp: "واتساب",
 };
 
-function Icon({ name, className }: { name: IconName; className?: string }) {
+export function SocialIcon({ name, className }: { name: IconName; className?: string }) {
   return (
     <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden>
       <path d={PATHS[name]} />
@@ -77,14 +77,13 @@ export default function SocialIcons({
     if (merged[k]) links.push({ name: k, href: merged[k] });
   });
 
-  const btn =
-    size === "lg"
-      ? "size-14 sm:size-16"
-      : "size-11 sm:size-12";
-  const icn = size === "lg" ? "size-6 sm:size-7" : "size-5";
+  // بدون دوائر — أيقونة بيضاء بسيطة فقط
+  const icn = size === "lg" ? "size-7 sm:size-8" : "size-6";
 
   return (
-    <div className={`flex flex-wrap items-center justify-center gap-3 ${className}`}>
+    <div
+      className={`flex flex-wrap items-center gap-5 sm:gap-6 ${className}`}
+    >
       {links.map((l) => (
         <a
           key={l.name}
@@ -93,9 +92,9 @@ export default function SocialIcons({
           rel="noopener noreferrer"
           aria-label={LABELS[l.name]}
           title={LABELS[l.name]}
-          className={`grid ${btn} place-items-center rounded-full bg-cream text-ink shadow-lg transition hover:-translate-y-1 hover:bg-gold hover:shadow-gold/25`}
+          className="text-cream/85 transition hover:-translate-y-0.5 hover:text-gold"
         >
-          <Icon name={l.name} className={icn} />
+          <SocialIcon name={l.name} className={icn} />
         </a>
       ))}
     </div>
