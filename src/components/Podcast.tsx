@@ -16,12 +16,7 @@ export default function Podcast() {
             alt="بودكاست سَعي"
             className="mx-auto w-full max-w-[190px] sm:max-w-[230px]"
           />
-          <p className="mx-auto mt-6 max-w-2xl text-cream/70">
-            سَعي مكان تطلع منه بفائدة حقيقية — نحوّل الخبرة المتخصصة إلى كلام
-            بسيط يفيدك، ونروي قصة السعي خلف كل تجربة. أنتجناه وقدّمناه في
-            استوديو مجهّز، ومن نفس المكان نوفّر خدمات إنتاج لغيرنا.
-          </p>
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
             <a
               href={site.podcast.youtube}
               target="_blank"
@@ -58,8 +53,8 @@ export default function Podcast() {
 
         {/* شريط متحرك بالبرامج — يتوقف عند المرور بالفأرة */}
         <div className="relative left-1/2 mt-8 w-screen -translate-x-1/2 overflow-hidden [mask-image:linear-gradient(90deg,transparent,#000_7%,#000_93%,transparent)]">
-          <div className="marquee-track flex w-max [animation-duration:50s]">
-            {[...programs, ...programs].map((p, i) => (
+          <div className="loop-track flex w-max">
+            {[...programs, ...programs, ...programs, ...programs].map((p, i) => (
               <a
                 key={`${p.title}-${i}`}
                 href={p.href}
@@ -67,45 +62,27 @@ export default function Podcast() {
                 rel="noopener noreferrer"
                 aria-hidden={i >= programs.length}
                 tabIndex={i >= programs.length ? -1 : undefined}
-                className="group me-5 block w-[300px] shrink-0 overflow-hidden rounded-2xl border border-line bg-ink-card text-right transition hover:border-gold/60 sm:w-[360px]"
+                className="group relative me-5 block aspect-video w-[300px] shrink-0 overflow-hidden rounded-2xl text-right sm:w-[380px]"
               >
-                <div className="relative aspect-video overflow-hidden bg-ink">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://img.youtube.com/vi/${p.ytId}/hqdefault.jpg`}
-                    alt={p.title}
-                    className="size-full object-cover transition duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute inset-0 grid place-items-center bg-black/25 transition group-hover:bg-black/10">
-                    <span className="grid size-14 place-items-center rounded-full bg-red-600 text-xl text-white shadow-lg transition group-hover:scale-110">
-                      ▶
-                    </span>
-                  </span>
-                  {p.active && (
-                    <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-emerald-500 px-3 py-1 text-xs font-bold text-white shadow-lg">
-                      <span className="size-2 animate-pulse rounded-full bg-white" />
-                      قائم الآن
-                    </span>
-                  )}
-                </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`https://img.youtube.com/vi/${p.ytId}/hqdefault.jpg`}
+                  alt={p.title}
+                  className="size-full object-cover transition duration-700 group-hover:scale-105"
+                />
 
-                <div className="flex items-center gap-3 p-4">
-                  {p.logo && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={p.logo}
-                      alt=""
-                      className="size-11 shrink-0 rounded-full border border-line bg-ink object-contain p-1"
-                    />
-                  )}
-                  <div className="min-w-0">
-                    <h4 className="truncate font-extrabold text-cream">
-                      {p.title}
-                    </h4>
-                    <p className="truncate text-xs text-cream/55">
-                      {[p.year, p.meta].filter(Boolean).join(" · ") || "مشاهدة"}
-                    </p>
-                  </div>
+                {/* تدرّج بسيط من تحت ليظهر الكلام فوق الصورة */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black via-black/45 to-transparent" />
+
+                <div className="absolute inset-x-0 bottom-0 p-4">
+                  <h4 className="truncate text-lg font-extrabold text-white">
+                    {p.title}
+                  </h4>
+                  <p className="truncate text-xs text-white/65">
+                    {[p.active ? "قائم الآن" : null, p.year, p.meta]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </p>
                 </div>
               </a>
             ))}

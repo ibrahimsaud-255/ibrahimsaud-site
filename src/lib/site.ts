@@ -71,16 +71,8 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نقصّ ونحرّر",
     description:
       "قص وإيقاع وموسيقى تناسب الفكرة والسياق — نسخة رئيسية ونسخ قصيرة جاهزة للنشر على كل المنصات.",
-    image: "/services/editing.jpg",
+    image: "/services/editing-v2.jpg",
     accent: "#38bdf8",
-  },
-  {
-    id: "motion",
-    title: "الموشن",
-    headline: "حركة وانسيابية",
-    description:
-      "موشن جرافيك وهوية بصرية متحركة — الحركة عنصر أساسي في أي منتج مرئي، ونجيد توظيفها في مكانها الصحيح.",
-    accent: "#e7b24c",
   },
   {
     id: "podcast",
@@ -88,7 +80,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "نسجّل وننشر",
     description:
       "استوديو مجهّز بالكامل لتسجيل حلقاتك: تصوير متعدد الكاميرات، هندسة صوت، مونتاج كامل، ومقاطع قصيرة للمنصات.",
-    image: "/services/podcast.jpg",
+    image: "/services/podcast-v2.jpg",
     accent: "#a78bfa",
   },
   {
@@ -105,7 +97,7 @@ export const serviceTabs: ServiceTab[] = [
     headline: "أنظمة تخدم عملك",
     description:
       "أوظّف التقنية والذكاء الاصطناعي في تطوير أعمالك: أنظمة إدارة، أتمتة، ومواقع تعكس هويتك وتشتغل لك.",
-    image: "/services/tech.jpg",
+    image: "/services/tech-v2.jpg",
     accent: "#22d3ee",
   },
 ];

@@ -33,6 +33,13 @@ html {
   scroll-behavior: smooth;
 }
 
+/* يمنع انسحاب الصفحة أفقياً (أي عنصر بعرض 100vw أو شريط متحرك) */
+html,
+body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
@@ -141,6 +148,11 @@ h1, h2, .font-serif-display {
 }
 .marquee-track:hover {
   animation-play-state: paused;
+}
+
+/* شريط لا يتوقّف أبداً — يخرج من اليسار ويعود من اليمين (بطاقات البرامج) */
+.loop-track {
+  animation: marquee 50s linear infinite;
 }
 
 /* Custom scrollbar */
