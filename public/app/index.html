@@ -269,6 +269,16 @@
   .kitem .t{font-weight:700;margin-bottom:4px}
   .kitem .m{font-size:12px;color:var(--muted)}
   .kitem .val{color:var(--gold);font-weight:800;margin-top:6px}
+  .kitem.rot{border-color:var(--warn);box-shadow:inset 3px 0 0 var(--warn)}
+  .rot-tag{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:700;color:var(--warn)}
+  .stage-track{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}
+  .stage-step{flex:1;min-width:64px;text-align:center;font-size:11px;font-weight:700;padding:7px 4px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);cursor:pointer;font-family:inherit;transition:.15s}
+  .stage-step:hover{border-color:var(--gold)}
+  .stage-step.done{background:var(--goldsoft);border-color:transparent;color:var(--gold2)}
+  .stage-step.on{background:var(--gold);border-color:var(--gold);color:#1a1400}
+  .tl-row{display:flex;gap:10px;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px}
+  .tl-row .tl-ic{width:26px;height:26px;flex:none;border-radius:8px;background:var(--panel3);display:grid;place-items:center;color:var(--muted)}
+  .tl-row .tl-ic i{width:14px;height:14px}
 
   .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:10px;flex-wrap:wrap}
   .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
@@ -565,6 +575,17 @@ const def={
   ],
   crmStages:[{key:'todo',label:'مهام'},{key:'doing',label:'جاري العمل عليها'},{key:'done',label:'تم بحمد الله'}],
   projectStages:[{key:'s1',label:'نفهم منتجك'},{key:'s2',label:'نكتب القصة'},{key:'s3',label:'نصوّر وننتج'},{key:'s4',label:'نسلّم ونطلق'},{key:'done',label:'منجز'}],
+  // مسار العميل — مراحل البيع ثم التنفيذ (rot = عدد الأيام قبل اعتبار العميل «راكداً»)
+  clientStages:[
+    {key:'lead',label:'عميل جديد',rot:3,pill:'lead'},
+    {key:'qualified',label:'مؤهّل',rot:5,pill:'contacted'},
+    {key:'quoted',label:'أُرسل عرض السعر',rot:7,pill:'quoted'},
+    {key:'negotiation',label:'تفاوض ومراجعة',rot:7,pill:'progress'},
+    {key:'won',label:'تم الاعتماد',rot:3,pill:'won'},
+    {key:'delivery',label:'قيد التنفيذ',rot:14,pill:'progress'},
+    {key:'delivered',label:'تم التسليم',rot:0,final:true,pill:'done'},
+    {key:'lost',label:'لم يكتمل',rot:0,final:true,lost:true,pill:'lost'}
+  ],
   counters:{sale:1000,invoice:1000,credit:1000},
   focus:{goalMin:180,breakEveryMin:50,breakLenMin:10,soundOn:true,log:{}},
   prayer:{city:'الرياض',country:'Saudi Arabia',method:4},
@@ -599,6 +620,7 @@ let S=load();
 function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(e){s=JSON.parse(JSON.stringify(def))}
   if(!s.crmStages||!s.crmStages.length)s.crmStages=JSON.parse(JSON.stringify(def.crmStages));
   if(!s.projectStages||!s.projectStages.length)s.projectStages=JSON.parse(JSON.stringify(def.projectStages));
+  if(!s.clientStages||!s.clientStages.length)s.clientStages=JSON.parse(JSON.stringify(def.clientStages));
   (s.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||s.crmStages[0].key;if(!o.priority)o.priority='none';if(o.due==null)o.due=''});
   (s.projects||[]).forEach(p=>{if(!p.stageKey){const m=s.projectStages.find(x=>x.label===p.stage);p.stageKey=p.status==='done'?'done':(m?m.key:s.projectStages[0].key)}});
   if(!s.habits||typeof s.habits!=='object')s.habits=JSON.parse(JSON.stringify(def.habits));
@@ -639,7 +661,7 @@ const ADMIN_EMAIL='ibrahimsaud25@gmail.com';
 async function enterApp(user){if(USER&&user&&USER.id===user.id)return;if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط ('+ADMIN_EMAIL+'). الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers();migrateData();save()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();initSidebarShell();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
 async function logout(){await sb.auth.signOut();USER=null;STATE_ID=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
 async function oauth(provider){lerr('');lmsg('جارٍ التحويل إلى '+(provider==='google'?'Google':'Apple')+'…');const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});if(error){lmsg('');lerr('تعذّر: '+error.message+' — تأكد من تفعيل المزوّد في Supabase.')}}
-async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
+async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));if(!S.clientStages||!S.clientStages.length)S.clientStages=JSON.parse(JSON.stringify(def.clientStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
 async function loadFreelancers(){const {data}=await sb.from('freelancers').select('*').order('created_at');S.freelancers=data||[]}
 function flName(id){const f=(S.freelancers||[]).find(x=>x.id===id);return f?f.name:''}
 function flLink(token){return location.origin+location.pathname+'?ft='+token}
@@ -725,6 +747,7 @@ const APPS=[
   {id:'pos',name:'الكاشير',icon:'scan-barcode'},
   {id:'subs',name:'الاشتراكات والمصروفات',icon:'credit-card'},
   {id:'habits',name:'العادات',icon:'repeat'},
+  {id:'pipeline',name:'مسار العملاء',icon:'git-branch'},
   {id:'contacts',name:'العملاء',icon:'contact'},
   {id:'suppliers',name:'الموردون',icon:'truck'},
   {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
@@ -741,7 +764,7 @@ const APPS=[
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -756,6 +779,7 @@ const LAUNCH=[
   {id:'pos',name:'الكاشير',icon:'scan-barcode',c:'#22c55e,#15803d'},
   {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777'},
   {id:'habits',name:'العادات',icon:'repeat',c:'#f59e0b,#b45309'},
+  {id:'pipeline',name:'مسار العملاء',icon:'git-branch',c:'#14b8a6,#0d9488'},
   {id:'contacts',name:'العملاء',icon:'contact',c:'#0ea5e9,#0284c7'},
   {id:'suppliers',name:'الموردون',icon:'truck',c:'#f59e0b,#b45309'},
   {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
@@ -1007,6 +1031,7 @@ function renderHome(){
   const H=hb();const habTotal=H.list.length;const habDone=H.list.filter(h=>habitDone(h.id)).length;
   const pendingHabits=H.list.filter(h=>!habitDone(h.id));const pendingPrayers=PRAYERS.filter(pr=>!prayerGet(pr[0]));
   const monthLbl=new Date().toLocaleDateString('ar-EG-u-nu-latn',{month:'long'});
+  const followUps=dueFollowUps();const rotting=rottingClients();
   document.getElementById('main').innerHTML=`
     <div class="hero-card"><h1>أهلاً ${esc(S.settings.owner)}</h1><p>نظرة سريعة على أعمالك — أدِر كل شيء من مكان واحد.</p>
       <div class="quick">
@@ -1031,6 +1056,14 @@ function renderHome(){
         ${pendingHabits.length?pendingHabits.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><button onclick="toggleHabit('${h.id}')" title="تم" style="flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:transparent;cursor:pointer"></button><span class="inl" style="color:${h.color}">${iconHTML(h.icon,'circle',16)}</span><span style="flex:1">${esc(h.name)}</span>${habitStreak(h.id)>0?`<span style="display:inline-flex;align-items:center;gap:2px;color:#f59e0b;font-size:12px;font-weight:700"><i data-lucide="flame" style="width:13px;height:13px"></i>${habitStreak(h.id)}</span>`:''}</div>`).join(''):(habTotal?'<p style="color:var(--good)"><i class="inl" data-lucide="check-check"></i> أنجزت كل عاداتك اليوم، أحسنت!</p>':'<p style="color:var(--muted)">لا عادات بعد.</p>')}
         <div style="margin-top:10px;font-size:13px;color:${pendingPrayers.length?'var(--muted)':'var(--good)'}"><i class="inl" data-lucide="moon-star"></i> ${pendingPrayers.length?'صلوات لم تُسجَّل: '+pendingPrayers.map(p=>p[1]).join('، '):'سجّلت كل صلوات اليوم'}</div>
         <button class="btn btn-ghost btn-sm" onclick="go('habits')" style="margin-top:10px"><i data-lucide="arrow-left-to-line"></i> إدارة العادات والتتبّع</button>
+      </div>
+      <div class="card"><h3><i data-lucide="bell"></i> متابعات العملاء
+        ${rotting.length?`<span class="rot-tag">· ${rotting.length} راكد</span>`:''}</h3>
+        ${followUps.length?followUps.slice(0,6).map(c=>`<div style="display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line);cursor:pointer" onclick="go('contacts');openClient('${c.id}')">
+          ${clientAvatar(c,28)}<div style="flex:1;min-width:0"><div style="font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.name)}</div>
+          <div style="color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(c.nextAction)}</div></div>
+          ${dueChip(c.nextDate)}</div>`).join(''):'<p style="color:var(--good)"><i class="inl" data-lucide="check-check"></i> ما فيه متابعات مستحقّة اليوم.</p>'}
+        <button class="btn btn-ghost btn-sm" onclick="go('pipeline')" style="margin-top:10px"><i data-lucide="git-branch"></i> افتح مسار العملاء</button>
       </div>
       <div class="card"><h3>آخر الفواتير</h3>${miniList(S.invoices.slice(-5).reverse(),i=>`${esc(i.client)} — ${money(invTotal(i))} ${pill(i.status)}`,'لا فواتير')}</div>
       <div class="card"><h3>مواعيد قادمة</h3>${miniList(upcoming.slice(0,5),a=>`${esc(a.title)} — ${a.datetime.replace('T',' ')}`,'لا مواعيد')}</div>
@@ -1157,7 +1190,7 @@ function contactName(id){const c=S.contacts.find(c=>c.id===id);return c?c.name:'
 /* ===== UNIFIED CLIENT LINKING (single source = contacts) ===== */
 const DEFAULT_TASK_STAGES=[{key:'todo',label:'قيد الانتظار'},{key:'doing',label:'قيد التنفيذ'},{key:'review',label:'مراجعة'},{key:'done',label:'منجز'}];
 // يجد جهة الاتصال بالاسم (دون حساسية حالة) أو ينشئها مرة واحدة، ويرجّع id
-function findOrCreateContact(name,type){name=(name||'').trim();if(!name)return '';let c=(S.contacts||[]).find(x=>(x.name||'').trim().toLowerCase()===name.toLowerCase());if(c)return c.id;c={id:uid(),name,type:type||'عميل',phone:'',email:'',company:'',vat:'',address:'',city:'',website:'',logo:'',notes:''};S.contacts.push(c);return c.id}
+function findOrCreateContact(name,type){name=(name||'').trim();if(!name)return '';let c=(S.contacts||[]).find(x=>(x.name||'').trim().toLowerCase()===name.toLowerCase());if(c)return c.id;c={id:uid(),name,type:type||'عميل',phone:'',email:'',company:'',vat:'',address:'',city:'',website:'',logo:'',notes:'',stageKey:S.clientStages[0].key,stageDate:today(),value:0,nextAction:'',nextDate:'',log:[]};S.contacts.push(c);return c.id}
 // اسم العميل للعرض: من الـ id المربوط، وإلا النص القديم (توافق)
 function resolveClientName(rec){return contactName(rec.contactId)||rec.client||rec.clientName||rec.contact||'—'}
 // قائمة datalist للإكمال التلقائي (تُضمَّن داخل المودال)
@@ -1166,6 +1199,32 @@ function contactsDatalist(){return `<datalist id="__contactsDL">${(S.contacts||[
 function clientFieldHTML(idAttr,current){return `<input id="${idAttr}" list="__contactsDL" value="${esc(current==='—'?'':current||'')}" placeholder="ابحث باسم عميل أو أضف جديد" autocomplete="off">`+contactsDatalist()}
 // روابط عناصر العميل (مواعيد/فواتير/مشاريع) عبر contactId
 function clientItems(contactId){if(!contactId)return {appts:[],invoices:[],projects:[]};return {appts:S.appointments.filter(a=>a.contactId===contactId),invoices:S.invoices.filter(i=>i.contactId===contactId),projects:S.projects.filter(p=>p.contactId===contactId)}}
+/* ===== مسار العميل (Pipeline) ===== */
+const LOG_KINDS={call:{label:'مكالمة',icon:'phone'},whatsapp:{label:'واتساب',icon:'message-circle'},meeting:{label:'اجتماع',icon:'users'},note:{label:'ملاحظة',icon:'sticky-note'},stage:{label:'انتقال مرحلة',icon:'move-right'}};
+function inPipeline(c){return (c.type||'عميل')!=='مورد'}
+function stageIdx(key){return S.clientStages.findIndex(s=>s.key===key)}
+function clientStage(c){return S.clientStages.find(s=>s.key===c.stageKey)||S.clientStages[0]}
+function daysSince(d){if(!d)return 0;const ms=Date.parse(d+'T00:00:00')-Date.parse(today()+'T00:00:00');return Math.max(0,Math.round(-ms/86400000))}
+function stageAge(c){return daysSince(c.stageDate)}
+function isRotting(c){const st=clientStage(c);if(!st||st.final||!st.rot)return false;return stageAge(c)>Number(st.rot)}
+function clientLog(c,kind,note){if(!Array.isArray(c.log))c.log=[];c.log.push({id:uid(),kind,note:note||'',date:today()})}
+// نقل مرحلة العميل — للأمام فقط، حتى لا يرجع عميل مسلَّم للخلف بسبب مستند قديم
+function bumpStage(contactId,targetKey,reason){
+  const c=(S.contacts||[]).find(x=>x.id===contactId);if(!c)return;
+  const cur=stageIdx(c.stageKey),to=stageIdx(targetKey);
+  if(to<0||cur>=to)return;
+  setClientStage(c,targetKey,reason);
+}
+function setClientStage(c,key,reason){
+  const st=S.clientStages.find(s=>s.key===key);if(!st||c.stageKey===key)return;
+  c.stageKey=key;c.stageDate=today();
+  clientLog(c,'stage',(reason?reason+' — ':'')+'انتقل إلى: '+st.label);
+}
+function moveClientStage(id,key,reason,stay){const c=(S.contacts||[]).find(x=>x.id===id);if(!c)return;setClientStage(c,key,reason);save();if(stay)openClient(id);else rerender()}
+// عملاء تحتاج متابعتهم اليوم أو تأخّرت خطوتهم القادمة
+function dueFollowUps(){const tk=today();return (S.contacts||[]).filter(c=>inPipeline(c)&&!clientStage(c).final&&c.nextDate&&c.nextDate<=tk).sort((a,b)=>(a.nextDate||'').localeCompare(b.nextDate||''))}
+function rottingClients(){return (S.contacts||[]).filter(c=>inPipeline(c)&&isRotting(c))}
+
 // ترحيل آمن: يحوّل الأسماء النصية القديمة لجهات اتصال مربوطة (idempotent)
 function migrateData(){
   // ترحيل لمرّة واحدة: تحديث الاسم القديم إلى اسم المؤسسة المسجّل (قابل للتغيير من الإعدادات لاحقاً)
@@ -1183,6 +1242,25 @@ function migrateData(){
   (S.invoices||[]).forEach(d=>{if(!d.contactId&&d.client)d.contactId=findOrCreateContact(d.client)});
   (S.sales||[]).forEach(d=>{if(!d.contactId&&d.client)d.contactId=findOrCreateContact(d.client)});
   (S.crm||[]).forEach(o=>{if(!o.contactId&&(o.clientName||o.client))o.contactId=findOrCreateContact(o.clientName||o.client)});
+  // مسار العميل: استنتاج مرحلة العملاء القدامى من مستنداتهم بدل وضعهم كلهم في «عميل جديد»
+  (S.contacts||[]).forEach(c=>{
+    if(!Array.isArray(c.log))c.log=[];
+    if(c.value==null)c.value=0;
+    if(c.nextAction==null)c.nextAction='';
+    if(c.nextDate==null)c.nextDate='';
+    if(!c.stageKey){
+      const invs=(S.invoices||[]).filter(d=>d.contactId===c.id);
+      const quotes=(S.sales||[]).filter(d=>d.contactId===c.id);
+      if(!inPipeline(c))c.stageKey='lead';
+      else if(invs.length&&invs.every(d=>d.status==='paid'))c.stageKey='delivered';
+      else if(invs.length)c.stageKey='delivery';
+      else if(quotes.length)c.stageKey='quoted';
+      else if((c.type||'')==='عميل محتمل')c.stageKey='lead';
+      else c.stageKey='qualified';
+    }
+    if(stageIdx(c.stageKey)<0)c.stageKey=S.clientStages[0].key;
+    if(!c.stageDate)c.stageDate=today();
+  });
 }
 function emptyBox(ic,txt){const isName=/^[a-z][a-z0-9-]*$/.test(ic||'');const inner=isName?`<i data-lucide="${ic}"></i>`:ic;return `<div class="empty"><div class="big">${inner}</div>${txt}</div>`}
 function delItem(coll,id,cb){if(!confirm('تأكيد الحذف؟'))return;S[coll]=S[coll].filter(x=>x.id!==id);save();closeModal();cb&&cb()}
@@ -1193,7 +1271,7 @@ function dstart(e,coll,id){DRAG={coll,id};e.currentTarget.classList.add('draggin
 function dend(e){e.currentTarget.classList.remove('dragging')}
 function dover(e){e.preventDefault();e.currentTarget.classList.add('dragover')}
 function dleave(e){e.currentTarget.classList.remove('dragover')}
-function ddrop(e,coll,stageKey){e.preventDefault();e.currentTarget.classList.remove('dragover');if(DRAG&&DRAG.coll===coll){const it=S[coll].find(x=>x.id===DRAG.id);if(it&&it.stageKey!==stageKey){it.stageKey=stageKey;save();if(coll==='projects')syncTasks();rerender()}}DRAG=null}
+function ddrop(e,coll,stageKey){e.preventDefault();e.currentTarget.classList.remove('dragover');if(DRAG&&DRAG.coll===coll){const it=S[coll].find(x=>x.id===DRAG.id);if(it&&it.stageKey!==stageKey){if(coll==='contacts')setClientStage(it,stageKey);else it.stageKey=stageKey;save();if(coll==='projects')syncTasks();rerender()}}DRAG=null}
 
 /* ===== STAGE EDITOR ===== */
 function stageEditor(stagesKey,coll){
@@ -1215,21 +1293,42 @@ function stageEditor(stagesKey,coll){
 /* ===== GENERIC KANBAN ===== */
 function renderKanban(cfg){
   const stages=S[cfg.stagesKey];
+  const pool=cfg.filter?S[cfg.coll].filter(cfg.filter):S[cfg.coll];
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>${cfg.title}</h1><div style="display:flex;gap:8px;flex-wrap:wrap">
       <button class="btn btn-ghost btn-sm" onclick="stageEditor('${cfg.stagesKey}','${cfg.coll}')"><i data-lucide="settings"></i> تعديل المراحل</button>
       <button class="btn btn-gold" onclick="${cfg.onAdd}">+ ${cfg.addLabel}</button></div></div>
     ${cfg.note||''}
-    ${!S[cfg.coll].length?emptyBox(cfg.emptyIcon,cfg.emptyText):
+    ${!pool.length?emptyBox(cfg.emptyIcon,cfg.emptyText):
     `<div class="kanban">${stages.map(st=>{
-      let items=S[cfg.coll].filter(it=>it.stageKey===st.key);
+      let items=pool.filter(it=>it.stageKey===st.key);
       if(cfg.sort)items=items.slice().sort(cfg.sort);
       const sum=cfg.valueField?items.reduce((a,it)=>a+Number(it[cfg.valueField]||0),0):null;
       return `<div class="kcol" ondragover="dover(event)" ondragleave="dleave(event)" ondrop="ddrop(event,'${cfg.coll}','${st.key}')">
         <h4><span>${esc(st.label)}</span><span class="kbadge">${items.length}</span></h4>
         ${sum!=null?`<div style="font-size:12px;color:var(--gold);margin-bottom:8px">${money(sum)}</div>`:''}
-        ${items.map(it=>`<div class="kitem" draggable="true" ondragstart="dstart(event,'${cfg.coll}','${it.id}')" ondragend="dend(event)" onclick="${cfg.onOpen}('${it.id}')">${cfg.card(it)}</div>`).join('')||'<p style="color:var(--muted);font-size:12px">اسحب بطاقة هنا</p>'}
+        ${items.map(it=>`<div class="kitem ${cfg.itemClass?cfg.itemClass(it):''}" draggable="true" ondragstart="dstart(event,'${cfg.coll}','${it.id}')" ondragend="dend(event)" onclick="${cfg.onOpen}('${it.id}')">${cfg.card(it)}</div>`).join('')||'<p style="color:var(--muted);font-size:12px">اسحب بطاقة هنا</p>'}
       </div>`}).join('')}</div>`}`;
+}
+
+/* ===== مسار العملاء (لوحة المراحل) ===== */
+function renderPipeline(){
+  const live=(S.contacts||[]).filter(c=>inPipeline(c)&&!clientStage(c).final);
+  const open=live.reduce((a,c)=>a+Number(c.value||0),0);
+  const rot=rottingClients().length, due=dueFollowUps().length;
+  renderKanban({title:'مسار العملاء',onAdd:'contactModal(null,renderPipeline)',addLabel:'عميل جديد',
+    stagesKey:'clientStages',coll:'contacts',onOpen:'openClient',filter:inPipeline,valueField:'value',
+    itemClass:c=>isRotting(c)?'rot':'',
+    sort:(a,b)=>Number(b.value||0)-Number(a.value||0),
+    emptyIcon:'git-branch',emptyText:'لا يوجد عملاء في المسار بعد. أضف أول عميل وحدّد مرحلته.',
+    note:`<div class="badge-note"><i data-lucide="lightbulb"></i> <div>اسحب العميل بين المراحل لتحديث موقعه — يُسجَّل الانتقال تلقائياً في سجل تواصله.
+      البطاقة <b style="color:var(--warn)">بحدّ برتقالي</b> معناها ركود: مرّت أيام أكثر من المتوقّع بلا حركة.
+      <br><b>خط مفتوح:</b> ${money(open)} · <b>متابعات مستحقّة:</b> ${due} · <b>راكد:</b> ${rot}</div></div>`,
+    card:c=>`<div class="t" style="display:flex;align-items:center;gap:8px">${clientAvatar(c,30)}<span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(c.name)}</span></div>
+      ${c.company?`<div class="m">${esc(c.company)}</div>`:''}
+      ${Number(c.value||0)>0?`<div class="val">${money(c.value)}</div>`:''}
+      ${c.nextAction?`<div class="m" style="margin-top:6px">${dueChip(c.nextDate)} ${esc(c.nextAction)}</div>`:'<div class="m" style="margin-top:6px;color:var(--warn)">بلا خطوة قادمة</div>'}
+      ${isRotting(c)?`<div class="rot-tag" style="margin-top:6px"><i data-lucide="alarm-clock"></i> راكد ${stageAge(c)} يوم</div>`:''}`});
 }
 
 /* ===== المهام (نظام أهمية بثلاث مستويات — مثل TickTick) ===== */
@@ -2486,11 +2585,11 @@ function renderContacts(){
   const cs=S.contacts.slice().sort((a,b)=>(a.name||'').localeCompare(b.name||'','ar'));
   const view=uiPref('contactsView','cards');
   const sw=viewSwitch('contactsView',[{v:'cards',t:'بطاقات'},{v:'list',t:'قائمة'}],view);
-  const typePill=c=>`<span class="pill ${c.type==='عميل محتمل'?'lead':(c.type==='مورد'?'contacted':'won')}">${esc(c.type||'عميل')}</span>`;
+  const typePill=c=>inPipeline(c)?stagePill(c):`<span class="pill contacted">${esc(c.type||'مورد')}</span>`;
   let body;
   if(!cs.length){body=emptyBox('user','لا يوجد عملاء بعد. أضف أول عميل ببياناته وشعاره.');}
   else if(view==='list'){
-    body=`<table><thead><tr><th>العميل</th><th>الجهة</th><th>النوع</th><th>الفواتير</th><th>الرصيد</th></tr></thead><tbody>
+    body=`<table><thead><tr><th>العميل</th><th>الجهة</th><th>المرحلة</th><th>الفواتير</th><th>الرصيد</th></tr></thead><tbody>
     ${cs.map(c=>{const b=clientBalance(c.id);return `<tr style="cursor:pointer" onclick="openClient('${c.id}')">
       <td><span style="display:inline-flex;align-items:center;gap:10px">${clientAvatar(c,34)}<b>${esc(c.name)}</b></span></td>
       <td style="color:var(--muted)">${esc(c.company||'—')}</td><td>${typePill(c)}</td><td style="color:var(--muted)">${b.count}</td>
@@ -2527,7 +2626,9 @@ function openClient(id){
     <div class="card" style="display:flex;align-items:center;gap:16px;margin-bottom:18px">
       ${clientAvatar(c,72)}
       <div style="flex:1;min-width:0"><div style="font-size:22px;font-weight:900">${esc(c.name)}</div>
-      <div style="color:var(--muted)">${esc(c.company||'')} ${c.company&&c.type?'·':''} ${esc(c.type||'عميل')}</div></div></div>
+      <div style="color:var(--muted)">${esc(c.company||'')} ${c.company&&c.type?'·':''} ${esc(c.type||'عميل')}</div></div>
+      ${inPipeline(c)?stagePill(c):''}</div>
+    ${inPipeline(c)?stagePanel(c):''}
     <div class="stats">
       <div class="stat"><span class="ic"><i data-lucide="receipt-text"></i></span><div class="v">${b.count}</div><div class="l">عدد الفواتير</div></div>
       <div class="stat"><span class="ic"><i data-lucide="layers"></i></span><div class="v">${money(b.invoiced)}</div><div class="l">إجمالي مفوتر</div></div>
@@ -2556,6 +2657,16 @@ function openClient(id){
           <span><button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button> <button class="link-btn" onclick="docModal('sale','${d.id}',null,()=>openClient('${id}'))">#${d.number}</button></span>
           <span>${money(docTotal(d))} ${pill(d.status)}</span></div>`).join(''):'<p style="color:var(--muted)">لا عروض أسعار.</p>'}
       </div>
+      <div class="card"><h3><i data-lucide="history"></i> سجل التواصل</h3>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          ${['call','whatsapp','meeting','note'].map(k=>`<button class="btn btn-ghost btn-sm" onclick="logModal('${id}','${k}')"><i data-lucide="${LOG_KINDS[k].icon}"></i> ${LOG_KINDS[k].label}</button>`).join('')}
+        </div>
+        ${(c.log||[]).length?(c.log||[]).slice().reverse().map(l=>`<div class="tl-row">
+          <span class="tl-ic"><i data-lucide="${(LOG_KINDS[l.kind]||LOG_KINDS.note).icon}"></i></span>
+          <div style="flex:1;min-width:0"><div style="font-weight:700">${esc((LOG_KINDS[l.kind]||LOG_KINDS.note).label)}</div>
+          ${l.note?`<div style="color:var(--muted)">${esc(l.note)}</div>`:''}</div>
+          <span style="color:var(--muted);font-size:12px;flex:none">${esc(l.date)}</span></div>`).join(''):'<p style="color:var(--muted)">لا يوجد تواصل مسجّل بعد — سجّل أول مكالمة أو رسالة.</p>'}
+      </div>
       <div class="card"><h3><i data-lucide="clapperboard"></i> المشاريع والمواعيد</h3>
         ${it.projects.length?it.projects.map(p=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)"><i class="inl" data-lucide="clapperboard"></i> ${esc(p.title)}</div>`).join(''):''}
         ${apptUp.length?apptUp.map(a=>`<div style="padding:7px 0;border-bottom:1px solid var(--line)"><i class="inl" data-lucide="calendar-days"></i> ${esc(a.title)} — ${esc((a.datetime||'').replace('T',' '))}</div>`).join(''):''}
@@ -2564,9 +2675,55 @@ function openClient(id){
     </div>`;
   refreshIcons();
 }
+/* شارة المرحلة — تستخدم أصناف الـpill الموجودة أصلاً */
+function stagePill(c){const st=clientStage(c);return `<span class="pill ${st.pill||'lead'}">${esc(st.label)}</span>`}
+/* لوحة المرحلة والمتابعة أعلى بطاقة العميل */
+function stagePanel(c){
+  const st=clientStage(c),cur=stageIdx(c.stageKey);
+  const path=S.clientStages.filter(s=>!s.lost);
+  const nxt=path[path.findIndex(s=>s.key===c.stageKey)+1];
+  const rot=isRotting(c);
+  return `<div class="card" style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h3 style="margin:0"><i data-lucide="git-branch"></i> المرحلة والمتابعة</h3>
+      <span style="color:${rot?'var(--warn)':'var(--muted)'};font-size:13px;font-weight:700">${rot?`<i class="inl" data-lucide="alarm-clock"></i> راكد ${stageAge(c)} يوم في «${esc(st.label)}»`:`في هذه المرحلة منذ ${stageAge(c)} يوم`}</span>
+    </div>
+    <div class="stage-track">${path.map((s,i)=>`<button class="stage-step ${s.key===c.stageKey?'on':(i<cur?'done':'')}" onclick="moveClientStage('${c.id}','${s.key}','تعديل يدوي',1)" title="نقل إلى ${esc(s.label)}">${esc(s.label)}</button>`).join('')}</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+      ${nxt?`<button class="btn btn-gold btn-sm" onclick="moveClientStage('${c.id}','${nxt.key}','تعديل يدوي',1)"><i data-lucide="arrow-left"></i> نقل إلى: ${esc(nxt.label)}</button>`:''}
+      ${!st.lost&&!st.final?`<button class="btn btn-ghost btn-sm" onclick="loseClient('${c.id}')"><i data-lucide="x"></i> لم يكتمل</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="nextActionModal('${c.id}')"><i data-lucide="bell"></i> ${c.nextAction?'تعديل الخطوة القادمة':'حدّد الخطوة القادمة'}</button>
+    </div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:11px;font-size:13px">
+      <span style="color:var(--muted)">القيمة المتوقّعة: <b style="color:var(--gold)">${Number(c.value||0)>0?money(c.value):'—'}</b></span>
+      <span style="color:var(--muted)">الخطوة القادمة: ${c.nextAction?`${dueChip(c.nextDate)} <b>${esc(c.nextAction)}</b>`:'<b style="color:var(--warn)">غير محدّدة</b>'}</span>
+    </div>
+  </div>`;
+}
+function loseClient(id){
+  const c=S.contacts.find(x=>x.id===id);if(!c)return;
+  const why=prompt('ليش ما اكتمل؟ (يُسجَّل في سجل التواصل)','');if(why===null)return;
+  setClientStage(c,'lost',why?('السبب: '+why):'');save();openClient(id);
+}
+function nextActionModal(id){
+  const c=S.contacts.find(x=>x.id===id);if(!c)return;
+  openModal('الخطوة القادمة',`
+    <div class="field"><label>ما الإجراء القادم؟</label><input id="na_act" value="${esc(c.nextAction||'')}" placeholder="مثال: أتابع بالواتساب بخصوص العرض"></div>
+    <div class="field"><label>متى؟</label><input type="date" id="na_date" value="${esc(c.nextDate||today())}"></div>`,
+  ()=>{c.nextAction=document.getElementById('na_act').value;c.nextDate=document.getElementById('na_date').value;save();closeModal();openClient(id)});
+}
+function logModal(id,kind){
+  const c=S.contacts.find(x=>x.id===id);if(!c)return;
+  const k=LOG_KINDS[kind]||LOG_KINDS.note;
+  openModal('تسجيل '+k.label,`
+    <div class="field"><label>ماذا دار؟</label><textarea id="lg_note" rows="3" placeholder="خلاصة ${esc(k.label)}..."></textarea></div>
+    <div class="field"><label>الخطوة القادمة (اختياري)</label><input id="lg_next" value="${esc(c.nextAction||'')}"></div>
+    <div class="field"><label>تاريخها</label><input type="date" id="lg_date" value="${esc(c.nextDate||'')}"></div>`,
+  ()=>{clientLog(c,kind,document.getElementById('lg_note').value);c.nextAction=document.getElementById('lg_next').value;c.nextDate=document.getElementById('lg_date').value;save();closeModal();openClient(id)});
+}
 function contactModal(id,cb){
   cb=cb||renderContacts;
-  let c=id?{...S.contacts.find(x=>x.id===id)}:{id:'',name:'',type:'عميل',phone:'',email:'',company:'',vat:'',address:'',city:'',website:'',logo:'',notes:''};
+  let c=id?{...S.contacts.find(x=>x.id===id)}:{id:'',name:'',type:'عميل',phone:'',email:'',company:'',vat:'',address:'',city:'',website:'',logo:'',notes:'',stageKey:S.clientStages[0].key,stageDate:today(),value:0,nextAction:'',nextDate:'',log:[]};
   window.cPickLogo=(e)=>{const f=e.target.files[0];if(!f)return;if(f.size>1500000){alert('حجم الصورة كبير (أقل من 1.5MB)');return}const r=new FileReader();r.onload=()=>{c.logo=r.result;const p=document.getElementById('c_logoPrev');if(p){p.src=r.result;p.style.display='block'}};r.readAsDataURL(f)};
   openModal(id?'تعديل بطاقة العميل':'عميل جديد',`
     <div class="logo-upload"><img id="c_logoPrev" src="${esc(c.logo)}" style="${c.logo?'':'display:none'}" onerror="this.style.display='none'"><div>
@@ -2576,6 +2733,10 @@ function contactModal(id,cb){
     <input type="file" id="c_logoFile" accept="image/*" class="hidden" onchange="cPickLogo(event)">
     <div class="row2"><div class="field"><label>الاسم</label><input id="c_name" value="${esc(c.name)}"></div>
     <div class="field"><label>النوع</label><select id="c_type"><option ${c.type==='عميل'?'selected':''}>عميل</option><option ${c.type==='عميل محتمل'?'selected':''}>عميل محتمل</option><option ${c.type==='مورد'?'selected':''}>مورد</option></select></div></div>
+    <div class="row2"><div class="field"><label>المرحلة</label><select id="c_stage">${S.clientStages.map(s=>`<option value="${s.key}" ${c.stageKey===s.key?'selected':''}>${esc(s.label)}</option>`).join('')}</select></div>
+    <div class="field"><label>القيمة المتوقّعة (${esc(S.settings.currency)})</label><input type="number" id="c_value" value="${Number(c.value||0)}" min="0" step="any"></div></div>
+    <div class="row2"><div class="field"><label>الإجراء القادم</label><input id="c_nextAction" value="${esc(c.nextAction||'')}" placeholder="مثال: أتابع على الواتساب بخصوص العرض"></div>
+    <div class="field"><label>تاريخ الإجراء القادم</label><input type="date" id="c_nextDate" value="${esc(c.nextDate||'')}"></div></div>
     <div class="row2"><div class="field"><label>الجوال</label><input id="c_phone" value="${esc(c.phone)}"></div>
     <div class="field"><label>البريد</label><input id="c_email" value="${esc(c.email)}"></div></div>
     <div class="row2"><div class="field"><label>الشركة/الجهة</label><input id="c_company" value="${esc(c.company)}"></div>
@@ -2584,7 +2745,8 @@ function contactModal(id,cb){
     <div class="field"><label>الموقع الإلكتروني</label><input id="c_website" value="${esc(c.website)}" placeholder="https://"></div></div>
     <div class="field"><label>العنوان</label><input id="c_address" value="${esc(c.address)}"></div>
     <div class="field"><label>ملاحظات</label><textarea id="c_notes" rows="2">${esc(c.notes)}</textarea></div>`,
-  ()=>{const g=i=>document.getElementById(i).value;c.name=g('c_name');c.type=g('c_type');c.phone=g('c_phone');c.email=g('c_email');c.company=g('c_company');c.vat=g('c_vat');c.city=g('c_city');c.website=g('c_website');c.address=g('c_address');c.notes=g('c_notes');if(!c.name.trim()){alert('أدخل الاسم');return}if(id){const i=S.contacts.findIndex(x=>x.id===id);S.contacts[i]=c}else{c.id=uid();S.contacts.push(c)}save();closeModal();cb()},id?()=>delItem('contacts',id,renderContacts):null);
+  ()=>{const g=i=>document.getElementById(i).value;c.name=g('c_name');c.type=g('c_type');c.phone=g('c_phone');c.email=g('c_email');c.company=g('c_company');c.vat=g('c_vat');c.city=g('c_city');c.website=g('c_website');c.address=g('c_address');c.notes=g('c_notes');c.value=Number(g('c_value')||0);c.nextAction=g('c_nextAction');c.nextDate=g('c_nextDate');if(!c.name.trim()){alert('أدخل الاسم');return}
+    if(!Array.isArray(c.log))c.log=[];setClientStage(c,g('c_stage'));if(!c.stageDate)c.stageDate=today();if(id){const i=S.contacts.findIndex(x=>x.id===id);S.contacts[i]=c}else{c.id=uid();S.contacts.push(c)}save();closeModal();cb()},id?()=>delItem('contacts',id,renderContacts):null);
   window.__rmLogo=()=>{c.logo=''};
 }
 
@@ -2718,7 +2880,7 @@ function renderDocs(type){
     </tbody></table>`}`;
 }
 function delDoc(type,id){if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);save();renderDocs(type)}
-function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);const ct=S.contacts.find(c=>c.id===s.contactId);const inv={id:uid(),number:++S.counters.invoice,client:s.client,contactId:s.contactId||'',clientVat:(ct&&ct.vat)||'',date:today(),items:JSON.parse(JSON.stringify(s.items)),discType:s.discType||'none',discVal:Number(s.discVal||0),notes:s.notes,status:'unpaid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:''};S.invoices.push(inv);save();go('invoicing');alert('تم إنشاء فاتورة من عرض السعر')}
+function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);const ct=S.contacts.find(c=>c.id===s.contactId);const inv={id:uid(),number:++S.counters.invoice,client:s.client,contactId:s.contactId||'',clientVat:(ct&&ct.vat)||'',date:today(),items:JSON.parse(JSON.stringify(s.items)),discType:s.discType||'none',discVal:Number(s.discVal||0),notes:s.notes,status:'unpaid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:''};S.invoices.push(inv);bumpStage(inv.contactId,'won','تحويل عرض السعر إلى فاتورة #'+inv.number);save();go('invoicing');alert('تم إنشاء فاتورة من عرض السعر')}
 function docModal(type,id,presetName,cb){
   const isInv=type==='invoice';const k=isInv?'invoices':'sales';
   let d=id?JSON.parse(JSON.stringify(S[k].find(x=>x.id===id))):
@@ -2757,7 +2919,8 @@ function docModal(type,id,presetName,cb){
     <div class="line grand"><span>الإجمالي</span><span>${money(total)}</span></div>`;}
   function updateTotals(){const el=document.getElementById('docTotals');if(el)el.innerHTML=totalsHTML()}
   window.docDisc=()=>{const t=document.getElementById('d_disctype'),v=document.getElementById('d_discval');if(t)d.discType=t.value;if(v){d.discVal=Number(v.value||0);v.disabled=(d.discType||'none')==='none'}updateTotals()};
-  openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>renderDocs(type)))()});
+  openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);
+    bumpStage(d.contactId,isInv?'won':'quoted',isInv?('فاتورة #'+d.number):('عرض سعر #'+d.number));if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>renderDocs(type)))()});
   window.addItem=()=>{collect();d.items.push({desc:'',qty:1,price:0,discount:0});refresh()};
   window.addProduct=pid=>{collect();const p=(S.products||[]).find(x=>x.id===pid);if(!p)return;const line={desc:p.name,qty:1,price:Number(p.price||0),discount:0,details:p.desc||''};if(d.items.length===1&&!d.items[0].desc)d.items[0]=line;else d.items.push(line);refresh()};
   window.rmItem=i=>{collect();d.items.splice(i,1);if(!d.items.length)d.items.push({desc:'',qty:1,price:0,discount:0});refresh()};
@@ -2917,7 +3080,7 @@ function paymentModal(invId){
     <div class="row2"><div class="field"><label>المبلغ</label><input id="pa_amt" type="number" inputmode="decimal" value="${Number(due.toFixed(2))}">${amtChipsHTML('pa_amt',[500,1000,2500])}</div>
     <div class="field"><label>التاريخ</label><input id="pa_date" type="date" value="${today()}"></div></div>
     <div class="field"><label>طريقة الدفع</label><select id="pa_method"><option>تحويل بنكي</option><option>نقداً</option><option>مدى / بطاقة</option><option>STC Pay</option><option>أخرى</option></select></div>`,
-  ()=>{const amt=Number(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);save();closeModal();openDoc('invoice',invId)});
+  ()=>{const amt=Number(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);bumpStage(inv.contactId,'delivery','استلمنا دفعة على الفاتورة #'+inv.number);save();closeModal();openDoc('invoice',invId)});
 }
 function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;if(!confirm('حذف هذه الدفعة؟'))return;inv.payments.splice(idx,1);syncInvStatus(inv);save();openDoc('invoice',invId)}
 
@@ -3035,6 +3198,13 @@ function renderDashboards(){
   const byC={};allInv.forEach(i=>{const n=resolveClientName(i);byC[n]=(byC[n]||0)+invTotal(i)});
   const top=Object.entries(byC).sort((a,b)=>b[1]-a[1]).slice(0,6);const maxC=Math.max(1,...top.map(t=>t[1]));
   const qStages=[{k:'draft',l:'عرض سعر'},{k:'sent',l:'مُرسل'},{k:'sale',l:'أمر بيع'},{k:'cancel',l:'ملغى'}];
+  // ملخّص مسار العملاء: عدد وقيمة كل مرحلة + نسبة التحويل إلى «تم الاعتماد»
+  const pipeAll=(S.contacts||[]).filter(inPipeline);
+  const pipeRows=S.clientStages.map(st=>{const g=pipeAll.filter(c=>c.stageKey===st.key);return {label:st.label,n:g.length,v:g.reduce((a,c)=>a+Number(c.value||0),0)}});
+  const pipeMax=Math.max(1,...pipeRows.map(r=>r.n));
+  const pipeOpen=pipeAll.filter(c=>!clientStage(c).final).reduce((a,c)=>a+Number(c.value||0),0);
+  const wonIdx=stageIdx('won');
+  const pipeConv=pipeAll.length?Math.round(pipeAll.filter(c=>wonIdx>=0&&stageIdx(c.stageKey)>=wonIdx&&!clientStage(c).lost).length/pipeAll.length*100):0;
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>لوحة البيانات والتحليلات</h1><span style="color:var(--muted)">${today()}</span></div>
     <div class="stats">
@@ -3049,6 +3219,11 @@ function renderDashboards(){
         ${months.map(m=>`<div style="flex:1;text-align:center"><div style="height:${Math.round(m.v/maxM*130)}px;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:7px 7px 0 0;min-height:3px"></div><div style="font-size:11px;color:var(--muted);margin-top:6px">${m.lbl}</div><div style="font-size:11px">${m.v?Math.round(m.v):''}</div></div>`).join('')}</div></div>
       <div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="users"></i> المبيعات حسب العميل</h3>
         ${top.length?top.map(([n,v])=>`<div style="margin:10px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:70%">${esc(n)}</span><span style="font-weight:700">${money(v)}</span></div><div style="height:11px;background:var(--panel3);border-radius:6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.round(v/maxC*100)}%;background:linear-gradient(90deg,var(--gold),var(--gold2))"></i></div></div>`).join(''):'<p style="color:var(--muted)">لا مبيعات بعد.</p>'}</div>
+      <div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="git-branch"></i> مسار العملاء
+        <span style="color:var(--muted);font-weight:400;font-size:13px">· خط مفتوح ${money(pipeOpen)} · تحويل ${pipeConv}%</span></h3>
+        ${pipeRows.map(r=>`<div style="margin:9px 0"><div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px"><span>${esc(r.label)} <span style="color:var(--muted)">(${r.n})</span></span><span style="font-weight:700">${r.v?money(r.v):'—'}</span></div>
+          <div style="height:11px;background:var(--panel3);border-radius:6px;overflow:hidden"><i style="display:block;height:100%;width:${Math.round(r.n/pipeMax*100)}%;background:linear-gradient(90deg,var(--gold),var(--gold2))"></i></div></div>`).join('')}
+        <button class="btn btn-ghost btn-sm" onclick="go('pipeline')" style="margin-top:8px"><i data-lucide="arrow-left-to-line"></i> افتح اللوحة</button></div>
       <div class="card"><h3><i data-lucide="eye"></i> زيارات الموقع</h3><div id="visitsBox"><p style="color:var(--muted)">…جارٍ التحميل</p></div></div>
       <div class="card"><h3><i data-lucide="file-text"></i> حالة عروض الأسعار</h3>
         ${qStages.map(st=>{const c=quotes.filter(q=>q.status===st.k).length;return `<div style="display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--line)"><span>${st.l}</span><b>${c}</b></div>`}).join('')}</div>
