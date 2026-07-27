@@ -1,0 +1,492 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>عرض تطوير وإطلاق الموقع الإلكتروني — شركة التكامل المتحدة للخدمات اللوجستية</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="icon" href="assets/img/favicon.png" type="image/png">
+<style>
+@font-face{font-family:"Thmanyah Sans";src:url("assets/fonts/thmanyahsans-Light.woff2") format("woff2");font-weight:300;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("assets/fonts/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("assets/fonts/thmanyahsans-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("assets/fonts/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("assets/fonts/thmanyahsans-Black.woff2") format("woff2");font-weight:900;font-display:swap}
+@font-face{font-family:"Thmanyah Display";src:url("assets/fonts/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+
+:root{
+  --navy-900:#0d2440;--navy-800:#12365e;--navy-700:#1e4d82;--navy-600:#285d9a;
+  --navy-050:#eef3f9;--navy-025:#f6f9fc;--gold:#ffc50c;
+  --ink:#12181f;--body:#4a5560;--muted:#7c8894;--line:#e3e9f0;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{
+  margin:0;background:#eef1f5;color:var(--body);
+  font-family:"Thmanyah Sans",system-ui,sans-serif;font-size:15.5px;line-height:1.9;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;color:var(--ink);line-height:1.35;font-weight:700}
+h1,h2{font-family:"Thmanyah Display","Thmanyah Sans",serif;letter-spacing:-.01em}
+p{margin:0 0 1em}
+ul{margin:0;padding:0;list-style:none}
+img{max-width:100%;display:block;height:auto}
+a{color:var(--navy-700);text-decoration:none}
+
+.sheet{
+  width:210mm;min-height:297mm;margin:16px auto;background:#fff;
+  padding:20mm 18mm;position:relative;box-shadow:0 12px 40px rgba(13,36,64,.14);
+}
+.sheet--cover{padding:0;overflow:hidden;display:flex;flex-direction:column}
+
+/* ---------- cover ---------- */
+.cover-top{
+  background:linear-gradient(140deg,var(--navy-900),var(--navy-700));
+  color:#fff;padding:22mm 18mm 20mm;position:relative;overflow:hidden;flex:1
+}
+.cover-top::before{
+  content:"";position:absolute;inset:0;opacity:.16;
+  background-image:radial-gradient(circle at 1px 1px,#fff 1px,transparent 0);background-size:22px 22px
+}
+.cover-top>*{position:relative;z-index:2}
+.cover-top img{width:210px;margin-bottom:32mm}
+.cover-kicker{
+  display:flex;align-items:center;gap:12px;color:var(--gold);
+  font-size:14px;font-weight:700;margin-bottom:14px
+}
+.cover-kicker::before{content:"";width:36px;height:2px;background:var(--gold);border-radius:2px}
+.cover-top h1{color:#fff;font-size:34px;line-height:1.3;margin-bottom:14px;max-width:15ch}
+.cover-top p{color:rgba(255,255,255,.82);font-size:16px;max-width:44ch;margin:0}
+.cover-meta{
+  background:#fff;padding:14mm 18mm;display:grid;grid-template-columns:repeat(3,1fr);gap:10mm;
+  border-top:4px solid var(--gold)
+}
+.cover-meta dt{font-size:12.5px;color:var(--muted);margin-bottom:4px}
+.cover-meta dd{margin:0;font-size:15.5px;font-weight:700;color:var(--ink)}
+.cover-to{background:var(--navy-025);padding:10mm 18mm;border-top:1px solid var(--line)}
+.cover-to b{color:var(--ink)}
+
+/* ---------- sections ---------- */
+.eyebrow{
+  display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;
+  color:var(--navy-600);letter-spacing:.06em;margin-bottom:10px
+}
+.eyebrow::before{content:"";width:24px;height:2px;background:var(--gold);border-radius:2px}
+h2{font-size:23px;margin-bottom:16px}
+h3{font-size:16.5px;margin:22px 0 8px;color:var(--navy-700)}
+.lead{font-size:16px;color:var(--body);margin-bottom:22px}
+
+.rule{height:1px;background:var(--line);margin:26px 0}
+
+.audit{border-top:1px solid var(--line)}
+.audit li{
+  display:grid;grid-template-columns:26px 1fr 1fr;gap:14px;align-items:start;
+  padding:12px 0;border-bottom:1px solid var(--line);font-size:14.4px;line-height:1.75
+}
+.audit li span:first-child{color:#c0392b;font-weight:900;font-size:15px;text-align:center}
+.audit li b{color:var(--ink);font-weight:700}
+.audit li i{font-style:normal;color:var(--navy-700);font-weight:500}
+.audit-head{
+  display:grid;grid-template-columns:26px 1fr 1fr;gap:14px;padding:0 0 8px;
+  font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.04em
+}
+
+.checks li{position:relative;padding-inline-start:24px;margin-bottom:9px;font-size:14.8px;line-height:1.8}
+.checks li::before{
+  content:"";position:absolute;inset-inline-start:0;inset-block-start:.78em;width:10px;height:5.5px;
+  border-inline-start:2px solid var(--navy-600);border-block-end:2px solid var(--navy-600);transform:rotate(-45deg)
+}
+.checks li b{color:var(--ink)}
+
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+
+.statbox{border:1px solid var(--line);border-radius:12px;padding:18px;text-align:center;background:var(--navy-025)}
+.statbox b{display:block;font-size:30px;font-weight:900;color:var(--navy-700);line-height:1.1;letter-spacing:-.02em;direction:ltr}
+.statbox span{font-size:13px;color:var(--muted);line-height:1.5;display:block}
+
+table{width:100%;border-collapse:collapse;font-size:14.4px}
+th,td{padding:11px 12px;text-align:start;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--navy-025);color:var(--ink);font-weight:700;font-size:13px}
+td b{color:var(--ink)}
+
+/* pricing */
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:8px}
+.plan{border:1px solid var(--line);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;background:#fff}
+.plan--best{border:2px solid var(--navy-700);box-shadow:0 8px 24px rgba(30,77,130,.13);position:relative}
+.plan--best::after{
+  content:"الأنسب لكم";position:absolute;inset-block-start:-11px;inset-inline-start:50%;transform:translateX(50%);
+  background:var(--gold);color:var(--navy-900);font-size:11.5px;font-weight:900;padding:4px 14px;border-radius:100px
+}
+.plan h3{margin:0 0 4px;font-size:16px;color:var(--ink)}
+.plan .sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;min-height:34px}
+.plan .price{font-size:30px;font-weight:900;color:var(--navy-700);line-height:1;letter-spacing:-.02em;direction:ltr;text-align:start}
+.plan .price small{font-size:13px;font-weight:500;color:var(--muted)}
+.plan ul{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+.plan li{font-size:13.4px;line-height:1.7;padding-inline-start:19px;position:relative;margin-bottom:7px}
+.plan li::before{
+  content:"";position:absolute;inset-inline-start:0;inset-block-start:.72em;width:8px;height:4.5px;
+  border-inline-start:2px solid var(--navy-600);border-block-end:2px solid var(--navy-600);transform:rotate(-45deg)
+}
+.plan li.off{color:#aab3bd}
+.plan li.off::before{border-color:#cfd6dd}
+
+.note{background:var(--navy-025);border-inline-start:3px solid var(--gold);border-radius:0 10px 10px 0;padding:16px 18px;font-size:14.2px}
+.note p:last-child{margin:0}
+
+.sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px}
+.sign div{border-top:1px solid var(--ink);padding-top:10px;font-size:13.5px;color:var(--muted)}
+
+.contact-band{
+  background:linear-gradient(140deg,var(--navy-800),var(--navy-600));color:#fff;
+  border-radius:16px;padding:26px 28px;margin-top:24px
+}
+.contact-band h3{color:#fff;margin:0 0 12px;font-size:18px}
+.contact-band p{color:rgba(255,255,255,.85);margin:0 0 16px;font-size:14.5px}
+.contact-band dl{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin:0}
+.contact-band dt{font-size:12px;color:rgba(255,255,255,.6);margin-bottom:3px}
+.contact-band dd{margin:0;font-size:14.6px;font-weight:700;color:#fff;direction:ltr;text-align:start}
+
+.foot{
+  position:absolute;inset-inline:18mm;inset-block-end:10mm;display:flex;justify-content:space-between;
+  font-size:11.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:8px
+}
+
+[dir="ltr"]{white-space:nowrap}
+.contact-band dd[dir],.plan .price{white-space:normal}
+.hl{background:linear-gradient(transparent 62%,rgba(255,197,12,.42) 0);font-weight:700;color:var(--ink)}
+
+@media print{
+  body{background:#fff}
+  .sheet{width:auto;min-height:auto;margin:0;box-shadow:none;padding:14mm 14mm 18mm;page-break-after:always}
+  .sheet:last-child{page-break-after:auto}
+  .no-print{display:none}
+}
+@media (max-width:820px){
+  .sheet{width:auto;padding:24px 18px}
+  .cover-top{padding:34px 22px}
+  .cover-meta,.cover-to{padding:20px 22px}
+  .cover-meta,.grid2,.grid3,.plans,.contact-band dl,.sign{grid-template-columns:1fr}
+  .cover-top img{margin-bottom:40px}
+  .audit li,.audit-head{grid-template-columns:20px 1fr}
+  .audit li i{grid-column:2}
+  .foot{position:static;inset:auto;margin-top:24px}
+}
+.tip{max-width:210mm;margin:16px auto 0;font-size:13.5px;color:#5a6570;background:#fff8dd;border:1px solid #f0e0a0;border-radius:10px;padding:14px 18px}
+</style>
+</head>
+<body>
+
+<div class="tip no-print">
+  <b>ملاحظة لك (لن تُطبع):</b> عبّئ رقم جوالك في خانة «الجوال» بالأسفل، ثم اطبع الصفحة عبر <b>Ctrl/Cmd + P</b> واختر «حفظ كـ PDF» لإرسال العرض للعميل.
+</div>
+
+<!-- ============ الغلاف ============ -->
+<section class="sheet sheet--cover">
+  <div class="cover-top">
+    <img src="assets/img/logo-white.png" alt="شركة التكامل المتحدة للخدمات اللوجستية">
+    <div class="cover-kicker">عرض فني ومالي</div>
+    <h1>تطوير وإطلاق الموقع الإلكتروني الجديد</h1>
+    <p>موقع عربي احترافي متجاوب، مبني بالكامل على هوية الشركة، ومُهيّأ لمحركات البحث — <b style="color:#fff">جاهز ومُنجز بنسبة 100%، وقابل للمعاينة الحيّة قبل أي التزام مالي.</b></p>
+  </div>
+  <dl class="cover-meta">
+    <div><dt>رقم العرض</dt><dd>UIL-WEB-2026-01</dd></div>
+    <div><dt>تاريخ الإصدار</dt><dd>يوليو 2026</dd></div>
+    <div><dt>صلاحية العرض</dt><dd>30 يوماً من تاريخه</dd></div>
+  </dl>
+  <div class="cover-to">
+    <p style="margin:0">مُقدَّم إلى: <b>شركة التكامل المتحدة للخدمات اللوجستية</b> — الرياض، طريق الملك فهد، مبنى الصالحية.</p>
+    <p style="margin:6px 0 0">عناية: <b>الإدارة التنفيذية / إدارة التسويق</b></p>
+  </div>
+</section>
+
+<!-- ============ 1. لماذا هذا العرض ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم الأول</div>
+  <h2>لماذا يحتاج موقعكم الحالي إلى إعادة بناء؟</h2>
+  <p class="lead">
+    قبل إعداد هذا العرض، أجريتُ فحصاً فنياً كاملاً لموقعكم الحالي على
+    <span dir="ltr">ilogistics.com.sa</span>. النتائج أدناه <b>وقائع مرصودة فعلياً في كود الموقع</b>،
+    وليست ملاحظات عامة — وكل واحدة منها تكلّفكم ظهوراً في جوجل أو ثقة لدى العميل.
+  </p>
+
+  <div class="audit-head"><span></span><span>ما تم رصده في الموقع الحالي</span><span>الأثر المباشر</span></div>
+  <ul class="audit">
+    <li><span>✕</span><b>عنوان الصفحة (Title) واحد ومكرّر حرفياً على جميع الصفحات</b>
+        <i>جوجل لا يستطيع التمييز بين صفحة «الجرد» وصفحة «التدقيق» — فتتنافس صفحاتكم مع بعضها وتخسر جميعها.</i></li>
+    <li><span>✕</span><b>لا يوجد وصف ميتا (Meta Description) في أي صفحة</b>
+        <i>جوجل يقتطع نصاً عشوائياً لعرضه في نتائج البحث، فتنخفض نسبة النقر إلى موقعكم.</i></li>
+    <li><span>✕</span><b>خريطة الموقع <span dir="ltr">sitemap.xml</span> وملف <span dir="ltr">robots.txt</span> غير موجودين (يرجعان صفحة خطأ)</b>
+        <i>لا توجد خارطة طريق ترشد عناكب البحث لصفحاتكم، فتتأخر الأرشفة أو لا تكتمل.</i></li>
+    <li><span>✕</span><b>صفر بيانات منظّمة (Schema.org)</b>
+        <i>لا تظهر بياناتكم كمنشأة (عنوان، هاتف، خدمات) في نتائج جوجل الغنية ولا في محركات الذكاء الاصطناعي.</i></li>
+    <li><span>✕</span><b>لا يوجد وسم <span dir="ltr">canonical</span> ولا <span dir="ltr">hreflang</span> رغم وجود نسختين عربية وإنجليزية</b>
+        <i>محتوى مكرّر من منظور جوجل، وخلط بين النسختين في نتائج البحث.</i></li>
+    <li><span>✕</span><b>رابط مكسور في القائمة الرئيسية: «قطاعات العملاء والشراكات الاستراتيجية»</b>
+        <i>الزائر يصل إلى صفحة «عفواً الصفحة غير موجودة» من القائمة الرئيسية مباشرةً.</i></li>
+    <li><span>✕</span><b>التذييل يعرض «حقوق النشر © 2022» و«تحت الإنشاء والتطوير»</b>
+        <i>انطباع فوري بأن الشركة متوقفة أو غير مهتمة — أخطر رسالة يمكن أن يلتقطها عميل محتمل.</i></li>
+    <li><span>✕</span><b>شرائح الصفحة الرئيسية العربية مكتوبة بالإنجليزية</b>
+        <i>أول ما يقرأه الزائر العربي محتوى بلغة أخرى، وجوجل يخلط لغة الصفحة.</i></li>
+    <li><span>✕</span><b>صور غير مضغوطة — صورة واحدة في السلايدر تزن ≈ 841 كيلوبايت</b>
+        <i>بطء تحميل على شبكة الجوال، وهو عامل ترتيب مباشر في جوجل (Core Web Vitals).</i></li>
+    <li><span>✕</span><b>بنية تقنية قديمة (jQuery + Bootstrap قديم)</b>
+        <i>ثِقل زائد، وتجربة جوال أضعف من معايير 2026.</i></li>
+  </ul>
+
+  <div class="note" style="margin-top:22px">
+    <p><b>الخلاصة:</b> الموقع الحالي لا يعكس مكانة شركة تصف نفسها — بحق — بأنها <span class="hl">الوحيدة في المملكة</span>
+    التي تقدّم هذه الحزمة المتكاملة من الخدمات اللوجستية. الفجوة ليست في المحتوى، بل في طريقة عرضه وتهيئته.</p>
+  </div>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٢</span></div>
+</section>
+
+<!-- ============ 2. الحل ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم الثاني</div>
+  <h2>الحل: موقع جديد مبنيّ بالكامل — ومُنجز فعلاً</h2>
+  <p class="lead">
+    لم أُعِدّ لكم مقترحاً نظرياً. <b>الموقع مبنيّ ومكتمل بنسبة 100% — 43 صفحة</b> بمحتواكم الحالي بعد إعادة تحريره وتوسيعه،
+    وبهويتكم البصرية (شعاركم واللون الأزرق المعتمد)، وبخط <b>«ثمانية»</b> العربي الاحترافي.
+    يمكنكم تصفّحه كاملاً على رابط معاينة خاص قبل اتخاذ أي قرار.
+  </p>
+
+  <div class="grid3" style="margin-bottom:24px">
+    <div class="statbox"><b>43</b><span>صفحة كاملة الجاهزية</span></div>
+    <div class="statbox"><b>8</b><span>صفحات خدمات مفصّلة</span></div>
+    <div class="statbox"><b>10</b><span>مقالات مدونة جاهزة</span></div>
+  </div>
+
+  <h3>هيكل الموقع الجديد</h3>
+  <table>
+    <tr><th style="width:32%">القسم</th><th>الصفحات</th></tr>
+    <tr><td><b>الرئيسية</b></td><td>واجهة بشرائح متحركة، مؤشرات أداء، الخدمات، نقاط القوة، المنهجية، النتائج، شعارات العملاء، وقسم أسئلة شائعة بأسلوب محادثة تفاعلي.</td></tr>
+    <tr><td><b>الشركة</b></td><td>من نحن · قوتنا وما يميّزنا · منهجية العمل · النتائج المتوقعة</td></tr>
+    <tr><td><b>الخدمات (8 صفحات)</b></td><td>الاستشارات · جرد المخزون والأصول · تحسين العمليات · التشغيل والإدارة 4PL · الإشراف اللوجستي · التدقيق اللوجستي · ترميز المواقع التخزينية · تنظيم ونقل المستودعات</td></tr>
+    <tr><td><b>العملاء</b></td><td>القطاعات التي نخدمها · من يحتاج خدماتنا · الإنجازات (+ 6 صفحات مشاريع مستقلة)</td></tr>
+    <tr><td><b>الأحداث والأنشطة</b></td><td>القائمة + 5 صفحات مستقلة لكل فعالية بمعرض صور وتفاصيل</td></tr>
+    <tr><td><b>المدونة</b></td><td>صفحة المدونة + <b>10 مقالات متخصصة جاهزة</b> بصفحات مستقلة ومهيّأة لمحركات البحث (جرد المخزون، تصنيف ABC، FIFO/FEFO، أنظمة WMS، الإجراءات القياسية، الفاقد، مؤشرات الأداء…)</td></tr>
+    <tr><td><b>أخرى</b></td><td>وظائف · اتصل بنا (نموذج مرتبط بواتساب) · صفحة خطأ 404 مخصّصة</td></tr>
+  </table>
+
+  <h3>ما الذي أُضيف على المحتوى الحالي</h3>
+  <ul class="checks">
+    <li><b>إعادة تحرير كل النصوص</b> بصياغة تسويقية موجّهة لمدير المستودع وصانع القرار، مع الحفاظ الكامل على معلوماتكم ورسائلكم.</li>
+    <li><b>صفحة مستقلة لكل مشروع وكل فعالية</b> — بدل معرض صور مجمّع، صار لكل إنجاز صفحة بمحتوى وتفاصيل ومعرض خاص (11 صفحة جديدة تُؤرشف في جوجل).</li>
+    <li><b>قسم أسئلة شائعة</b> بعرض تفاعلي على هيئة محادثة، ومُهيّأ بصيغة <span dir="ltr">FAQ Schema</span> للظهور المباشر في نتائج جوجل.</li><li><b>مدونة متخصصة بعشرة مقالات جاهزة</b> — المحرّك الأساسي لجلب زيارات مجانية من جوجل على المدى الطويل، وأهم ما يفتقده الموقع الحالي تماماً.</li>
+    <li><b>قسم «القطاعات التي نخدمها»</b> — القسم الذي رابطه مكسور حالياً — مبنيّ من الصفر بثمانية قطاعات مستهدفة.</li>
+    <li><b>تحويل النموذج إلى واتساب مباشرة</b> — الطلب يصلكم على جوال المبيعات فوراً بدل بريد قد لا يُفتح.</li>
+  </ul>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٣</span></div>
+</section>
+
+<!-- ============ 3. المواصفات ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم الثالث</div>
+  <h2>المواصفات الفنية وتهيئة محركات البحث</h2>
+
+  <div class="grid2">
+    <div>
+      <h3>الأداء والتقنية</h3>
+      <ul class="checks">
+        <li>موقع ثابت فائق السرعة (بدون قواعد بيانات) — أمان أعلى وتكلفة استضافة أقل.</li>
+        <li>تصميم متجاوب بالكامل: جوال، لوحي، وسطح مكتب.</li>
+        <li>دعم كامل لاتجاه اليمين لليسار (RTL) على مستوى بنية التصميم.</li>
+        <li>خط «ثمانية» مُضمّن محلياً بصيغة <span dir="ltr">woff2</span> — لا اعتماد على خدمات خارجية.</li>
+        <li>تحميل كسول للصور (Lazy Loading) وأبعاد محجوزة لمنع اهتزاز الصفحة.</li>
+        <li>بدون jQuery أو مكتبات ثقيلة — جافاسكربت أصلي خفيف.</li>
+        <li>متوافق مع معايير الوصول: تباين ألوان، تنقّل بلوحة المفاتيح، ووسوم وصفية للصور.</li>
+      </ul>
+    </div>
+    <div>
+      <h3>تهيئة محركات البحث (SEO)</h3>
+      <ul class="checks">
+        <li><b>عنوان ووصف فريد</b> لكل صفحة من الـ43 صفحة — مكتوبة بكلمات بحث حقيقية.</li>
+        <li><b>بيانات منظّمة كاملة:</b> <span dir="ltr">ProfessionalService</span>، <span dir="ltr">Service</span>،
+            <span dir="ltr">FAQPage</span>، <span dir="ltr">HowTo</span>، <span dir="ltr">BreadcrumbList</span>،
+            <span dir="ltr">JobPosting</span>، <span dir="ltr">Event</span>.</li>
+        <li><b>خريطة موقع <span dir="ltr">sitemap.xml</span></b> وملف <span dir="ltr">robots.txt</span> جاهزان.</li>
+        <li>وسم <span dir="ltr">canonical</span> على كل صفحة لمنع تكرار المحتوى.</li>
+        <li>وسوم <span dir="ltr">Open Graph</span> — الروابط تظهر باحترافية عند مشاركتها في واتساب ولينكدإن.</li>
+        <li>بنية عناوين منطقية (H1/H2/H3) وروابط داخلية بين الخدمات ذات الصلة.</li>
+        <li>مسارات روابط وصفية مثل <span dir="ltr">/inventory-count.html</span> بدل روابط مبهمة.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h3>الكلمات المفتاحية المستهدفة</h3>
+  <p style="font-size:14.6px">
+    جرد مخزون · شركة جرد مستودعات · جرد الأصول الثابتة · استشارات لوجستية · إدارة المستودعات ·
+    تحسين العمليات اللوجستية · تشغيل مستودعات 4PL · التدقيق اللوجستي · ترميز المواقع التخزينية ·
+    نقل مستودعات — مع استهداف جغرافي: <b>الرياض، جدة، الدمام، القصيم</b>.
+  </p>
+
+  <div class="note">
+    <p><b>ملاحظة مهمة:</b> تحسين محركات البحث عمل تراكمي. هذا العرض يضمن <b>البنية التقنية الصحيحة بنسبة 100%</b>
+    — وهي الشرط الذي لا يتحقق أي ترتيب بدونه. أما الوصول للصفحة الأولى فيعتمد إضافةً على المنافسة
+    واستمرارية نشر المحتوى، وهو ما تغطيه باقة النمو المستمر.</p>
+  </div>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٤</span></div>
+</section>
+
+<!-- ============ 4. التسعير ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم الرابع</div>
+  <h2>الباقات والاستثمار</h2>
+  <p class="lead">جميع الأسعار بالريال السعودي وغير شاملة ضريبة القيمة المضافة.</p>
+
+  <div class="plans">
+    <div class="plan">
+      <h3>باقة الإطلاق</h3>
+      <div class="sub">تسليم الموقع جاهزاً وربطه بدومينكم.</div>
+      <div class="price">6,900 <small>ريال</small></div>
+      <ul>
+        <li>الموقع كاملاً (43 صفحة)</li>
+        <li>ربط الدومين وشهادة SSL</li>
+        <li>استضافة سنة أولى مجاناً</li>
+        <li>رفع خريطة الموقع لجوجل</li>
+        <li>تسليم ملفات المصدر</li>
+        <li class="off">لوحة التحكم</li>
+        <li class="off">تحليلات وتقارير</li>
+        <li class="off">صيانة ودعم</li>
+      </ul>
+    </div>
+
+    <div class="plan plan--best">
+      <h3>باقة النمو</h3>
+      <div class="sub">الأنسب لشركة تريد الموقع أداةَ مبيعات لا واجهةً فقط.</div>
+      <div class="price">8,900 <small>ريال</small></div>
+      <ul>
+        <li>كل ما في باقة الإطلاق</li>
+        <li><b>لوحة تحكم عربية كاملة</b> لإدارة المدونة والأخبار والمشاريع وشعارات العملاء وبيانات التواصل — ونشر التغييرات بضغطة زر دون مبرمج</li>
+        <li>ربط <span dir="ltr">Google Analytics 4</span> و<span dir="ltr">Search Console</span></li>
+        <li>إعداد <span dir="ltr">Google Business Profile</span> لظهوركم في خرائط جوجل</li>
+        <li>تدريب فريقكم (جلسة أونلاين + دليل مصوّر)</li>
+        <li><b>3 أشهر دعم فني</b> وتعديلات مجانية</li>
+        <li class="off">النسخة الإنجليزية</li>
+      </ul>
+    </div>
+
+    <div class="plan">
+      <h3>باقة النمو+</h3>
+      <div class="sub">الموقع بنسختيه العربية والإنجليزية مع متابعة سنة كاملة.</div>
+      <div class="price">9,900 <small>ريال</small></div>
+      <ul>
+        <li>كل ما في باقة النمو</li>
+        <li><b>النسخة الإنجليزية كاملة</b> مع وسوم <span dir="ltr">hreflang</span> صحيحة</li>
+        <li><b>12 شهر دعم فني</b> وصيانة</li>
+        <li>تقرير أداء ربع سنوي (زيارات، كلمات، فرص تحسين)</li>
+        <li>أولوية في التنفيذ خلال 24 ساعة</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="rule"></div>
+
+  <h3>خدمات اختيارية (تُطلب لاحقاً)</h3>
+  <table>
+    <tr><th style="width:52%">الخدمة</th><th>السعر</th></tr>
+    <tr><td>تجديد الاستضافة والدومين — بعد السنة الأولى</td><td><b>900 ريال / سنة</b></td></tr>
+    <tr><td>باقة محتوى شهرية: مقالتان متخصصتان مُهيّأتان لمحركات البحث</td><td><b>1,500 ريال / شهر</b></td></tr>
+    <tr><td>إدارة حملات إعلانية (جوجل / لينكدإن) — عدا الميزانية الإعلانية</td><td><b>2,500 ريال / شهر</b></td></tr>
+    <tr><td>تصوير احترافي لمشاريع ومستودعات العملاء</td><td><b>حسب الموقع والنطاق</b></td></tr>
+  </table>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٥</span></div>
+</section>
+
+<!-- ============ 5. الشروط ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم الخامس</div>
+  <h2>آلية التنفيذ والشروط</h2>
+
+  <h3>الجدول الزمني</h3>
+  <table>
+    <tr><th style="width:22%">المرحلة</th><th style="width:52%">التفاصيل</th><th>المدة</th></tr>
+    <tr><td><b>المعاينة</b></td><td>تصفّح الموقع كاملاً على رابط خاص، وإبداء ملاحظاتكم — <b>بدون أي التزام مالي</b>.</td><td>فوري</td></tr>
+    <tr><td><b>الاعتماد</b></td><td>توقيع العرض ودفع الدفعة الأولى.</td><td>يوم واحد</td></tr>
+    <tr><td><b>التعديلات</b></td><td>تنفيذ ملاحظاتكم على النصوص والصور والألوان (جولتا تعديل).</td><td>3 – 5 أيام</td></tr>
+    <tr><td><b>الإطلاق</b></td><td>الربط بدومينكم، شهادة SSL، ورفع خريطة الموقع لجوجل.</td><td>يوم واحد</td></tr>
+    <tr><td><b>التسليم</b></td><td>تسليم ملفات المصدر وبيانات الدخول والتدريب.</td><td>يوم واحد</td></tr>
+  </table>
+  <p style="font-size:14.5px;margin-top:12px">
+    <b>إجمالي المدة من الاعتماد حتى الإطلاق: أسبوع واحد.</b>
+    والسبب بسيط — <span class="hl">الموقع مُنجز بالفعل</span>، وما تبقّى هو ملاحظاتكم والربط الفني فقط.
+  </p>
+
+  <div class="rule"></div>
+
+  <h3>شروط الدفع</h3>
+  <ul class="checks">
+    <li><b>50%</b> عند اعتماد العرض والبدء بالتنفيذ.</li>
+    <li><b>50%</b> عند الإطلاق وتسليم الملفات وبيانات الدخول.</li>
+    <li>الدفع عبر تحويل بنكي، وتُصدر فاتورة ضريبية نظامية لكل دفعة.</li>
+  </ul>
+
+  <h3>ما يشمله العرض</h3>
+  <ul class="checks">
+    <li>ملكية كاملة للموقع وملفات المصدر بعد سداد كامل المبلغ.</li>
+    <li>جولتا تعديل على النصوص والصور والألوان ضمن نطاق العمل المتفق عليه.</li>
+    <li>ضمان فني 30 يوماً لأي خلل برمجي بعد الإطلاق — بدون مقابل.</li>
+    <li>تسليم الموقع بمحتواه المكتمل، وليس قالباً فارغاً يحتاج تعبئة.</li>
+  </ul>
+
+  <h3>ما لا يشمله العرض</h3>
+  <ul class="checks" style="opacity:.85">
+    <li>تكاليف الدومين والاستضافة بعد السنة الأولى (موضّحة في الخدمات الاختيارية).</li>
+    <li>الميزانيات الإعلانية المدفوعة لجوجل أو منصات التواصل.</li>
+    <li>إعادة تصميم الهوية البصرية أو الشعار (تم اعتماد هويتكم الحالية كما هي).</li>
+    <li>التصوير الفوتوغرافي الميداني الجديد.</li>
+    <li>إضافة أقسام أو صفحات خارج الهيكل المذكور في القسم الثاني.</li>
+  </ul>
+
+  <div class="note" style="margin-top:20px">
+    <p><b>ضمان الرضا:</b> تُعاينون الموقع كاملاً قبل دفع أي مبلغ. وإذا لم يعجبكم — لا يوجد أي التزام عليكم.
+    هذه الطريقة تحمي وقتكم وتحمي عملي في آنٍ واحد.</p>
+  </div>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٦</span></div>
+</section>
+
+<!-- ============ 6. الاعتماد ============ -->
+<section class="sheet">
+  <div class="eyebrow">القسم السادس</div>
+  <h2>الاعتماد والتواصل</h2>
+
+  <p class="lead">للموافقة على العرض، يُرجى تحديد الباقة المطلوبة والتوقيع أدناه، أو الرد عبر واتساب مباشرة.</p>
+
+  <table>
+    <tr><th style="width:12%">الاختيار</th><th style="width:48%">الباقة</th><th>الإجمالي (قبل الضريبة)</th></tr>
+    <tr><td style="text-align:center;font-size:19px">☐</td><td><b>باقة الإطلاق</b></td><td><b>6,900 ريال</b></td></tr>
+    <tr><td style="text-align:center;font-size:19px">☐</td><td><b>باقة النمو</b> — الموصى بها</td><td><b>8,900 ريال</b></td></tr>
+    <tr><td style="text-align:center;font-size:19px">☐</td><td><b>باقة النمو+</b> — بنسختين عربية وإنجليزية</td><td><b>9,900 ريال</b></td></tr>
+  </table>
+
+  <div class="sign">
+    <div>الاسم والصفة — عن شركة التكامل المتحدة</div>
+    <div>التوقيع والختم والتاريخ</div>
+  </div>
+
+  <div class="contact-band">
+    <h3>مُقدِّم العرض</h3>
+    <p>لأي استفسار فني أو تعديل على نطاق العمل، تواصلوا معي مباشرة — بدون وسطاء.</p>
+    <dl>
+      <div><dt>الاسم</dt><dd style="direction:rtl">إبراهيم سعود</dd></div>
+      <div><dt>الجوال / واتساب</dt><dd>__________________</dd></div>
+      <div><dt>البريد الإلكتروني</dt><dd style="font-size:13.5px">ibrahimsaud25@gmail.com</dd></div>
+    </dl>
+  </div>
+
+  <div class="note" style="margin-top:22px">
+    <p style="margin:0"><b>رابط معاينة الموقع:</b> <span dir="ltr">__________________________________</span></p>
+  </div>
+
+  <div class="foot"><span>عرض تطوير الموقع الإلكتروني — التكامل المتحدة</span><span>صفحة ٧</span></div>
+</section>
+
+</body>
+</html>
