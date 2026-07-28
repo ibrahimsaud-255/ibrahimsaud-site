@@ -145,6 +145,13 @@ html[lang="en"] .band h2{max-width:26ch}
 html[lang="en"] .case-hero h1{max-width:26ch}
 html[lang="en"] .nav a{padding:10px 11px;font-size:15px}
 html[lang="en"] .prose blockquote,html[lang="en"] h1,html[lang="en"] h2{letter-spacing:-.015em}
+/* الأسهم والفواصل تنعكس مع الاتجاه */
+html[lang="en"] .card__more::after{content:"→"}
+html[lang="en"] .card:hover .card__more::after,
+html[lang="en"] .post:hover .card__more::after{transform:translateX(5px)}
+html[lang="en"] .crumbs li+li::before{content:"›"}
+html[lang="en"] .lb__nav.prev::before{content:""}
+html[lang="en"] .band__pills li::before{content:none}
 html[lang="en"] .step__n,html[lang="en"] .fgrid__n{direction:ltr}
 .header-cta .btn{padding:12px 22px;font-size:15px}
 .site-header:not(.is-solid) .header-cta .btn--primary{background:var(--gold);color:var(--navy-900)}
