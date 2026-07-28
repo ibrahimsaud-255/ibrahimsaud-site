@@ -134,7 +134,7 @@ td b{color:var(--ink)}
 .note{background:var(--navy-025);border-inline-start:3px solid var(--gold);border-radius:0 10px 10px 0;padding:16px 18px;font-size:14.2px}
 .note p:last-child{margin:0}
 
-.sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:26px}
+.sign{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:34px}
 .sign div{border-top:1px solid var(--ink);padding-top:10px;font-size:13.5px;color:var(--muted)}
 
 .contact-band{
@@ -156,13 +156,15 @@ td b{color:var(--ink)}
 .contact-band dd[dir],.plan .price{white-space:normal}
 .hl{background:linear-gradient(transparent 62%,rgba(255,197,12,.42) 0);font-weight:700;color:var(--ink)}
 
+@page{size:A4;margin:0}
 @media print{
   body{background:#fff}
-  .sheet{width:auto;min-height:auto;margin:0;box-shadow:none;padding:14mm 14mm 18mm;page-break-after:always}
+  html,body{width:210mm}
+  .sheet{width:210mm;height:297mm;min-height:0;margin:0;box-shadow:none;padding:15mm 15mm 12mm;page-break-after:always;overflow:hidden}
   .sheet:last-child{page-break-after:auto}
   .no-print{display:none}
 }
-@media (max-width:820px){
+@media screen and (max-width:820px){
   .sheet{width:auto;padding:24px 18px}
   .cover-top{padding:34px 22px}
   .cover-meta,.cover-to{padding:20px 22px}
@@ -288,67 +290,48 @@ td b{color:var(--ink)}
   <div class="eyebrow">القسم الثالث</div>
   <h2>الشروط والأحكام</h2>
 
-  <div class="grid2" style="margin-top:20px">
+  <div class="grid2" style="margin-top:18px">
     <div>
-      <h3>آلية السداد</h3>
+      <h3>السداد</h3>
       <ul class="checks">
-        <li><b>70%</b> عند اعتماد العرض — الموقع مُنجز ومُسلَّم للمعاينة قبل السداد.</li>
-        <li><b>30%</b> عند الإطلاق على دومينكم وتسليم ملفات المصدر.</li>
-        <li>الدفعة الأولى غير مستردة بعد بدء العمل.</li>
-        <li>المبالغ وتفاصيل التحويل في العرض المالي المرفق.</li>
+        <li><b>70%</b> عند التوقيع — الموقع مُنجز ومتاح للمعاينة قبل السداد، وغير مستردة بعد بدء العمل.</li>
+        <li><b>30%</b> عند الإطلاق وقبل تسليم ملفات المصدر.</li>
+        <li>تحويل بنكي بفاتورة نظامية. المبالغ في العرض المالي المرفق.</li>
       </ul>
 
       <h3>التعديلات</h3>
       <ul class="checks">
-        <li><b>جولتا تعديل</b> على النصوص والصور والألوان ضمن الهيكل المعتمد.</li>
-        <li>ملاحظات كل جولة دفعةً واحدة — وما زاد أو خرج عن النطاق يُسعَّر منفصلاً بموافقة كتابية.</li>
-        <li>قبول ضمني إن لم ترد ملاحظات خلال 7 أيام من التسليم.</li>
+        <li><b>جولتا تعديل</b> ضمن الهيكل المعتمد، وملاحظات كل جولة دفعةً واحدة.</li>
+        <li>ما زاد أو خرج عن النطاق يُسعَّر منفصلاً بموافقة كتابية.</li>
       </ul>
     </div>
     <div>
       <h3>التزامات العميل</h3>
       <ul class="checks">
-        <li>بيانات الدخول للاستضافة (<span dir="ltr">cPanel/FTP</span>) ولوحة الدومين.</li>
-        <li>نافذة زمنية للنشر (تُنفَّذ عادةً خارج ساعات العمل).</li>
+        <li>بيانات الدخول للاستضافة والدومين، ونافذة زمنية للنشر.</li>
         <li>الرد على الملاحظات خلال 3 أيام عمل — وإلا يُمدَّد الجدول.</li>
-        <li>تحديد مسؤول واحد للتواصل والاعتماد.</li>
       </ul>
 
       <h3>الملكية والضمان</h3>
       <ul class="checks">
         <li>ملكية كاملة للموقع وملفات المصدر <b>بعد سداد كامل المبلغ</b>.</li>
         <li><b>ضمان فني 30 يوماً</b> لأي خلل برمجي بعد الإطلاق.</li>
-        <li>سرية تامة للبيانات · سريان العرض 30 يوماً، ويُعدّ توقيعه عقداً ملزماً.</li>
+        <li>سريان العرض 30 يوماً، ويُعدّ توقيعه عقداً ملزماً.</li>
       </ul>
     </div>
   </div>
 
-  <h3 style="margin-top:6px">ما لا يشمله العرض</h3>
-  <p style="font-size:14.2px;opacity:.9">
-    النسخة الإنجليزية · التصوير الميداني وشراء صور مرخّصة · الميزانيات الإعلانية ·
-    إعادة تصميم الهوية أو الشعار · صفحات خارج الهيكل أعلاه ·
-    ضمان ترتيب محدد في نتائج البحث (يشمل العرض البنية التقنية الصحيحة، أما الترتيب فيتأثر بالمنافسة واستمرارية النشر).
+  <h3 style="margin-top:2px">ما لا يشمله العرض</h3>
+  <p style="font-size:13.6px;opacity:.9;margin-bottom:0">
+    التصوير الميداني وشراء صور مرخّصة · الميزانيات الإعلانية · إعادة تصميم الهوية أو الشعار ·
+    صفحات خارج الهيكل أعلاه · ضمان ترتيب محدد في نتائج البحث (يشمل العرض البنية التقنية الصحيحة،
+    أما الترتيب فيتأثر بالمنافسة واستمرارية النشر).
   </p>
 
-  <div class="note" style="margin-top:14px">
-    <p style="margin:0"><b>ضمان الرضا:</b> تُعاينون الموقع كاملاً قبل دفع أي مبلغ — وإذا لم يعجبكم فلا التزام عليكم.</p>
-  </div>
+  <div class="rule" style="margin:12px 0"></div>
 
-  <div class="foot"><span>العرض الفني لتطوير الموقع — التكامل المتحدة</span><span>صفحة ٤</span></div>
-</section>
-
-<!-- ============ 4. الاعتماد ============ -->
-<section class="sheet">
-  <div class="eyebrow">القسم الرابع</div>
-  <h2>الاعتماد والتواصل</h2>
-  <p class="lead">للموافقة على العرض الفني، وقّعوا أدناه وأعيدوا إرساله مع العرض المالي، أو ردّوا بالموافقة عبر واتساب.</p>
-
-  <table>
-    <tr><th style="width:34%">البند</th><th>الحالة</th></tr>
-    <tr><td><b>نطاق العمل</b></td><td>معتمد كما ورد في القسم الثاني من هذا العرض</td></tr>
-    <tr><td><b>الشروط الفنية</b></td><td>معتمدة كما وردت في القسم الثالث</td></tr>
-    <tr><td><b>العرض المالي</b></td><td>مستند منفصل مرفق — يُعتمد بتوقيعه أيضاً</td></tr>
-  </table>
+  <h2 style="font-size:19px;margin-bottom:4px">الاعتماد والتواصل</h2>
+  <p style="font-size:14.2px;margin-bottom:10px">للموافقة، وقّعوا أدناه وأعيدوا إرساله مع العرض المالي، أو ردّوا عبر واتساب.</p>
 
   <p style="font-size:14px;margin-top:14px">
     ☐ &nbsp; أوافق على نطاق العمل والشروط الفنية الواردة في هذا العرض، وأعتمد البدء بالتنفيذ.
@@ -359,9 +342,9 @@ td b{color:var(--ink)}
     <div style="position:relative">عن مؤسسة حروف و دروس — إبراهيم سعود</div>
   </div>
 
-  <div class="contact">
+  <div class="contact" style="margin-top:12px;padding:18px 22px">
     <h3>مُقدِّم العرض</h3>
-    <p>مؤسسة حروف و دروس — سجل تجاري نشط برقم <span dir="ltr">7054189027</span>.<br>لأي استفسار فني أو تعديل على نطاق العمل، التواصل المباشر مع <b style="color:#fff">إبراهيم سعود</b> دون وسطاء.</p>
+    <p style="margin-bottom:.5em">مؤسسة حروف و دروس — سجل تجاري نشط برقم <span dir="ltr">7054189027</span>. التواصل المباشر مع <b style="color:#fff">إبراهيم سعود</b> دون وسطاء.</p>
     <dl>
       <div><dt>الجهة</dt><dd style="direction:rtl;font-size:13.6px">مؤسسة حروف و دروس</dd></div>
       <div><dt>الجوال / واتساب</dt><dd>0543983230</dd></div>
@@ -369,12 +352,13 @@ td b{color:var(--ink)}
     </dl>
   </div>
 
-  <div class="note" style="margin-top:18px">
-    <p style="margin:0"><b>رابط معاينة الموقع:</b> <span dir="ltr">https://ibrahimsaud.com/ilogistics/</span></p>
-  </div>
+  <p style="font-size:13.4px;margin:12px 0 0"><b>رابط معاينة الموقع:</b> <span dir="ltr">https://ibrahimsaud.com/ilogistics/</span></p>
 
   <div class="foot"><span>العرض الفني لتطوير الموقع — التكامل المتحدة</span><span>صفحة ٤</span></div>
 </section>
+
+<!-- ============ 4. الاعتماد ============ -->
+
 
 
 </body>
