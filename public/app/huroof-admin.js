@@ -30,7 +30,8 @@ const HD_TABS=[
  ['tq','أسئلة المعلمين','message-square'],
  ['pdf','مكتبة PDF','file-text'],
  ['extract','استخراج أسئلة AI','sparkles'],
- ['nafs','أوراق نافس','trophy'],
+ /* حُذف تبويب «أوراق نافس»: أُلغيت مواد نافس من المنصة، وكان التبويب
+    يقرأ كتالوجاً لم يعد يُبنى — فيعرض فراغاً أو خطأ تحليل. */
  ['teachers','المعلمون','users'],
  ['subs','المشتركون','credit-card'],
  ['waitlist','قائمة الانتظار','user-plus'],
@@ -58,7 +59,6 @@ async function hdLoad(tab){
     else if(tab==='tq')await hdTabTQ();
     else if(tab==='pdf')await hdTabPdf();
     else if(tab==='extract')hdTabExtract();
-    else if(tab==='nafs')await hdTabNafs();
     else if(tab==='teachers')await hdTabTeachers();
     else if(tab==='subs')await hdTabSubs();
     else if(tab==='waitlist')await hdTabWaitlist();
@@ -92,7 +92,74 @@ async function hdTabOverview(){
     </div>
     <div class="card"><h3><i data-lucide="trending-up"></i> التسجيلات اليومية — آخر 30 يوم</h3>
       ${days.length?`<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:10px">${days.map(r=>`<div title="${r.date}: ${r.count}" style="flex:1;height:${mx?Math.max(6,Math.round(r.count/mx*100)):6}%;background:linear-gradient(180deg,#f5c542,#b8860b);border-radius:4px 4px 0 0;min-width:6px"></div>`).join('')}</div>`:'<div style="opacity:.6;padding:14px">لا توجد تسجيلات خلال الفترة.</div>'}
-    </div>`;
+    </div>
+    ${hdAnswerBalanceCard(ext.answerBalance)}
+    ${hdCoverageCard(ext.coverage)}`;
+}
+
+/* ── ميزان الإجابة الصحيحة ──────────────────────────────────
+ *
+ * كان ‎80%‎ من أسئلة البنك إجابتها في الخيار الثاني. والطالب يكتشف ذلك قبلنا:
+ * يضغط الثاني فيصيب، فيصير الاختبار قياساً للحدس لا للفهم.
+ *
+ * عولج بخلط الخيارات في التطبيق، لكنّ الخلط يعالج ما يُعرض لا ما يُخزَّن —
+ * وأي دفعة أسئلة جديدة تُستورد قد تعيد الميل صامتاً. فهذه البطاقة تجعل
+ * الانحراف مرئياً قبل أن يشتكي منه معلّم.
+ */
+function hdAnswerBalanceCard(ab){
+  if(!ab||!ab.positions||!ab.positions.length)return '';
+  const L=['الأول','الثاني','الثالث','الرابع'];
+  /* الحدّ ‎35%‎: التوازن التام ‎25%‎، وما فوق ‎35%‎ ميلٌ يلحظه الطالب */
+  const worst=Math.max(...ab.positions.map(p=>p.percent));
+  const bad=worst>=35;
+  return `<div class="card"><h3><i data-lucide="scale"></i> ميزان الإجابة الصحيحة</h3>
+    <div class="badge-note" style="margin-bottom:12px">
+      ${bad
+        ? `<b style="color:#ef4444">انحراف: ${worst}% من الأسئلة إجابتها في موضع واحد.</b> التوازن المطلوب ‎25%‎ لكل موضع — الميل يجعل الطالب يخمّن الموضع بدل قراءة السؤال.`
+        : `متوازن. أعلى موضع ${worst}% والمطلوب قرابة ‎25%‎.`}
+    </div>
+    <div style="display:flex;flex-direction:column;gap:9px">
+      ${ab.positions.map(p=>{
+        const off=Math.abs(p.percent-25);
+        const col=off>=10?'#ef4444':off>=5?'#f59e0b':'#22c55e';
+        return `<div style="display:flex;align-items:center;gap:10px">
+          <div style="width:54px;font-size:13px;color:var(--muted)">${L[p.index]||('#'+p.index)}</div>
+          <div style="flex:1;height:22px;background:var(--panel2);border-radius:6px;overflow:hidden">
+            <div style="width:${Math.min(100,p.percent*2)}%;height:100%;background:${col};border-radius:6px"></div>
+          </div>
+          <div style="width:96px;text-align:left;font-size:13px;font-weight:700">${p.percent}% <span style="color:var(--muted);font-weight:400">(${p.count.toLocaleString('en')})</span></div>
+        </div>`}).join('')}
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">من ${ab.total.toLocaleString('en')} سؤال مفعّل. العرض يُقاس على الشريط بمقياس مضاعف ليَبين الفرق.</div>
+  </div>`;
+}
+
+/* ── تغطية المنهج ───────────────────────────────────────────
+ * صفٌّ بلا أسئلة صفحةٌ فارغة أمام معلّم فتحها ليحضّر حصّته. وقد اختفى
+ * الأول الثانوي كاملاً مرّةً بسبب كتالوج مكتوب باليد، ولم ينكشف إلا بشكوى.
+ */
+function hdCoverageCard(cov){
+  if(!cov||!cov.length)return '';
+  const byGrade={};cov.forEach(c=>byGrade[c.grade]=c);
+  const mx=Math.max(...cov.map(c=>c.questionCount));
+  const rows=[];
+  for(let g=1;g<=12;g++){
+    const c=byGrade[g]||{grade:g,label:(HD_GRADES[g]||('الصف '+g)),questionCount:0,subjectCount:0};
+    rows.push(c);
+  }
+  const empty=rows.filter(r=>r.questionCount===0);
+  return `<div class="card"><h3><i data-lucide="layout-grid"></i> تغطية المنهج — الأسئلة لكل صف</h3>
+    ${empty.length?`<div class="badge-note" style="margin-bottom:12px"><b style="color:#f59e0b">${empty.length} صفّاً بلا أسئلة:</b> ${empty.map(r=>HD_GRADES[r.grade]||r.label).join('، ')}</div>`:''}
+    <div style="display:flex;flex-direction:column;gap:7px">
+      ${rows.map(r=>`<div style="display:flex;align-items:center;gap:10px">
+        <div style="width:118px;font-size:12.5px;color:var(--muted)">${HD_GRADES[r.grade]||r.label}</div>
+        <div style="flex:1;height:18px;background:var(--panel2);border-radius:6px;overflow:hidden">
+          <div style="width:${mx?Math.round(r.questionCount/mx*100):0}%;height:100%;background:${r.questionCount?'linear-gradient(90deg,#f5c542,#b8860b)':'transparent'};border-radius:6px"></div>
+        </div>
+        <div style="width:130px;text-align:left;font-size:12.5px">${r.questionCount.toLocaleString('en')} <span style="color:var(--muted)">سؤال · ${r.subjectCount} مادة</span></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
 }
 /* ── إدارة الأسئلة ─────────────────────────────────────── */
 function hdQParams(){const p=new URLSearchParams();p.set('page',HD_STATE.qPage);p.set('limit','50');
@@ -238,18 +305,6 @@ async function hdExSave(){
   const msg=document.getElementById('hdExMsg');msg.textContent='جارٍ الحفظ…';
   try{const j=await hdApi('/admin/pdf-extractor/save',{method:'POST',body:JSON.stringify(Object.assign({questions:HD_EX_RESULT},HD_EX_META))});
     msg.textContent='✓ '+(j.message||('تم حفظ '+(j.saved||j.count||'')+' سؤال'))}catch(e){msg.textContent='خطأ في الحفظ: '+e.message}
-}
-/* ── أوراق نافس ───────────────────────────────────────── */
-async function hdTabNafs(){
-  const j=await fetch(HD_API+'/worksheets/nafs/catalog').then(r=>r.json());
-  if(HD_TAB!=='nafs'||!hdEl())return;
-  const items=j.catalog||j.entries||j.items||(Array.isArray(j)?j:[]);
-  hdEl().innerHTML=`
-    <div class="badge-note"><i data-lucide="info"></i><div>كتالوج <b>أوراق نافس</b> المتاح في المنصة. توليد الأوراق يتم من حسابات المعلمين داخل المنصة، وهنا تستعرض المتاح.</div></div>
-    <div class="card"><h3><i data-lucide="trophy"></i> الكتالوج (${items.length})</h3>
-    <div style="overflow-x:auto"><table><thead><tr><th>#</th><th>العنوان</th><th>التفاصيل</th></tr></thead><tbody>
-    ${items.map((it,i)=>`<tr><td>${i+1}</td><td>${esc(it.title||it.name||it.id||'—')}</td><td style="opacity:.7">${esc(it.description||[it.grade,it.subject].filter(Boolean).join(' · ')||'—')}</td></tr>`).join('')||'<tr><td colspan="3" style="opacity:.6">الكتالوج فارغ.</td></tr>'}
-    </tbody></table></div></div>`;
 }
 /* ── المعلمون ─────────────────────────────────────────── */
 async function hdTabTeachers(){
