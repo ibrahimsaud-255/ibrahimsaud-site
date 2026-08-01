@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- عنوان الصفحة الافتراضي (صفحة الدخول وما قبل تحميل الواجهة) -->
+    <template id="layout_brand_title" inherit_id="web.layout" name="عنوان نظام إبراهيم سعود">
+        <xpath expr="//title" position="replace">
+            <title t-esc="title or 'نظام إبراهيم سعود'"/>
+        </xpath>
+    </template>
+
+</odoo>
