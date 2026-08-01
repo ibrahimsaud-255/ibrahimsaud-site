@@ -337,13 +337,59 @@ async function hdTabSubs(){
       <div class="stat"><span class="ic" style="color:#f59e0b"><i data-lucide="hourglass"></i></span><div class="v">${d.stats.expired}</div><div class="l">منتهي</div></div>
       <div class="stat"><span class="ic" style="color:#ef4444"><i data-lucide="x-circle"></i></span><div class="v">${d.stats.cancelled}</div><div class="l">ملغي</div></div>
     </div>
+    <div class="card"><h3><i data-lucide="gift"></i> تفعيل يدوي</h3>
+      <div class="badge-note" style="margin-bottom:12px">
+        فعّل الاشتراك الكامل لحسابٍ سجّل ولم يدفع. <b>لا بدّ أن يكون قد سجّل دخوله مرّة</b> —
+        المنح يبحث عن بريده في الحسابات. والمنحة تدوم حتى تُلغى.
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <input id="grantEmail" type="email" placeholder="البريد الإلكتروني" style="flex:1;min-width:220px" dir="ltr">
+        <input id="grantNote" placeholder="ملاحظة (اختياري)" style="flex:1;min-width:160px">
+        <button class="btn btn-gold" onclick="hdGrant()"><i data-lucide="check"></i> فعّل</button>
+      </div>
+      <div id="grantMsg" style="margin-top:10px;font-size:13.5px"></div>
+    </div>
+
     <div class="card"><h3><i data-lucide="credit-card"></i> المشتركون (${d.count})</h3>
     <div style="overflow-x:auto"><table><thead><tr><th>المشترك</th><th>البريد</th><th>المنصة</th><th>الخطة</th><th>الحالة</th><th>تنتهي</th><th>تغيير الحالة</th></tr></thead><tbody>
-    ${d.entries.map(s=>`<tr><td>${esc(s.displayName||'—')}</td><td>${esc(s.email||'—')}</td><td>${esc(s.platform||'—')}</td><td>${esc(s.planId||'—')}</td><td>${hdStatusPill(s.status)}</td><td>${hdDate(s.currentPeriodEnd)}</td>
-      <td><select onchange="hdSetSubStatus('${s.id}',this.value)"><option value="">اختر…</option><option value="active">نشط</option><option value="expired">منتهي</option><option value="cancelled">ملغي</option></select></td></tr>`).join('')||'<tr><td colspan="7" style="opacity:.6">لا توجد اشتراكات بعد.</td></tr>'}
+    ${d.entries.map(s=>{
+      const manual = s.platform==='manual';
+      /* المدفوع لا يُلغى — دفع صاحبه. والزرّ مخفيّ هنا، والخادم يرفض الطلب
+         أيضاً، فلا يكفي الإخفاء وحده. */
+      const act = manual && s.status==='active'
+        ? `<button class="btn btn-ghost btn-sm" onclick="hdRevokeGrant('${s.id}')"><i data-lucide="x"></i> إلغاء التفعيل</button>`
+        : (manual ? '<span style="opacity:.6">—</span>' : '<span style="opacity:.6;font-size:12.5px">مدفوع — لا يُلغى</span>');
+      const plat = manual ? hdPill('ممنوح يدوياً','') : esc(s.platform||'—');
+      return `<tr><td>${esc(s.displayName||'—')}</td><td>${esc(s.email||'—')}</td><td>${plat}</td><td>${esc(s.planId||'—')}</td><td>${hdStatusPill(s.status)}</td><td>${s.currentPeriodEnd?hdDate(s.currentPeriodEnd):'بلا نهاية'}</td>
+      <td>${act}</td></tr>`;
+    }).join('')||'<tr><td colspan="7" style="opacity:.6">لا توجد اشتراكات بعد.</td></tr>'}
     </tbody></table></div></div>`;
 }
 async function hdSetSubStatus(id,val){if(!val)return;try{await hdApi('/admin/subscribers/'+id+'/status',{method:'PATCH',body:JSON.stringify({status:val})});delete HD_CACHE.subs;hdLoad('subs')}catch(e){alert(e.message)}}
+
+/* الرسالة في الصفحة لا في `alert`: النتيجة تُقرأ بجانب الحقل الذي كُتب فيه */
+function hdGrantMsg(text,ok){
+  const el=document.getElementById('grantMsg');
+  if(el)el.innerHTML=`<span style="color:${ok?'#22c55e':'#ef4444'};font-weight:700">${esc(text)}</span>`;
+}
+async function hdGrant(){
+  const email=(document.getElementById('grantEmail')||{}).value||'';
+  const note=(document.getElementById('grantNote')||{}).value||'';
+  if(!email.trim()){hdGrantMsg('اكتب البريد أولاً',false);return}
+  hdGrantMsg('جارٍ التفعيل…',true);
+  try{
+    const r=await hdApi('/admin/grants',{method:'POST',body:JSON.stringify({email:email.trim(),note:note.trim()||undefined})});
+    hdGrantMsg(`✅ فُعِّل الاشتراك لـ ${r.name||r.email}`,true);
+    document.getElementById('grantEmail').value='';
+    document.getElementById('grantNote').value='';
+    delete HD_CACHE.subs; hdLoad('subs');
+  }catch(e){ hdGrantMsg(e.message,false); }
+}
+async function hdRevokeGrant(id){
+  if(!confirm('إلغاء التفعيل عن هذا الحساب؟'))return;
+  try{ await hdApi('/admin/grants/'+id,{method:'DELETE'}); delete HD_CACHE.subs; hdLoad('subs'); }
+  catch(e){ alert(e.message); }
+}
 /* ── قائمة الانتظار ──────────────────────────────────── */
 async function hdTabWaitlist(){
   const d=await hdApi('/admin/waitlist');
