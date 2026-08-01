@@ -1,0 +1,73 @@
+// ===== لمسات هوية إبراهيم سعود على واجهة النظام =====
+
+.o_web_client,
+.o_action_manager,
+.modal,
+.o_dialog {
+    font-family: "Thmanyah Sans", "Tajawal", system-ui, sans-serif;
+}
+
+// العناوين بخط ثمانية العريض (طابع أنيق)
+.o_web_client {
+    h1, h2, h3,
+    .o_form_view .oe_title input,
+    .o_breadcrumb .active {
+        font-family: "Thmanyah Serif", "Thmanyah Sans", serif;
+    }
+}
+
+// الشريط العلوي: حبري داكن + لمسة ذهبية
+.o_main_navbar {
+    background-color: #0a0a0c;
+    border-bottom: 1px solid #26262e;
+
+    .o_menu_brand {
+        font-family: "Thmanyah Serif", "Thmanyah Sans", serif;
+        color: #f5f2ea;
+        letter-spacing: 0.2px;
+
+        &:hover, &:focus {
+            color: #e7b24c;
+        }
+    }
+}
+
+// حلقة التركيز والروابط بالذهبي
+.o_web_client {
+    a:not(.btn):not(.dropdown-item) {
+        color: #b3862a;
+
+        &:hover {
+            color: #e7b24c;
+        }
+    }
+
+    .form-control:focus,
+    .o_input:focus {
+        border-color: #e7b24c;
+        box-shadow: 0 0 0 0.15rem rgba(231, 178, 76, 0.25);
+    }
+}
+
+// زر الفعل الأساسي: ذهبي بنص داكن (تباين مقروء)
+.btn-primary {
+    --o-btn-primary-color: #0a0a0c;
+    color: #0a0a0c;
+    font-weight: 500;
+}
+
+// إخفاء إعلانات الترقية للنسخة المؤسسية (لا وجود لعروض المنصّة داخل نظامك)
+.o_setting_box:has(.o_enterprise_label),
+.o_settings_container .o_enterprise_label,
+.o_form_label .o_enterprise_label {
+    display: none !important;
+}
+
+// تحسينات عربية: مسافة أنسب للأرقام داخل النصوص العربية
+[dir="rtl"] .o_web_client {
+    .o_field_monetary,
+    .o_field_float,
+    .o_field_integer {
+        font-variant-numeric: tabular-nums;
+    }
+}
