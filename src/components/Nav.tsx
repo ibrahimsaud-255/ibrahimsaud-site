@@ -5,7 +5,7 @@ import { site, waLink } from "@/lib/site";
 
 const links = [
   { href: "/#works", label: "الأعمال" },
-  { href: "/studio-rental/", label: "الأستديو" },
+  { href: "/ad-packages/", label: "الباقات والأسعار" },
   { href: "/blog/", label: "المدونة" },
 ];
 
@@ -54,7 +54,7 @@ export default function Nav() {
 
         <div className="flex items-center gap-3">
           <a
-            href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
+            href={waLink("السلام عليكم، أبي فيديو إعلاني لمنتجي 🎬")}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden rounded-full bg-gold px-5 py-2 text-sm font-bold text-ink transition hover:bg-gold-soft sm:inline-block"
@@ -85,7 +85,7 @@ export default function Nav() {
               </a>
             ))}
             <a
-              href={waLink("السلام عليكم، أبي أطلب فيديو إعلاني 🎬")}
+              href={waLink("السلام عليكم، أبي فيديو إعلاني لمنتجي 🎬")}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-gold px-5 py-2 text-center text-sm font-bold text-ink"

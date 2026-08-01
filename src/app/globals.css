@@ -155,6 +155,30 @@ h1, h2, .font-serif-display {
   animation: marquee 50s linear infinite;
 }
 
+/* جدار المقاطع الطولية في الواجهة — زحف عمودي بطيء */
+@keyframes marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+.marquee-y {
+  animation: marquee-y 46s linear infinite;
+}
+.marquee-y-rev {
+  animation: marquee-y 52s linear infinite reverse;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-y,
+  .marquee-y-rev,
+  .marquee-track,
+  .loop-track {
+    animation: none;
+  }
+}
+
 /* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;

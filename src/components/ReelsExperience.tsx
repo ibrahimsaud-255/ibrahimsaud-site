@@ -1,24 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { reels, reelPoster, type Reel } from "@/lib/reels";
-import { waLink } from "@/lib/site";
+// مشغّل الإعلانات الطولية — تجربة ملء الشاشة بأسلوب تيك توك:
+// سحب لأعلى للمقطع التالي، وكل مقطع بإطار ٩:١٦ مع معلومات العمل ودعوة للطلب.
+// يُفتح من بطاقات قسم «الأعمال» (AdReels) بتمرير رقم المقطع.
 
-// مشغّل يوتيوب (بديل مؤقت): رابط تضمين مع تشغيل تلقائي مكتوم وحلقة، مع JS API للصوت.
-function embedSrc(ytId: string) {
-  const params = new URLSearchParams({
-    autoplay: "1",
-    mute: "1",
-    controls: "0",
-    loop: "1",
-    playlist: ytId,
-    playsinline: "1",
-    modestbranding: "1",
-    rel: "0",
-    enablejsapi: "1",
-  });
-  return `https://www.youtube.com/embed/${ytId}?${params.toString()}`;
-}
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { reels, reelPoster, reelSource, type Reel } from "@/lib/reels";
+import { waLink } from "@/lib/site";
 
 function ytCommand(
   iframe: HTMLIFrameElement | null,
@@ -31,11 +19,17 @@ function ytCommand(
   );
 }
 
-export default function ReelsExperience() {
-  const [open, setOpen] = useState(false);
-  const [shown, setShown] = useState(false);
-  const [active, setActive] = useState(0);
+export default function ReelsExperience({
+  openAt,
+  onClose,
+}: {
+  openAt: number | null;
+  onClose: () => void;
+}) {
+  const open = openAt !== null;
+  const [active, setActive] = useState(openAt ?? 0);
   const [muted, setMuted] = useState(true);
+  const [shown, setShown] = useState(false);
 
   const scrollerRef = useRef<HTMLDivElement>(null);
   const slideRefs = useRef<(HTMLElement | null)[]>([]);
@@ -44,24 +38,12 @@ export default function ReelsExperience() {
 
   const total = reels.length;
 
-  // فتح/إغلاق عبر هاش الرابط (#reels)
-  useEffect(() => {
-    const sync = () => setOpen(window.location.hash === "#reels");
-    sync();
-    window.addEventListener("hashchange", sync);
-    return () => window.removeEventListener("hashchange", sync);
-  }, []);
-
   // قفل تمرير الخلفية + انتقال الدخول
+  // (المكوّن يُركَّب من جديد مع كل فتح — لذا تكفي القيم الابتدائية للحالة)
   useEffect(() => {
-    if (!open) {
-      setShown(false);
-      return;
-    }
+    if (!open) return;
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
-    setActive(0);
-    setMuted(true);
     const raf = requestAnimationFrame(() => setShown(true));
     return () => {
       document.body.style.overflow = prev;
@@ -69,27 +51,21 @@ export default function ReelsExperience() {
     };
   }, [open]);
 
-  const close = useCallback(() => {
-    history.replaceState(
-      null,
-      "",
-      window.location.pathname + window.location.search,
-    );
-    setOpen(false);
-    requestAnimationFrame(() => {
-      document.getElementById("works")?.scrollIntoView({ behavior: "smooth" });
-    });
-  }, []);
+  // الفتح على المقطع المطلوب مباشرة (بلا حركة تمرير)
+  useLayoutEffect(() => {
+    if (openAt === null) return;
+    slideRefs.current[openAt]?.scrollIntoView({ block: "start" });
+  }, [openAt]);
 
   // إغلاق بزر Escape
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") close();
+      if (e.key === "Escape") onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [open, close]);
+  }, [open, onClose]);
 
   // اكتشاف السلايد النشط
   useEffect(() => {
@@ -111,7 +87,7 @@ export default function ReelsExperience() {
     return () => io.disconnect();
   }, [open]);
 
-  // تشغيل المقطع النشط فقط + تطبيق حالة الصوت (فيديو native ويوتيوب)
+  // تشغيل المقطع النشط فقط + حالة الصوت (mp4 محلي ويوتيوب)
   useEffect(() => {
     if (!open) return;
     reels.forEach((_, i) => {
@@ -126,7 +102,7 @@ export default function ReelsExperience() {
       }
     });
     const ifr = iframeRefs.current[active];
-    if (ifr) {
+    if (ifr && reels[active]?.ytId) {
       if (muted) {
         ytCommand(ifr, "mute");
       } else {
@@ -137,10 +113,14 @@ export default function ReelsExperience() {
     }
   }, [open, active, muted]);
 
-  const goTo = (i: number) =>
-    slideRefs.current[i]?.scrollIntoView({ behavior: "smooth" });
+  const goTo = useCallback((i: number) => {
+    slideRefs.current[i]?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, []);
 
   if (!open || total === 0) return null;
+
+  // زر الصوت لا معنى له مع إطار درايف (المشغّل داخلي)
+  const canMute = !!(reels[active]?.src || reels[active]?.ytId);
 
   return (
     <div
@@ -152,22 +132,26 @@ export default function ReelsExperience() {
       {/* شريط علوي */}
       <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex items-center justify-between bg-gradient-to-b from-black/70 to-transparent px-4 pb-10 pt-[max(1rem,env(safe-area-inset-top))]">
         <button
-          onClick={close}
+          onClick={onClose}
           className="pointer-events-auto flex size-10 items-center justify-center rounded-full bg-white/10 text-xl text-white backdrop-blur transition hover:bg-white/20"
           aria-label="إغلاق"
         >
           ✕
         </button>
         <span className="text-sm font-bold tracking-wide text-white/80">
-          أعمالي · مقاطع
+          فيديوهات إعلانية · {active + 1} / {total}
         </span>
-        <button
-          onClick={() => setMuted((m) => !m)}
-          className="pointer-events-auto flex size-10 items-center justify-center rounded-full bg-white/10 text-lg text-white backdrop-blur transition hover:bg-white/20"
-          aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
-        >
-          {muted ? "🔇" : "🔊"}
-        </button>
+        {canMute ? (
+          <button
+            onClick={() => setMuted((m) => !m)}
+            className="pointer-events-auto flex size-10 items-center justify-center rounded-full bg-white/10 text-lg text-white backdrop-blur transition hover:bg-white/20"
+            aria-label={muted ? "تشغيل الصوت" : "كتم الصوت"}
+          >
+            {muted ? "🔇" : "🔊"}
+          </button>
+        ) : (
+          <span className="size-10" />
+        )}
       </div>
 
       {/* الحاوية القابلة للتمرير العمودي */}
@@ -179,6 +163,7 @@ export default function ReelsExperience() {
         {reels.map((r, i) => {
           const near = Math.abs(i - active) <= 1; // نحمّل النشط وجاره فقط
           const poster = reelPoster(r);
+          const source = reelSource(r);
           return (
             <section
               key={r.id}
@@ -188,7 +173,7 @@ export default function ReelsExperience() {
               }}
               className="relative flex h-full w-full snap-start snap-always items-center justify-center"
             >
-              {/* خلفية ضبابية */}
+              {/* خلفية ضبابية من صورة المقطع */}
               {poster && (
                 <div
                   className="absolute inset-0 scale-110 bg-cover bg-center opacity-40 blur-2xl"
@@ -197,24 +182,24 @@ export default function ReelsExperience() {
               )}
               <div className="absolute inset-0 bg-black/40" />
 
-              {/* إطار الفيديو العمودي 9:16 */}
+              {/* إطار الفيديو العمودي ٩:١٦ — والمعلومات فوقه بعرضه نفسه */}
               <div className="relative z-10 h-full max-h-[92vh] w-full max-w-[min(100vw,52vh)] overflow-hidden bg-black sm:rounded-2xl">
                 {!near ? (
                   poster ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={poster}
-                      alt={r.title}
+                      alt={r.client}
                       loading="lazy"
                       className="absolute inset-0 size-full object-cover"
                     />
                   ) : null
-                ) : r.src ? (
+                ) : source.kind === "video" ? (
                   <video
                     ref={(el) => {
                       videoRefs.current[i] = el;
                     }}
-                    src={r.src}
+                    src={source.src}
                     poster={r.poster}
                     className="absolute inset-0 size-full object-cover"
                     loop
@@ -222,22 +207,23 @@ export default function ReelsExperience() {
                     playsInline
                     preload="auto"
                   />
-                ) : r.ytId ? (
+                ) : source.kind !== "none" ? (
                   <iframe
-                    key={r.ytId}
+                    key={source.src}
                     ref={(el) => {
                       iframeRefs.current[i] = el;
                     }}
-                    src={embedSrc(r.ytId)}
+                    src={source.src}
                     className="absolute inset-0 size-full"
                     style={{ border: 0 }}
-                    allow="autoplay; encrypted-media; picture-in-picture"
-                    title={r.title}
+                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+                    allowFullScreen
+                    title={r.client}
                   />
                 ) : null}
-              </div>
 
-              <SlideOverlay reel={r} />
+                <SlideOverlay reel={r} />
+              </div>
             </section>
           );
         })}
@@ -250,7 +236,7 @@ export default function ReelsExperience() {
               شفت شغلي؟ <span className="gold-text">خلنا نسوي إعلانك.</span>
             </p>
             <a
-              href={waLink("السلام عليكم، شفت أعمالك وأبي أطلب فيديو إعلاني 🎬")}
+              href={waLink("السلام عليكم، شفت أعمالك وأبي فيديو إعلاني لمنتجي 🎬")}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
@@ -258,7 +244,7 @@ export default function ReelsExperience() {
               اطلب إعلانك الآن
             </a>
             <button
-              onClick={close}
+              onClick={onClose}
               className="text-sm text-white/60 underline-offset-4 transition hover:text-white hover:underline"
             >
               العودة للموقع ↑
@@ -281,25 +267,20 @@ export default function ReelsExperience() {
         ))}
       </div>
 
-      {/* تلميح السحب */}
-      {active === 0 && (
-        <div className="pointer-events-none absolute inset-x-0 bottom-6 z-20 flex animate-bounce flex-col items-center text-white/70">
-          <span className="text-xs">اسحب للأعلى</span>
-          <span className="text-lg">↑</span>
-        </div>
-      )}
     </div>
   );
 }
 
-// طبقة المعلومات والأزرار على كل مقطع
+// طبقة المعلومات والأزرار — داخل إطار الفيديو نفسه (بأسلوب تيك توك)
 function SlideOverlay({ reel }: { reel: Reel }) {
   return (
     <>
       {/* أزرار جانبية */}
-      <div className="absolute bottom-28 right-3 z-20 flex flex-col items-center gap-5 sm:right-[max(1rem,calc(50vw-26vh-3.5rem))]">
+      <div className="absolute bottom-44 right-3 z-20 flex flex-col items-center gap-5">
         <a
-          href={waLink(`السلام عليكم، أعجبني «${reel.title}» وأبي إعلان مثله 🎬`)}
+          href={waLink(
+            `السلام عليكم، أعجبني إعلان «${reel.client}» وأبي إعلان مثله 🎬`,
+          )}
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center gap-1 text-white"
@@ -309,21 +290,23 @@ function SlideOverlay({ reel }: { reel: Reel }) {
           </span>
           <span className="text-[10px] font-medium">اطلب مثله</span>
         </a>
-        <a
-          href={waLink(`شف هذا العمل من إبراهيم سعود: «${reel.title}»`)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-col items-center gap-1 text-white"
-        >
-          <span className="flex size-12 items-center justify-center rounded-full bg-white/15 text-xl backdrop-blur transition hover:bg-white/25">
-            ↗
-          </span>
-          <span className="text-[10px] font-medium">مشاركة</span>
-        </a>
+        {reel.href && (
+          <a
+            href={reel.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-col items-center gap-1 text-white"
+          >
+            <span className="flex size-12 items-center justify-center rounded-full bg-white/15 text-xl backdrop-blur transition hover:bg-white/25">
+              ↗
+            </span>
+            <span className="text-[10px] font-medium">المقطع الأصلي</span>
+          </a>
+        )}
       </div>
 
       {/* معلومات العمل */}
-      <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-4 pb-24 pt-16 sm:px-[max(1rem,calc(50vw-26vh))]">
+      <div className="absolute inset-x-0 bottom-0 z-20 bg-gradient-to-t from-black via-black/70 to-transparent px-4 pb-5 pt-16">
         <div className="flex items-center gap-2">
           {reel.logo && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -333,11 +316,16 @@ function SlideOverlay({ reel }: { reel: Reel }) {
               className="size-9 shrink-0 rounded-lg border border-white/20 bg-ink object-contain p-1"
             />
           )}
-          <span className="text-sm font-bold text-gold">{reel.client}</span>
+          <span className="text-sm font-bold text-gold">{reel.category}</span>
         </div>
         <h3 className="mt-2 text-lg font-extrabold leading-snug text-white">
-          {reel.title}
+          {reel.client}
         </h3>
+        {reel.desc && (
+          <p className="mt-1 line-clamp-2 max-w-[85%] text-sm leading-relaxed text-white/70">
+            {reel.desc}
+          </p>
+        )}
         <div className="mt-2 flex flex-wrap gap-1.5">
           {reel.roles.map((role) => (
             <span

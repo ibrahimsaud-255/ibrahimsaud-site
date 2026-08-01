@@ -1,60 +1,53 @@
 "use client";
 
-// أقسام الصفحة الرئيسية — الترتيب والإظهار/الإخفاء يُداران من النظام الداخلي
-// («محتوى الموقع» → «أقسام الصفحة»، مفتاح layout). الهيرو ثابت دائماً في الأعلى.
+// أقسام الصفحة الرئيسية — الموقع كله يعرض خدمة واحدة: الفيديو الإعلاني الطولي.
+// الترتيب ثابت (مصمَّم ليقود الزائر: أعمال ← ثقة ← طريقة عمل ← سعر ← طلب)،
+// والإظهار/الإخفاء يُداران من النظام الداخلي («محتوى الموقع» → «أقسام الصفحة»).
+//
+// أقسام البودكاست والاستوديو والخدمات المتعدّدة أُخرجت من الموقع عمداً؛ ملفاتها
+// وبياناتها محفوظة في المشروع (Podcast/StudioTour/StudioRental/Services وsite.ts)
+// وتقدر ترجّعها بإضافتها لخريطة SECTIONS متى احتجتها.
 
 import { useContent } from "@/lib/cms";
+import AdReels from "./AdReels";
 import Brands from "./Brands";
-import Podcast from "./Podcast";
-import StudioTour from "./StudioTour";
-import Services from "./Services";
-import Works from "./Works";
+import Process from "./Process";
+import PackagesSection from "./PackagesSection";
 import Newsletter from "./Newsletter";
 import Contact from "./Contact";
-import About from "./About";
-import Process from "./Process";
-import StudioRental from "./StudioRental";
 
 const SECTIONS: Record<string, React.ComponentType> = {
+  works: AdReels,
   brands: Brands,
-  podcast: Podcast,
-  studio: StudioTour,
-  services: Services,
-  works: Works,
+  process: Process,
+  packages: PackagesSection,
   newsletter: Newsletter,
   contact: Contact,
-  about: About,
-  process: Process,
-  rental: StudioRental,
 };
 
-// «عني» و«كيف نشتغل» و«باقات التأجير» مطفأة افتراضياً — فعّلها من اللوحة متى شئت
-const layoutFallback = {
-  sections: [
-    { id: "brands", on: true },
-    { id: "podcast", on: true },
-    { id: "studio", on: true },
-    { id: "services", on: true },
-    { id: "works", on: true },
-    { id: "about", on: false },
-    { id: "process", on: false },
-    { id: "rental", on: false },
-    { id: "newsletter", on: true },
-    { id: "contact", on: true },
-  ],
-};
+// الترتيب المعتمد للصفحة + الحالة الافتراضية لكل قسم
+const ORDER = [
+  { id: "works", on: true },
+  { id: "brands", on: true },
+  { id: "process", on: true },
+  { id: "packages", on: true },
+  { id: "newsletter", on: false },
+  { id: "contact", on: true },
+];
+
+const layoutFallback = { sections: ORDER };
 
 export default function HomeSections() {
   const c = useContent("layout", layoutFallback);
-  // أي قسم جديد غير مذكور في الإعداد المحفوظ يظهر في نهاية الصفحة
-  const listed = c.sections.map((s) => s.id);
-  const rest = layoutFallback.sections.filter((s) => !listed.includes(s.id));
+  // الإعداد المحفوظ يتحكّم بالإظهار فقط — الترتيب يبقى كما صُمّم أعلاه.
+  const saved = new Map(c.sections.map((s) => [s.id, s.on !== false]));
 
   return (
     <>
-      {[...c.sections, ...rest].map((s) => {
-        const Cmp = SECTIONS[s.id] as React.ComponentType | undefined;
-        return Cmp && s.on !== false ? <Cmp key={s.id} /> : null;
+      {ORDER.map((s) => {
+        const Cmp = SECTIONS[s.id];
+        const on = saved.has(s.id) ? saved.get(s.id) : s.on;
+        return Cmp && on ? <Cmp key={s.id} /> : null;
       })}
     </>
   );
