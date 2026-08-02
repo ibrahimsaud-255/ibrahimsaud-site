@@ -14,7 +14,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="./huroof-admin.js?v=3"></script>
 <script src="./techco-admin.js?v=1"></script>
 <script src="./growth-apps.js?v=5"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -759,12 +758,11 @@ const APPS=[
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
   {id:'autopub',name:'النشر التلقائي',icon:'send'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic'},
-  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
   {id:'lab',name:'تحت التجربة',icon:'flask-conical'},
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,huroof:renderHuroof,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -791,7 +789,6 @@ const LAUNCH=[
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
   {id:'autopub',name:'النشر التلقائي',icon:'send',c:'#8b5cf6,#6d28d9'},
   {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
-  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#facc15,#d97706'},
   {id:'techco',name:'الأنظمة المباعة',icon:'building-2',c:'#06b6d4,#0e7490'},
   {id:'plan',name:'خطة المشروع',icon:'target',c:'#22c55e,#15803d'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb',c:'#f59e0b,#b45309'},
