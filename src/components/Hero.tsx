@@ -9,7 +9,6 @@ import { site } from "@/lib/site";
 import { useContent, goldParts, waHref } from "@/lib/cms";
 
 const heroFallback = {
-  badge: "فيديو إعلاني · طولي ٩:١٦ · جاهز للنشر",
   title: "فيديوهات إعلانية *تبيع*.",
   sub: "أنا إبراهيم سعود — أصنع لك إعلاناً قصيراً طولياً من الفكرة والسكربت إلى التصوير والمونتاج، وتستلمه جاهزاً لتيك توك وريلز وسناب وشورتس.",
   cta1: {
@@ -75,11 +74,7 @@ export default function Hero() {
       <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
         {/* الرسالة */}
         <div className="relative z-10">
-          <span className="glass-pill inline-block rounded-full px-4 py-1.5 text-xs font-bold text-gold sm:text-sm">
-            {c.badge}
-          </span>
-
-          <h1 className="mt-6 text-5xl font-black leading-[1.1] sm:text-6xl lg:text-7xl">
+          <h1 className="text-5xl font-black leading-[1.1] sm:text-6xl lg:text-7xl">
             {goldParts(c.title).map((p, i) =>
               p.gold ? (
                 <span key={i} className="gold-text">

@@ -5,7 +5,7 @@
 
 import { site } from "@/lib/site";
 import { useContent, goldParts, waHref } from "@/lib/cms";
-import SocialIcons, { SocialIcon } from "./SocialIcons";
+import { SocialIcon } from "./SocialIcons";
 
 const contactFallback = {
   title: "عندك منتج؟ *خلنا نسوي إعلانه.*",
@@ -82,10 +82,7 @@ export default function Contact() {
               {c.cta2.label}
             </a>
           </div>
-
-          <div className="mt-9">
-            <SocialIcons />
-          </div>
+          {/* أيقونات التواصل تظهر في الفوتر فقط — لا نكرّرها هنا */}
         </div>
       </div>
     </section>
