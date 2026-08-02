@@ -26,11 +26,13 @@ const SECTIONS: Record<string, React.ComponentType> = {
 };
 
 // الترتيب المعتمد للصفحة + الحالة الافتراضية لكل قسم
+// «الباقات» مطفأ: الأسعار لا تظهر في الصفحة الرئيسية (تبقى في /ad-packages/
+// لمن يُرسل له الرابط) — فعّله من اللوحة متى أردت إظهارها.
 const ORDER = [
   { id: "works", on: true },
   { id: "brands", on: true },
   { id: "process", on: true },
-  { id: "packages", on: true },
+  { id: "packages", on: false },
   { id: "newsletter", on: false },
   { id: "contact", on: true },
 ];

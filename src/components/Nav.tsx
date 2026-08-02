@@ -3,9 +3,11 @@
 import { useEffect, useState } from "react";
 import { site, waLink } from "@/lib/site";
 
+// لا رابط للأسعار في الناف — صفحة الباقات /ad-packages/ تبقى موجودة لمن تُرسل له
+// الرابط مباشرة، لكنها لا تُعلَن في الموقع.
 const links = [
   { href: "/#works", label: "الأعمال" },
-  { href: "/ad-packages/", label: "الباقات والأسعار" },
+  { href: "/#process", label: "كيف نشتغل" },
   { href: "/blog/", label: "المدونة" },
 ];
 
