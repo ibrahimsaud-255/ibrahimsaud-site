@@ -9,14 +9,15 @@ import { site } from "@/lib/site";
 import { useContent, goldParts, waHref } from "@/lib/cms";
 
 const heroFallback = {
-  title: "فيديوهات إعلانية *تبيع*.",
-  sub: "أنا إبراهيم سعود — أصنع لك إعلاناً قصيراً طولياً من الفكرة والسكربت إلى التصوير والمونتاج، وتستلمه جاهزاً لتيك توك وريلز وسناب وشورتس.",
+  title: "فيديو إعلاني *يبيع* — تستلمه خلال ٣ أيام.",
+  sub: "أنا إبراهيم سعود. أكتب الفكرة والسكربت، وأصوّر، وأمنتج — وتستلم إعلاناً طولياً (٩:١٦) بهوك يوقف التمرير في أول ثانيتين، جاهزاً للنشر على تيك توك وسناب وريلز وشورتس.",
   cta1: {
-    label: "اطلب إعلانك",
-    waMsg: "السلام عليكم إبراهيم، أبي فيديو إعلاني لمنتجي 🎬",
+    label: "اطلب إعلانك الآن",
+    waMsg:
+      "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: \nهدفي من الإعلان: ",
   },
-  cta2: { label: "شاهد الأعمال", href: "#works" },
-  note: "خدمة واحدة أتقنها — وأمثلتها كلها تحت.",
+  cta2: { label: "شوف الإعلانات أولاً", href: "#works" },
+  note: "٣ أيام تسليم · جولتا تعديل مجانية · تصوير في موقعك بالرياض أو في استوديو مجهّز",
 };
 
 // عمود من المقاطع يزحف ببطء (زينة فقط — المشاهدة من قسم الأعمال)
@@ -74,7 +75,7 @@ export default function Hero() {
       <div className="mx-auto grid w-full max-w-6xl items-center gap-10 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
         {/* الرسالة */}
         <div className="relative z-10">
-          <h1 className="text-5xl font-black leading-[1.1] sm:text-6xl lg:text-7xl">
+          <h1 className="text-4xl font-black leading-[1.3] sm:text-5xl lg:text-6xl">
             {goldParts(c.title).map((p, i) =>
               p.gold ? (
                 <span key={i} className="gold-text">
@@ -107,7 +108,19 @@ export default function Hero() {
             </a>
           </div>
 
-          <p className="mt-6 text-sm text-cream/50">{c.note}</p>
+          {/* شريط طمأنة — كل عنصر يزيل اعتراضاً قبل ما يسأل عنه العميل */}
+          <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-sm text-cream/65">
+            {c.note
+              .split("·")
+              .map((t) => t.trim())
+              .filter(Boolean)
+              .map((t) => (
+                <li key={t} className="flex items-center gap-1.5">
+                  <span className="font-black text-gold">✓</span>
+                  {t}
+                </li>
+              ))}
+          </ul>
         </div>
 
         {/* جدار المقاطع الطولية */}

@@ -12,6 +12,7 @@ import { useContent } from "@/lib/cms";
 import AdReels from "./AdReels";
 import Brands from "./Brands";
 import Process from "./Process";
+import Faq from "./Faq";
 import PackagesSection from "./PackagesSection";
 import Newsletter from "./Newsletter";
 import Contact from "./Contact";
@@ -20,6 +21,7 @@ const SECTIONS: Record<string, React.ComponentType> = {
   works: AdReels,
   brands: Brands,
   process: Process,
+  faq: Faq,
   packages: PackagesSection,
   newsletter: Newsletter,
   contact: Contact,
@@ -32,6 +34,7 @@ const ORDER = [
   { id: "works", on: true },
   { id: "brands", on: true },
   { id: "process", on: true },
+  { id: "faq", on: true },
   { id: "packages", on: false },
   { id: "newsletter", on: false },
   { id: "contact", on: true },

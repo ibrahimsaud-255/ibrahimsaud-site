@@ -233,15 +233,20 @@ export default function ReelsExperience({
           <div className="absolute inset-0 bg-gradient-to-b from-ink via-ink-soft to-ink" />
           <div className="relative z-10 flex flex-col items-center gap-6">
             <p className="text-2xl font-black text-white sm:text-3xl">
-              شفت شغلي؟ <span className="gold-text">خلنا نسوي إعلانك.</span>
+              شفت الشغل؟ <span className="gold-text">دورك الحين.</span>
+            </p>
+            <p className="max-w-xs text-sm text-white/65">
+              أرسل منتجك، وخلال ٣ أيام يكون إعلانك جاهز للنشر.
             </p>
             <a
-              href={waLink("السلام عليكم، شفت أعمالك وأبي فيديو إعلاني لمنتجي 🎬")}
+              href={waLink(
+                "السلام عليكم إبراهيم، شفت أعمالك وأبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+              )}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-gold px-8 py-3.5 text-base font-bold text-ink transition hover:bg-gold-soft"
             >
-              اطلب إعلانك الآن
+              ابدأ إعلانك الآن
             </a>
             <button
               onClick={onClose}
@@ -279,7 +284,7 @@ function SlideOverlay({ reel }: { reel: Reel }) {
       <div className="absolute bottom-44 right-3 z-20 flex flex-col items-center gap-5">
         <a
           href={waLink(
-            `السلام عليكم، أعجبني إعلان «${reel.client}» وأبي إعلان مثله 🎬`,
+            `السلام عليكم إبراهيم، أعجبني إعلان «${reel.client}» وأبي إعلان بنفس المستوى 🎬\nمنتجي: `,
           )}
           target="_blank"
           rel="noopener noreferrer"

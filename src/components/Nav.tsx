@@ -56,12 +56,14 @@ export default function Nav() {
 
         <div className="flex items-center gap-3">
           <a
-            href={waLink("السلام عليكم، أبي فيديو إعلاني لمنتجي 🎬")}
+            href={waLink(
+              "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+            )}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden rounded-full bg-gold px-5 py-2 text-sm font-bold text-ink transition hover:bg-gold-soft sm:inline-block"
           >
-            اطلب فيديوك
+            اطلب إعلانك
           </a>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -87,12 +89,14 @@ export default function Nav() {
               </a>
             ))}
             <a
-              href={waLink("السلام عليكم، أبي فيديو إعلاني لمنتجي 🎬")}
+              href={waLink(
+              "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+            )}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-gold px-5 py-2 text-center text-sm font-bold text-ink"
             >
-              اطلب فيديوك عبر واتساب
+              اطلب إعلانك عبر واتساب
             </a>
           </div>
         </div>

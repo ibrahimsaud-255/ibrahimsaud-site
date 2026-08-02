@@ -26,11 +26,12 @@ export default function AdPackagesPage() {
                 الفيديوهات الإعلانية
               </p>
               <h1 className="mx-auto mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                باقات إعلانية بأسعار واضحة
+                سعر واضح من البداية — وتستلم خلال ٣ أيام
               </h1>
               <p className="mx-auto mt-5 max-w-2xl text-cream/70">
-                اختر الباقة المناسبة لمنتجك — من الفكرة والسكربت حتى التصوير
-                والمونتاج والتسليم جاهزاً للنشر. الأسعار شاملة الإنتاج الكامل.
+                السعر شامل كل شيء: الفكرة والسكربت والتصوير والمونتاج والنسخ
+                الجاهزة للنشر — بلا رسوم إضافية بعد الاتفاق، ومعه جولتا تعديل
+                مجانية.
               </p>
             </Reveal>
           </div>
@@ -48,22 +49,22 @@ export default function AdPackagesPage() {
             <Reveal>
               <div className="rounded-3xl border border-line bg-ink-soft p-8 text-center sm:p-10">
                 <h2 className="text-2xl font-black text-cream">
-                  عندك منتج وتبي إعلان يبيع؟
+                  مو متأكد أي باقة تناسبك؟
                 </h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm text-cream/70">
-                  راسلني وأرتب لك الباقة المناسبة، أو نتفق على باقة مخصّصة تناسب
-                  حملتك وميزانيتك.
+                  احكِ لي عن منتجك وجمهورك، وأرشّح لك الأنسب بصراحة — حتى لو كانت
+                  الأرخص. وإن احتجت باقة مخصّصة نرتّبها على مقاسك.
                 </p>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
                   <a
                     href={waLink(
-                      "السلام عليكم، أبي أستفسر عن باقات الفيديوهات الإعلانية 🎬",
+                      "السلام عليكم إبراهيم، أبي أستشيرك في الباقة المناسبة 🎬\nالمنتج: \nجمهوري: ",
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-bold text-ink transition hover:bg-gold-soft"
                   >
-                    تواصل عبر واتساب
+                    استشرني في الباقة المناسبة
                   </a>
                   <Link
                     href="/#works"

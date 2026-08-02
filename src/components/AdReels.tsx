@@ -13,9 +13,9 @@ import ReelsExperience from "./ReelsExperience";
 
 const fallback = {
   label: "الأعمال",
-  title: "إعلانات طولية لعلامات مختلفة",
-  sub: "عقار · أقفال ذكية · زيوت سيارات · تجارة إلكترونية · تطبيقات — قطاعات متباعدة بمعيار إنتاج واحد.",
-  hint: "اضغط لمشاهدة أي مقطع",
+  title: "شوف الإعلانات قبل ما تقرّر.",
+  sub: "عقار · قهوة · أقفال ذكية · زيوت سيارات · متاجر إلكترونية · تطبيقات — قطاعات ما تشبه بعض، ونفس المعيار في كلها: هوك سريع، رسالة واحدة، ودعوة واضحة في النهاية.",
+  hint: "اضغط أي مقطع وشغّله",
 };
 
 function ReelCard({
@@ -102,16 +102,22 @@ export default function AdReels() {
 
         <Reveal>
           <div className="mt-12 flex flex-col items-center gap-3 text-center">
-            <p className="text-lg font-extrabold text-cream">
-              منتجك يستاهل إعلان بهذا المستوى.
+            <p className="text-xl font-extrabold text-cream sm:text-2xl">
+              إعلان منتجك يقدر يكون المقطع القادم في هذي القائمة.
+            </p>
+            <p className="max-w-md text-sm text-cream/65">
+              أرسل لي منتجك وجمهورك، وأرجع لك بفكرة الإعلان وعرض السعر — بلا
+              التزام.
             </p>
             <a
-              href={waLink("السلام عليكم، شفت أعمالك وأبي فيديو إعلاني لمنتجي 🎬")}
+              href={waLink(
+                "السلام عليكم إبراهيم، شفت أعمالك وأبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+              )}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gold px-8 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
+              className="mt-1 rounded-full bg-gold px-8 py-3.5 text-sm font-black text-ink transition hover:bg-gold-soft"
             >
-              اطلب إعلانك عبر واتساب
+              ابدأ إعلانك عبر واتساب
             </a>
           </div>
         </Reveal>

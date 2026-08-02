@@ -8,7 +8,7 @@ import { useContent, waHref } from "@/lib/cms";
 export default function WhatsAppFab() {
   const info = useContent("site", {
     whatsapp: site.whatsapp as string,
-    fabMsg: "السلام عليكم، أبي أطلب فيديو إعلاني 🎬",
+    fabMsg: "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: ",
   });
 
   return (
