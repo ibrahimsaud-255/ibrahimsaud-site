@@ -159,7 +159,7 @@ export const fabrics: Fabric[] = [
     desc: "الخامة القياسية للعبايات: مطفية، ثقيلة نسبياً، لا تشفّ ولا تتجعّد.",
     priceDelta: 0,
     colors: ["أسود", "كحلي", "رمادي فحمي", "بني داكن"],
-    image: "/sarah/fabrics/nida.svg",
+    image: "/sarah/fabrics/nida.jpg",
     aiPrompt:
       "Studio macro photograph of matte black French Nida fabric, heavy opaque crepe weave, soft even folds, neutral beige background, natural soft light, high detail texture, 1:1 square, photorealistic.",
   },
@@ -170,7 +170,7 @@ export const fabrics: Fabric[] = [
     desc: "انسدال فخم وثِقل مريح — الأفضل للعبايات والفساتين الرسمية.",
     priceDelta: 60,
     colors: ["أسود", "كحلي", "زيتي", "خمري", "بيج رملي"],
-    image: "/sarah/fabrics/japanese-crepe.svg",
+    image: "/sarah/fabrics/japanese-crepe.jpg",
     aiPrompt:
       "Studio macro photograph of Japanese crepe fabric in deep olive, fine pebbled texture, luxurious drape with soft vertical folds, warm neutral background, soft diffused light, 1:1 square, photorealistic.",
   },
@@ -181,7 +181,7 @@ export const fabrics: Fabric[] = [
     desc: "لمعة ناعمة وملمس بارد — للفساتين والقفاطين والأطقم المنزلية.",
     priceDelta: 120,
     colors: ["أوف وايت", "وردي مغبر", "خمري", "أزرق ملكي", "ذهبي شامبين"],
-    image: "/sarah/fabrics/silk-satin.svg",
+    image: "/sarah/fabrics/silk-satin.jpg",
     aiPrompt:
       "Studio macro photograph of champagne gold silk satin, glossy liquid sheen, elegant flowing folds, soft highlights and shadows, cream background, 1:1 square, photorealistic.",
   },
@@ -192,7 +192,7 @@ export const fabrics: Fabric[] = [
     desc: "خفيف وشفّاف — يُستخدم طبقات مع بطانة كاملة.",
     priceDelta: 80,
     colors: ["أوف وايت", "بيج رملي", "وردي مغبر", "أسود", "سماوي"],
-    image: "/sarah/fabrics/chiffon.svg",
+    image: "/sarah/fabrics/chiffon.jpg",
     aiPrompt:
       "Studio macro photograph of dusty rose silk chiffon, sheer airy layers, delicate translucent folds floating, soft white background, backlit, 1:1 square, photorealistic.",
   },
@@ -203,7 +203,7 @@ export const fabrics: Fabric[] = [
     desc: "خامة صيفية تتنفّس — للجلابيات اليومية والقمصان والتنانير.",
     priceDelta: 40,
     colors: ["بيج رملي", "أبيض", "زيتي", "أزرق باهت", "رمادي فاتح"],
-    image: "/sarah/fabrics/linen.svg",
+    image: "/sarah/fabrics/linen.jpg",
     aiPrompt:
       "Studio macro photograph of natural sand beige linen blend fabric, visible woven slub texture, relaxed folds, warm daylight, minimal neutral background, 1:1 square, photorealistic.",
   },
@@ -214,7 +214,7 @@ export const fabrics: Fabric[] = [
     desc: "وبَر قصير وعمق لوني — لفساتين وقفاطين المناسبات الشتوية.",
     priceDelta: 150,
     colors: ["خمري", "أخضر زمردي", "كحلي", "أسود", "بنفسجي"],
-    image: "/sarah/fabrics/velvet.svg",
+    image: "/sarah/fabrics/velvet.jpg",
     aiPrompt:
       "Studio macro photograph of emerald green velvet fabric, short dense pile catching light, rich depth and sheen variation, dark neutral background, dramatic soft light, 1:1 square, photorealistic.",
   },
@@ -225,7 +225,7 @@ export const fabrics: Fabric[] = [
     desc: "تطريز شبكي فاخر — يُركّب كطبقة على الأكمام أو الصدر أو القطعة كاملة.",
     priceDelta: 220,
     colors: ["أوف وايت", "أسود", "شامبين", "وردي"],
-    image: "/sarah/fabrics/embroidered-lace.svg",
+    image: "/sarah/fabrics/embroidered-lace.jpg",
     aiPrompt:
       "Studio macro photograph of off-white embroidered floral lace fabric, fine tulle net base, raised thread embroidery, delicate scalloped edge, soft cream background, 1:1 square, photorealistic.",
   },
@@ -247,7 +247,7 @@ export const fabrics: Fabric[] = [
     desc: "قطن طويل التيلة — للأطقم المنزلية والقمصان المريحة.",
     priceDelta: 30,
     colors: ["أبيض", "بيج", "سماوي", "وردي فاتح", "رمادي"],
-    image: "/sarah/fabrics/egyptian-cotton.svg",
+    image: "/sarah/fabrics/egyptian-cotton.jpg",
     aiPrompt:
       "Studio macro photograph of white Egyptian cotton fabric, fine smooth weave, crisp soft folds, bright natural light, clean white background, 1:1 square, photorealistic.",
   },
@@ -258,7 +258,7 @@ export const fabrics: Fabric[] = [
     desc: "خفيف ومتين وحركته جميلة — للجلابيات والفساتين اليومية.",
     priceDelta: 50,
     colors: ["أسود", "كحلي", "زيتي", "بيج رملي", "خمري"],
-    image: "/sarah/fabrics/georgette.svg",
+    image: "/sarah/fabrics/georgette.jpg",
     aiPrompt:
       "Studio macro photograph of navy georgette fabric, lightweight crinkled surface, fluid rippling drape, soft neutral background, diffused studio light, 1:1 square, photorealistic.",
   },
@@ -328,7 +328,7 @@ export const products: Product[] = [
     sizing: "length",
     fabrics: ["nida", "japanese-crepe", "georgette", "linen"],
     addOns: ["hand-embroidery", "beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["/sarah/products/abaya-classic-1.svg", "/sarah/products/abaya-classic-2.svg", "/sarah/products/abaya-classic-3.svg", "/sarah/products/abaya-classic-4.svg"],
+    images: ["/sarah/products/abaya-classic-1.jpg", "/sarah/products/abaya-classic-2.jpg", "/sarah/products/abaya-classic-3.jpg", "/sarah/products/abaya-classic-4.jpg"],
     aiPrompt:
       "Editorial fashion photograph of an elegant black tailored abaya on a faceless mannequin, straight classic cut, matte crepe fabric with beautiful drape, warm sand-beige studio backdrop, soft directional light, full length, 4:5 portrait, photorealistic, luxury modest fashion catalog.",
     featured: true,
@@ -345,7 +345,7 @@ export const products: Product[] = [
     sizing: "length",
     fabrics: ["nida", "japanese-crepe", "silk-satin", "georgette"],
     addOns: ["beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["/sarah/products/abaya-embroidered-1.svg", "/sarah/products/abaya-embroidered-2.svg", "/sarah/products/abaya-embroidered-3.svg", "/sarah/products/abaya-embroidered-4.svg"],
+    images: ["/sarah/products/abaya-embroidered-1.jpg", "/sarah/products/abaya-embroidered-2.jpg", "/sarah/products/abaya-embroidered-3.jpg", "/sarah/products/abaya-embroidered-4.jpg"],
     aiPrompt:
       "Editorial fashion photograph of a black abaya with delicate gold hand embroidery on the sleeves and hem, on a faceless mannequin, luxurious crepe fabric, cream studio backdrop, soft golden light, full length, 4:5 portrait, photorealistic, luxury modest fashion catalog.",
     featured: true,
@@ -362,7 +362,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["egyptian-cotton", "georgette", "linen"],
     addOns: ["gift-wrap", "rush"],
-    images: ["/sarah/products/abaya-prayer-1.svg", "/sarah/products/abaya-prayer-2.svg", "/sarah/products/abaya-prayer-3.svg", "/sarah/products/abaya-prayer-4.svg"],
+    images: ["/sarah/products/abaya-prayer-1.jpg", "/sarah/products/abaya-prayer-2.jpg", "", ""],
     aiPrompt:
       "Product photograph of a soft cream two-piece prayer garment neatly folded and styled on a light wooden surface, gentle cotton texture, natural window light, minimal warm background, 4:5 portrait, photorealistic.",
     includes: ["خامة تتنفّس", "خياطة منظّفة", "كيس حفظ قماشي"],

@@ -15,8 +15,10 @@ export default function Gallery({
   name: string;
   productId: string;
 }) {
-  const slots = [0, 1, 2, 3];
-  const [active, setActive] = useState(0);
+  // لو وصلت صور فعلية، نعرض المتوفّر فقط؛ ولو ما فيه ولا صورة نعرض ٤ خانات فارغة
+  const filled = [0, 1, 2, 3].filter((i) => images[i]);
+  const slots = filled.length ? filled : [0, 1, 2, 3];
+  const [active, setActive] = useState(slots[0]);
 
   return (
     <div>
@@ -27,7 +29,10 @@ export default function Gallery({
         slot={`صورة المنتج ${active + 1}`}
         path={`public/sarah/products/${productId}-${active + 1}.webp`}
       />
-      <div className="mt-3 grid grid-cols-4 gap-2">
+      <div
+        className="mt-3 grid gap-2"
+        style={{ gridTemplateColumns: `repeat(${Math.min(slots.length, 4)}, minmax(0, 1fr))` }}
+      >
         {slots.map((i) => (
           <button
             key={i}
