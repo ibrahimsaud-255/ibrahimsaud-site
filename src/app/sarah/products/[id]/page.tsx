@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import Gallery from "@/components/sarah/Gallery";
 import OrderForm from "@/components/sarah/OrderForm";
 import ProductCard from "@/components/sarah/ProductCard";
+import { IconCheck } from "@/components/sarah/icons";
 import {
   alphaSizes,
   categories,
@@ -101,8 +102,8 @@ export default async function ProductPage({
               <p className="text-sm font-black text-espresso">السعر يشمل</p>
               <ul className="mt-3 space-y-2 text-sm text-cocoa">
                 {p.includes.map((i) => (
-                  <li key={i} className="flex gap-2">
-                    <span className="text-clay">✓</span>
+                  <li key={i} className="flex items-start gap-2">
+                    <IconCheck className="mt-0.5 size-4 shrink-0 text-clay" />
                     {i}
                   </li>
                 ))}
@@ -163,7 +164,7 @@ export default async function ProductPage({
                 جهّزي طلبك
               </a>
               <a
-                href={waLink(`السلام عليكم ${sarah.name} 🌸\nأستفسر عن: ${p.name}`)}
+                href={waLink(`السلام عليكم ${sarah.name}،\nأستفسر عن: ${p.name}`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="rounded-full border border-ecru bg-white px-7 py-3.5 text-sm font-bold text-espresso transition hover:border-clay hover:text-clay"

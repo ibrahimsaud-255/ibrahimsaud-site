@@ -4,6 +4,7 @@
 // مربّع منقّط يوضّح المسار المطلوب ومقاس الصورة — بدون ما ينكسر الشكل.
 
 import { useState } from "react";
+import { IconImage } from "./icons";
 
 export default function SlotImage({
   src,
@@ -13,6 +14,7 @@ export default function SlotImage({
   ratio = "aspect-[4/5]",
   className = "",
   rounded = "rounded-2xl",
+  fit = "cover",
 }: {
   src?: string;
   alt: string;
@@ -21,6 +23,7 @@ export default function SlotImage({
   ratio?: string;
   className?: string;
   rounded?: string;
+  fit?: "cover" | "contain"; // contain = تظهر القطعة كاملة بلا قص
 }) {
   const [failed, setFailed] = useState(false);
   const show = Boolean(src) && !failed;
@@ -37,16 +40,12 @@ export default function SlotImage({
           src={src}
           alt={alt}
           onError={() => setFailed(true)}
-          className="size-full object-cover"
+          className={`size-full ${fit === "contain" ? "object-contain" : "object-cover"}`}
           loading="lazy"
         />
       ) : (
         <div className="flex size-full flex-col items-center justify-center gap-2 p-4 text-center">
-          <svg viewBox="0 0 24 24" className="size-8 fill-none stroke-clay/70" strokeWidth="1.5">
-            <rect x="3" y="4" width="18" height="16" rx="2" />
-            <circle cx="8.5" cy="9.5" r="1.5" />
-            <path d="m4 17 4.5-4.5 3 3L15 12l5 5" />
-          </svg>
+          <IconImage className="size-8 text-clay/70" />
           <p className="text-xs font-bold text-clay-deep">{slot ?? "مكان الصورة"}</p>
           {path ? (
             <p dir="ltr" className="max-w-full truncate text-[10px] text-cocoa/70">

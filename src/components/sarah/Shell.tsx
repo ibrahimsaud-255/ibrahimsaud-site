@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { sarah, waLink } from "@/lib/sarah";
+import { IconClose, IconMenu, IconNeedle, IconWhatsApp } from "./icons";
 
 const navLinks = [
   { href: "/sarah", label: "الرئيسية" },
@@ -26,7 +27,7 @@ export function Notice() {
         aria-label="إغلاق الإشعار"
         className="absolute left-3 top-1/2 -translate-y-1/2 text-sand/60 transition hover:text-sand"
       >
-        ✕
+        <IconClose className="size-4" />
       </button>
     </div>
   );
@@ -38,8 +39,8 @@ export function Nav() {
     <header className="sticky top-0 z-40 border-b border-ecru/80 bg-sand/85 backdrop-blur-xl">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link href="/sarah" className="flex items-center gap-2.5">
-          <span className="flex size-9 items-center justify-center rounded-full bg-clay text-base text-white">
-            🪡
+          <span className="flex size-9 items-center justify-center rounded-full bg-clay text-white">
+            <IconNeedle className="size-5" />
           </span>
           <span className="leading-tight">
             <span className="block text-base font-black text-espresso">{sarah.name}</span>
@@ -70,9 +71,7 @@ export function Nav() {
           aria-label="القائمة"
           className="rounded-full border border-ecru p-2 text-espresso md:hidden"
         >
-          <svg viewBox="0 0 24 24" className="size-5 stroke-current" fill="none" strokeWidth="2">
-            {open ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M4 7h16M4 12h16M4 17h16" />}
-          </svg>
+          {open ? <IconClose className="size-5" /> : <IconMenu className="size-5" />}
         </button>
       </div>
 
@@ -119,7 +118,7 @@ export function Footer() {
           <ul className="mt-3 space-y-2 text-sm text-cocoa">
             <li>
               <a
-                href={waLink(`السلام عليكم ${sarah.name} 🌸`)}
+                href={waLink(`السلام عليكم ${sarah.name}،`)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="transition hover:text-clay"
@@ -154,15 +153,13 @@ export function Footer() {
 export function WhatsAppFab() {
   return (
     <a
-      href={waLink(`السلام عليكم ${sarah.name} 🌸\nأبغى أستفسر عن:`)}
+      href={waLink(`السلام عليكم ${sarah.name}،\nأبغى أستفسر عن:`)}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="تواصل عبر واتساب"
       className="fixed bottom-6 left-6 z-50 flex size-14 items-center justify-center rounded-full bg-[#25D366] shadow-lg shadow-espresso/25 transition hover:scale-110"
     >
-      <svg viewBox="0 0 32 32" className="size-7 fill-white">
-        <path d="M16.004 0h-.008C7.174 0 .004 7.17.004 16c0 3.49 1.12 6.73 3.03 9.36L1.05 31.5l6.31-2.02A15.9 15.9 0 0 0 16.004 32C24.83 32 32 24.83 32 16S24.83 0 16.004 0zm9.32 22.6c-.39 1.1-1.94 2.01-3.17 2.28-.84.18-1.94.32-5.64-1.21-4.73-1.96-7.78-6.77-8.02-7.08-.23-.31-1.92-2.56-1.92-4.88s1.22-3.46 1.65-3.93c.36-.39.94-.57 1.5-.57.18 0 .35.01.5.02.43.02.65.04.94.73.36.85 1.23 2.96 1.34 3.18.11.22.18.48.04.79-.13.31-.2.5-.4.77-.2.27-.42.6-.6.8-.2.22-.4.46-.18.86.23.39 1.02 1.68 2.19 2.72 1.51 1.34 2.78 1.76 3.22 1.94.33.14.72.11.96-.15.31-.33.69-.88 1.08-1.42.27-.39.62-.44.99-.31.38.13 2.4 1.13 2.81 1.34.41.2.69.31.79.48.1.18.1 1.02-.29 2.12z" />
-      </svg>
+      <IconWhatsApp className="size-7 text-white" />
     </a>
   );
 }

@@ -1,6 +1,14 @@
 import Link from "next/link";
 import ProductCard from "@/components/sarah/ProductCard";
 import SlotImage from "@/components/sarah/SlotImage";
+import {
+  IconChevron,
+  IconNeedle,
+  IconRepeat,
+  IconRuler,
+  IconScissors,
+  IconTruck,
+} from "@/components/sarah/icons";
 import { AlphaTable, LengthTable, SizeCalculator } from "@/components/sarah/SizeGuide";
 import {
   categories,
@@ -24,7 +32,8 @@ export default function SarahHome() {
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
           <div>
             <p className="inline-flex items-center gap-2 rounded-full border border-clay/30 bg-clay/10 px-4 py-1.5 text-xs font-bold text-clay-deep">
-              🪡 خياطة وتفصيل نسائي — {sarah.city} وشحن لكل المملكة
+              <IconNeedle className="size-4" /> خياطة وتفصيل نسائي — {sarah.city} وشحن
+              لكل المملكة
             </p>
             <h1 className="mt-5 text-[2rem] font-black leading-[1.2] text-espresso sm:text-5xl sm:leading-[1.15]">
               فستانك على مقاسك أنتِ،
@@ -54,16 +63,16 @@ export default function SarahHome() {
 
             <ul className="mt-8 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
               {[
-                ["📏", "مقاسات عالمية"],
-                ["✂️", "تفصيل على مقاسك"],
-                ["🚚", "شحن لكل المملكة"],
-                ["🔁", "تعديل مقاس مجاني"],
-              ].map(([icon, label]) => (
+                { Icon: IconRuler, label: "مقاسات عالمية" },
+                { Icon: IconScissors, label: "تفصيل على مقاسك" },
+                { Icon: IconTruck, label: "شحن لكل المملكة" },
+                { Icon: IconRepeat, label: "تعديل مقاس مجاني" },
+              ].map(({ Icon, label }) => (
                 <li
                   key={label}
-                  className="rounded-2xl border border-ecru bg-white px-3 py-3 text-center font-bold text-espresso"
+                  className="flex flex-col items-center gap-2 rounded-2xl border border-ecru bg-white px-3 py-4 text-center font-bold text-espresso"
                 >
-                  <span className="block text-lg">{icon}</span>
+                  <Icon className="size-5 text-clay" />
                   {label}
                 </li>
               ))}
@@ -310,10 +319,8 @@ export default function SarahHome() {
                 key={f.q}
                 className="group rounded-2xl border border-ecru bg-white p-5 open:border-clay/40"
               >
-                <summary className="cursor-pointer list-none text-sm font-black text-espresso marker:hidden">
-                  <span className="ml-2 text-clay transition group-open:rotate-45 inline-block">
-                    ＋
-                  </span>
+                <summary className="flex cursor-pointer list-none items-center gap-3 text-sm font-black text-espresso marker:hidden">
+                  <IconChevron className="size-4 shrink-0 text-clay transition group-open:rotate-180" />
                   {f.q}
                 </summary>
                 <p className="mt-3 text-sm leading-relaxed text-cocoa">{f.a}</p>
@@ -339,7 +346,7 @@ export default function SarahHome() {
               ابدئي طلبك
             </Link>
             <a
-              href={waLink(`السلام عليكم ${sarah.name} 🌸\nأبغى أستشيركم في:`)}
+              href={waLink(`السلام عليكم ${sarah.name}،\nأبغى أستشيركم في:`)}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full border border-ecru px-7 py-3.5 text-sm font-bold text-espresso transition hover:border-clay hover:text-clay"

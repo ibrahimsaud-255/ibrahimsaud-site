@@ -6,6 +6,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import SlotImage from "./SlotImage";
+import { IconCheck, IconMinus, IconPlus, IconWhatsApp } from "./icons";
 import {
   addOns as allAddOns,
   addOnById,
@@ -128,7 +129,7 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
   // ------------------- نص رسالة واتساب -------------------
   function buildMessage(orderNo: string) {
     const L: string[] = [];
-    L.push(`طلب جديد من موقع ${sarah.name} 🪡`);
+    L.push(`طلب جديد من موقع ${sarah.name}`);
     L.push(`رقم الطلب: ${orderNo}`);
     L.push("");
     L.push(`• المنتج: ${product.name} (${sar(product.price)})`);
@@ -206,7 +207,7 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
           <h3 className={step}>
             <span className={num}>١</span> اختاري القطعة
           </h3>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {products.map((p) => {
               const on = p.id === productId;
               return (
@@ -214,24 +215,34 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
                   key={p.id}
                   type="button"
                   onClick={() => changeProduct(p.id)}
-                  className={`flex items-center gap-3 rounded-2xl border p-3 text-right transition ${
+                  className={`group overflow-hidden rounded-2xl border text-right transition ${
                     on
-                      ? "border-clay bg-clay/10 ring-1 ring-clay"
-                      : "border-ecru bg-white hover:border-clay/50"
+                      ? "border-clay ring-2 ring-clay"
+                      : "border-ecru hover:border-clay/60 hover:shadow-md hover:shadow-clay/10"
                   }`}
                 >
-                  <SlotImage
-                    src={p.images[0]}
-                    alt={p.name}
-                    ratio="aspect-square"
-                    rounded="rounded-xl"
-                    className="w-16 shrink-0"
-                    slot="صورة"
-                  />
-                  <span className="min-w-0">
+                  <span className="relative block">
+                    <SlotImage
+                      src={p.images[0]}
+                      alt={p.name}
+                      ratio="aspect-square"
+                      rounded="rounded-none"
+                      fit="contain"
+                      className="w-full"
+                      slot="صورة"
+                    />
+                    {on ? (
+                      <span className="absolute right-2 top-2 flex size-7 items-center justify-center rounded-full bg-clay text-white shadow">
+                        <IconCheck className="size-4" />
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className={`block px-3 py-2.5 ${on ? "bg-clay/10" : "bg-white"}`}>
                     <span className="block truncate text-sm font-bold text-espresso">{p.name}</span>
-                    <span className="block text-xs text-cocoa">من {sar(p.price)}</span>
-                    <span className="block text-[11px] text-cocoa/70">{p.days}</span>
+                    <span className="mt-0.5 flex items-center justify-between gap-2 text-[11px]">
+                      <span className="font-bold text-clay">من {sar(p.price)}</span>
+                      <span className="text-cocoa/70">{p.days}</span>
+                    </span>
                   </span>
                 </button>
               );
@@ -245,7 +256,7 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
             <h3 className={step}>
               <span className={num}>٢</span> الخامة واللون
             </h3>
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {productFabrics.map((f) => {
                 const on = f.id === fabricId;
                 return (
@@ -256,24 +267,30 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
                       setFabricId(f.id);
                       setColor("");
                     }}
-                    className={`flex items-center gap-3 rounded-2xl border p-3 text-right transition ${
+                    className={`overflow-hidden rounded-2xl border text-right transition ${
                       on
-                        ? "border-clay bg-clay/10 ring-1 ring-clay"
-                        : "border-ecru bg-white hover:border-clay/50"
+                        ? "border-clay ring-2 ring-clay"
+                        : "border-ecru hover:border-clay/60 hover:shadow-md hover:shadow-clay/10"
                     }`}
                   >
-                    <SlotImage
-                      src={f.image}
-                      alt={f.name}
-                      ratio="aspect-square"
-                      rounded="rounded-xl"
-                      className="w-14 shrink-0"
-                      slot="خامة"
-                    />
-                    <span className="min-w-0">
+                    <span className="relative block">
+                      <SlotImage
+                        src={f.image}
+                        alt={f.name}
+                        ratio="aspect-square"
+                        rounded="rounded-none"
+                        className="w-full"
+                        slot="خامة"
+                      />
+                      {on ? (
+                        <span className="absolute right-2 top-2 flex size-6 items-center justify-center rounded-full bg-clay text-white shadow">
+                          <IconCheck className="size-3.5" />
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className={`block px-3 py-2.5 ${on ? "bg-clay/10" : "bg-white"}`}>
                       <span className="block text-sm font-bold text-espresso">{f.name}</span>
-                      <span className="block text-[11px] leading-snug text-cocoa">{f.desc}</span>
-                      <span className="mt-0.5 block text-xs font-bold text-clay">
+                      <span className="mt-0.5 block text-[11px] font-bold text-clay">
                         {f.priceDelta ? `+ ${sar(f.priceDelta)}` : "مشمول بالسعر"}
                       </span>
                     </span>
@@ -499,7 +516,7 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
                           on ? "border-clay bg-clay text-white" : "border-ecru bg-white"
                         }`}
                       >
-                        {on ? "✓" : ""}
+                        {on ? <IconCheck className="size-3.5" /> : null}
                       </span>
                       <span>
                         <span className="block text-sm font-bold text-espresso">
@@ -651,17 +668,19 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
               <button
                 type="button"
                 onClick={() => setQty((q) => Math.max(1, q - 1))}
-                className="size-7 rounded-full border border-ecru bg-white text-espresso"
+                className="flex size-7 items-center justify-center rounded-full border border-ecru bg-white text-espresso transition hover:border-clay hover:text-clay"
+                aria-label="إنقاص الكمية"
               >
-                −
+                <IconMinus className="size-3.5" />
               </button>
               <span className="w-6 text-center text-sm font-black">{qty}</span>
               <button
                 type="button"
                 onClick={() => setQty((q) => Math.min(10, q + 1))}
-                className="size-7 rounded-full border border-ecru bg-white text-espresso"
+                className="flex size-7 items-center justify-center rounded-full border border-ecru bg-white text-espresso transition hover:border-clay hover:text-clay"
+                aria-label="زيادة الكمية"
               >
-                +
+                <IconPlus className="size-3.5" />
               </button>
             </div>
           </div>
@@ -693,9 +712,7 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
             onClick={submit}
             className="mt-4 flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3.5 text-sm font-black text-white transition hover:brightness-95"
           >
-            <svg viewBox="0 0 32 32" className="size-5 fill-white">
-              <path d="M16.004 0h-.008C7.174 0 .004 7.17.004 16c0 3.49 1.12 6.73 3.03 9.36L1.05 31.5l6.31-2.02A15.9 15.9 0 0 0 16.004 32C24.83 32 32 24.83 32 16S24.83 0 16.004 0z" />
-            </svg>
+<IconWhatsApp className="size-5 text-white" />
             إرسال الطلب في واتساب
           </button>
           <button
