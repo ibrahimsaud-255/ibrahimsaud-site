@@ -1,9 +1,9 @@
 import Link from "next/link";
+import FaqChat from "@/components/sarah/FaqChat";
+import HowToOrder from "@/components/sarah/HowToOrder";
 import ProductCard from "@/components/sarah/ProductCard";
 import SlotImage from "@/components/sarah/SlotImage";
 import {
-  IconChevron,
-  IconNeedle,
   IconRepeat,
   IconRuler,
   IconScissors,
@@ -13,7 +13,6 @@ import { AlphaTable, LengthTable, SizeCalculator } from "@/components/sarah/Size
 import {
   categories,
   fabrics,
-  faq,
   freeShippingOver,
   products,
   regions,
@@ -31,9 +30,8 @@ export default function SarahHome() {
       <section className="px-5 pt-12 pb-14 sm:pt-16">
         <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-2">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full border border-clay/30 bg-clay/10 px-4 py-1.5 text-xs font-bold text-clay-deep">
-              <IconNeedle className="size-4" /> خياطة وتفصيل نسائي — {sarah.city} وشحن
-              لكل المملكة
+            <p className="text-xs font-bold tracking-[0.12em] text-clay">
+              خياطة وتفصيل نسائي — {sarah.city} وشحن لكل المملكة
             </p>
             <h1 className="mt-5 text-[2rem] font-black leading-[1.2] text-espresso sm:text-5xl sm:leading-[1.15]">
               فستانك على مقاسك أنتِ،
@@ -61,18 +59,15 @@ export default function SarahHome() {
               </Link>
             </div>
 
-            <ul className="mt-8 grid grid-cols-2 gap-3 text-xs sm:grid-cols-4">
+            <ul className="mt-8 flex flex-wrap gap-x-7 gap-y-4 text-[13px]">
               {[
                 { Icon: IconRuler, label: "مقاسات عالمية" },
                 { Icon: IconScissors, label: "تفصيل على مقاسك" },
                 { Icon: IconTruck, label: "شحن لكل المملكة" },
                 { Icon: IconRepeat, label: "تعديل مقاس مجاني" },
               ].map(({ Icon, label }) => (
-                <li
-                  key={label}
-                  className="flex flex-col items-center gap-2 rounded-2xl border border-ecru bg-white px-3 py-4 text-center font-bold text-espresso"
-                >
-                  <Icon className="size-5 text-clay" />
+                <li key={label} className="flex items-center gap-2 font-bold text-espresso">
+                  <Icon className="size-[18px] shrink-0 text-clay" />
                   {label}
                 </li>
               ))}
@@ -254,31 +249,7 @@ export default function SarahHome() {
       </section>
 
       {/* ============================ كيف تطلبين ============================ */}
-      <section className="bg-espresso px-5 py-16 text-sand">
-        <div className="mx-auto max-w-6xl">
-          <h2 className="text-3xl font-black text-sand">كيف تطلبين؟ ٤ خطوات</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              ["١", "اختاري وجهّزي", "القطعة والخامة واللون والمقاس — والسعر يتحدّث معك مباشرة."],
-              ["٢", "أرسلي الطلب", "بضغطة واحدة يفتح واتساب ومعه تفاصيل طلبك كاملة وجاهزة."],
-              ["٣", "حوّلي بنكياً", "نؤكّد لك السعر النهائي، تحوّلين وترسلين صورة الإيصال."],
-              ["٤", "استلمي", `نخيطها ونشحنها لعنوانك خلال ${sarah.leadTime} + مدة الشحن.`],
-            ].map(([n, t, d]) => (
-              <div key={n} className="rounded-3xl border border-sand/15 bg-sand/5 p-5">
-                <span className="flex size-9 items-center justify-center rounded-full bg-clay text-sm font-black text-white">
-                  {n}
-                </span>
-                <p className="mt-3 text-base font-black text-sand">{t}</p>
-                <p className="mt-1 text-xs leading-relaxed text-sand/70">{d}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 text-xs text-sand/60">
-            ملاحظة: لا يوجد دفع إلكتروني في المتجر حالياً — الطلب يُعتمد بعد التحويل
-            البنكي وإرسال الإيصال في واتساب.
-          </p>
-        </div>
-      </section>
+      <HowToOrder />
 
       {/* ============================ الشحن ============================ */}
       <section id="shipping" className="scroll-mt-20 px-5 py-16">
@@ -310,25 +281,7 @@ export default function SarahHome() {
       </section>
 
       {/* ============================ الأسئلة ============================ */}
-      <section className="bg-sand-deep/50 px-5 py-16">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-3xl font-black text-espresso">أسئلة شائعة</h2>
-          <div className="mt-6 space-y-3">
-            {faq.map((f) => (
-              <details
-                key={f.q}
-                className="group rounded-2xl border border-ecru bg-white p-5 open:border-clay/40"
-              >
-                <summary className="flex cursor-pointer list-none items-center gap-3 text-sm font-black text-espresso marker:hidden">
-                  <IconChevron className="size-4 shrink-0 text-clay transition group-open:rotate-180" />
-                  {f.q}
-                </summary>
-                <p className="mt-3 text-sm leading-relaxed text-cocoa">{f.a}</p>
-              </details>
-            ))}
-          </div>
-        </div>
-      </section>
+      <FaqChat />
 
       {/* ============================ الدعوة الأخيرة ============================ */}
       <section className="px-5 py-16">

@@ -3,6 +3,9 @@ import { Footer, Notice, Nav, WhatsAppFab } from "@/components/sarah/Shell";
 import { sarah } from "@/lib/sarah";
 
 export const metadata: Metadata = {
+  // رابط خاص: لا يظهر في نتائج البحث ولا يُؤرشف، ولا يُشار إليه من موقع إبراهيم.
+  // احذفي هذا السطر عند الإطلاق الرسمي ليبدأ ظهوره في جوجل.
+  robots: { index: false, follow: false, nocache: true },
   title: {
     default: `${sarah.name} — ${sarah.tagline}`,
     template: `%s | ${sarah.name}`,

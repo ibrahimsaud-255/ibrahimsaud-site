@@ -63,6 +63,41 @@ export const IconNeedle = ({ className, strokeWidth }: P) => (
   </svg>
 );
 
+/** علّاقة ملابس — اختيار القطعة */
+export const IconHanger = ({ className, strokeWidth }: P) => (
+  <svg {...base(className, strokeWidth)}>
+    <path d="M12 8.5V11" />
+    <path d="M12 8.5a2.2 2.2 0 1 1 2.2-2.2" />
+    <path d="M12 11 3.6 16.2a1.4 1.4 0 0 0 .8 2.6h15.2a1.4 1.4 0 0 0 .8-2.6L12 11Z" />
+  </svg>
+);
+
+/** إرسال — الطلب في واتساب */
+export const IconSend = ({ className, strokeWidth }: P) => (
+  <svg {...base(className, strokeWidth)}>
+    <path d="M21 3 10.5 13.5" />
+    <path d="M21 3l-6.8 18-3.7-7.5L3 9.8 21 3Z" />
+  </svg>
+);
+
+/** مصرف — التحويل البنكي */
+export const IconBank = ({ className, strokeWidth }: P) => (
+  <svg {...base(className, strokeWidth)}>
+    <path d="M3 9.5 12 4l9 5.5" />
+    <path d="M5 9.5v8M9.7 9.5v8M14.3 9.5v8M19 9.5v8" />
+    <path d="M3 20.5h18" />
+  </svg>
+);
+
+/** طرد — الاستلام */
+export const IconPackage = ({ className, strokeWidth }: P) => (
+  <svg {...base(className, strokeWidth)}>
+    <path d="M20.5 7.8v8.4a1.6 1.6 0 0 1-.9 1.4l-6.8 3.6a1.6 1.6 0 0 1-1.6 0l-6.8-3.6a1.6 1.6 0 0 1-.9-1.4V7.8" />
+    <path d="m3.5 7.5 8.5 4.4 8.5-4.4L12.8 3.2a1.6 1.6 0 0 0-1.6 0L3.5 7.5Z" />
+    <path d="M12 11.9V21" />
+  </svg>
+);
+
 /** صح — قوائم المزايا */
 export const IconCheck = ({ className, strokeWidth }: P) => (
   <svg {...base(className, strokeWidth ?? 2.4)}>

@@ -362,7 +362,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["egyptian-cotton", "georgette", "linen"],
     addOns: ["gift-wrap", "rush"],
-    images: ["/sarah/products/abaya-prayer-1.jpg", "/sarah/products/abaya-prayer-2.jpg", "", ""],
+    images: ["/sarah/products/abaya-prayer-1.jpg", "/sarah/products/abaya-prayer-2.jpg", "/sarah/products/abaya-prayer-3.jpg", ""],
     aiPrompt:
       "Product photograph of a soft cream two-piece prayer garment neatly folded and styled on a light wooden surface, gentle cotton texture, natural window light, minimal warm background, 4:5 portrait, photorealistic.",
     includes: ["خامة تتنفّس", "خياطة منظّفة", "كيس حفظ قماشي"],
@@ -395,7 +395,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["linen", "egyptian-cotton", "georgette", "chiffon"],
     addOns: ["full-lining", "belt", "rush", "gift-wrap"],
-    images: ["/sarah/products/day-dress-1.svg", "/sarah/products/day-dress-2.svg", "/sarah/products/day-dress-3.svg", "/sarah/products/day-dress-4.svg"],
+    images: ["/sarah/products/day-dress-1.jpg", "/sarah/products/day-dress-2.jpg", "/sarah/products/day-dress-3.jpg", "/sarah/products/day-dress-4.jpg"],
     aiPrompt:
       "Editorial photograph of a sand-beige linen midi day dress on a faceless mannequin, relaxed elegant cut, soft natural folds, bright airy studio with warm daylight, full length, 4:5 portrait, photorealistic, modest fashion catalog.",
     includes: ["خامة صيفية", "جيوب جانبية اختيارية", "كي وتغليف"],
@@ -491,7 +491,7 @@ export const products: Product[] = [
     sizing: "custom",
     fabrics: [],
     addOns: ["rush"],
-    images: ["/sarah/products/alteration-1.svg", "/sarah/products/alteration-2.svg", "/sarah/products/alteration-3.svg", "/sarah/products/alteration-4.svg"],
+    images: ["/sarah/products/alteration-1.jpg", "", "", ""],
     aiPrompt:
       "Close-up photograph of a tailor's hands pinning and adjusting a garment on a dress form, measuring tape and pincushion nearby, warm atelier light, shallow depth of field, 4:5 portrait, photorealistic.",
     includes: ["فحص القطعة قبل البدء", "سعر يُحدَّد بعد المعاينة", "إعادة كي"],
