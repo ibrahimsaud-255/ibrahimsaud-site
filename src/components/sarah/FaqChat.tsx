@@ -13,24 +13,23 @@ const TOTAL = faq.length * 2 + 1;
 export default function FaqChat() {
   const ref = useRef<HTMLDivElement>(null);
   const [shown, setShown] = useState(0); // كم رسالة ظهرت
-  const [typing, setTyping] = useState(false);
   const [started, setStarted] = useState(false);
+
+  // مؤشّر «تكتب…» مشتقّ من الحالة: كل رقم فردي يعني أن الجواب في الطريق
+  const typing = started && shown % 2 === 1 && shown < faq.length * 2;
 
   // ابدأ التسلسل عند ظهور القسم
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
-      setShown(TOTAL);
-      return;
-    }
     const obs = new IntersectionObserver(
       (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setStarted(true);
-          obs.disconnect();
-        }
+        if (!entries.some((e) => e.isIntersecting)) return;
+        // مع تفضيل تقليل الحركة: تظهر كل الرسائل دفعة واحدة
+        if (reduce) setShown(TOTAL);
+        else setStarted(true);
+        obs.disconnect();
       },
       { threshold: 0.15 },
     );
@@ -41,18 +40,10 @@ export default function FaqChat() {
   // تسلسل الرسائل: سؤال ← «تكتب…» ← جواب ← …
   useEffect(() => {
     if (!started || shown >= TOTAL) return;
-    const isAnswerNext = shown % 2 === 1 && shown < faq.length * 2;
-    if (isAnswerNext) {
-      setTyping(true);
-      const t = setTimeout(() => {
-        setTyping(false);
-        setShown((s) => s + 1);
-      }, 850);
-      return () => clearTimeout(t);
-    }
-    const t = setTimeout(() => setShown((s) => s + 1), shown === 0 ? 250 : 520);
+    const delay = typing ? 850 : shown === 0 ? 250 : 520;
+    const t = setTimeout(() => setShown((s) => s + 1), delay);
     return () => clearTimeout(t);
-  }, [started, shown]);
+  }, [started, shown, typing]);
 
   // بناء قائمة الرسائل
   const messages: { who: "me" | "her"; text: string }[] = [];
@@ -61,10 +52,7 @@ export default function FaqChat() {
     messages.push({ who: "her", text: f.a });
   });
 
-  const skip = () => {
-    setTyping(false);
-    setShown(TOTAL);
-  };
+  const skip = () => setShown(TOTAL);
 
   return (
     <section id="faq" className="scroll-mt-16 px-5 py-16">
