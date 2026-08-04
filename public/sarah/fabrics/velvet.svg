@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+<defs>
+<pattern id="p" width="1000" height="1000" patternUnits="userSpaceOnUse"><rect width="1000" height="1000" fill="#1f5442"/></pattern>
+<filter id="nz">
+<feTurbulence type="fractalNoise" baseFrequency="1.9" numOctaves="5" result="n"/>
+<feColorMatrix type="saturate" values="0" in="n" result="g"/>
+<feComponentTransfer in="g" result="g2"><feFuncA type="linear" slope="0.3"/></feComponentTransfer>
+<feComposite in="g2" in2="SourceGraphic" operator="over"/>
+</filter>
+<linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0%" stop-color="#163c30"/>
+<stop offset="30%" stop-color="#62877b" stop-opacity="0.9"/>
+<stop offset="52%" stop-color="#194536"/>
+<stop offset="74%" stop-color="#557d6f" stop-opacity="0.8"/>
+<stop offset="100%" stop-color="#15392d"/>
+</linearGradient>
+<radialGradient id="vig" cx="50%" cy="42%" r="72%">
+<stop offset="8%" stop-color="rgba(0,0,0,0)"/>
+<stop offset="100%" stop-color="rgba(30,18,8,0.3)"/>
+</radialGradient>
+</defs>
+<g filter="url(#nz)"><rect width="1000" height="1000" fill="url(#p)"/></g>
+<rect width="1000" height="1000" fill="url(#sheen)" opacity="0.55" style="mix-blend-mode:soft-light"/>
+<path d="M 142.85714285714286 -40 C 112.85714285714286 392, 172.85714285714286 737.6, 127.85714285714286 1040"
+stroke="rgba(255,255,255,0.5)" stroke-width="10"
+fill="none" opacity="0.1" stroke-linecap="round"/><path d="M 285.7142857142857 -40 C 315.7142857142857 392, 255.71428571428572 737.6, 300.7142857142857 1040"
+stroke="rgba(0,0,0,0.55)" stroke-width="14"
+fill="none" opacity="0.1" stroke-linecap="round"/><path d="M 428.57142857142856 -40 C 398.57142857142856 392, 458.57142857142856 737.6, 413.57142857142856 1040"
+stroke="rgba(255,255,255,0.5)" stroke-width="10"
+fill="none" opacity="0.1" stroke-linecap="round"/><path d="M 571.4285714285714 -40 C 601.4285714285714 392, 541.4285714285714 737.6, 586.4285714285714 1040"
+stroke="rgba(0,0,0,0.55)" stroke-width="14"
+fill="none" opacity="0.1" stroke-linecap="round"/><path d="M 714.2857142857143 -40 C 684.2857142857143 392, 744.2857142857143 737.6, 699.2857142857143 1040"
+stroke="rgba(255,255,255,0.5)" stroke-width="10"
+fill="none" opacity="0.1" stroke-linecap="round"/><path d="M 857.1428571428571 -40 C 887.1428571428571 392, 827.1428571428571 737.6, 872.1428571428571 1040"
+stroke="rgba(0,0,0,0.55)" stroke-width="14"
+fill="none" opacity="0.1" stroke-linecap="round"/>
+<rect width="1000" height="1000" fill="url(#vig)"/>
+</svg>

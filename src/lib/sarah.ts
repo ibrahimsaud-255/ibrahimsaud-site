@@ -150,7 +150,7 @@ export const fabrics: Fabric[] = [
     desc: "الخامة القياسية للعبايات: مطفية، ثقيلة نسبياً، لا تشفّ ولا تتجعّد.",
     priceDelta: 0,
     colors: ["أسود", "كحلي", "رمادي فحمي", "بني داكن"],
-    image: "",
+    image: "/sarah/fabrics/nida.svg",
     aiPrompt:
       "Studio macro photograph of matte black French Nida fabric, heavy opaque crepe weave, soft even folds, neutral beige background, natural soft light, high detail texture, 1:1 square, photorealistic.",
   },
@@ -161,7 +161,7 @@ export const fabrics: Fabric[] = [
     desc: "انسدال فخم وثِقل مريح — الأفضل للعبايات والفساتين الرسمية.",
     priceDelta: 60,
     colors: ["أسود", "كحلي", "زيتي", "خمري", "بيج رملي"],
-    image: "",
+    image: "/sarah/fabrics/japanese-crepe.svg",
     aiPrompt:
       "Studio macro photograph of Japanese crepe fabric in deep olive, fine pebbled texture, luxurious drape with soft vertical folds, warm neutral background, soft diffused light, 1:1 square, photorealistic.",
   },
@@ -172,7 +172,7 @@ export const fabrics: Fabric[] = [
     desc: "لمعة ناعمة وملمس بارد — للفساتين والقفاطين والأطقم المنزلية.",
     priceDelta: 120,
     colors: ["أوف وايت", "وردي مغبر", "خمري", "أزرق ملكي", "ذهبي شامبين"],
-    image: "",
+    image: "/sarah/fabrics/silk-satin.svg",
     aiPrompt:
       "Studio macro photograph of champagne gold silk satin, glossy liquid sheen, elegant flowing folds, soft highlights and shadows, cream background, 1:1 square, photorealistic.",
   },
@@ -183,7 +183,7 @@ export const fabrics: Fabric[] = [
     desc: "خفيف وشفّاف — يُستخدم طبقات مع بطانة كاملة.",
     priceDelta: 80,
     colors: ["أوف وايت", "بيج رملي", "وردي مغبر", "أسود", "سماوي"],
-    image: "",
+    image: "/sarah/fabrics/chiffon.svg",
     aiPrompt:
       "Studio macro photograph of dusty rose silk chiffon, sheer airy layers, delicate translucent folds floating, soft white background, backlit, 1:1 square, photorealistic.",
   },
@@ -194,7 +194,7 @@ export const fabrics: Fabric[] = [
     desc: "خامة صيفية تتنفّس — للجلابيات اليومية والقمصان والتنانير.",
     priceDelta: 40,
     colors: ["بيج رملي", "أبيض", "زيتي", "أزرق باهت", "رمادي فاتح"],
-    image: "",
+    image: "/sarah/fabrics/linen.svg",
     aiPrompt:
       "Studio macro photograph of natural sand beige linen blend fabric, visible woven slub texture, relaxed folds, warm daylight, minimal neutral background, 1:1 square, photorealistic.",
   },
@@ -205,7 +205,7 @@ export const fabrics: Fabric[] = [
     desc: "وبَر قصير وعمق لوني — لفساتين وقفاطين المناسبات الشتوية.",
     priceDelta: 150,
     colors: ["خمري", "أخضر زمردي", "كحلي", "أسود", "بنفسجي"],
-    image: "",
+    image: "/sarah/fabrics/velvet.svg",
     aiPrompt:
       "Studio macro photograph of emerald green velvet fabric, short dense pile catching light, rich depth and sheen variation, dark neutral background, dramatic soft light, 1:1 square, photorealistic.",
   },
@@ -216,7 +216,7 @@ export const fabrics: Fabric[] = [
     desc: "تطريز شبكي فاخر — يُركّب كطبقة على الأكمام أو الصدر أو القطعة كاملة.",
     priceDelta: 220,
     colors: ["أوف وايت", "أسود", "شامبين", "وردي"],
-    image: "",
+    image: "/sarah/fabrics/embroidered-lace.svg",
     aiPrompt:
       "Studio macro photograph of off-white embroidered floral lace fabric, fine tulle net base, raised thread embroidery, delicate scalloped edge, soft cream background, 1:1 square, photorealistic.",
   },
@@ -227,7 +227,7 @@ export const fabrics: Fabric[] = [
     desc: "خرز وكريستال مخيَّط يدوياً على تُل — لفساتين السهرة والزفاف.",
     priceDelta: 350,
     colors: ["أوف وايت", "شامبين", "فضي", "أسود"],
-    image: "",
+    image: "/sarah/fabrics/beaded-tulle.svg",
     aiPrompt:
       "Studio macro photograph of champagne beaded tulle fabric, hand-sewn crystals and pearls catching light, sheer net base, sparkling highlights, soft dark background, 1:1 square, photorealistic.",
   },
@@ -238,7 +238,7 @@ export const fabrics: Fabric[] = [
     desc: "قطن طويل التيلة — للأطقم المنزلية والقمصان المريحة.",
     priceDelta: 30,
     colors: ["أبيض", "بيج", "سماوي", "وردي فاتح", "رمادي"],
-    image: "",
+    image: "/sarah/fabrics/egyptian-cotton.svg",
     aiPrompt:
       "Studio macro photograph of white Egyptian cotton fabric, fine smooth weave, crisp soft folds, bright natural light, clean white background, 1:1 square, photorealistic.",
   },
@@ -249,7 +249,7 @@ export const fabrics: Fabric[] = [
     desc: "خفيف ومتين وحركته جميلة — للجلابيات والفساتين اليومية.",
     priceDelta: 50,
     colors: ["أسود", "كحلي", "زيتي", "بيج رملي", "خمري"],
-    image: "",
+    image: "/sarah/fabrics/georgette.svg",
     aiPrompt:
       "Studio macro photograph of navy georgette fabric, lightweight crinkled surface, fluid rippling drape, soft neutral background, diffused studio light, 1:1 square, photorealistic.",
   },
@@ -319,7 +319,7 @@ export const products: Product[] = [
     sizing: "length",
     fabrics: ["nida", "japanese-crepe", "georgette", "linen"],
     addOns: ["hand-embroidery", "beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/abaya-classic-1.svg", "/sarah/products/abaya-classic-2.svg", "/sarah/products/abaya-classic-3.svg", "/sarah/products/abaya-classic-4.svg"],
     aiPrompt:
       "Editorial fashion photograph of an elegant black tailored abaya on a faceless mannequin, straight classic cut, matte crepe fabric with beautiful drape, warm sand-beige studio backdrop, soft directional light, full length, 4:5 portrait, photorealistic, luxury modest fashion catalog.",
     featured: true,
@@ -336,7 +336,7 @@ export const products: Product[] = [
     sizing: "length",
     fabrics: ["nida", "japanese-crepe", "silk-satin", "georgette"],
     addOns: ["beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/abaya-embroidered-1.svg", "/sarah/products/abaya-embroidered-2.svg", "/sarah/products/abaya-embroidered-3.svg", "/sarah/products/abaya-embroidered-4.svg"],
     aiPrompt:
       "Editorial fashion photograph of a black abaya with delicate gold hand embroidery on the sleeves and hem, on a faceless mannequin, luxurious crepe fabric, cream studio backdrop, soft golden light, full length, 4:5 portrait, photorealistic, luxury modest fashion catalog.",
     featured: true,
@@ -353,7 +353,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["egyptian-cotton", "georgette", "linen"],
     addOns: ["gift-wrap", "rush"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/abaya-prayer-1.svg", "/sarah/products/abaya-prayer-2.svg", "/sarah/products/abaya-prayer-3.svg", "/sarah/products/abaya-prayer-4.svg"],
     aiPrompt:
       "Product photograph of a soft cream two-piece prayer garment neatly folded and styled on a light wooden surface, gentle cotton texture, natural window light, minimal warm background, 4:5 portrait, photorealistic.",
     includes: ["خامة تتنفّس", "خياطة منظّفة", "كيس حفظ قماشي"],
@@ -369,7 +369,7 @@ export const products: Product[] = [
     sizing: "custom",
     fabrics: ["silk-satin", "velvet", "beaded-tulle", "embroidered-lace", "chiffon"],
     addOns: ["hand-embroidery", "beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/evening-dress-1.svg", "/sarah/products/evening-dress-2.svg", "/sarah/products/evening-dress-3.svg", "/sarah/products/evening-dress-4.svg"],
     aiPrompt:
       "High-end editorial photograph of a floor-length emerald velvet evening gown on a faceless mannequin, sculpted bodice, dramatic flowing skirt, dark moody studio backdrop, cinematic side light, full length, 4:5 portrait, photorealistic, couture catalog.",
     featured: true,
@@ -386,7 +386,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["linen", "egyptian-cotton", "georgette", "chiffon"],
     addOns: ["full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/day-dress-1.svg", "/sarah/products/day-dress-2.svg", "/sarah/products/day-dress-3.svg", "/sarah/products/day-dress-4.svg"],
     aiPrompt:
       "Editorial photograph of a sand-beige linen midi day dress on a faceless mannequin, relaxed elegant cut, soft natural folds, bright airy studio with warm daylight, full length, 4:5 portrait, photorealistic, modest fashion catalog.",
     includes: ["خامة صيفية", "جيوب جانبية اختيارية", "كي وتغليف"],
@@ -402,7 +402,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["georgette", "linen", "silk-satin", "egyptian-cotton"],
     addOns: ["hand-embroidery", "beads", "full-lining", "gift-wrap", "rush"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/jalabiya-1.svg", "/sarah/products/jalabiya-2.svg", "/sarah/products/jalabiya-3.svg", "/sarah/products/jalabiya-4.svg"],
     aiPrompt:
       "Editorial photograph of a loose flowing jalabiya in dusty rose with intricate gold embroidery at the neckline and sleeves, faceless mannequin, soft satin sheen, warm cream backdrop, gentle light, full length, 4:5 portrait, photorealistic, Gulf modest fashion catalog.",
     includes: ["تطريز صدر وأكمام", "قَصّة واسعة مريحة", "كي وتغليف"],
@@ -418,7 +418,7 @@ export const products: Product[] = [
     sizing: "custom",
     fabrics: ["silk-satin", "velvet", "embroidered-lace", "beaded-tulle"],
     addOns: ["hand-embroidery", "beads", "full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/kaftan-1.svg", "/sarah/products/kaftan-2.svg", "/sarah/products/kaftan-3.svg", "/sarah/products/kaftan-4.svg"],
     aiPrompt:
       "Luxury editorial photograph of a royal blue Moroccan kaftan with gold hand-woven trim and matching belt, faceless mannequin, rich satin fabric, ornate warm studio backdrop, dramatic soft light, full length, 4:5 portrait, photorealistic, couture catalog.",
     includes: ["حزام من نفس الخامة", "بطانة كاملة", "تفاصيل يدوية", "جولتا تعديل مجاناً"],
@@ -434,7 +434,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["silk-satin", "egyptian-cotton"],
     addOns: ["hand-embroidery", "gift-wrap", "rush"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/home-set-1.svg", "/sarah/products/home-set-2.svg", "/sarah/products/home-set-3.svg", "/sarah/products/home-set-4.svg"],
     aiPrompt:
       "Product photograph of a two-piece champagne silk satin robe and slip set, elegantly styled on a soft bed of neutral linen, glossy fabric highlights, warm morning light, minimal background, 4:5 portrait, photorealistic, luxury loungewear catalog.",
     includes: ["قطعتان", "تطريز الاسم اختياري", "تغليف أنيق"],
@@ -450,7 +450,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["japanese-crepe", "linen", "silk-satin", "georgette"],
     addOns: ["full-lining", "belt", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/skirt-1.svg", "/sarah/products/skirt-2.svg", "/sarah/products/skirt-3.svg", "/sarah/products/skirt-4.svg"],
     aiPrompt:
       "Product photograph of a long pleated olive crepe skirt on a faceless mannequin, crisp pleats with elegant movement, neutral warm studio backdrop, soft light, 4:5 portrait, photorealistic, fashion catalog.",
     includes: ["اختيار القَصّة والطول", "خصر مطاطي أو سحاب مخفي", "كي وتغليف"],
@@ -466,7 +466,7 @@ export const products: Product[] = [
     sizing: "alpha",
     fabrics: ["egyptian-cotton", "silk-satin", "chiffon", "linen"],
     addOns: ["full-lining", "hand-embroidery", "rush", "gift-wrap"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/blouse-1.svg", "/sarah/products/blouse-2.svg", "/sarah/products/blouse-3.svg", "/sarah/products/blouse-4.svg"],
     aiPrompt:
       "Product photograph of a crisp white cotton blouse with long sleeves on a faceless mannequin, clean tailored lines, bright minimal studio background, soft even light, 4:5 portrait, photorealistic, fashion catalog.",
     includes: ["قَصّة كلاسيكية أو واسعة", "أزرار مخفية اختيارية", "كي وتغليف"],
@@ -482,7 +482,7 @@ export const products: Product[] = [
     sizing: "custom",
     fabrics: [],
     addOns: ["rush"],
-    images: ["", "", "", ""],
+    images: ["/sarah/products/alteration-1.svg", "/sarah/products/alteration-2.svg", "/sarah/products/alteration-3.svg", "/sarah/products/alteration-4.svg"],
     aiPrompt:
       "Close-up photograph of a tailor's hands pinning and adjusting a garment on a dress form, measuring tape and pincushion nearby, warm atelier light, shallow depth of field, 4:5 portrait, photorealistic.",
     includes: ["فحص القطعة قبل البدء", "سعر يُحدَّد بعد المعاينة", "إعادة كي"],

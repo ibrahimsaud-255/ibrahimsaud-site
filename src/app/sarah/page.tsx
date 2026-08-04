@@ -73,27 +73,27 @@ export default function SarahHome() {
           {/* صور الهيرو — خانات جاهزة */}
           <div className="grid grid-cols-2 gap-3">
             <SlotImage
-              src=""
+              src="/sarah/hero-1.svg"
               alt="عباية مفصّلة"
               ratio="aspect-[3/4]"
               slot="صورة الهيرو ١"
-              path="public/sarah/hero-1.webp"
+              path="public/sarah/hero-1.svg"
               className="translate-y-4"
             />
             <div className="space-y-3">
               <SlotImage
-                src=""
+                src="/sarah/hero-2.svg"
                 alt="تفاصيل التطريز"
                 ratio="aspect-square"
                 slot="صورة الهيرو ٢"
-                path="public/sarah/hero-2.webp"
+                path="public/sarah/hero-2.svg"
               />
               <SlotImage
-                src=""
+                src="/sarah/hero-3.svg"
                 alt="خامات"
                 ratio="aspect-square"
                 slot="صورة الهيرو ٣"
-                path="public/sarah/hero-3.webp"
+                path="public/sarah/hero-3.svg"
               />
             </div>
           </div>
