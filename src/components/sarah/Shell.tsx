@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { sarah, waLink } from "@/lib/sarah";
 import { IconClose, IconMenu, IconNeedle, IconWhatsApp } from "./icons";
+import PaymentBadges from "./PaymentBadges";
 
 const navLinks = [
   { href: "/sarah", label: "الرئيسية" },
@@ -143,7 +144,11 @@ export function Footer() {
           </ul>
         </div>
       </div>
-      <p className="mx-auto mt-10 max-w-6xl border-t border-ecru pt-6 text-center text-xs text-cocoa/70">
+      <div className="mx-auto mt-10 max-w-6xl border-t border-ecru pt-6">
+        <p className="mb-3 text-xs font-bold text-espresso">وسائل الدفع</p>
+        <PaymentBadges />
+      </div>
+      <p className="mx-auto mt-8 max-w-6xl border-t border-ecru pt-6 text-center text-xs text-cocoa/70">
         © {new Date().getFullYear()} {sarah.name} — جميع الحقوق محفوظة.
       </p>
     </footer>

@@ -34,6 +34,13 @@ export const bank = {
   note: "التحويل بنفس الاسم غير مطلوب، لكن يلزم إرسال صورة الإيصال عبر واتساب لتأكيد الطلب.",
 } as const;
 
+// ------------------------- وسائل الدفع -------------------------
+// cardsEnabled: false ← تظهر شعارات مدى/فيزا/ماستركارد بوسم «قريباً»
+// حوّليها إلى true فقط بعد ربط بوابة دفع أو اعتماد روابط دفع فعلية.
+export const payments = {
+  cardsEnabled: false,
+} as const;
+
 export function waLink(message: string) {
   return `https://wa.me/${sarah.whatsapp}?text=${encodeURIComponent(message)}`;
 }

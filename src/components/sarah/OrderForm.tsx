@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from "react";
 import SlotImage from "./SlotImage";
 import { IconCheck, IconMinus, IconPlus, IconWhatsApp } from "./icons";
+import PaymentBadges from "./PaymentBadges";
 import {
   addOns as allAddOns,
   addOnById,
@@ -588,6 +589,8 @@ export default function OrderForm({ initialProduct }: { initialProduct?: string 
           <h3 className={step}>
             <span className={num}>٦</span> طريقة الدفع
           </h3>
+          <PaymentBadges className="mb-4" />
+
           <div className="grid gap-3 sm:grid-cols-2">
             {([
               ["bank", "تحويل بنكي", "أحوّل المبلغ وأرسل صورة الإيصال في واتساب."],
