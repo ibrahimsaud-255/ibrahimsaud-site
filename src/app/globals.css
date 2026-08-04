@@ -22,6 +22,17 @@
   --color-muted: #9a9aa6;
   --font-sans: "Thmanyah Sans", var(--font-tajawal), system-ui, sans-serif;
   --font-serif: "Thmanyah Serif", "Thmanyah Sans", serif;
+
+  /* ===== ألوان متجر «إبرة سارة» (هوية فاتحة دافئة) ===== */
+  --color-sand: #faf6f0; /* الخلفية */
+  --color-sand-deep: #f1e8dc; /* بطاقات وأقسام */
+  --color-ecru: #e6d9c8; /* حدود */
+  --color-espresso: #2f251e; /* النص الأساسي */
+  --color-cocoa: #6b5748; /* نص ثانوي */
+  --color-clay: #b0764f; /* اللون المميّز */
+  --color-clay-deep: #8c5a39;
+  --color-blush: #d8b3a3;
+  --color-sage: #7c8a6f;
 }
 
 :root {
@@ -192,4 +203,56 @@ h1, h2, .font-serif-display {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--color-gold);
+}
+
+/* ===================================================================
+   متجر «إبرة سارة» — نطاق فاتح مستقل عن هوية الموقع الداكنة
+   =================================================================== */
+.sarah-scope {
+  background:
+    radial-gradient(45rem 30rem at 85% -5%, rgba(176, 118, 79, 0.1), transparent 60%),
+    radial-gradient(40rem 30rem at 0% 5%, rgba(216, 179, 163, 0.14), transparent 55%),
+    var(--color-sand);
+  color: var(--color-espresso);
+  min-height: 100vh;
+}
+.sarah-scope h1,
+.sarah-scope h2 {
+  font-family: "Thmanyah Serif", "Thmanyah Sans", serif;
+}
+.sarah-scope ::selection {
+  background: var(--color-clay);
+  color: #fff;
+}
+
+/* خانة صورة فارغة — تظهر حتى تُرفع الصورة */
+.slot-empty {
+  background:
+    repeating-linear-gradient(
+      45deg,
+      rgba(176, 118, 79, 0.05) 0 12px,
+      rgba(176, 118, 79, 0.11) 12px 24px
+    ),
+    var(--color-sand-deep);
+  border: 1.5px dashed rgba(176, 118, 79, 0.42);
+}
+
+/* حقول النماذج داخل المتجر */
+.sarah-field {
+  width: 100%;
+  border-radius: 0.9rem;
+  border: 1px solid var(--color-ecru);
+  background: #fff;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.95rem;
+  color: var(--color-espresso);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.sarah-field:focus {
+  border-color: var(--color-clay);
+  box-shadow: 0 0 0 3px rgba(176, 118, 79, 0.16);
+}
+.sarah-field::placeholder {
+  color: #b6a695;
 }
