@@ -4,10 +4,11 @@
 
 import { payments } from "@/lib/sarah";
 
+// ارتفاع كل شعار مضبوط بصرياً (نِسب الشعارات مختلفة)
 const cards = [
-  { id: "mada", label: "مدى" },
-  { id: "visa", label: "Visa" },
-  { id: "mastercard", label: "Mastercard" },
+  { id: "mada", label: "مدى", h: "h-5", hc: "h-4" },
+  { id: "visa", label: "Visa", h: "h-4", hc: "h-3" },
+  { id: "mastercard", label: "Mastercard", h: "h-6", hc: "h-5" },
 ];
 
 export default function PaymentBadges({
@@ -32,7 +33,7 @@ export default function PaymentBadges({
             <img
               src={`/sarah/payments/${c.id}.svg`}
               alt={c.label}
-              className={compact ? "h-4 w-auto" : "h-5 w-auto"}
+              className={`${compact ? c.hc : c.h} w-auto`}
               loading="lazy"
             />
           </span>
