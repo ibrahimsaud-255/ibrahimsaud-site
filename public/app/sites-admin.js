@@ -204,7 +204,8 @@ function renderSites() {
               <option value="72">٣ أيام</option>
               <option value="168">أسبوع</option>
             </select>
-            <button class="btn btn-ghost btn-sm" onclick="gtPreview('${esc(s.slug)}')" title="يفتح لك الموقع دائماً حتى وهو مقفل"><i data-lucide="eye"></i> معاينتي</button>
+            <button class="btn btn-ghost btn-sm" onclick="gtPreviewOpen('${esc(s.slug)}')" title="يفتح لك الموقع الآن حتى وهو مقفل"><i data-lucide="eye"></i> افتح معاينتي</button>
+            <button class="btn btn-ghost btn-sm" onclick="gtPreviewCopy('${esc(s.slug)}')" title="نسخ رابط المعاينة (لجوالك مثلاً)"><i data-lucide="copy"></i></button>
             <button class="btn btn-ghost btn-sm" onclick="GT_SEL='${esc(s.slug)}';renderSites()"><i data-lucide="bar-chart-3"></i> التفاصيل</button>
             <button class="btn btn-ghost btn-sm" onclick="gtSiteForm('${esc(s.slug)}')"><i data-lucide="settings-2"></i></button>
           </div>
@@ -287,19 +288,43 @@ async function gtSeen(id) {
 }
 
 /* رابط معاينتك الخاص (يفتح الموقع لك حتى وهو مقفل) */
-async function gtPreview(slug) {
+async function gtLink(slug) {
   const { data, error } = await sb.from('client_sites').select('url,owner_key').eq('slug', slug).single();
-  if (error) { alert('تعذّر جلب المفتاح: ' + error.message); return; }
-  const link = location.origin + data.url + (data.url.indexOf('?') > -1 ? '&' : '?') + 'k=' + data.owner_key;
+  if (error) { alert('تعذّر جلب المفتاح: ' + error.message); return null; }
+  return location.origin + data.url + (data.url.indexOf('?') > -1 ? '&' : '?') + 'k=' + data.owner_key;
+}
+
+/* فتح فوري بضغطة واحدة — يُفتح التبويب أولاً كي لا يحجبه المتصفح */
+async function gtPreviewOpen(slug) {
+  const w = window.open('', '_blank');
+  const link = await gtLink(slug);
+  if (!link) { if (w) w.close(); return; }
+  if (w) { w.opener = null; w.location = link; }
+  else window.location.href = link;   /* لو حجب المتصفح النافذة */
+}
+
+async function gtPreviewCopy(slug) {
+  const link = await gtLink(slug);
+  if (!link) return;
   try { await navigator.clipboard.writeText(link); } catch (e) { /* تجاهل */ }
   openModal('رابط معاينتك الخاص',
     `<div style="font-size:13px;line-height:1.9;opacity:.8;margin-bottom:10px">
-       يفتح لك الموقع دائماً حتى وهو مقفل، ولا يُحتسب في الإحصاءات. لا تشاركه مع العميل.
+       نُسخ الرابط. يفتح لك الموقع دائماً حتى وهو مقفل، ولا تُحتسب زيارتك في الإحصاءات.
+       يكفي فتحه مرة واحدة على كل جهاز — بعدها يبقى الموقع مفتوحاً لك على ذلك الجهاز.
+       <b>لا تشاركه مع العميل.</b>
      </div>
-     <div style="word-break:break-all;background:rgba(255,255,255,.06);padding:10px;border-radius:10px;font-size:12.5px">${esc(link)}</div>
-     <div style="margin-top:10px"><a class="btn btn-gold btn-sm" href="${esc(link)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> افتح الآن</a></div>`,
+     <div style="word-break:break-all;background:rgba(255,255,255,.06);padding:10px;border-radius:10px;font-size:12.5px">${esc(link)}</div>`,
     null);
   refreshIcons();
+}
+
+/* تجديد المفتاح: يبطل كل الروابط القديمة فوراً */
+async function gtPreviewRenew(slug) {
+  if (!confirm('سيتوقّف عمل روابط المعاينة القديمة لهذا الموقع على كل أجهزتك. متابعة؟')) return;
+  const key = (Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2)).slice(0, 18);
+  const { error } = await sb.from('client_sites').update({ owner_key: key }).eq('slug', slug);
+  if (error) { alert('تعذّر التجديد: ' + error.message); return; }
+  gtPreviewCopy(slug);
 }
 
 /* إضافة / تعديل موقع وربطه بعميل */
@@ -321,7 +346,12 @@ function gtSiteForm(slug) {
      <label>رقم واتساب زر التواصل</label>
      <input id="gt_wa" value="${esc(s ? (s.wa_phone || '966504895213') : '966504895213')}" placeholder="966504895213">
      <label>رسالة تظهر للعميل في شاشة العدسة</label>
-     <textarea id="gt_note" rows="2" placeholder="مثال: هذه معاينة — للنسخة الكاملة تواصل معي.">${esc(s ? (s.note || '') : '')}</textarea>`,
+     <textarea id="gt_note" rows="2" placeholder="مثال: هذه معاينة — للنسخة الكاملة تواصل معي.">${esc(s ? (s.note || '') : '')}</textarea>
+     ${s ? `<div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:flex;gap:6px;flex-wrap:wrap">
+       <button type="button" class="btn btn-ghost btn-sm" onclick="gtPreviewOpen('${esc(s.slug)}')"><i data-lucide="eye"></i> افتح معاينتي</button>
+       <button type="button" class="btn btn-ghost btn-sm" onclick="gtPreviewCopy('${esc(s.slug)}')"><i data-lucide="copy"></i> نسخ الرابط</button>
+       <button type="button" class="btn btn-ghost btn-sm" onclick="gtPreviewRenew('${esc(s.slug)}')" title="يبطل الروابط القديمة"><i data-lucide="refresh-cw"></i> تجديد المفتاح</button>
+     </div>` : ''}`,
     async () => {
       const slugV = (document.getElementById('gt_slug').value || '').trim();
       const name = (document.getElementById('gt_name').value || '').trim();
