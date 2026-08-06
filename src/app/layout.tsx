@@ -63,6 +63,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
+      <head>
+        {/* بوابة مواقع العملاء — تعمل على المسارات المذكورة فقط، وبقية الموقع لا تتأثر */}
+        <script src="/gate/gate.js" data-map='{"/sarah":"sarah"}' />
+      </head>
       <body className={`${tajawal.variable} antialiased`}>
         <PreviewBanner />
         {children}
