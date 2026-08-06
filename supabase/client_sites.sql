@@ -121,7 +121,8 @@ create policy knocks_delete on site_knocks for delete to authenticated using (tr
 insert into client_sites (slug, name, url, client_name, status, note) values
   ('manabir',    'منابر — منصة المحاضرات',        '/manabir/',    '', 'open', ''),
   ('sarah',      'إبرة سارة — متجر الخياطة',       '/sarah/',      '', 'open', ''),
-  ('ilogistics', 'التكامل المتحدة — اللوجستيات',  '/ilogistics/', '', 'open', '')
+  ('ilogistics', 'التكامل المتحدة — اللوجستيات',  '/ilogistics/', '', 'open', ''),
+  ('masarak',    'مسارك — منصة القبول الجامعي',    '/masarak/',    '', 'open', '')
 on conflict (slug) do nothing;
 
 -- ============================================================================
