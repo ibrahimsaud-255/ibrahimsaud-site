@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>منابر — منصة تنظيم الأنشطة الدعوية في المساجد</title>
+<meta name="description" content="منصة موحّدة تربط الدعاة والأئمة بالمساجد والجهة الإدارية والوزارة: تقديم الطلبات، اعتمادها، وجدولة المحاضرات والدورات." />
+<meta name="theme-color" content="#0f6f63" />
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+<!-- رقم الإصدار في نهاية الروابط: زِده عند كل تحديث ليأخذ المتصفح النسخة الجديدة -->
+<link rel="stylesheet" href="assets/app.css?v=1.0.2" />
+</head>
+<body>
+
+<!-- خلفية زجاجية متدرّجة (طبقات لونية خلف كل الواجهة) -->
+<div class="bg-field" aria-hidden="true">
+  <span class="orb orb-1"></span>
+  <span class="orb orb-2"></span>
+  <span class="orb orb-3"></span>
+  <span class="grain"></span>
+</div>
+
+<!-- ============ شاشة الدخول ============ -->
+<section id="auth" class="auth" hidden>
+  <div class="auth-card glass">
+    <header class="auth-head">
+      <div class="brand-mark" id="authBrandMark"></div>
+      <div>
+        <h1 class="auth-title" id="authBrandName">منابر</h1>
+        <p class="auth-sub" id="authBrandTag">منصة تنظيم الأنشطة الدعوية في المساجد</p>
+      </div>
+    </header>
+
+    <form id="loginForm" class="auth-form" autocomplete="on">
+      <label class="field">
+        <span class="field-label">البريد الإلكتروني</span>
+        <input class="input" type="email" name="email" id="loginEmail" placeholder="name@manabir.sa" required />
+      </label>
+      <label class="field">
+        <span class="field-label">كلمة المرور</span>
+        <input class="input" type="password" name="password" id="loginPass" placeholder="••••••••" required />
+      </label>
+      <div id="loginError" class="form-error" hidden></div>
+      <button class="btn btn-primary btn-block" type="submit">تسجيل الدخول</button>
+    </form>
+
+    <div class="auth-divider"><span>أو جرّب المنصة بحساب تجريبي</span></div>
+
+    <div class="demo-roles" id="demoRoles"></div>
+
+    <footer class="auth-foot">
+      <a href="#/apply" id="publicApplyLink">تقديم طلب بدون حساب</a>
+    </footer>
+  </div>
+</section>
+
+<!-- ============ هيكل التطبيق ============ -->
+<div id="app" class="app" hidden>
+
+  <!-- الشريط الجانبي -->
+  <aside class="sidebar glass" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark" id="navBrandMark"></div>
+      <div class="brand-text">
+        <strong id="navBrandName">منابر</strong>
+        <small id="navOrgName">الإدارة العامة للدعوة والإرشاد</small>
+      </div>
+      <button class="icon-btn sidebar-close" id="sidebarClose" aria-label="إغلاق القائمة" data-icon="x"></button>
+    </div>
+    <nav class="nav" id="mainNav"></nav>
+    <div class="sidebar-foot">
+      <button class="nav-item" id="themeToggle"><span class="nav-ico" data-icon="moon"></span><span>المظهر الليلي</span></button>
+      <button class="nav-item danger" id="logoutBtn"><span class="nav-ico" data-icon="logout"></span><span>تسجيل الخروج</span></button>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim" hidden></div>
+
+  <!-- المحتوى -->
+  <div class="main">
+    <header class="topbar glass">
+      <button class="icon-btn only-mobile" id="menuBtn" aria-label="القائمة" data-icon="menu"></button>
+      <div class="search-wrap">
+        <span class="search-ico" data-icon="search"></span>
+        <input class="search" id="globalSearch" type="search" placeholder="ابحث عن مسجد، داعية، أو رقم طلب…" />
+        <div class="search-results glass" id="searchResults" hidden></div>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="notifBtn" aria-label="الإشعارات" data-icon="bell"><span class="dot" id="notifDot" hidden></span></button>
+        <button class="user-chip" id="userChip">
+          <span class="avatar" id="userAvatar"></span>
+          <span class="user-meta">
+            <strong id="userName">—</strong>
+            <small id="userRole">—</small>
+          </span>
+        </button>
+      </div>
+    </header>
+
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+
+  <!-- شريط التنقّل السفلي للجوال -->
+  <nav class="tabbar glass" id="tabbar"></nav>
+</div>
+
+<!-- طبقات عائمة -->
+<div class="drawer-host" id="drawerHost" hidden>
+  <div class="drawer-scrim" data-close="1"></div>
+  <section class="drawer glass" id="drawer" role="dialog" aria-modal="true"></section>
+</div>
+
+<div class="modal-host" id="modalHost" hidden>
+  <div class="modal-scrim" data-close="1"></div>
+  <section class="modal glass" id="modal" role="dialog" aria-modal="true"></section>
+</div>
+
+<div class="popover glass" id="popover" hidden></div>
+<div class="toasts" id="toasts"></div>
+
+<!-- ملفات المنصة (بترتيب التحميل) -->
+<script src="config.js?v=1.0.2"></script>
+<script src="assets/icons.js?v=1.0.2"></script>
+<script src="assets/ui.js?v=1.0.2"></script>
+<script src="assets/data.js?v=1.0.2"></script>
+<script src="assets/store.js?v=1.0.2"></script>
+<script src="assets/views-core.js?v=1.0.2"></script>
+<script src="assets/views-requests.js?v=1.0.2"></script>
+<script src="assets/views-directory.js?v=1.0.2"></script>
+<script src="assets/views-admin.js?v=1.0.2"></script>
+<script src="assets/app.js?v=1.0.2"></script>
+</body>
+</html>
