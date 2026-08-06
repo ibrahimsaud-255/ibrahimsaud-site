@@ -155,15 +155,12 @@
     var waText = encodeURIComponent("السلام عليكم، شفت الموقع من العدسة وأبغى أشوفه كامل.");
     var waLink = "https://wa.me/" + phone + "?text=" + waText;
 
-    var ZOOM = 1.5;   /* قوة التكبير داخل العدسة — خفيفة كي يبقى السياق واضحاً */
-
     var root = document.createElement("div");
     root.id = "gateLens";
     root.setAttribute("dir", "rtl");
     root.innerHTML =
       '<div class="gl-veil" id="glVeil"></div>' +
       '<div class="gl-loupe" id="glLoupe">' +
-        '<div class="gl-well"><div class="gl-zoom" id="glZoom"></div></div>' +
         '<div class="gl-glass"></div>' +
         '<div class="gl-shine"></div>' +
         '<div class="gl-fringe"></div>' +
@@ -172,8 +169,8 @@
           '<div class="gl-edge-in"></div>' +
           '<svg class="gl-engrave" viewBox="0 0 200 200" aria-hidden="true">' +
             '<defs><path id="glArc" d="M 14,100 A 86,86 0 0 0 186,100"></path></defs>' +
-            '<text class="gl-en-dark"><textPath href="#glArc" startOffset="50%" text-anchor="middle">تكبير ×١٫٥</textPath></text>' +
-            '<text class="gl-en-light" dy="1"><textPath href="#glArc" startOffset="50%" text-anchor="middle">تكبير ×١٫٥</textPath></text>' +
+            '<text class="gl-en-dark"><textPath href="#glArc" startOffset="50%" text-anchor="middle">اضغط للتوسيع</textPath></text>' +
+            '<text class="gl-en-light" dy="1"><textPath href="#glArc" startOffset="50%" text-anchor="middle">اضغط للتوسيع</textPath></text>' +
           "</svg>" +
         "</div>" +
       "</div>" +
@@ -209,25 +206,10 @@
     }
     var r = baseR(), rT = r;
 
-    /* نسخة ساكنة من الصفحة تُعرض مكبّرة داخل العدسة (الصفحة متجمّدة أصلاً) */
-    var zoomEl = document.getElementById("glZoom");
-    try {
-      var clone = document.body.cloneNode(true);
-      clone.removeAttribute("id");
-      clone.style.cssText = "margin:0;width:" + innerWidth + "px;min-height:" + innerHeight + "px;" +
-        "pointer-events:none;transform:none;filter:none";
-      zoomEl.appendChild(clone);
-    } catch (e) { root.classList.add("nozoom"); }
-
     function place() {
       root.style.setProperty("--x", x.toFixed(1) + "px");
       root.style.setProperty("--y", y.toFixed(1) + "px");
       root.style.setProperty("--r", r.toFixed(1) + "px");
-      if (zoomEl) {
-        zoomEl.style.transform =
-          "translate(" + r.toFixed(1) + "px," + r.toFixed(1) + "px) scale(" + ZOOM + ") " +
-          "translate(" + (-x).toFixed(1) + "px," + (-y).toFixed(1) + "px)";
-      }
     }
     place();
 
@@ -316,11 +298,13 @@
     "font-family:'IBM Plex Sans Arabic','Segoe UI',system-ui,sans-serif;color:#fff}",
     "@media (pointer:coarse){#gateLens{cursor:default}}",
 
-    /* طبقة التغبيش فوق الموقع كاملاً — العدسة تعرض نسخة مكبّرة واضحة */
+    /* طبقة التغبيش فوق الموقع، وفيها فتحة دائرية تكشف ما تحتها بوضوح كامل (بلا تحجيم) */
     ".gl-veil{position:absolute;inset:0;",
     "background:rgba(10,14,18,.14);",
     "-webkit-backdrop-filter:blur(7px) saturate(.92);",
-    "backdrop-filter:blur(7px) saturate(.92)}",
+    "backdrop-filter:blur(7px) saturate(.92);",
+    "-webkit-mask:radial-gradient(circle calc(var(--r) * 1.005) at var(--x) var(--y),transparent 0 99%,#000 100%);",
+    "mask:radial-gradient(circle calc(var(--r) * 1.005) at var(--x) var(--y),transparent 0 99%,#000 100%)}",
 
     /* جسم العدسة: قطر الزجاج = 2r ، والحلقة حوله بسماكة ٢٨٪ */
     ".gl-loupe{position:absolute;left:var(--x);top:var(--y);",
@@ -329,14 +313,6 @@
     "filter:drop-shadow(0 26px 40px rgba(0,0,0,.6)) drop-shadow(0 6px 12px rgba(0,0,0,.45))}",
     "#gateLens.pressing .gl-loupe{filter:drop-shadow(0 34px 52px rgba(0,0,0,.66)) drop-shadow(0 8px 16px rgba(0,0,0,.5))}",
     "#gateLens.pressing .gl-fringe{opacity:1}",
-
-    /* بئر العدسة: يقصّ النسخة المكبّرة في دائرة */
-    ".gl-well{position:absolute;left:50%;top:50%;width:72%;height:72%;transform:translate(-50%,-50%);",
-    "border-radius:50%;overflow:hidden;background:#0b0d10;",
-    "box-shadow:inset 0 0 30px rgba(0,0,0,.55)}",
-    ".gl-zoom{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform;",
-    "pointer-events:none;user-select:none;-webkit-user-select:none}",
-    "#gateLens.nozoom .gl-well{background:transparent;box-shadow:none}",
 
     /* الحلقة ثلاثية الأبعاد */
     ".gl-ring{position:absolute;inset:0;border-radius:50%;",
@@ -379,11 +355,12 @@
     "-webkit-mask:radial-gradient(circle closest-side,transparent 0 69%,#000 71% 73%,transparent 75%);",
     "mask:radial-gradient(circle closest-side,transparent 0 69%,#000 71% 73%,transparent 75%)}",
 
-    /* زجاج العدسة فوق النسخة المكبّرة */
+    /* زجاج العدسة: يزيد الوضوح قليلاً ويظلّل الحافة فقط */
     ".gl-glass{position:absolute;left:50%;top:50%;width:72%;height:72%;transform:translate(-50%,-50%);",
     "border-radius:50%;pointer-events:none;",
-    "background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0) 62%,rgba(0,0,0,.16) 92%,rgba(0,0,0,.3) 100%);",
-    "box-shadow:inset 0 0 0 1px rgba(255,255,255,.14)}",
+    "-webkit-backdrop-filter:saturate(1.1) contrast(1.03);backdrop-filter:saturate(1.1) contrast(1.03);",
+    "background:radial-gradient(circle at 50% 50%,rgba(255,255,255,0) 72%,rgba(0,0,0,.1) 94%,rgba(0,0,0,.2) 100%);",
+    "box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}",
 
     /* لمعة زجاجية علوية */
     ".gl-shine{position:absolute;left:50%;top:50%;width:72%;height:72%;transform:translate(-50%,-50%);",
