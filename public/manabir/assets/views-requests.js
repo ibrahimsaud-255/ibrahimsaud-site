@@ -255,6 +255,7 @@
       sub: r.approvalNo || "غير معتمد بعد",
       body:
         '<div class="letter" id="letterBox">' +
+        '<div class="letter-logo"><img src="assets/logo-org.png" alt="" /></div>' +
         '<div class="letter-meta"><span>' + UI.esc(s.ministryName) + "</span><span>" + UI.esc(s.orgName) + "</span></div>" +
         "<h4>خطاب اعتماد نشاط دعوي</h4>" +
         '<div class="letter-meta" style="border:0;margin-bottom:10px"><span class="num">الرقم: ' + UI.esc(r.approvalNo || "—") +

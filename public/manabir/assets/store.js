@@ -8,7 +8,7 @@
   "use strict";
 
   var CFG = global.MANABIR_CONFIG || {};
-  var KEY = (CFG.storageKey || "manabir") + ".v1";
+  var KEY = (CFG.storageKey || "manabir") + ".v2";
   var SKEY = (CFG.storageKey || "manabir") + ".session";
 
   var Store = {

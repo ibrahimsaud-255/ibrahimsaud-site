@@ -159,7 +159,6 @@
     var s = Store.db.settings;
     document.getElementById("navBrandName").textContent = s.brandName;
     document.getElementById("navOrgName").textContent = s.orgName;
-    document.getElementById("navBrandMark").innerHTML = Icons.svg("mosque");
     document.title = s.brandName + " — " + App.viewTitle(current.split("/")[0]);
   }
 
@@ -180,7 +179,6 @@
     var s = (Store.db && Store.db.settings) || {};
     document.getElementById("authBrandName").textContent = s.brandName || "منابر";
     document.getElementById("authBrandTag").textContent = s.tagline || "";
-    document.getElementById("authBrandMark").innerHTML = Icons.svg("mosque");
 
     var demos = ["U-1", "U-2", "U-4", "U-5", "U-7"];
     document.getElementById("demoRoles").innerHTML = demos.map(function (id) {

@@ -164,7 +164,7 @@ create table if not exists settings (
 );
 
 insert into settings(key, value) values
-  ('brand', '{"brandName":"منابر","tagline":"منصة تنظيم الأنشطة الدعوية في المساجد","orgName":"الإدارة العامة للدعوة والإرشاد","ministryName":"وزارة الشؤون الإسلامية والدعوة والإرشاد","city":"الرياض"}'::jsonb),
+  ('brand', '{"brandName":"منابر","tagline":"منصة الجمعية لتنظيم الأنشطة الدعوية في المساجد","orgName":"جمعية الدعوة والإرشاد وتوعية الجاليات بالسلي","ministryName":"وزارة الشؤون الإسلامية والدعوة والإرشاد","city":"الرياض"}'::jsonb),
   ('workflow', '{"requireMinistry":true,"autoApproveKhutbah":false,"minLeadDays":3}'::jsonb)
 on conflict (key) do nothing;
 
