@@ -15,13 +15,13 @@ create table if not exists client_sites (
   expires_at  timestamptz,                       -- إن وُجد: يُقفل تلقائياً بعد هذا الوقت
   note        text,                              -- رسالة تظهر للعميل في شاشة القفل
   wa_phone    text default '966504895213',       -- رقم واتساب زر التواصل في شاشة القفل
-  owner_key   text default encode(gen_random_bytes(9),'hex'),  -- مفتاح معاينتك الخاص (لا يخرج من القاعدة)
+  owner_key   text default md5(random()::text || clock_timestamp()::text),  -- مفتاح معاينتك (لا يخرج من القاعدة)
   created_at  timestamptz default now(),
   updated_at  timestamptz default now()
 );
 
 -- لو كان الجدول موجوداً من قبل بدون هذه الأعمدة
-alter table client_sites add column if not exists owner_key text default encode(gen_random_bytes(9),'hex');
+alter table client_sites add column if not exists owner_key text default md5(random()::text || clock_timestamp()::text);
 alter table client_sites add column if not exists wa_phone  text default '966504895213';
 
 -- ------------------------------------------------------------ الزيارات --
@@ -124,6 +124,16 @@ insert into client_sites (slug, name, url, client_name, status, note) values
   ('ilogistics', 'التكامل المتحدة — اللوجستيات',  '/ilogistics/', '', 'open', ''),
   ('masarak',    'مسارك — منصة القبول الجامعي',    '/masarak/',    '', 'open', '')
 on conflict (slug) do nothing;
+
+-- ============================================================================
+-- تحقّق: بعد Run يجب أن يظهر جدول بأربعة مواقع وكلمة ok أمام الدالة.
+-- لو ظهر خطأ أحمر بدل الجدول، انسخه لي كما هو.
+-- ============================================================================
+select s.slug, s.name, s.status,
+       (select state from gate_state(s.slug, '')) as gate_says,
+       'ok' as function_works
+from client_sites s
+order by s.name;
 
 -- ============================================================================
 -- تنظيف الزيارات الأقدم من ٦ أشهر (اختياري — نفّذه عند الحاجة)
