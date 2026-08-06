@@ -139,3 +139,33 @@ order by s.name;
 -- تنظيف الزيارات الأقدم من ٦ أشهر (اختياري — نفّذه عند الحاجة)
 --   delete from site_visits where at < now() - interval '6 months';
 -- ============================================================================
+
+-- ============================================================================
+-- تحديث ٢: المواقع كبضاعة (مرحلة البيع) + إحصاءات جاهزة
+-- نفّذ هذا الجزء وحده إن كان الملف منفَّذاً من قبل.
+-- ============================================================================
+
+-- مرحلة الموقع: draft = تحت التصميم | sent = أُرسل للشركة | talking = تواصل
+--               sold = مباع | archived = مؤرشف
+alter table client_sites add column if not exists stage text not null default 'draft';
+alter table client_sites add column if not exists company text;   -- الشركة المستهدفة
+alter table client_sites add column if not exists price numeric;  -- السعر المعروض/المُباع به
+alter table client_sites add column if not exists sent_at timestamptz;
+
+create index if not exists client_sites_stage_idx on client_sites(stage);
+
+-- إحصاءات جاهزة لكل موقع (تُقرأ بسطر واحد بدل تحميل آلاف الزيارات)
+create or replace view site_stats as
+select slug,
+       count(*)                                                   as total,
+       count(distinct visitor)                                    as visitors,
+       count(*) filter (where at > now() - interval '1 day')      as today,
+       count(*) filter (where at > now() - interval '7 days')     as week,
+       max(at)                                                    as last_at
+from site_visits
+group by slug;
+
+revoke all on site_stats from anon;
+grant select on site_stats to authenticated;
+
+select 'تم التحديث ✅' as status;
