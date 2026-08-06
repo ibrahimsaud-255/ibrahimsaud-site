@@ -173,4 +173,6 @@ export type MajorMatch = {
   easiestCutoff: number;
   /** الحد التقديري الأعلى — يُستخدم لترتيب التخصصات من الأصعب للأسهل */
   hardestCutoff: number;
+  /** نسبة التوافق مع شخصية الطالب (٠–١٠٠)، أو null إن لم يُجرِ الاختبار */
+  fit: number | null;
 };

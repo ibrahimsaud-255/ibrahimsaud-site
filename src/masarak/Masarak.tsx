@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { BRAND, COPY } from "./config";
-import ScoreField from "./components/ScoreField";
+import Gate from "./components/Gate";
+import Quiz from "./components/Quiz";
 import Results from "./components/Results";
+import ScoreField from "./components/ScoreField";
 import {
   IconArrowLeft,
   IconChart,
@@ -15,9 +17,18 @@ import {
   IconTarget,
   IconUser,
 } from "./components/Icons";
+import { saveResult, savedToken, verifySaved } from "./lib/access";
+import {
+  buildProfile,
+  isComplete,
+  majorFitScore,
+  type Answers,
+} from "./lib/personality";
+import { matchAll, summarize } from "./lib/calc";
 import type { Gender, StudentInput, Track } from "./types";
 
-const STORE_KEY = "masarak.input.v1";
+const DRAFT_KEY = "masarak.input.v1";
+const ANSWERS_KEY = "masarak.answers.v1";
 
 type Draft = {
   track: Track;
@@ -35,14 +46,24 @@ const DEFAULT_DRAFT: Draft = {
   tah: 78,
 };
 
-/** آخر إدخال للطالب إن وُجد — تُقرأ مرّة واحدة عند أول عرض في المتصفح */
-function readStored(): Draft | null {
-  if (typeof window === "undefined") return null;
+/** مرحلة رحلة الطالب */
+type Stage = "checking" | "locked" | "form" | "quiz" | "results";
+
+function readJson<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
   try {
-    const raw = localStorage.getItem(STORE_KEY);
-    return raw ? { ...DEFAULT_DRAFT, ...JSON.parse(raw) } : null;
+    const raw = localStorage.getItem(key);
+    return raw ? { ...fallback, ...JSON.parse(raw) } : fallback;
   } catch {
-    return null; // التخزين المحلي قد يكون معطّلاً
+    return fallback;
+  }
+}
+
+function writeJson(key: string, value: unknown) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* التخزين المحلي معطّل — نتجاهل */
   }
 }
 
@@ -50,41 +71,101 @@ const noopSubscribe = () => () => {};
 
 /**
  * هل نحن بعد الترطيب (hydration)؟
- * الصفحة مبنيّة مسبقاً وقت البناء، فلا يمكن قراءة التخزين المحلي أثناء العرض
- * على الخادم. نؤجّل عرض النموذج حتى أول عرض في المتصفح، فلا يقع تعارض ترطيب.
+ * الصفحة مبنيّة وقت البناء فلا يمكن قراءة التخزين المحلي أثناء العرض على
+ * الخادم؛ نؤجّل عرض ما يعتمد عليه حتى أول عرض في المتصفح.
  */
 function useIsClient() {
-  return useSyncExternalStore(
-    noopSubscribe,
-    () => true,
-    () => false
-  );
+  return useSyncExternalStore(noopSubscribe, () => true, () => false);
 }
 
 export default function Masarak() {
   const isClient = useIsClient();
-  const [draft, setDraft] = useState<Draft>(() => readStored() ?? DEFAULT_DRAFT);
+  const [stage, setStage] = useState<Stage>("checking");
+  const [draft, setDraft] = useState<Draft>(() => readJson(DRAFT_KEY, DEFAULT_DRAFT));
+  const [answers, setAnswers] = useState<Answers>(() => readJson<Answers>(ANSWERS_KEY, {}));
   const [student, setStudent] = useState<StudentInput | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
   const topRef = useRef<HTMLDivElement>(null);
+  const savedOnce = useRef(false);
+
+  const profile = useMemo(
+    () => (isComplete(answers) ? buildProfile(answers) : null),
+    [answers]
+  );
+
+  // فحص كود التفعيل مرّة واحدة عند الفتح
+  useEffect(() => {
+    let alive = true;
+    verifySaved().then((r) => {
+      if (alive) setStage(r.ok ? "form" : "locked");
+    });
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  // حفظ نتيجة مجهّلة للإحصاء — مرّة واحدة لكل جلسة
+  useEffect(() => {
+    if (stage !== "results" || !student || !profile || savedOnce.current) return;
+    savedOnce.current = true;
+    const matches = matchAll(student, profile, "fit");
+    const s = summarize(student, matches);
+    saveResult({
+      track: student.track,
+      gender: student.gender,
+      weighted: s.bestWeighted,
+      riasec: profile.riasec,
+      anchors: profile.anchors,
+      top_majors: matches.slice(0, 5).map((m) => ({
+        id: m.major.id,
+        fit: majorFitScore(profile, m.major.id),
+        open: m.openCount,
+      })),
+    });
+  }, [stage, student, profile]);
 
   const set = <K extends keyof Draft>(k: K, v: Draft[K]) =>
-    setDraft((d) => ({ ...d, [k]: v }));
+    setDraft((d) => {
+      const next = { ...d, [k]: v };
+      writeJson(DRAFT_KEY, next);
+      return next;
+    });
 
-  const submit = () => {
-    try {
-      localStorage.setItem(STORE_KEY, JSON.stringify(draft));
-    } catch {
-      /* لا شيء */
-    }
-    setStudent({ ...draft, region: null });
+  const answer = (id: string, value: number) =>
+    setAnswers((a) => {
+      const next = { ...a, [id]: value };
+      writeJson(ANSWERS_KEY, next);
+      return next;
+    });
+
+  const scrollTop = () =>
     requestAnimationFrame(() =>
       topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
     );
-  };
 
-  const scrollToForm = () =>
-    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  function submitGrades() {
+    setStudent({ ...draft, region: null });
+    setStage(profile ? "results" : "quiz");
+    scrollTop();
+  }
+
+  function finishQuiz() {
+    savedOnce.current = false;
+    setStage("results");
+    scrollTop();
+  }
+
+  function retakeQuiz() {
+    setAnswers({});
+    writeJson(ANSWERS_KEY, {});
+    savedOnce.current = false;
+    setStage("quiz");
+    scrollTop();
+  }
+
+  if (stage === "locked") {
+    return <Gate onUnlocked={() => setStage("form")} />;
+  }
 
   return (
     <div className="masarak">
@@ -101,17 +182,49 @@ export default function Masarak() {
             <IconCompass size={24} />
             {BRAND.name}
           </span>
-          <span className="mk-chip">
-            <IconGraduationCap size={14} />
-            دليل القبول الجامعي
-          </span>
+          {isClient && savedToken() === "demo" ? (
+            <span className="mk-chip" data-tone="borderline">
+              وضع التجربة
+            </span>
+          ) : (
+            <span className="mk-chip">
+              <IconGraduationCap size={14} />
+              دليل القبول الجامعي
+            </span>
+          )}
         </header>
 
         <div ref={topRef} />
 
-        {student ? (
-          <Results student={student} onEdit={() => setStudent(null)} />
-        ) : (
+        {stage === "checking" && (
+          <div className="mk-glass mk-sheen mk-mt" style={{ height: 220 }} aria-hidden />
+        )}
+
+        {stage === "quiz" && (
+          <Quiz
+            answers={answers}
+            onAnswer={answer}
+            onDone={finishQuiz}
+            onExit={() => {
+              setStage(student ? "results" : "form");
+              scrollTop();
+            }}
+          />
+        )}
+
+        {stage === "results" && student && (
+          <Results
+            student={student}
+            profile={profile}
+            onEdit={() => {
+              setStage("form");
+              scrollTop();
+            }}
+            onTakeQuiz={retakeQuiz}
+          />
+        )}
+
+        {stage === "form" && (
           <>
             {/* ── الواجهة التسويقية ── */}
             <section
@@ -132,7 +245,9 @@ export default function Masarak() {
                 type="button"
                 className="mk-btn mk-btn-primary"
                 style={{ marginTop: 28 }}
-                onClick={scrollToForm}
+                onClick={() =>
+                  formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+                }
               >
                 {COPY.heroCta}
                 <IconArrowLeft size={19} />
@@ -142,8 +257,8 @@ export default function Masarak() {
             <section className="mk-stats mk-mt-lg">
               {[
                 { icon: <IconPercent size={18} />, t: "معادلة لكل جامعة", s: "لا نستخدم معادلة واحدة للجميع" },
-                { icon: <IconChart size={18} />, t: "ترتيب بالتنافسية", s: "الأصعب فوق والأسهل تحت" },
-                { icon: <IconDocument size={18} />, t: "٨٠+ تخصصاً", s: "من الطب إلى التصميم" },
+                { icon: <IconTarget size={18} />, t: "اختبار ميول علمي", s: "نموذج هولاند ومراسي شاين" },
+                { icon: <IconDocument size={18} />, t: "٨٥ تخصصاً", s: "من الطب إلى التصميم" },
                 { icon: <IconGraduationCap size={18} />, t: "٢٨ جامعة حكومية", s: "كل مناطق المملكة" },
               ].map((f) => (
                 <div key={f.t} className="mk-glass-sm mk-stat">
@@ -157,15 +272,11 @@ export default function Masarak() {
             {/* ── النموذج ── */}
             <div ref={formRef} className="mk-grid mk-mt-lg" style={{ gap: 14 }}>
               <h2 className="mk-h2" style={{ marginBottom: 2 }}>
-                بياناتك
+                الخطوة الأولى — درجاتك
               </h2>
 
               {!isClient && (
-                <div
-                  className="mk-glass mk-sheen"
-                  style={{ height: 230 }}
-                  aria-hidden
-                />
+                <div className="mk-glass mk-sheen" style={{ height: 230 }} aria-hidden />
               )}
 
               {isClient && (
@@ -215,9 +326,12 @@ export default function Masarak() {
                       </button>
                     </div>
 
-                    <p className="mk-faint" style={{ fontSize: 12.5, margin: "14px 0 0", lineHeight: 1.7 }}>
-                      بعض الجامعات تستخدم معادلة مختلفة للطلاب عن الطالبات، وبعضها
-                      مخصّص لجنس واحد — لذلك نسألك.
+                    <p
+                      className="mk-faint"
+                      style={{ fontSize: 12.5, margin: "14px 0 0", lineHeight: 1.7 }}
+                    >
+                      بعض الجامعات تستخدم معادلة مختلفة للطلاب عن الطالبات،
+                      وبعضها مخصّص لجنس واحد — لذلك نسألك.
                     </p>
                   </section>
 
@@ -256,9 +370,9 @@ export default function Masarak() {
                 <button
                   type="button"
                   className="mk-btn mk-btn-primary mk-btn-block"
-                  onClick={submit}
+                  onClick={submitGrades}
                 >
-                  اعرض تخصصاتي
+                  {profile ? "اعرض نتائجي" : "التالي — اختبار الميول"}
                   <IconArrowLeft size={19} />
                 </button>
               </div>

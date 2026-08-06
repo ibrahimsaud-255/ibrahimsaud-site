@@ -10,7 +10,10 @@ import {
   matchAll,
   summarize,
   weightedByUniversity,
+  type SortMode,
 } from "../lib/calc";
+import { fitLabel, type Profile } from "../lib/personality";
+import PersonaCard from "./PersonaCard";
 import type { FieldId, MajorMatch, MatchRow, StudentInput } from "../types";
 import {
   FIELD_ICON,
@@ -30,6 +33,14 @@ import UniversityLogo from "./UniversityLogo";
 const FIELDS = Object.keys(FIELD_NAME) as FieldId[];
 
 const fmt = (n: number) => n.toFixed(2);
+
+/** صيغة العدد بالعربية: جامعة واحدة / جامعتان / ٣ جامعات / ١١ جامعة */
+function uniCount(n: number): string {
+  if (n === 1) return "جامعة واحدة تقبلك";
+  if (n === 2) return "جامعتان تقبلانك";
+  if (n <= 10) return `${n} جامعات تقبلك`;
+  return `${n} جامعة تقبلك`;
+}
 
 /* ─────────────── صف جامعة داخل تخصص ─────────────── */
 
@@ -144,9 +155,14 @@ function MajorCard({ m, index }: { m: MajorMatch; index: number }) {
         <span style={{ minWidth: 0 }}>
           <span className="mk-major-name">{m.major.name}</span>
           <span className="mk-major-sub">
+            {m.fit !== null && (
+              <span className="mk-chip" data-tone={fitLabel(m.fit).tone}>
+                يناسبك <bdi>{m.fit}٪</bdi>
+              </span>
+            )}
             <span className="mk-chip" data-tone={tone}>
               {m.openCount > 0
-                ? `${m.openCount} جامعة تقبلك`
+                ? uniCount(m.openCount)
                 : tone === "borderline"
                   ? "فرص حدّية"
                   : "خارج متناولك حالياً"}
@@ -210,16 +226,24 @@ function MajorCard({ m, index }: { m: MajorMatch; index: number }) {
 
 export default function Results({
   student,
+  profile,
   onEdit,
+  onTakeQuiz,
 }: {
   student: StudentInput;
+  profile: Profile | null;
   onEdit: () => void;
+  onTakeQuiz: () => void;
 }) {
   const [field, setField] = useState<FieldId | "all">("all");
   const [onlyOpen, setOnlyOpen] = useState(true);
   const [showFormulas, setShowFormulas] = useState(false);
+  const [sort, setSort] = useState<SortMode>(profile ? "fit" : "hard");
 
-  const matches = useMemo(() => matchAll(student), [student]);
+  const matches = useMemo(
+    () => matchAll(student, profile, sort),
+    [student, profile, sort]
+  );
   const summary = useMemo(() => summarize(student, matches), [student, matches]);
   const perUni = useMemo(() => weightedByUniversity(student), [student]);
 
@@ -310,6 +334,37 @@ export default function Results({
         )}
       </section>
 
+      {/* الشخصية */}
+      <div className="mk-mt">
+        {profile ? (
+          <PersonaCard profile={profile} onRetake={onTakeQuiz} />
+        ) : (
+          <section className="mk-glass mk-sheen" style={{ padding: 22 }}>
+            <div className="mk-row" style={{ alignItems: "flex-start", marginBottom: 14 }}>
+              <span className="mk-major-icon" style={{ width: 40, height: 40 }}>
+                <IconTarget size={19} />
+              </span>
+              <span>
+                <div style={{ fontWeight: 700, fontSize: 17 }}>
+                  درجاتك أظهرت ما تستطيع… بقي ما يناسبك
+                </div>
+                <div className="mk-dim" style={{ fontSize: 14, marginTop: 6, lineHeight: 1.8 }}>
+                  اختبار الميول يرتّب هذه التخصصات حسب شخصيتك أنت، لا حسب
+                  صعوبتها فقط. ٧٥ عبارة قصيرة، أقل من سبع دقائق.
+                </div>
+              </span>
+            </div>
+            <button
+              type="button"
+              className="mk-btn mk-btn-primary mk-btn-block"
+              onClick={onTakeQuiz}
+            >
+              ابدأ اختبار الميول
+            </button>
+          </section>
+        )}
+      </div>
+
       {/* الفلاتر */}
       <div className="mk-mt">
         <div className="mk-between mk-wrap" style={{ marginBottom: 10 }}>
@@ -324,6 +379,27 @@ export default function Results({
             {onlyOpen ? "المتاح لي فقط" : "كل التخصصات"}
           </button>
         </div>
+
+        {profile && (
+          <div className="mk-seg" style={{ marginBottom: 12 }}>
+            <button
+              type="button"
+              className="mk-seg-item"
+              data-on={sort === "fit"}
+              onClick={() => setSort("fit")}
+            >
+              الأنسب لشخصيتك
+            </button>
+            <button
+              type="button"
+              className="mk-seg-item"
+              data-on={sort === "hard"}
+              onClick={() => setSort("hard")}
+            >
+              الأصعب قبولاً
+            </button>
+          </div>
+        )}
 
         <div className="mk-filters">
           <button
@@ -354,7 +430,9 @@ export default function Results({
         </div>
 
         <p className="mk-faint" style={{ fontSize: 12.5, margin: "12px 2px 0" }}>
-          مرتّبة من الأصعب قبولاً إلى الأسهل. اضغط أي تخصص لتفتح الجامعات التي تدرّسه.
+          {sort === "fit" && profile
+            ? "مرتّبة حسب توافقها مع شخصيتك. اضغط أي تخصص لتفتح الجامعات التي تدرّسه."
+            : "مرتّبة من الأصعب قبولاً إلى الأسهل. اضغط أي تخصص لتفتح الجامعات التي تدرّسه."}
         </p>
       </div>
 

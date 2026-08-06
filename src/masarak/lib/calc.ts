@@ -1,6 +1,7 @@
 import { MODEL, THRESHOLDS } from "../config";
 import { MAJORS } from "../data/majors";
 import { UNIVERSITIES } from "../data/universities";
+import { majorFitScore, type Profile } from "./personality";
 import type {
   FormulaRule,
   Major,
@@ -162,11 +163,21 @@ function buildRow(
   };
 }
 
+/** طريقة ترتيب التخصصات في النتائج */
+export type SortMode = "fit" | "hard";
+
 /**
- * المحرّك الرئيسي: يحوّل درجات الطالب إلى قائمة تخصصات
- * مرتّبة من الأصعب (الأعلى حداً) إلى الأسهل، وتحت كل تخصص الجامعات.
+ * المحرّك الرئيسي: يحوّل درجات الطالب (وشخصيته إن توفّرت) إلى قائمة
+ * تخصصات، وتحت كل تخصص الجامعات التي تدرّسه.
+ *
+ * الترتيب الافتراضي «الأصعب أولاً»؛ وإن أُجري اختبار الشخصية صار
+ * «الأنسب لك أولاً» مع مراعاة أن التخصص في متناول درجاته.
  */
-export function matchAll(student: StudentInput): MajorMatch[] {
+export function matchAll(
+  student: StudentInput,
+  profile?: Profile | null,
+  sort: SortMode = profile ? "fit" : "hard"
+): MajorMatch[] {
   const results: MajorMatch[] = [];
 
   for (const major of MAJORS) {
@@ -204,15 +215,28 @@ export function matchAll(student: StudentInput): MajorMatch[] {
       openCount: open.length,
       easiestCutoff: cutoffs.length ? Math.min(...cutoffs) : 0,
       hardestCutoff: cutoffs.length ? Math.max(...cutoffs) : 0,
+      fit: profile ? majorFitScore(profile, major.id) : null,
     });
   }
 
-  // الأصعب أولاً — كما هو مطلوب: الطب والهندسة في الأعلى
-  results.sort((a, b) => {
-    if (b.hardestCutoff !== a.hardestCutoff)
+  if (sort === "fit" && profile) {
+    // الأنسب لشخصيته أولاً، مع تقديم ما هو في متناول درجاته عند التساوي
+    results.sort((a, b) => {
+      const fa = a.fit ?? 0;
+      const fb = b.fit ?? 0;
+      if (fb !== fa) return fb - fa;
+      if ((b.openCount > 0 ? 1 : 0) !== (a.openCount > 0 ? 1 : 0))
+        return (b.openCount > 0 ? 1 : 0) - (a.openCount > 0 ? 1 : 0);
       return b.hardestCutoff - a.hardestCutoff;
-    return b.major.demand - a.major.demand;
-  });
+    });
+  } else {
+    // الأصعب أولاً — الطب والهندسة في الأعلى
+    results.sort((a, b) => {
+      if (b.hardestCutoff !== a.hardestCutoff)
+        return b.hardestCutoff - a.hardestCutoff;
+      return b.major.demand - a.major.demand;
+    });
+  }
 
   return results;
 }
