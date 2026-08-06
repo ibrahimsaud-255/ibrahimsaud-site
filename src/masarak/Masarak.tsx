@@ -258,7 +258,7 @@ export default function Masarak() {
               {[
                 { icon: <IconPercent size={18} />, t: "معادلة لكل جامعة", s: "لا نستخدم معادلة واحدة للجميع" },
                 { icon: <IconTarget size={18} />, t: "اختبار ميول علمي", s: "نموذج هولاند ومراسي شاين" },
-                { icon: <IconDocument size={18} />, t: "٨٥ تخصصاً", s: "من الطب إلى التصميم" },
+                { icon: <IconDocument size={18} />, t: "٨٢ تخصصاً", s: "من الطب إلى التصميم" },
                 { icon: <IconGraduationCap size={18} />, t: "٢٨ جامعة حكومية", s: "كل مناطق المملكة" },
               ].map((f) => (
                 <div key={f.t} className="mk-glass-sm mk-stat">
