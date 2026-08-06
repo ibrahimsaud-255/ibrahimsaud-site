@@ -6,8 +6,19 @@
    الجداول: client_sites · site_visits · site_knocks · site_stats
    ============================================================================ */
 
-let GT_SITES = null, GT_STATS = null, GT_KNOCKS = null, GT_VISITS = null;
+let GT_SITES = null, GT_STATS = null, GT_KNOCKS = null, GT_VISITS = null, GT_PROS = null;
 let GT_SEL = null, GT_TAB = 'live', GT_LOADING = false, GT_ERR = null;
+
+/* مراحل الشركة المستهدفة */
+const GT_PSTAGES = [
+  { k: 'new',      n: 'جديدة',        c: '#64748b' },
+  { k: 'building', n: 'أبني لها',      c: '#a855f7' },
+  { k: 'sent',     n: 'أرسلت لها',     c: '#0ea5e9' },
+  { k: 'replied',  n: 'ردّت',          c: '#f59e0b' },
+  { k: 'won',      n: 'اشترت',         c: '#22c55e' },
+  { k: 'lost',     n: 'لم تكتمل',      c: '#ef4444' }
+];
+const gtPStage = k => GT_PSTAGES.find(x => x.k === k) || GT_PSTAGES[0];
 
 /* المراحل */
 const GT_STAGES = [
@@ -54,16 +65,18 @@ async function gtLoad(force) {
   if (GT_SITES && !force) return;
   GT_LOADING = true; GT_ERR = null;
   try {
-    const [sites, stats, knocks] = await Promise.all([
+    const [sites, stats, knocks, pros] = await Promise.all([
       sb.from('client_sites').select('*').order('created_at', { ascending: false }),
       sb.from('site_stats').select('*'),
-      sb.from('site_knocks').select('*').eq('seen', false).order('at', { ascending: false }).limit(40)
+      sb.from('site_knocks').select('*').eq('seen', false).order('at', { ascending: false }).limit(40),
+      sb.from('prospects').select('*').order('created_at', { ascending: false }).limit(500)
     ]);
     if (sites.error) throw new Error(sites.error.message);
     GT_SITES = sites.data || [];
     GT_STATS = {};
     (stats.data || []).forEach(r => { GT_STATS[r.slug] = r; });
     GT_KNOCKS = knocks.error ? [] : (knocks.data || []);
+    GT_PROS = pros.error ? [] : (pros.data || []);
   } catch (e) {
     GT_ERR = e.message || 'تعذّر الاتصال';
   }
@@ -133,13 +146,150 @@ function renderSites() {
     </div>` : ''}
 
     <div class="gt-tabs">
-      ${[['live', 'معروضة', live.length], ['sold', 'مباعة', sold.length], ['archived', 'الأرشيف', arch.length]]
+      ${[['live', 'معروضة', live.length], ['sold', 'مباعة', sold.length],
+         ['archived', 'الأرشيف', arch.length], ['pros', 'الشركات المستهدفة', (GT_PROS || []).length]]
         .map(t => `<button class="${GT_TAB === t[0] ? 'on' : ''}" onclick="GT_TAB='${t[0]}';renderSites()">${t[1]} <span>${t[2]}</span></button>`).join('')}
     </div>
 
-    ${rows.length ? `<div class="gt-grid">${rows.map(gtCard).join('')}</div>`
+    ${GT_TAB === 'pros' ? gtProsList()
+      : rows.length ? `<div class="gt-grid">${rows.map(gtCard).join('')}</div>`
       : `<div class="card" style="text-align:center;padding:34px;opacity:.65">لا يوجد شيء هنا بعد</div>`}`;
   refreshIcons();
+}
+
+/* ==========================================================================
+   الشركات المستهدفة — من أبني له، وماذا أرسلت، وأين وصل
+   ========================================================================== */
+function gtProsList() {
+  const rows = GT_PROS || [];
+  return `
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <button class="btn btn-gold btn-sm" onclick="gtProForm()"><i data-lucide="plus"></i> شركة جديدة</button>
+    </div>
+    ${rows.length ? `<div class="card" style="padding:0;overflow:hidden">
+      ${rows.map(p => {
+        const st = gtPStage(p.stage);
+        const site = (GT_SITES || []).find(s => s.slug === p.site_slug);
+        return `<div class="gt-prow">
+          <span class="gt-dot" style="background:${st.c}"></span>
+          <div style="min-width:0;flex:1">
+            <b>${esc(p.company)}</b>
+            <small>${esc(st.n)}${p.sector ? ' · ' + esc(p.sector) : ''}${site ? ' · ' + esc(site.name) : ''}</small>
+          </div>
+          <div class="gt-pacts">
+            ${p.website ? `<a class="btn btn-ghost btn-sm" href="${esc(p.website)}" target="_blank" rel="noopener" title="موقعها الحالي"><i data-lucide="external-link"></i></a>` : ''}
+            ${site ? `<button class="btn btn-ghost btn-sm" onclick="gtMail(${p.id})" title="نص رسالة الإرسال"><i data-lucide="mail"></i></button>` : ''}
+            <button class="btn btn-ghost btn-sm" onclick="gtProForm(${p.id})"><i data-lucide="more-horizontal"></i></button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>` : `<div class="card" style="text-align:center;padding:34px;opacity:.65">
+      أضف الشركات التي موقعها قديم — ثم ابنِ لها موقعاً وأرسله.</div>`}`;
+}
+
+function gtProForm(id) {
+  const p = id ? (GT_PROS || []).find(x => x.id === id) : null;
+  const sites = (GT_SITES || []);
+  openModal(p ? p.company : 'شركة جديدة',
+    `<label>اسم الشركة</label>
+     <input id="pr_company" value="${esc(p ? p.company : '')}" placeholder="مؤسسة النخبة للمقاولات">
+     <label>موقعها الحالي</label>
+     <input id="pr_website" value="${esc(p ? (p.website || '') : '')}" placeholder="https://…" dir="ltr">
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+       <div><label>القطاع</label><input id="pr_sector" value="${esc(p ? (p.sector || '') : '')}" placeholder="مقاولات"></div>
+       <div><label>المدينة</label><input id="pr_city" value="${esc(p ? (p.city || 'الرياض') : 'الرياض')}"></div>
+     </div>
+     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+       <div><label>المسؤول</label><input id="pr_person" value="${esc(p ? (p.person || '') : '')}"></div>
+       <div><label>الجوال</label><input id="pr_phone" value="${esc(p ? (p.phone || '') : '')}" dir="ltr"></div>
+     </div>
+     <label>البريد</label>
+     <input id="pr_email" value="${esc(p ? (p.email || '') : '')}" dir="ltr" placeholder="info@company.sa">
+     <label>الموقع الذي بنيته لها</label>
+     <select id="pr_site">
+       <option value="">— لم أبنِ بعد —</option>
+       ${sites.map(s => `<option value="${esc(s.slug)}" ${p && p.site_slug === s.slug ? 'selected' : ''}>${esc(s.name)}</option>`).join('')}
+     </select>
+     <label>ملاحظات</label>
+     <textarea id="pr_note" rows="2">${esc(p ? (p.note || '') : '')}</textarea>
+     <label style="margin-top:10px">المرحلة</label>
+     <div class="gt-stages">
+       ${GT_PSTAGES.map(g => `<button type="button" class="${(p ? p.stage : 'new') === g.k ? 'on' : ''}"
+          style="--c:${g.c}" onclick="gtProStage(this,'${g.k}')">${g.n}</button>`).join('')}
+     </div>
+     <input type="hidden" id="pr_stage" value="${esc(p ? p.stage : 'new')}">`,
+    async () => {
+      const g = id2 => (document.getElementById(id2).value || '').trim();
+      if (!g('pr_company')) { alert('اسم الشركة مطلوب'); return; }
+      const row = {
+        company: g('pr_company'), website: g('pr_website') || null, sector: g('pr_sector') || null,
+        city: g('pr_city') || null, person: g('pr_person') || null, phone: g('pr_phone') || null,
+        email: g('pr_email') || null, site_slug: document.getElementById('pr_site').value || null,
+        note: document.getElementById('pr_note').value || null, stage: g('pr_stage') || 'new',
+        last_touch: new Date().toISOString()
+      };
+      const { error } = p
+        ? await sb.from('prospects').update(row).eq('id', p.id)
+        : await sb.from('prospects').insert(row);
+      if (error) { alert('تعذّر الحفظ: ' + error.message); return; }
+      closeModal(); gtLoad(true);
+    });
+  refreshIcons();
+}
+
+function gtProStage(btn, k) {
+  btn.parentNode.querySelectorAll('button').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('pr_stage').value = k;
+}
+
+/* مسوّدة رسالة الإرسال — تُنسخ أو تُفتح في بريدك. لا إرسال تلقائي. */
+async function gtMail(id) {
+  const p = (GT_PROS || []).find(x => x.id === id);
+  if (!p) return;
+  const site = (GT_SITES || []).find(s => s.slug === p.site_slug);
+  if (!site) { alert('اربط الشركة بموقع أولاً'); return; }
+  const link = location.origin + site.url;
+  const subject = `موقع جديد لـ ${p.company} — جاهز للمعاينة`;
+  const body =
+`السلام عليكم${p.person ? ' أ. ' + p.person : ''}،
+
+اطّلعت على موقع ${p.company}، ولاحظت أنه يحتاج تحديثاً ليواكب شكل الشركة اليوم.
+بدل أن أعرض عليكم فكرة، صمّمت الموقع فعلاً ورفعته لتروه بأنفسكم:
+
+${link}
+
+الموقع جاهز بالكامل: تصميم حديث، سريع على الجوال، ومهيّأ لمحركات البحث.
+إن أعجبكم أسلّمه لكم على نطاقكم خلال يومين.
+
+وإن لم يعجبكم فلا التزام — تجاهلوا الرسالة وأشكر وقتكم.
+
+إبراهيم سعود
+واتساب: 966504895213`;
+
+  openModal('رسالة ' + p.company,
+    `<div style="font-size:12.5px;opacity:.7;margin-bottom:8px">الموضوع</div>
+     <input id="ml_sub" value="${esc(subject)}">
+     <div style="font-size:12.5px;opacity:.7;margin:10px 0 6px">النص</div>
+     <textarea id="ml_body" rows="12" style="font-size:13px;line-height:1.8">${esc(body)}</textarea>
+     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">
+       <button type="button" class="btn btn-gold btn-sm" onclick="gtMailCopy()"><i data-lucide="copy"></i> نسخ النص</button>
+       ${p.email ? `<a class="btn btn-ghost btn-sm" href="mailto:${esc(p.email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}"><i data-lucide="mail"></i> فتح في البريد</a>` : ''}
+       <button type="button" class="btn btn-ghost btn-sm" onclick="gtMarkSent(${p.id},'${esc(site.slug)}')"><i data-lucide="check"></i> علّمها «أرسلت»</button>
+     </div>`,
+    null);
+  refreshIcons();
+}
+
+function gtMailCopy() {
+  const t = document.getElementById('ml_sub').value + '\n\n' + document.getElementById('ml_body').value;
+  navigator.clipboard.writeText(t).then(() => alert('نُسخت الرسالة')).catch(() => { });
+}
+
+async function gtMarkSent(pid, slug) {
+  await sb.from('prospects').update({ stage: 'sent', last_touch: new Date().toISOString() }).eq('id', pid);
+  await sb.from('client_sites').update({ stage: 'sent', sent_at: new Date().toISOString() }).eq('slug', slug);
+  closeModal(); gtLoad(true);
 }
 
 /* بطاقة موقع — أبسط ما يمكن */
@@ -400,5 +550,10 @@ function gtStyle() {
     .gt-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line);font-size:13px}
     .gt-row:last-child{border-bottom:0}
     .gt-row span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .gt-prow{display:flex;align-items:center;gap:11px;padding:12px 16px;border-bottom:1px solid var(--line)}
+    .gt-prow:last-child{border-bottom:0}
+    .gt-prow b{display:block;font-size:14px}
+    .gt-prow small{display:block;opacity:.55;font-size:11.5px}
+    .gt-pacts{display:flex;gap:4px;flex:none}
   </style>`;
 }

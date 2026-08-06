@@ -169,3 +169,32 @@ revoke all on site_stats from anon;
 grant select on site_stats to authenticated;
 
 select 'تم التحديث ✅' as status;
+
+-- ============================================================================
+-- تحديث ٣: الشركات المستهدفة — من تبحث عنه، وماذا أرسلت له، وأين وصل
+-- ============================================================================
+create table if not exists prospects (
+  id          bigserial primary key,
+  company     text not null,          -- اسم الشركة
+  website     text,                   -- موقعها الحالي (القديم)
+  sector      text,                   -- القطاع
+  city        text default 'الرياض',
+  person      text,                   -- اسم المسؤول
+  email       text,
+  phone       text,
+  source      text,                   -- من أين وجدتها
+  rating      int  default 3,         -- ١..٥ مدى ملاءمتها
+  stage       text not null default 'new',  -- new|building|sent|replied|won|lost
+  site_slug   text,                   -- الموقع الذي بنيته لهم (client_sites.slug)
+  note        text,
+  last_touch  timestamptz,
+  created_at  timestamptz default now()
+);
+create index if not exists prospects_stage_idx on prospects(stage);
+
+alter table prospects enable row level security;
+drop policy if exists prospects_all on prospects;
+create policy prospects_all on prospects for all to authenticated using (true) with check (true);
+revoke all on prospects from anon;
+
+select 'تم تحديث ٣ ✅' as status;
