@@ -77,6 +77,14 @@ export default function HuroofSchools() {
   const [creating, setCreating] = useState(false);
   const [copied, setCopied] = useState<string | null>(null);
 
+  /* تعديل مدرسةٍ قائمة — الحالة، وتمديد العقد، وحدّ الإعادة، والملاحظات. */
+  const [editing, setEditing] = useState<string | null>(null);
+  const [editStatus, setEditStatus] = useState<OrgRow["status"]>("active");
+  const [editEndsAt, setEditEndsAt] = useState("");
+  const [editMaxReassigns, setEditMaxReassigns] = useState(3);
+  const [editNotes, setEditNotes] = useState("");
+  const [savingEdit, setSavingEdit] = useState(false);
+
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [slugTouched, setSlugTouched] = useState(false);
@@ -84,6 +92,8 @@ export default function HuroofSchools() {
   const [adminEmail, setAdminEmail] = useState("");
   const [city, setCity] = useState("");
   const [contractDays, setContractDays] = useState(365);
+  const [seatDurationDays, setSeatDurationDays] = useState(365);
+  const [maxReassigns, setMaxReassigns] = useState(3);
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -143,6 +153,8 @@ export default function HuroofSchools() {
           seatsTotal: seats,
           adminEmails: [adminEmail.trim()],
           contractDays,
+          seatDurationDays,
+          maxReassignsPerSeat: maxReassigns,
           pricePerSeat: q.perSeat.toFixed(2),
           city: city.trim() || undefined,
           notes: notes.trim() || undefined,
@@ -155,6 +167,9 @@ export default function HuroofSchools() {
       setSeats(10);
       setAdminEmail("");
       setCity("");
+      setContractDays(365);
+      setSeatDurationDays(365);
+      setMaxReassigns(3);
       setNotes("");
       await load();
     } catch (e) {
@@ -162,6 +177,38 @@ export default function HuroofSchools() {
       else setError(e instanceof Error ? e.message : "تعذّر الإنشاء");
     } finally {
       setBusy(false);
+    }
+  }
+
+  function startEdit(o: OrgRow) {
+    setEditing(o.id);
+    setEditStatus(o.status);
+    setEditEndsAt(new Date(o.endsAt).toISOString().slice(0, 10));
+    setEditMaxReassigns(o.maxReassignsPerSeat);
+    setEditNotes(o.notes ?? "");
+    setError(null);
+  }
+
+  async function saveEdit(id: string) {
+    setSavingEdit(true);
+    setError(null);
+    try {
+      await api(`admin/organizations/${id}`, {
+        method: "PATCH",
+        body: {
+          status: editStatus,
+          endsAt: new Date(`${editEndsAt}T00:00:00Z`).toISOString(),
+          maxReassignsPerSeat: editMaxReassigns,
+          notes: editNotes.trim(),
+        },
+      });
+      setEditing(null);
+      await load();
+    } catch (e) {
+      if (e instanceof AuthExpired) setAuthed(false);
+      else setError(e instanceof Error ? e.message : "تعذّر الحفظ");
+    } finally {
+      setSavingEdit(false);
     }
   }
 
@@ -368,6 +415,36 @@ export default function HuroofSchools() {
                   onChange={(e) => setContractDays(Number(e.target.value) || 365)}
                 />
               </div>
+              <div>
+                <label style={label}>مدّة اشتراك المقعد بالأيام</label>
+                <input
+                  style={field}
+                  type="number"
+                  dir="ltr"
+                  min={30}
+                  max={1095}
+                  value={seatDurationDays}
+                  onChange={(e) => setSeatDurationDays(Number(e.target.value) || 365)}
+                />
+                <p style={{ color: C.faint, fontSize: 11, fontWeight: 600, marginTop: 4 }}>
+                  مدّة المعلّم الواحد — لا تتجاوز العقد.
+                </p>
+              </div>
+              <div>
+                <label style={label}>حدّ إعادة إسناد المقعد</label>
+                <input
+                  style={field}
+                  type="number"
+                  dir="ltr"
+                  min={0}
+                  max={50}
+                  value={maxReassigns}
+                  onChange={(e) => setMaxReassigns(Math.max(0, Number(e.target.value) || 0))}
+                />
+                <p style={{ color: C.faint, fontSize: 11, fontWeight: 600, marginTop: 4 }}>
+                  كم مرّة يُعاد المقعد لمعلّمٍ جديد (منعُ الاستغلال).
+                </p>
+              </div>
             </div>
 
             <div style={{ marginTop: 14 }}>
@@ -570,7 +647,106 @@ export default function HuroofSchools() {
                     >
                       {copied === o.slug ? "نُسخ ✓" : "نسخ الرابط للمدير"}
                     </button>
+                    <button
+                      onClick={() => (editing === o.id ? setEditing(null) : startEdit(o))}
+                      style={{
+                        background: "transparent",
+                        color: editing === o.id ? C.gold : C.muted,
+                        border: `1px solid ${C.border}`,
+                        borderRadius: 8,
+                        padding: "7px 14px",
+                        fontSize: 12.5,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                      }}
+                    >
+                      {editing === o.id ? "إغلاق التعديل" : "تعديل"}
+                    </button>
                   </div>
+
+                  {editing === o.id && (
+                    <div
+                      style={{
+                        marginTop: 16,
+                        paddingTop: 16,
+                        borderTop: `1px solid ${C.border}`,
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                        gap: 14,
+                      }}
+                    >
+                      <div>
+                        <label style={label}>الحالة</label>
+                        <select
+                          style={field}
+                          value={editStatus}
+                          onChange={(e) => setEditStatus(e.target.value as OrgRow["status"])}
+                        >
+                          <option value="active">نشط</option>
+                          <option value="suspended">موقوف</option>
+                          <option value="expired">منتهٍ</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label style={label}>ينتهي العقد في</label>
+                        <input
+                          style={field}
+                          type="date"
+                          dir="ltr"
+                          value={editEndsAt}
+                          onChange={(e) => setEditEndsAt(e.target.value)}
+                        />
+                        <p style={{ color: C.faint, fontSize: 11, fontWeight: 600, marginTop: 4 }}>
+                          مدّده بعد سداد التجديد للسنة الجديدة.
+                        </p>
+                      </div>
+                      <div>
+                        <label style={label}>حدّ إعادة الإسناد</label>
+                        <input
+                          style={field}
+                          type="number"
+                          dir="ltr"
+                          min={0}
+                          max={50}
+                          value={editMaxReassigns}
+                          onChange={(e) =>
+                            setEditMaxReassigns(Math.max(0, Number(e.target.value) || 0))
+                          }
+                        />
+                      </div>
+                      <div style={{ gridColumn: "1 / -1" }}>
+                        <label style={label}>ملاحظات (لك وحدك)</label>
+                        <textarea
+                          style={{ ...field, minHeight: 52 }}
+                          value={editNotes}
+                          onChange={(e) => setEditNotes(e.target.value)}
+                        />
+                      </div>
+                      <div style={{ gridColumn: "1 / -1", display: "flex", gap: 10 }}>
+                        <button
+                          style={{ ...primaryBtn, opacity: savingEdit ? 0.5 : 1 }}
+                          disabled={savingEdit}
+                          onClick={() => void saveEdit(o.id)}
+                        >
+                          {savingEdit ? "جارٍ الحفظ…" : "حفظ التعديل"}
+                        </button>
+                        <button
+                          style={{
+                            background: "transparent",
+                            color: C.muted,
+                            border: `1px solid ${C.border}`,
+                            borderRadius: 10,
+                            padding: "11px 18px",
+                            fontWeight: 700,
+                            cursor: "pointer",
+                          }}
+                          onClick={() => setEditing(null)}
+                        >
+                          إلغاء
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

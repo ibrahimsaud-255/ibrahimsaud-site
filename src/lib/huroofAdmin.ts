@@ -138,9 +138,12 @@ export interface OrgRow {
   slug: string;
   status: "active" | "suspended" | "expired";
   seatsTotal: number;
+  seatDurationDays: number;
+  maxReassignsPerSeat: number;
   activeSeats: number;
   emptySeats: number;
   endsAt: string;
   pricePerSeat: string | null;
   city: string | null;
+  notes: string | null;
 }
