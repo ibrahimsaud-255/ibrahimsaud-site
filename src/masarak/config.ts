@@ -6,8 +6,6 @@
 export const BRAND = {
   name: "مسارك",
   tagline: "درجاتك تعرف طريقها",
-  /** مسار الصفحة داخل الموقع */
-  basePath: "/masarak",
   /** مجلد شعارات الجامعات داخل public */
   logosPath: "/masarak/logos",
   /** رابط شراء كود التفعيل (متجر سلة) */
