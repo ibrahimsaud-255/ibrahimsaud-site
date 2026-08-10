@@ -65,7 +65,7 @@ export default function RootLayout({
     <html lang="ar" dir="rtl" data-scroll-behavior="smooth">
       <head>
         {/* بوابة مواقع العملاء — تعمل على المسارات المذكورة فقط، وبقية الموقع لا تتأثر */}
-        <script src="/gate/gate.js" data-map='{"/sarah":"sarah","/masarak":"masarak"}' />
+        <script src="/gate/gate.js" data-map='{"/sarah":"sarah"}' />
       </head>
       <body className={`${tajawal.variable} antialiased`}>
         <PreviewBanner />

@@ -6,9 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "masarak:check": "node scripts/masarak-check.mjs",
-    "masarak:logos": "node scripts/masarak-logos.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "@calcom/embed-react": "^1.5.3",

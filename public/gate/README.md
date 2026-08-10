@@ -24,7 +24,7 @@
 أو لموقع داخل مسار من موقع أكبر (مثل `/sarah` داخل موقع إبراهيم):
 
 ```html
-<script src="/gate/gate.js" data-map='{"/sarah":"sarah","/masarak":"masarak"}'></script>
+<script src="/gate/gate.js" data-map='{"/sarah":"sarah"}'></script>
 ```
 
 `data-site` / قيم `data-map` يجب أن تطابق عمود `slug` في جدول `client_sites`.
@@ -36,7 +36,6 @@
 | منابر | `manabir` | `public/manabir/index.html` |
 | إبرة سارة | `sarah` | `src/app/layout.tsx` (بخريطة المسارات) |
 | التكامل المتحدة | `ilogistics` | كل صفحات `public/ilogistics/` |
-| مسارك | `masarak` | `src/app/layout.tsx` (بخريطة المسارات) |
 
 ## رابط معاينتك الخاص
 
