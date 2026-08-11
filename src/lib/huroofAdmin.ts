@@ -147,3 +147,47 @@ export interface OrgRow {
   city: string | null;
   notes: string | null;
 }
+
+/* ═══════════════════════════════════════════════════════════════════════
+   مؤشّرات حروف ودروس وإدارة اشتراكاتها — عبر نفس الجسر
+   كلّ مسارات `/admin/*` في خادم حروف ودروس تقبل `x-system-token`
+   (بوّابة المالك)، فتُنادى من هنا مباشرةً بلا تعديلٍ خلفيّ.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+export interface ExtendedStats {
+  totalTeachers: number;
+  activeSubscribers: number;
+  pdfCount: number;
+  pendingTeacherQuestions: number;
+  recentRegistrations: { date: string; count: number }[];
+}
+
+export function getExtendedStats() {
+  return api<ExtendedStats>("admin/stats/extended");
+}
+
+export interface GrantResult {
+  success: boolean;
+  id: string;
+  userId: string;
+  name: string | null;
+  email: string;
+  currentPeriodEnd: string | null;
+}
+
+/**
+ * يفعّل حساباً بالبريد (منحة يدوية دائمة أو لأشهر).
+ *
+ * يشترط الخادم أن يكون صاحب البريد **قد سجّل دخوله مسبقاً** — وإلا ‎404‎.
+ * ولمن لم يسجّل بعد: تُستعمل أكواد التفعيل. ويرفض ‎409‎ إن كان مشتركاً أصلاً.
+ */
+export function grantByEmail(email: string, months?: number, note?: string) {
+  return api<GrantResult>("admin/grants", {
+    method: "POST",
+    body: {
+      email: email.trim(),
+      ...(months ? { months } : {}),
+      ...(note ? { note } : {}),
+    },
+  });
+}
