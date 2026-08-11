@@ -6,8 +6,11 @@ import {
   AuthExpired,
   type ExtendedStats,
   type GrantResult,
+  type ActivationCode,
   getExtendedStats,
   grantByEmail,
+  generateCodes,
+  listCodes,
 } from "@/lib/huroofAdmin";
 import { HuroofGate, useHuroofExpired } from "@/components/huroof/HuroofGate";
 import { C, field, label, primaryBtn, cardBox } from "@/components/huroof/theme";
@@ -62,6 +65,15 @@ function ModuleBody() {
   const [granting, setGranting] = useState(false);
   const [grantMsg, setGrantMsg] = useState<{ ok: boolean; text: string } | null>(null);
 
+  /* أكواد التفعيل */
+  const [codes, setCodes] = useState<ActivationCode[]>([]);
+  const [genCount, setGenCount] = useState("10");
+  const [genMonths, setGenMonths] = useState("12");
+  const [genNote, setGenNote] = useState("");
+  const [generating, setGenerating] = useState(false);
+  const [freshCodes, setFreshCodes] = useState<string[]>([]);
+  const [codesErr, setCodesErr] = useState<string | null>(null);
+
   const loadStats = useCallback(async () => {
     try {
       setStats(await getExtendedStats());
@@ -103,6 +115,40 @@ function ModuleBody() {
     }
   }
 
+  const loadCodes = useCallback(async () => {
+    try {
+      const r = await listCodes();
+      setCodes(r.codes);
+      setCodesErr(null);
+    } catch (e) {
+      if (e instanceof AuthExpired) return onExpired();
+      setCodesErr(e instanceof Error ? e.message : "تعذّر تحميل الأكواد");
+    }
+  }, [onExpired]);
+
+  useEffect(() => {
+    void loadCodes();
+  }, [loadCodes]);
+
+  async function doGenerate() {
+    const count = Math.max(1, Math.min(100, Number(genCount) || 0));
+    if (!count) return;
+    setGenerating(true);
+    setFreshCodes([]);
+    try {
+      const m = genMonths.trim() ? Math.max(1, Number(genMonths)) : undefined;
+      const r = await generateCodes(count, m, genNote.trim() || undefined);
+      setFreshCodes(r.codes);
+      void loadCodes();
+    } catch (e) {
+      if (e instanceof AuthExpired) return onExpired();
+      setCodesErr(e instanceof Error ? e.message : "تعذّر التوليد");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
+  const unusedCount = codes.filter((c) => c.status === "unused").length;
   const newThisMonth = stats?.recentRegistrations.reduce((s, r) => s + r.count, 0) ?? 0;
 
   return (
@@ -207,14 +253,178 @@ function ModuleBody() {
         )}
       </section>
 
-      {/* ─── أكواد التفعيل (قريباً) ─── */}
-      <section style={{ ...cardBox, opacity: 0.7 }}>
-        <h2 style={{ color: C.text, fontSize: 15, fontWeight: 900, marginBottom: 4 }}>
-          أكواد التفعيل — مرّة واحدة
-        </h2>
-        <p style={{ color: C.muted, fontSize: 12.5, fontWeight: 600 }}>
-          توليد أكواد يفعّلها المستخدم مرّةً واحدة عند التسجيل. <strong>قريباً.</strong>
+      {/* ─── أكواد التفعيل ─── */}
+      <section style={cardBox}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "baseline",
+            flexWrap: "wrap",
+            gap: 8,
+          }}
+        >
+          <h2 style={{ color: C.text, fontSize: 15, fontWeight: 900 }}>
+            أكواد التفعيل — مرّة واحدة
+          </h2>
+          <span style={{ color: C.muted, fontSize: 12, fontWeight: 700 }}>
+            {ar(unusedCount)} متاح · {ar(codes.length)} إجمالاً
+          </span>
+        </div>
+        <p style={{ color: C.muted, fontSize: 12.5, fontWeight: 600, margin: "4px 0 16px" }}>
+          كودٌ يفعّله المستخدم مرّةً واحدة على المنصّة. مناسبٌ لمن لم يسجّل بعد.
         </p>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "auto auto 1.5fr auto",
+            gap: 12,
+            alignItems: "end",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{ minWidth: 90 }}>
+            <label style={label}>العدد</label>
+            <input
+              style={field}
+              type="number"
+              dir="ltr"
+              min={1}
+              max={100}
+              value={genCount}
+              onChange={(e) => setGenCount(e.target.value)}
+            />
+          </div>
+          <div style={{ minWidth: 110 }}>
+            <label style={label}>الأشهر (فارغ=دائم)</label>
+            <input
+              style={field}
+              type="number"
+              dir="ltr"
+              min={1}
+              value={genMonths}
+              onChange={(e) => setGenMonths(e.target.value)}
+              placeholder="∞"
+            />
+          </div>
+          <div>
+            <label style={label}>ملاحظة (اختياري)</label>
+            <input
+              style={field}
+              value={genNote}
+              onChange={(e) => setGenNote(e.target.value)}
+              placeholder="مثال: معرض التعليم"
+            />
+          </div>
+          <button
+            style={{ ...primaryBtn, opacity: generating ? 0.5 : 1 }}
+            disabled={generating}
+            onClick={() => void doGenerate()}
+          >
+            {generating ? "جارٍ…" : "توليد"}
+          </button>
+        </div>
+
+        {codesErr && (
+          <p style={{ color: C.red, fontSize: 13, fontWeight: 700, marginTop: 12 }}>{codesErr}</p>
+        )}
+
+        {freshCodes.length > 0 && (
+          <div
+            style={{
+              marginTop: 16,
+              padding: 14,
+              background: "rgba(0,200,83,0.08)",
+              border: "1px solid rgba(0,200,83,0.25)",
+              borderRadius: 12,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 8,
+              }}
+            >
+              <span style={{ color: C.green, fontWeight: 800, fontSize: 13 }}>
+                ✓ تولّد {ar(freshCodes.length)} كوداً — انسخها الآن
+              </span>
+              <button
+                style={{ ...primaryBtn, padding: "6px 14px", fontSize: 12 }}
+                onClick={() => void navigator.clipboard.writeText(freshCodes.join("\n"))}
+              >
+                نسخ الكل
+              </button>
+            </div>
+            <div
+              style={{
+                fontFamily: "monospace",
+                color: C.text,
+                fontSize: 13,
+                lineHeight: 1.9,
+                direction: "ltr",
+                textAlign: "left",
+                maxHeight: 160,
+                overflowY: "auto",
+              }}
+            >
+              {freshCodes.map((c) => (
+                <div key={c}>{c}</div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {codes.length > 0 && (
+          <div style={{ marginTop: 16, maxHeight: 220, overflowY: "auto" }}>
+            {codes.slice(0, 100).map((c) => (
+              <div
+                key={c.id}
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "8px 0",
+                  borderBottom: `1px solid ${C.border}`,
+                  gap: 10,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: "monospace",
+                    color: c.status === "unused" ? C.text : C.faint,
+                    fontSize: 13,
+                    direction: "ltr",
+                    textDecoration: c.status === "redeemed" ? "line-through" : "none",
+                  }}
+                >
+                  {c.code}
+                </span>
+                <span style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                  <span style={{ color: C.faint, fontSize: 11.5, fontWeight: 700 }}>
+                    {c.months ? `${ar(c.months)} شهر` : "دائم"}
+                    {c.note ? ` · ${c.note}` : ""}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      fontWeight: 900,
+                      padding: "3px 9px",
+                      borderRadius: 7,
+                      color: c.status === "unused" ? C.green : C.faint,
+                      background:
+                        c.status === "unused" ? "rgba(0,200,83,0.12)" : "rgba(255,255,255,0.05)",
+                    }}
+                  >
+                    {c.status === "unused" ? "متاح" : "مستخدَم"}
+                  </span>
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ─── إدارة حروف ودروس ─── */}

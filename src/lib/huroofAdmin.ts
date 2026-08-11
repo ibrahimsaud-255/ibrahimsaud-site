@@ -191,3 +191,28 @@ export function grantByEmail(email: string, months?: number, note?: string) {
     },
   });
 }
+
+/* ===== أكواد التفعيل — مرّة واحدة ===== */
+
+export interface ActivationCode {
+  id: string;
+  code: string;
+  months: number | null;
+  note: string | null;
+  status: "unused" | "redeemed";
+  createdByEmail: string | null;
+  redeemedByUserId: string | null;
+  redeemedAt: string | null;
+  createdAt: string;
+}
+
+export function generateCodes(count: number, months?: number, note?: string) {
+  return api<{ codes: string[] }>("admin/activation-codes", {
+    method: "POST",
+    body: { count, ...(months ? { months } : {}), ...(note ? { note } : {}) },
+  });
+}
+
+export function listCodes() {
+  return api<{ codes: ActivationCode[] }>("admin/activation-codes");
+}
