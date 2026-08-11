@@ -185,7 +185,14 @@ function ModuleBody() {
               label="سؤال معلّم بانتظار المراجعة"
               accent={stats && stats.pendingTeacherQuestions > 0 ? C.amber : C.gold}
             />
-            <Tile value="—" label="زيارات الموقع" hint="قريباً — تحليلات" accent={C.faint} />
+            <a
+              href="https://analytics.google.com/"
+              target="_blank"
+              rel="noreferrer"
+              style={{ textDecoration: "none" }}
+            >
+              <Tile value="📊" label="زيارات الموقع" hint="افتح Google Analytics ↗" accent={C.blue} />
+            </a>
           </div>
         )}
       </section>
