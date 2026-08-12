@@ -740,6 +740,7 @@ function setFreelancerAppIcon(emoji,name){try{const c=document.createElement('ca
 
 /* ===== APPS / ROUTER ===== */
 const APPS=[
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
@@ -764,13 +765,14 @@ const APPS=[
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
 const LAUNCH=[
   {id:'antar',name:'عنتر',icon:'sparkles',c:'#8b5cf6,#6366f1'},
   {id:'workspace',name:'مساحة العمل',icon:'layout-dashboard',c:'#0ea5e9,#6366f1'},
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#f5a623,#d97706'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
   {id:'ai',name:'المساعد الذكي',icon:'bot',c:'#8b5cf6,#6366f1'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
@@ -863,6 +865,57 @@ function renderLab(){
   applyWallpaper();refreshIcons();
 }
 function labToggle(id){const l=labApps();const i=l.indexOf(id);if(i>-1)l.splice(i,1);else l.push(id);save();renderLab()}
+
+/* ═══════════ حروف ودروس — إدارة المنصّة داخل المكتب (جسر x-system-token) ═══════════
+   جلسة المكتب (Supabase rrerwhhxrjyzmnnjsfev) نفسها رمزُ الجسر: بريد المدير
+   في EXTERNAL_ADMIN_EMAILS بخادم حروف ودروس، فتُقبل مباشرةً. لا تسجيل دخولٍ ثانٍ. */
+const HR_API='https://huroofduroos.com/api';
+const HR_ar=n=>Number(n||0).toLocaleString('ar-SA');
+let hrFreshCodes=[];
+async function hrApi(path,opts){opts=opts||{};const {data}=await sb.auth.getSession();const tok=data&&data.session?data.session.access_token:'';const res=await fetch(HR_API+'/'+path,{method:opts.method||'GET',headers:{'x-system-token':tok,'Content-Type':'application/json'},body:opts.body?JSON.stringify(opts.body):undefined});const b=await res.json().catch(()=>({}));if(!res.ok)throw new Error(b.error||('تعذّر ('+res.status+')'));return b;}
+function hrLbl(t){return `<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px">${t}</div>`;}
+function renderHuroof(){
+  document.getElementById('main').innerHTML=`
+    <div class="desk">
+      <div class="desk-head">
+        <div><h1><i data-lucide="graduation-cap" style="width:26px;height:26px;vertical-align:-4px"></i> حروف ودروس</h1>
+          <p>إدارة المنصّة — المؤشرات، تفعيل الحسابات، وأكواد التفعيل.</p></div>
+        <a class="glass-btn" href="/admin/huroof-schools"><i data-lucide="school"></i> لوحة المدارس</a>
+      </div>
+      <div id="hrKpis" class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:20px"></div>
+      <div class="card" style="margin-bottom:16px">
+        <h3><i data-lucide="user-check"></i> تفعيل حساب بالبريد</h3>
+        <div style="opacity:.7;font-size:13px;margin:6px 0 12px">يمنح المنصّة لبريدٍ سجّل دخوله مسبقاً. لمن لم يسجّل بعد، استعمل الأكواد أدناه.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="flex:2;min-width:200px">${hrLbl('البريد')}<input id="hrEmail" class="field" dir="ltr" placeholder="teacher@example.com"></div>
+          <div style="width:130px">${hrLbl('أشهر (فارغ=دائم)')}<input id="hrMonths" class="field" type="number" dir="ltr" placeholder="∞"></div>
+          <button class="btn btn-gold" onclick="hrGrant()"><i data-lucide="check"></i> تفعيل</button>
+        </div>
+        <div id="hrGrantMsg" style="margin-top:10px;font-weight:700;font-size:13px"></div>
+      </div>
+      <div class="card" style="margin-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+          <h3 style="margin:0"><i data-lucide="ticket"></i> أكواد التفعيل — مرّة واحدة</h3>
+          <span id="hrCodesCount" style="opacity:.7;font-size:12px"></span>
+        </div>
+        <div style="opacity:.7;font-size:13px;margin:6px 0 12px">كودٌ يفعّله المستخدم مرّةً واحدة على المنصّة (يفتحه في huroofduroos.com/activate). مناسبٌ لمن لم يسجّل بعد.</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end">
+          <div style="width:90px">${hrLbl('العدد')}<input id="hrCount" class="field" type="number" dir="ltr" value="10"></div>
+          <div style="width:110px">${hrLbl('أشهر')}<input id="hrCMonths" class="field" type="number" dir="ltr" value="12"></div>
+          <div style="flex:1;min-width:150px">${hrLbl('ملاحظة (اختياري)')}<input id="hrNote" class="field" placeholder="مثال: معرض التعليم"></div>
+          <button class="btn btn-gold" onclick="hrGen()"><i data-lucide="plus"></i> توليد</button>
+        </div>
+        <div id="hrFresh" style="margin-top:12px"></div>
+        <div id="hrList" style="margin-top:12px;max-height:220px;overflow:auto"></div>
+      </div>
+    </div>`;
+  refreshIcons();hrLoadStats();hrLoadCodes();
+}
+async function hrLoadStats(){const el=document.getElementById('hrKpis');if(!el)return;el.innerHTML='<div class="card" style="opacity:.6">جارٍ تحميل المؤشرات…</div>';try{const s=await hrApi('admin/stats/extended');const reg=(s.recentRegistrations||[]).reduce((a,r)=>a+Number(r.count||0),0);const tile=(v,l,c)=>`<div class="card" style="padding:16px"><div style="font-size:24px;font-weight:900;color:${c}">${v}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${l}</div></div>`;el.innerHTML=tile(HR_ar(s.activeSubscribers),'مشترك نشط','#22c55e')+tile(HR_ar(s.totalTeachers),'معلّم مسجّل','#f5a623')+tile(HR_ar(reg),'تسجيل (٣٠ يوم)','#0ea5e9')+tile(HR_ar(s.pendingTeacherQuestions),'سؤال معلّق','#ec4899')+`<a href="https://analytics.google.com/" target="_blank" rel="noopener" style="text-decoration:none">${tile('📊','زيارات — GA','#64748b')}</a>`;}catch(e){el.innerHTML=`<div class="card" style="color:#ef4444;font-weight:700">${esc(e.message)}</div>`;}}
+async function hrGrant(){const email=(document.getElementById('hrEmail').value||'').trim();const m=(document.getElementById('hrMonths').value||'').trim();const msg=document.getElementById('hrGrantMsg');if(!/.+@.+\..+/.test(email)){msg.style.color='#ef4444';msg.textContent='بريد غير صالح';return}msg.style.color='var(--muted)';msg.textContent='جارٍ…';try{const r=await hrApi('admin/grants',{method:'POST',body:Object.assign({email},m?{months:+m}:{})});msg.style.color='#22c55e';msg.textContent='✓ فُعّل حساب '+(r.name||r.email)+(r.currentPeriodEnd?(' حتى '+new Date(r.currentPeriodEnd).toLocaleDateString('ar-SA')):' (دائم)');document.getElementById('hrEmail').value='';document.getElementById('hrMonths').value='';hrLoadStats();}catch(e){msg.style.color='#ef4444';msg.textContent=e.message;}}
+async function hrGen(){const count=Math.max(1,Math.min(100,parseInt(document.getElementById('hrCount').value)||0));const m=(document.getElementById('hrCMonths').value||'').trim();const note=(document.getElementById('hrNote').value||'').trim();const fresh=document.getElementById('hrFresh');if(!count)return;fresh.innerHTML='جارٍ التوليد…';try{const r=await hrApi('admin/activation-codes',{method:'POST',body:Object.assign({count},m?{months:+m}:{},note?{note}:{})});hrFreshCodes=r.codes||[];fresh.innerHTML=`<div class="card" style="border-color:#22c55e55;background:#22c55e11"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#22c55e">✓ تولّد ${HR_ar(hrFreshCodes.length)} كوداً — انسخها الآن</b><button class="btn btn-sm btn-gold" onclick="hrCopy(this)">نسخ الكل</button></div><div style="font-family:monospace;direction:ltr;text-align:left;font-size:13px;line-height:1.9;max-height:150px;overflow:auto">${hrFreshCodes.map(esc).join('<br>')}</div></div>`;hrLoadCodes();}catch(e){fresh.innerHTML=`<div style="color:#ef4444;font-weight:700">${esc(e.message)}</div>`;}}
+function hrCopy(btn){navigator.clipboard.writeText(hrFreshCodes.join('\n'));btn.textContent='نُسخ ✓';}
+async function hrLoadCodes(){const list=document.getElementById('hrList');const cnt=document.getElementById('hrCodesCount');if(!list)return;try{const r=await hrApi('admin/activation-codes');const codes=r.codes||[];const unused=codes.filter(c=>c.status==='unused').length;if(cnt)cnt.textContent=HR_ar(unused)+' متاح · '+HR_ar(codes.length)+' إجمالاً';list.innerHTML=codes.slice(0,100).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);gap:10px"><span style="font-family:monospace;direction:ltr;${c.status==='redeemed'?'text-decoration:line-through;opacity:.5':''}">${esc(c.code)}</span><span style="display:flex;gap:8px;align-items:center;font-size:11px"><span style="opacity:.6">${c.months?HR_ar(c.months)+' شهر':'دائم'}${c.note?' · '+esc(c.note):''}</span><span style="font-weight:900;color:${c.status==='unused'?'#22c55e':'#94a3b8'}">${c.status==='unused'?'متاح':'مستخدَم'}</span></span></div>`).join('')||'<div style="opacity:.6">لا أكواد بعد.</div>';}catch(e){list.innerHTML=`<div style="color:#ef4444">${esc(e.message)}</div>`;}}
 
 /* ===== WALLPAPER (خلفية الشاشة) ===== */
 const WALLS=[
