@@ -741,6 +741,7 @@ function setFreelancerAppIcon(emoji,name){try{const c=document.createElement('ca
 /* ===== APPS / ROUTER ===== */
 const APPS=[
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
+  {id:'banners',name:'بانرات حروف',icon:'image'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
@@ -765,7 +766,7 @@ const APPS=[
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,huroof:renderHuroof,banners:renderBanners,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -1567,6 +1568,120 @@ async function swLoad(force){
   SW_LOADING=false;if(CUR==='sitework')renderSiteWorks();
 }
 function swThumb(w){if(w.thumb)return w.thumb;if(w.images&&w.images.length)return w.images[0];const u=w.video_url||'';const m=u.match(/(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/);return m?('https://img.youtube.com/vi/'+m[1]+'/hqdefault.jpg'):''}
+/* ═════════════════════════════════════════════════════════════════════════
+   بانرات حروف ودروس — لافتات واجهة الموقع (huroofduroos.com)
+   ─────────────────────────────────────────────────────────────────────────
+   لا تمرّ ببيانات هذا الموقع: تُرفع مباشرةً إلى خادم حروف ودروس عبر ترويسة
+   `x-system-token` (رمز جلسة Supabase نفسه، تتحقّق منه بوّابة المالك هناك).
+   أربع خانات: لغتان × جهازان، كلٌّ بمقاس إطارها في فيغما.
+   ═════════════════════════════════════════════════════════════════════════ */
+const HUROOF_API_BASE='https://huroofduroos.com';
+const BANNER_SLOTS=[
+  {slot:'ar-windows',label:'عربي — ويندوز (كمبيوتر)',dims:'3168 × 1344',ar:2.357},
+  {slot:'en-windows',label:'إنجليزي — ويندوز (كمبيوتر)',dims:'3168 × 1344',ar:2.357},
+  {slot:'ar-phone',label:'عربي — جوال',dims:'1801 × 1352',ar:1.332},
+  {slot:'en-phone',label:'إنجليزي — جوال',dims:'1801 × 1352',ar:1.332},
+];
+let BANNERS=null,BANNERS_ERR=null,BANNERS_LOADING=false;
+const BANNER_PENDING={};
+
+async function hbToken(){try{const {data}=await sb.auth.getSession();return (data&&data.session&&data.session.access_token)||null}catch(_){return null}}
+async function hbApi(path,init){
+  const token=await hbToken();
+  if(!token)throw new Error('انتهت الجلسة — سجّل الدخول من جديد');
+  const res=await fetch(HUROOF_API_BASE+'/api/'+path,{
+    method:(init&&init.method)||'GET',
+    headers:{'x-system-token':token,'Content-Type':'application/json'},
+    body:(init&&init.body!==undefined)?JSON.stringify(init.body):undefined,
+  });
+  const body=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(body.error||('تعذّر التنفيذ ('+res.status+')'));
+  return body;
+}
+async function bannersLoad(force){
+  if(BANNERS_LOADING)return;BANNERS_LOADING=true;BANNERS_ERR=null;if(force)renderBanners();
+  try{const r=await hbApi('admin/banners');BANNERS=r.slots||[];}
+  catch(e){BANNERS_ERR=(e&&e.message)||'تعذّر الاتصال';}
+  BANNERS_LOADING=false;if(CUR==='banners')renderBanners();
+}
+function bannerCardHTML(def){
+  const s=(BANNERS||[]).find(x=>x.slot===def.slot)||{slot:def.slot,hasImage:false,url:'',linkUrl:'',active:false};
+  const prev=s.hasImage?(HUROOF_API_BASE+s.url):'';
+  return `<div class="card" style="display:flex;flex-direction:column;gap:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+      <div style="font-weight:800">${esc(def.label)}</div>
+      <span class="pill${s.active&&s.hasImage?' done':''}" style="font-size:11px">${s.active&&s.hasImage?'ظاهر':'مخفي'}</span>
+    </div>
+    <div style="font-size:12px;color:var(--muted)">المقاس المطلوب: <b>${def.dims}</b> بكسل</div>
+    <div style="position:relative;width:100%;aspect-ratio:${def.ar};background:#0006;border-radius:10px;overflow:hidden;border:1px solid #ffffff14">
+      <img id="bp_${def.slot}" src="${esc(prev)}" style="width:100%;height:100%;object-fit:cover;display:${prev?'block':'none'}">
+      <div id="bph_${def.slot}" style="display:${prev?'none':'grid'};place-items:center;height:100%;color:var(--muted);font-size:13px;gap:6px"><i data-lucide="image-off"></i> لا توجد صورة</div>
+    </div>
+    <input type="file" accept="image/png,image/jpeg,image/webp" id="bf_${def.slot}" style="display:none" onchange="bannerPick('${def.slot}',event)">
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('bf_${def.slot}').click()"><i data-lucide="upload"></i> اختيار صورة</button>
+      ${prev?`<button class="btn btn-ghost btn-sm" onclick="bannerDelete('${def.slot}')"><i data-lucide="trash-2"></i> حذف</button>`:''}
+    </div>
+    <label style="font-size:12px;color:var(--muted)">رابط عند الضغط (اختياري)</label>
+    <input id="bl_${def.slot}" value="${esc(s.linkUrl||'')}" placeholder="https://…" dir="ltr" style="text-align:left">
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="ba_${def.slot}" ${s.active?'checked':''} style="width:auto"> إظهار هذه اللافتة في الموقع</label>
+    <div id="bs_${def.slot}" style="font-size:12px;color:var(--muted);min-height:16px"></div>
+    <button class="btn btn-gold" onclick="bannerSave('${def.slot}')"><i data-lucide="save"></i> حفظ</button>
+  </div>`;
+}
+function renderBanners(){
+  const main=document.getElementById('main');
+  if(BANNERS===null&&!BANNERS_ERR){if(!BANNERS_LOADING)bannersLoad();main.innerHTML=`<div class="page-head"><h1><i data-lucide="image"></i> بانرات حروف ودروس</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}
+  if(BANNERS_ERR){main.innerHTML=`<div class="page-head"><h1><i data-lucide="image"></i> بانرات حروف ودروس</h1><button class="btn btn-ghost" onclick="bannersLoad(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>
+    <div class="card"><div class="badge-note"><i data-lucide="alert-triangle"></i> <div><b>تعذّر الاتصال بخادم حروف ودروس.</b> تأكّد أنّ الخادم مُحدَّث (مسار البانرات منشور) وأنّ بريدك ضمن <b>EXTERNAL_ADMIN_EMAILS</b>.<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(BANNERS_ERR)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
+  main.innerHTML=`
+    <div class="page-head"><h1><i data-lucide="image"></i> بانرات حروف ودروس</h1><button class="btn btn-ghost" onclick="bannersLoad(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="globe"></i> <div>هذه اللافتات تظهر <b>أوّل قسمٍ في موقع حروف ودروس</b>. لكلّ خانةٍ مقاسٌ محدّد — صدّر تصميمك من فيغما بنفس المقاس. النسخة العربية تظهر للزوّار بالعربية، والإنجليزية بالإنجليزية؛ ونسخة «ويندوز» للحاسب و«الجوال» للجوّال. اضبط «إظهار» ثم «حفظ». يظهر الأثر خلال دقيقة.</div></div>
+    <div class="grid">${BANNER_SLOTS.map(bannerCardHTML).join('')}</div>`;
+  applyWallpaper();refreshIcons();
+}
+function bannerPick(slot,ev){
+  const f=ev.target.files[0];ev.target.value='';if(!f)return;
+  const st=document.getElementById('bs_'+slot);
+  if(f.size>15*1024*1024){alert('الصورة كبيرة جداً (الحد ١٥MB). صدّرها بجودةٍ أخفّ.');return}
+  if(st)st.textContent='جارٍ المعالجة…';
+  compressImage(f,3200,0.86,(blob)=>{
+    if(!blob){if(st)st.textContent='';alert('تعذّر معالجة الصورة');return}
+    const rd=new FileReader();
+    rd.onload=()=>{
+      const b64=String(rd.result).split(',')[1]||'';
+      BANNER_PENDING[slot]={base64:b64,contentType:blob.type||'image/webp'};
+      const pv=document.getElementById('bp_'+slot);if(pv){pv.src=rd.result;pv.style.display='block'}
+      const ph=document.getElementById('bph_'+slot);if(ph)ph.style.display='none';
+      if(st)st.textContent='صورة جاهزة ('+Math.round(blob.size/1024)+'KB) — اضغط «حفظ» لنشرها.';
+    };
+    rd.onerror=()=>{if(st)st.textContent='';alert('تعذّر قراءة الصورة')};
+    rd.readAsDataURL(blob);
+  });
+}
+async function bannerSave(slot){
+  const st=document.getElementById('bs_'+slot);
+  const le=document.getElementById('bl_'+slot),ae=document.getElementById('ba_'+slot);
+  const linkUrl=le?le.value.trim():'';const active=ae?ae.checked:false;
+  const pend=BANNER_PENDING[slot];
+  const existing=(BANNERS||[]).find(x=>x.slot===slot);
+  if(!pend&&!(existing&&existing.hasImage)){alert('اختر صورةً أولاً.');return}
+  if(st)st.textContent='جارٍ الحفظ…';
+  try{
+    const body={linkUrl,active};
+    if(pend){body.dataBase64=pend.base64;body.contentType=pend.contentType}
+    await hbApi('admin/banners/'+slot,{method:'POST',body});
+    delete BANNER_PENDING[slot];
+    if(st)st.textContent='تم النشر ✓';
+    bannersLoad(true);
+  }catch(e){if(st)st.textContent='';alert('تعذّر الحفظ: '+((e&&e.message)||e))}
+}
+async function bannerDelete(slot){
+  if(!confirm('حذف صورة هذه الخانة؟ سيعود الموقع للواجهة الافتراضية لهذه اللغة.'))return;
+  try{await hbApi('admin/banners/'+slot,{method:'DELETE'});delete BANNER_PENDING[slot];bannersLoad(true)}
+  catch(e){alert('تعذّر الحذف: '+((e&&e.message)||e))}
+}
+
 function renderSiteWorks(){
   const main=document.getElementById('main');
   if(SITEWORKS===null){if(!SW_LOADING&&!SW_ERR)swLoad();if(!SW_ERR){main.innerHTML=`<div class="page-head"><h1><i data-lucide="film"></i> الأعمال (الموقع)</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}}
