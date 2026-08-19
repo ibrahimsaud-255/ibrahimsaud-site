@@ -705,7 +705,10 @@ const USD_RATE=3.75; // ريال لكل دولار
 const num2=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const usdMoney=n=>'$'+num2(n);            // دولار فقط — بدون رمز الريال
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const today=()=>new Date().toISOString().slice(0,10);
+/* today() و ymKey() يعتمدان التوقيت المحلي — تفادياً لخطأ نقل الشهر ليلاً في التوقيتات الشرقية */
+const _pad2=n=>String(n).padStart(2,'0');
+const today=()=>{const d=new Date();return d.getFullYear()+'-'+_pad2(d.getMonth()+1)+'-'+_pad2(d.getDate())};
+const ymKey=d=>d.getFullYear()+'-'+_pad2(d.getMonth()+1);
 
 /* ===== AUTH (Supabase) ===== */
 const LOGO='https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/%D8%B4%D8%B9%D8%A7%D8%B1_%D8%A7%D9%95%D8%A8%D8%B1%D8%A7%D9%87%D9%8A%D9%85_%D8%B3%D8%B9%D9%88%D8%AF.png';
@@ -1196,7 +1199,7 @@ function homeCustomizeModal(){const rows=HOME_WIDGETS.map(w=>{const on=homeHasWi
 
 /* — بيانات مشتركة تستخدمها كروت الرئيسية — */
 function homeMonthCollected(ymKey){const ym=ymKey||today().slice(0,7);return S.invoices.reduce((a,inv)=>{const pays=(inv.payments&&inv.payments.length)?inv.payments:(inv.status==='paid'?[{date:inv.paidDate||inv.date,amount:invTotal(inv)}]:[]);return a+pays.filter(p=>(p.date||'').slice(0,7)===ym).reduce((s,p)=>s+Number(p.amount||0),0)},0)}
-function homeRevenueMonths(count){const months=[];const now=new Date();for(let i=(count||6)-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({k:d.toISOString().slice(0,7),lbl:d.toLocaleDateString('ar',{month:'short'}),v:homeMonthCollected(d.toISOString().slice(0,7))})}return months}
+function homeRevenueMonths(count){const months=[];const now=new Date();for(let i=(count||6)-1;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);const k=ymKey(d);months.push({k,lbl:d.toLocaleDateString('ar',{month:'short'}),v:homeMonthCollected(k)})}return months}
 
 /* — كل كارت مستقل — يعيد HTML — */
 function widgetHTML(k){
@@ -1204,8 +1207,8 @@ function widgetHTML(k){
   switch(k){
     case 'focus':return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="brain"></i> تركيز اليوم الواعي</h3><div id="focusWidget"></div></div>`;
     case 'prayer':return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="moon-star"></i> مواقيت الصلاة</h3><div id="prayerWidget"></div></div>`;
-    case 'revenue_6m':{const ms=homeRevenueMonths(6);const maxM=Math.max(1,...ms.map(m=>m.v));return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="trending-up"></i> الإيرادات المحصّلة — آخر ٦ أشهر <span style="color:var(--muted);font-weight:400;font-size:12px">· حيّ</span></h3>
-      <div style="display:flex;align-items:flex-end;gap:14px;height:170px;padding-top:10px">${ms.map(m=>`<div style="flex:1;text-align:center"><div style="height:${Math.round(m.v/maxM*130)}px;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:7px 7px 0 0;min-height:3px"></div><div style="font-size:11px;color:var(--muted);margin-top:6px">${m.lbl}</div><div style="font-size:11px">${m.v?Math.round(m.v):''}</div></div>`).join('')}</div></div>`;}
+    case 'revenue_6m':{const ms=homeRevenueMonths(6);const maxM=Math.max(1,...ms.map(m=>m.v));return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="trending-up"></i> الإيرادات المحصّلة — آخر ٦ أشهر <span style="color:var(--muted);font-weight:400;font-size:12px">· حيّ · حسب تواريخ المدفوعات المسجّلة على الفواتير فقط</span></h3>
+      <div style="display:flex;align-items:flex-end;gap:14px;height:170px;padding-top:10px">${ms.map(m=>`<div style="flex:1;text-align:center;cursor:help" title="${esc(m.lbl)} · ${esc(m.k)} — ${money(m.v)}\n(يُحتسب من مدفوعات الفواتير المسجّلة في هذا الشهر — السجل لا يشمل عروض الأسعار قبل تحويلها لفاتورة)"><div style="height:${Math.round(m.v/maxM*130)}px;background:linear-gradient(180deg,var(--gold2),var(--gold));border-radius:7px 7px 0 0;min-height:3px"></div><div style="font-size:11px;color:var(--muted);margin-top:6px">${m.lbl}</div><div style="font-size:11px">${m.v?Math.round(m.v):''}</div></div>`).join('')}</div></div>`;}
     case 'habits_list':{const habTotal=H.list.length;const habDone=H.list.filter(h=>habitDone(h.id)).length;const pendingHabits=H.list.filter(h=>!habitDone(h.id));const pendingPrayers=PRAYERS.filter(pr=>!prayerGet(pr[0]));return `<div class="card"><h3><i data-lucide="repeat"></i> عادات اليوم <span style="color:var(--muted);font-weight:400;font-size:13px">${habDone}/${habTotal}</span></h3>
       ${pendingHabits.length?pendingHabits.map(h=>`<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)"><button onclick="toggleHabit('${h.id}')" title="تم" style="flex:none;width:26px;height:26px;border-radius:50%;border:2px solid var(--line);background:transparent;cursor:pointer"></button><span class="inl" style="color:${h.color}">${iconHTML(h.icon,'circle',16)}</span><span style="flex:1">${esc(h.name)}</span>${habitStreak(h.id)>0?`<span style="display:inline-flex;align-items:center;gap:2px;color:#f59e0b;font-size:12px;font-weight:700"><i data-lucide="flame" style="width:13px;height:13px"></i>${habitStreak(h.id)}</span>`:''}</div>`).join(''):(habTotal?'<p style="color:var(--good)"><i class="inl" data-lucide="check-check"></i> أنجزت كل عاداتك اليوم، أحسنت!</p>':'<p style="color:var(--muted)">لا عادات بعد.</p>')}
       <div style="margin-top:10px;font-size:13px;color:${pendingPrayers.length?'var(--muted)':'var(--good)'}"><i class="inl" data-lucide="moon-star"></i> ${pendingPrayers.length?'صلوات لم تُسجَّل: '+pendingPrayers.map(p=>p[1]).join('، '):'سجّلت كل صلوات اليوم'}</div>
@@ -3969,7 +3972,7 @@ function renderDashboards(){
   const invoicedTotal=allInv.reduce((a,i)=>a+invTotal(i),0);
   const quotes=S.sales||[];const openQuotes=quotes.filter(q=>q.status==='draft'||q.status==='sent').length;
   const months=[];const now=new Date();
-  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({k:d.toISOString().slice(0,7),lbl:d.toLocaleDateString('ar',{month:'short'}),v:0})}
+  for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({k:ymKey(d),lbl:d.toLocaleDateString('ar',{month:'short'}),v:0})}
   allInv.forEach(inv=>{const pays=(inv.payments&&inv.payments.length)?inv.payments:(inv.status==='paid'?[{date:inv.paidDate||inv.date,amount:invTotal(inv)}]:[]);pays.forEach(p=>{const k=(p.date||'').slice(0,7);const mm=months.find(x=>x.k===k);if(mm)mm.v+=Number(p.amount||0)})});
   const maxM=Math.max(1,...months.map(m=>m.v));
   const byC={};allInv.forEach(i=>{const n=resolveClientName(i);byC[n]=(byC[n]||0)+invTotal(i)});
@@ -4005,7 +4008,7 @@ function renderDashboards(){
       <div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="file-text"></i> عروض الأسعار — تفصيل شهري</h3>
         ${(function(){
           // آخر ٦ أشهر
-          const ms=[];const nn=new Date();for(let i=5;i>=0;i--){const d=new Date(nn.getFullYear(),nn.getMonth()-i,1);ms.push({k:d.toISOString().slice(0,7),lbl:d.toLocaleDateString('ar',{month:'long',year:'numeric'})})}
+          const ms=[];const nn=new Date();for(let i=5;i>=0;i--){const d=new Date(nn.getFullYear(),nn.getMonth()-i,1);ms.push({k:ymKey(d),lbl:d.toLocaleDateString('ar',{month:'long',year:'numeric'})})}
           const rows=ms.map(m=>{const g=quotes.filter(q=>(q.date||'').slice(0,7)===m.k);const c={draft:0,sent:0,sale:0,cancel:0};g.forEach(q=>{if(c[q.status]!==undefined)c[q.status]++});const sum=g.reduce((a,q)=>a+docTotal(q),0);return {m,g,c,sum}}).reverse();
           const tot={draft:0,sent:0,sale:0,cancel:0,sum:0,n:0};rows.forEach(r=>{tot.draft+=r.c.draft;tot.sent+=r.c.sent;tot.sale+=r.c.sale;tot.cancel+=r.c.cancel;tot.sum+=r.sum;tot.n+=r.g.length});
           return `<table style="margin-top:8px"><thead><tr><th>الشهر</th><th>عرض</th><th>مُرسل</th><th>أمر بيع</th><th>ملغى</th><th>إجمالي القيمة</th></tr></thead><tbody>
