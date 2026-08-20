@@ -3645,45 +3645,57 @@ function printDocHTML(type,id){
   const ct=S.contacts.find(c=>c.id===d.contactId)||{};const cname=resolveClientName(d);const cvat=d.clientVat||ct.vat||'';const caddr=[ct.company,ct.address,ct.city].filter(Boolean).join('، ');
   let qrBlock='';
   if(isInv||isCredit){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(off.brand||s.vat.sellerName||s.brand,off.vat||s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
-  // ===== صفحة الغلاف (Page 1) — النصف العلوي بلون البراند، شعار يسار، «عرض سعر» كبير في المنتصف — تظهر في معاينة الواتساب
+  // ===== صفحة الغلاف (Page 1) — «عرض سعر» كبير في المنتصف بتنسيق نظيف — تظهر في معاينة الواتساب
   const cover=`
    <div class="page cover" style="background:#fff;display:flex;flex-direction:column">
-    <div class="cover-top" style="position:relative;height:400px;flex:0 0 400px;overflow:hidden">
+    <div class="cover-top" style="position:relative;height:420px;flex:0 0 420px;overflow:hidden">
       ${brandPatternTop(b)}
-      <div style="position:absolute;inset:0;padding:32px 40px;display:flex;flex-direction:column;justify-content:space-between">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div style="text-align:left">${b.logo?`<img src="${esc(b.logo)}" style="height:64px;max-width:190px;object-fit:contain;filter:drop-shadow(0 2px 6px rgba(0,0,0,.18))">`:`<div style="color:#fff;font-weight:900;font-size:26px;letter-spacing:.5px;text-shadow:0 2px 6px rgba(0,0,0,.25)">${esc(b.name)}</div>`}</div>
-          <div style="text-align:right;color:#fff"><div style="font-size:12px;opacity:.85;font-weight:700">${esc(b.tagline||'')}</div></div>
+      <div style="position:absolute;inset:0;padding:36px 48px;display:flex;flex-direction:column;justify-content:space-between">
+        <!-- الشعار في الزاوية العلوية اليسرى + اسم البراند في اليمنى -->
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:20px">
+          <div>${b.logo?`<img src="${esc(b.logo)}" style="height:70px;max-width:220px;object-fit:contain;filter:drop-shadow(0 3px 10px rgba(0,0,0,.22))">`:`<div style="color:#fff;font-weight:900;font-size:28px;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.28)">${esc(b.name)}</div>`}</div>
+          <div style="text-align:left;color:#fff">
+            <div style="font-weight:900;font-size:15px;letter-spacing:.5px">${esc(b.name)}</div>
+            ${b.tagline?`<div style="font-size:11.5px;opacity:.9;margin-top:3px;max-width:220px">${esc(b.tagline)}</div>`:''}
+          </div>
         </div>
+        <!-- العنوان الرئيسي في المنتصف — بخط ثمانية الرسمي، بلا ظل -->
         <div style="text-align:center;color:#fff">
-          <div style="font-size:14px;letter-spacing:8px;opacity:.9;font-weight:700">${esc(kind.toUpperCase()==='QUOTATION'?kind:kind)}</div>
-          <div style="font-size:68px;font-weight:900;line-height:1;margin:8px 0 6px;text-shadow:0 3px 12px rgba(0,0,0,.25)">${esc(kind)}</div>
-          <div style="font-size:16px;font-weight:800;opacity:.95;letter-spacing:2px">${esc(docNo)}</div>
+          <div class="headline" style="font-size:82px;font-weight:900;line-height:1;margin:0;letter-spacing:-1px">${esc(kind)}</div>
+          <div style="display:inline-block;margin-top:16px;padding:7px 22px;border:2px solid rgba(255,255,255,.6);border-radius:30px;font-size:15px;font-weight:700;letter-spacing:3px" dir="ltr">${esc(docNo)}</div>
         </div>
         <div></div>
       </div>
     </div>
-    <div style="padding:40px 44px;display:grid;grid-template-columns:1fr 1fr;gap:28px;color:#0f172a">
+    <!-- شريط بيانات مركزي: للعميل / التاريخ / الإجمالي — بمسافات كافية من الحواف -->
+    <div style="padding:44px 56px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:#0f172a">
       <div>
-        <div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:2px;margin-bottom:4px">مُقدَّم إلى</div>
-        <div style="font-size:22px;font-weight:900;color:${esc(b.ink)}">${esc(cname)}</div>
-        ${caddr?`<div style="color:#475569;font-size:13px;margin-top:4px">${esc(caddr)}</div>`:''}
-        ${ct.email?`<div style="color:#475569;font-size:13px">${esc(ct.email)}</div>`:''}
-        ${ct.phone?`<div style="color:#475569;font-size:13px" dir="ltr">${esc(ct.phone)}</div>`:''}
+        <div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:3px;margin-bottom:6px">مُقدَّم إلى</div>
+        <div style="font-size:24px;font-weight:900;color:${esc(b.ink)};line-height:1.25">${esc(cname)}</div>
+        ${caddr?`<div style="color:#475569;font-size:13px;margin-top:6px;line-height:1.7">${esc(caddr)}</div>`:''}
+        ${ct.email?`<div style="color:#475569;font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
+        ${ct.phone?`<div style="color:#475569;font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}
       </div>
-      <div style="text-align:left">
-        <div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:2px;margin-bottom:4px">التاريخ</div>
-        <div style="font-size:16px;font-weight:800">${d.date}</div>
-        ${d.expiry?`<div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:2px;margin-top:14px">صالح حتى</div><div style="font-size:15px;font-weight:800">${esc(d.expiry)}</div>`:''}
-        <div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:2px;margin-top:14px">الإجمالي</div>
-        <div style="font-size:26px;font-weight:900;color:${esc(b.accent2||b.accent)}">${money(total)}</div>
+      <div style="border-right:2px solid ${esc(b.accent)}33;padding-right:24px">
+        <div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:14px">
+          <div>
+            <div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div>
+            <div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.date)}</div>
+          </div>
+          ${d.expiry?`<div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">صالح حتى</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.expiry)}</div></div>`:''}
+        </div>
+        <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,${esc(b.accent)}18,${esc(b.accent)}08);border:1px solid ${esc(b.accent)}44;border-radius:12px">
+          <div style="font-size:10.5px;color:${esc(b.accent2||b.accent)};font-weight:800;letter-spacing:2px">الإجمالي</div>
+          <div style="font-size:26px;font-weight:900;color:${esc(b.accent2||b.accent)};margin-top:2px;white-space:nowrap">${money(total)}</div>
+        </div>
       </div>
     </div>
-    <div style="padding:0 44px">
-      <div style="height:1px;background:linear-gradient(90deg,transparent,${esc(b.accent)}55,transparent);margin:8px 0 24px"></div>
+    <!-- البيانات الرسمية أسفل الغلاف -->
+    <div style="padding:24px 56px;margin-top:auto">
+      <div style="height:1px;background:linear-gradient(90deg,transparent,${esc(b.accent)}66,transparent);margin-bottom:18px"></div>
       <div style="color:#64748b;font-size:12px;line-height:1.9">
-        <div style="font-weight:800;color:${esc(b.ink)};font-size:13px;margin-bottom:6px">${esc(off.brand)}</div>
-        ${off.owner?`${esc(off.owner)} · `:''}${off.email?esc(off.email):''}${off.phone?' · <span dir="ltr">'+esc(off.phone)+'</span>':''}
+        <div style="font-weight:800;color:${esc(b.ink)};font-size:13.5px;margin-bottom:4px">${esc(off.brand)}</div>
+        ${off.owner?`${esc(off.owner)}`:''}${off.email?(off.owner?' · ':'')+esc(off.email):''}${off.phone?' · <span dir="ltr">'+esc(off.phone)+'</span>':''}
         ${off.address?`<br>${esc(off.address)}`:''}
         ${off.cr||off.vat?`<br>${off.cr?'س.ت '+esc(off.cr):''}${off.cr&&off.vat?' · ':''}${off.vat?'الرقم الضريبي '+esc(off.vat):''}`:''}
       </div>
@@ -3745,13 +3757,21 @@ function printDocHTML(type,id){
       ${off.cr||off.vat?`<br>${off.cr?'س.ت '+esc(off.cr):''}${off.cr&&off.vat?' · ':''}${off.vat?'الرقم الضريبي '+esc(off.vat):''}`:''}
     </div>
    </div>`;
+  const ORIGIN=location.origin;
   return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(kind)} ${esc(docNo)}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
     <style>
+      /* خط ثمانية — الخط الرسمي للنظام */
+      @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+      @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+      @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+      @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:900;font-display:swap}
+      @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+      @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Black.woff2") format("woff2");font-weight:900;font-display:swap}
       @page{size:A4;margin:0}
-      html,body{margin:0;padding:0;background:#e5e7eb;font-family:Tajawal,Arial,sans-serif;color:#0f172a}
+      html,body{margin:0;padding:0;background:#e5e7eb;font-family:"Thmanyah Sans","Tajawal",Arial,sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased}
       .page{width:210mm;min-height:297mm;background:#fff;margin:0 auto;position:relative;page-break-after:always;overflow:hidden}
       .page:last-child{page-break-after:auto}
+      .headline{font-family:"Thmanyah Serif","Thmanyah Sans","Tajawal",serif}
       @media screen{.page{margin:14px auto;box-shadow:0 8px 24px rgba(0,0,0,.15)}}
       table{font-family:inherit}
     </style></head><body>${cover}${details}</body></html>`;
