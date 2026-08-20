@@ -3704,7 +3704,7 @@ function printDocHTML(type,id){
    </div>`;
   // ===== صفحة التفاصيل (Page 2) — الجدول والإجمالي والشروط
   const details=`
-   <div class="page details" style="padding:34px 40px;position:relative">
+   <div class="page details" style="padding:40px 48px;position:relative">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${esc(b.accent)};padding-bottom:14px;margin-bottom:20px">
       <div>${b.logo?`<img src="${esc(b.logo)}" style="height:44px;margin-bottom:6px">`:`<div style="font-size:20px;font-weight:900">${esc(b.name)}</div>`}
         <div style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
@@ -3721,32 +3721,34 @@ function printDocHTML(type,id){
         ${cvat?`<div style="color:#475569;font-size:13px"><b>الرقم الضريبي:</b> ${esc(cvat)}</div>`:''}</div>
       ${ct.logo?`<img src="${esc(ct.logo)}" style="height:46px;max-width:130px;object-fit:contain">`:''}
     </div>
-    <table style="width:100%;border-collapse:separate;border-spacing:0;border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
+    <div style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
+    <table style="width:100%;border-collapse:collapse;table-layout:fixed">
       <thead><tr style="background:${esc(b.accent)};color:#fff">
-        <th style="padding:11px;text-align:right;font-size:13px">الوصف</th>
-        <th style="padding:11px;width:60px;font-size:13px">الكمية</th>
-        <th style="padding:11px;width:88px;font-size:13px">السعر</th>
-        ${disc>0.001?'<th style="padding:11px;width:60px;font-size:13px">خصم</th>':''}
-        <th style="padding:11px;width:100px;font-size:13px">المجموع</th>
+        <th style="padding:11px 14px;text-align:right;font-size:13px">الوصف</th>
+        <th style="padding:11px 8px;width:64px;font-size:13px">الكمية</th>
+        <th style="padding:11px 8px;width:110px;font-size:13px">السعر</th>
+        ${disc>0.001?'<th style="padding:11px 8px;width:70px;font-size:13px">خصم</th>':''}
+        <th style="padding:11px 8px;width:130px;font-size:13px">المجموع</th>
       </tr></thead>
       <tbody>${d.items.map((it,i)=>`<tr style="background:${i%2?'#fafafa':'#fff'}">
-        <td style="padding:11px"><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:#64748b;margin-top:3px">${esc(it.details)}</div>`:''}</td>
-        <td style="padding:11px;text-align:center">${it.qty}</td>
-        <td style="padding:11px;text-align:center">${Number(it.price).toFixed(2)}</td>
-        ${disc>0.001?`<td style="padding:11px;text-align:center">${it.discount?it.discount+'%':'—'}</td>`:''}
-        <td style="padding:11px;text-align:center;font-weight:800">${lineTotal(it).toFixed(2)}</td>
+        <td style="padding:11px 14px;word-wrap:break-word"><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:#64748b;margin-top:3px;line-height:1.7">${esc(it.details)}</div>`:''}</td>
+        <td style="padding:11px 8px;text-align:center;white-space:nowrap">${it.qty}</td>
+        <td style="padding:11px 8px;text-align:center;white-space:nowrap" dir="ltr">${Number(it.price).toFixed(2)}</td>
+        ${disc>0.001?`<td style="padding:11px 8px;text-align:center;white-space:nowrap">${it.discount?it.discount+'%':'—'}</td>`:''}
+        <td style="padding:11px 8px;text-align:center;font-weight:800;white-space:nowrap" dir="ltr">${lineTotal(it).toFixed(2)}</td>
       </tr>`).join('')}</tbody>
     </table>
+    </div>
     <div style="display:flex;justify-content:space-between;gap:20px;margin-top:16px;flex-wrap:wrap">
       <div style="flex:1;min-width:200px">${d.notes?`<div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;color:#334155;white-space:pre-wrap;font-size:12.5px;line-height:1.9">${esc(isInv?d.notes:resolveQuoteNotes(d,d.notes))}</div>`:''}</div>
-      <div style="width:290px">
-        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px"><span>المجموع الفرعي</span><span>${lineSub.toFixed(2)} ${s.currency}</span></div>
-        ${disc>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px"><span>خصم البنود</span><span>- ${disc.toFixed(2)} ${s.currency}</span></div>`:''}
-        ${ovr>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span>- ${ovr.toFixed(2)} ${s.currency}</span></div>`:''}
-        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span>${tax.toFixed(2)} ${s.currency}</span></div>
-        <div style="display:flex;justify-content:space-between;padding:12px 14px;margin-top:6px;background:${esc(b.accent)};color:#fff;border-radius:10px;font-weight:900;font-size:16px"><span>الإجمالي</span><span>${total.toFixed(2)} ${s.currency}</span></div>
-        ${isInv&&paid>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px"><span>المدفوع</span><span>${paid.toFixed(2)} ${s.currency}</span></div>`:''}
-        ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px"><span>المتبقي</span><span>${due.toFixed(2)} ${s.currency}</span></div>`:''}
+      <div style="width:330px;flex:0 0 330px">
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>المجموع الفرعي</span><span style="white-space:nowrap" dir="ltr">${lineSub.toFixed(2)} ${esc(s.currency)}</span></div>
+        ${disc>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم البنود</span><span style="white-space:nowrap" dir="ltr">- ${disc.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        ${ovr>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span style="white-space:nowrap" dir="ltr">- ${ovr.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${esc(b.accent)};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>الإجمالي</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
+        ${isInv&&paid>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>المدفوع</span><span style="white-space:nowrap" dir="ltr">${paid.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
       </div>
     </div>
     ${isInv&&(off.iban||s.iban||s.bankName)?`<div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border-right:3px solid ${esc(b.accent)};border-radius:8px;color:#0c4a6e;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName||'')} <span dir="ltr">${esc(off.iban||s.iban||'')}</span></div>`:''}
