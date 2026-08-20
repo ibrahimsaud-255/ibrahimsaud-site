@@ -3769,12 +3769,15 @@ function printDocHTML(type,id){
       @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:900;font-display:swap}
       @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
       @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Black.woff2") format("woff2");font-weight:900;font-display:swap}
-      @page{size:A4;margin:0}
+      /* هوامش آمنة تناسب إعدادات الطباعة الافتراضية لكل المتصفحات (Chrome/Safari/Firefox) */
+      @page{size:A4;margin:14mm 12mm}
       html,body{margin:0;padding:0;background:#e5e7eb;font-family:"Thmanyah Sans","Tajawal",Arial,sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased}
-      .page{width:210mm;min-height:297mm;background:#fff;margin:0 auto;position:relative;page-break-after:always;overflow:hidden}
+      /* الصفحة العملية: 186mm × 269mm (A4 ناقص الهوامش) */
+      .page{width:186mm;min-height:269mm;background:#fff;margin:0 auto;position:relative;page-break-after:always;overflow:hidden;border-radius:2px}
       .page:last-child{page-break-after:auto}
       .headline{font-family:"Thmanyah Serif","Thmanyah Sans","Tajawal",serif}
       @media screen{.page{margin:14px auto;box-shadow:0 8px 24px rgba(0,0,0,.15)}}
+      @media print{.page{margin:0 auto;box-shadow:none}}
       table{font-family:inherit}
     </style></head><body>${cover}${details}</body></html>`;
 }
