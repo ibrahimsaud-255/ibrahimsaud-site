@@ -1213,6 +1213,291 @@ function setRender(){
     </div>`);
 }
 async function setSave(){const body={contact_email:(document.getElementById('setEmail').value||'').trim(),contact_whatsapp:(document.getElementById('setWa').value||'').trim(),contact_phone:(document.getElementById('setPhone').value||'').trim()};const msg=document.getElementById('setMsg');msg.style.color='var(--muted)';msg.textContent='جارٍ…';try{await hrApi('admin/settings',{method:'PUT',body});msg.style.color='#22c55e';msg.textContent='حُفظ ✓';}catch(e){msg.style.color='#ef4444';msg.textContent=e.message;}}
+/* ═══════════════════════════════════════════════════════════════════════════
+   إدارة منصّة حروف — المرحلة ٢ (التأليف): الأسئلة، مكتبة PDF، المستخرج،
+   نافس، الأغلفة، المدوّنة. تُضاف إلى HR_VIEWS في آخر الملفّ.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const HR_GRADES={1:'الأول الابتدائي',2:'الثاني الابتدائي',3:'الثالث الابتدائي',4:'الرابع الابتدائي',5:'الخامس الابتدائي',6:'السادس الابتدائي',7:'الأول المتوسط',8:'الثاني المتوسط',9:'الثالث المتوسط',10:'الأول الثانوي',11:'الثاني الثانوي',12:'الثالث الثانوي'};
+const HR_SUBJECTS={arabic:'اللغة العربية',math:'الرياضيات',science:'العلوم',social:'الدراسات الاجتماعية',english:'اللغة الإنجليزية',islamic:'الدراسات الإسلامية',quran:'القرآن الكريم وتفسيره',art:'التربية الفنية',digital:'المهارات الرقمية',lifeskills:'المهارات الحياتية والأسرية',pe:'التربية البدنية',history:'التاريخ',hadith:'الحديث',finance:'المعرفة المالية',critical:'التفكير الناقد',ai:'الذكاء الاصطناعي',geo:'الجغرافيا',stats:'الإحصاء والاحتمالات',chemistry:'الكيمياء',biology:'الأحياء',physics:'الفيزياء'};
+const HR_DIFF={easy:'سهل',medium:'متوسط',hard:'صعب'};
+function hrSubjName(s){return HR_SUBJECTS[s]||s||'—';}
+function hrGradeOpts(sel){return '<option value="">كل الصفوف</option>'+Object.keys(HR_GRADES).map(g=>`<option value="${g}" ${String(sel)===g?'selected':''}>${HR_GRADES[g]}</option>`).join('');}
+function hrGradeOptsReq(sel){return Object.keys(HR_GRADES).map(g=>`<option value="${g}" ${String(sel)===g?'selected':''}>${HR_GRADES[g]}</option>`).join('');}
+function hrSubjOpts(sel,withAll){return (withAll?'<option value="">كل المواد</option>':'')+Object.keys(HR_SUBJECTS).map(s=>`<option value="${s}" ${sel===s?'selected':''}>${HR_SUBJECTS[s]}</option>`).join('');}
+/* fetch متعدّد الأجزاء (FormData) بتوكن النظام — للمستخرج */
+async function hrApiForm(path,formData){const {data}=await sb.auth.getSession();const tok=data&&data.session?data.session.access_token:'';const res=await fetch(HR_API+'/'+path,{method:'POST',headers:{'x-system-token':tok},body:formData});const b=await res.json().catch(()=>({}));if(!res.ok)throw new Error(b.error||('تعذّر ('+res.status+')'));return b;}
+
+/* ═══════════ الأسئلة (بنك الأسئلة) ═══════════ */
+let Q=null,Q_ERR=null;const QF={page:1,search:'',grade:'',subject:'',book:'',difficulty:'',stars:''};
+function hrViewQuestions(){Q=null;Q_ERR=null;hrSet(hrLoading());qLoad();}
+async function qLoad(){try{const p=new URLSearchParams();p.set('page',String(QF.page));p.set('limit','20');if(QF.search)p.set('search',QF.search);if(QF.grade)p.set('grade',QF.grade);if(QF.subject)p.set('subject',QF.subject);if(QF.book)p.set('book',QF.book);if(QF.difficulty)p.set('difficulty',QF.difficulty);if(QF.stars)p.set('stars',QF.stars);const r=await hrApi('admin/questions?'+p.toString());Q=r;Q_ERR=null;}catch(e){Q_ERR=e.message||'خطأ';}if(hrActive('questions'))qRender();}
+function qSetFilter(k,v){QF[k]=v;QF.page=1;qLoad();}
+function qGoPage(p){QF.page=p;qLoad();}
+function qDiffChip(d){const c={easy:'#22c55e',medium:'#f59e0b',hard:'#ef4444'};return hrChip(HR_DIFF[d]||d,c[d]||'#64748b');}
+function qStars(n){n=Number(n||0);return n?('★'.repeat(n)+'☆'.repeat(Math.max(0,5-n))):'—';}
+function qRender(){
+  if(Q_ERR){hrSet(hrErr(Q_ERR,'qLoad()'));return}
+  const d=Q||{},qs=d.questions||[];const pages=Math.max(1,Math.ceil((d.total||0)/(d.limit||20)));
+  const filters=`<div class="card" style="margin-bottom:14px"><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+    <input class="field" style="flex:2;min-width:180px;margin:0" placeholder="بحث في نصّ السؤال…" value="${esc(QF.search)}" onchange="qSetFilter('search',this.value)">
+    <select class="field" style="width:auto;margin:0" onchange="qSetFilter('grade',this.value)">${hrGradeOpts(QF.grade)}</select>
+    <select class="field" style="width:auto;margin:0" onchange="qSetFilter('subject',this.value)">${hrSubjOpts(QF.subject,true)}</select>
+    <select class="field" style="width:auto;margin:0" onchange="qSetFilter('difficulty',this.value)"><option value="">كل الصعوبات</option><option value="easy" ${QF.difficulty==='easy'?'selected':''}>سهل</option><option value="medium" ${QF.difficulty==='medium'?'selected':''}>متوسط</option><option value="hard" ${QF.difficulty==='hard'?'selected':''}>صعب</option></select>
+    <select class="field" style="width:auto;margin:0" onchange="qSetFilter('stars',this.value)"><option value="">كل الجودة</option>${[5,4,3,2,1].map(s=>`<option value="${s}" ${QF.stars===String(s)?'selected':''}>${s} نجوم</option>`).join('')}</select>
+    <input class="field" style="width:140px;margin:0" placeholder="معرّف كتاب" value="${esc(QF.book)}" onchange="qSetFilter('book',this.value)">
+  </div></div>`;
+  const tiles=`<div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));margin-bottom:14px">${hrTile(HR_ar(d.total),'إجمالي','#f5a623')}${hrTile(HR_ar(d.activeCount),'مفعّل','#22c55e')}${hrTile(HR_ar(d.inactiveCount),'معطّل','#ef4444')}</div>`;
+  const rows=qs.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>السؤال</th><th>المادة/الصف</th><th>الصعوبة</th><th>الجودة</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>
+    ${qs.map(q=>`<tr>
+      <td style="max-width:340px"><div style="font-weight:600">${esc(q.question)}</div><div style="font-size:11px;color:var(--muted)">${(q.options||[]).map((o,i)=>`${i===q.correctIndex?'✓':''}${esc(o)}`).join(' · ')}</div></td>
+      <td style="font-size:12px">${esc(q.subjectLabel||q.subjectId||'')}<div style="color:var(--muted)">${esc(q.gradeLabel||('صف '+q.gradeNumber))}</div></td>
+      <td>${qDiffChip(q.difficulty)}</td>
+      <td title="${q.qualityScore!=null?('score '+q.qualityScore):''}" style="color:#f5a623;white-space:nowrap">${qStars(q.qualityStars)}</td>
+      <td>${q.isActive?hrChip('مفعّل','#22c55e'):hrChip('معطّل','#64748b')}</td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="qEdit('${esc(q.id)}')"><i data-lucide="pencil"></i></button>
+        <button class="btn btn-ghost btn-sm" onclick="qToggle('${esc(q.id)}',${!q.isActive})"><i data-lucide="power"></i></button>
+        <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="qDelete('${esc(q.id)}')"><i data-lucide="trash-2"></i></button>
+      </div></td></tr>`).join('')}</tbody></table></div>`:`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا أسئلة مطابقة.</div>`;
+  const pager=pages>1?`<div style="display:flex;gap:8px;justify-content:center;align-items:center;margin-top:14px">
+    <button class="btn btn-ghost btn-sm" ${d.page<=1?'disabled':''} onclick="qGoPage(${(d.page||1)-1})"><i data-lucide="chevron-right"></i></button>
+    <span style="font-size:13px;color:var(--muted)">${HR_ar(d.page)} / ${HR_ar(pages)}</span>
+    <button class="btn btn-ghost btn-sm" ${d.page>=pages?'disabled':''} onclick="qGoPage(${(d.page||1)+1})"><i data-lucide="chevron-left"></i></button></div>`:'';
+  hrSet(`${hrHead('بنك الأسئلة','help-circle','<button class="btn btn-ghost btn-sm" onclick="qLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}${filters}${tiles}${rows}${pager}`);
+}
+function qFindLocal(id){return (Q&&Q.questions||[]).find(x=>x.id===id);}
+function qEdit(id){const q=qFindLocal(id);if(!q)return;
+  const body=`
+    ${hrLbl('نصّ السؤال')}<textarea class="field" id="qeQ" style="min-height:70px">${esc(q.question)}</textarea>
+    ${hrLbl('الخيارات (سطر لكلّ خيار)')}<textarea class="field" id="qeOpts" style="min-height:90px">${esc((q.options||[]).join('\n'))}</textarea>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('رقم الإجابة الصحيحة (يبدأ من 0)')}<input class="field" id="qeCorrect" type="number" value="${q.correctIndex}"></div>
+      <div style="flex:1;min-width:120px">${hrLbl('الصعوبة')}<select class="field" id="qeDiff"><option value="easy" ${q.difficulty==='easy'?'selected':''}>سهل</option><option value="medium" ${q.difficulty==='medium'?'selected':''}>متوسط</option><option value="hard" ${q.difficulty==='hard'?'selected':''}>صعب</option></select></div>
+      <div style="flex:1;min-width:100px">${hrLbl('النقاط')}<input class="field" id="qePoints" type="number" value="${q.points||10}"></div>
+    </div>
+    ${hrLbl('الشرح')}<textarea class="field" id="qeExp" style="min-height:60px">${esc(q.explanation||'')}</textarea>`;
+  openModal('تعديل سؤال',body,async()=>{
+    const upd={question:document.getElementById('qeQ').value.trim(),options:document.getElementById('qeOpts').value.split('\n').map(s=>s.trim()).filter(Boolean),correctIndex:parseInt(document.getElementById('qeCorrect').value)||0,difficulty:document.getElementById('qeDiff').value,points:parseInt(document.getElementById('qePoints').value)||10,explanation:document.getElementById('qeExp').value.trim()};
+    try{await hrApi('admin/questions/'+id,{method:'PATCH',body:upd});closeModal();qLoad();}catch(e){alert('تعذّر: '+e.message)}
+  },null);
+}
+async function qToggle(id,isActive){try{await hrApi('admin/questions/'+id+'/toggle',{method:'PATCH',body:{isActive}});qLoad();}catch(e){alert('تعذّر: '+e.message)}}
+async function qDelete(id){if(!confirm('حذف هذا السؤال نهائيّاً؟'))return;try{await hrApi('admin/questions/'+id,{method:'DELETE'});qLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══════════ مكتبة PDF ═══════════ */
+let PL=null,PL_ERR=null,PL_F='all';
+function hrViewPdflib(){PL=null;PL_ERR=null;hrSet(hrLoading());plLoad();}
+function plFilter(f){PL_F=f;plRender();}
+async function plLoad(){try{const r=await hrApi('admin/pdf-library');PL=r.entries||[];PL_ERR=null;}catch(e){PL_ERR=e.message||'خطأ';}if(hrActive('pdflib'))plRender();}
+function plRender(){
+  if(PL_ERR){hrSet(hrErr(PL_ERR,'plLoad()'));return}
+  const all=PL||[];const rows=PL_F==='all'?all:all.filter(e=>e.type===PL_F);
+  const tabs=[['all','الكل'],['nafs','تهيئة نافس'],['worksheet','أوراق عمل'],['test','اختبارات'],['summary','ملخّصات'],['other','أخرى']]
+    .map(([k,l])=>`<button class="btn btn-sm ${PL_F===k?'btn-gold':'btn-ghost'}" onclick="plFilter('${k}')">${l} (${HR_ar((k==='all'?all:all.filter(e=>e.type===k)).length)})</button>`).join('');
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>الملف</th><th>المادة/الصف</th><th>النوع</th><th>تحميلات</th><th>إجراءات</th></tr></thead><tbody>
+    ${rows.map(e=>`<tr><td><b>${esc(e.fileName)}</b></td><td style="font-size:12px">${esc(e.subject||'')} · ${esc(String(e.grade||''))}</td><td>${esc(e.type)}</td><td>${HR_ar(e.downloadCount)}</td>
+      <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="plDownload('${esc(String(e.id))}')"><i data-lucide="download"></i></button><button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="plDelete('${esc(String(e.id))}')"><i data-lucide="trash-2"></i></button></div></td></tr>`).join('')}</tbody></table></div>`
+    :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا ملفّات.</div>`;
+  hrSet(`${hrHead('مكتبة PDF','folder','<button class="btn btn-gold btn-sm" onclick="plUploadModal()"><i data-lucide="upload"></i> رفع ملف</button><button class="btn btn-ghost btn-sm" onclick="plLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tabs}</div>${body}`);
+}
+function plUploadModal(){
+  const body=`
+    ${hrLbl('الملف (PDF)')}<input type="file" accept="application/pdf" id="plFile" class="field">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('الصف')}<select class="field" id="plGrade">${hrGradeOptsReq('1')}</select></div>
+      <div style="flex:1;min-width:120px">${hrLbl('المادة')}<select class="field" id="plSubject">${hrSubjOpts('arabic',false)}</select></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('معرّف الكتاب')}<input class="field" id="plBook" placeholder="arabic-g1-s1"></div>
+      <div style="flex:1;min-width:120px">${hrLbl('النوع')}<select class="field" id="plType"><option value="worksheet">أوراق عمل</option><option value="test">اختبار</option><option value="summary">ملخّص</option><option value="nafs">تهيئة نافس</option><option value="other">أخرى</option></select></div>
+    </div>
+    <div id="plMsg" style="font-size:12px;color:var(--muted);min-height:16px"></div>`;
+  openModal('رفع ملف PDF',body,plDoUpload,null);
+}
+async function plDoUpload(){
+  const f=document.getElementById('plFile').files[0];const msg=document.getElementById('plMsg');
+  if(!f){alert('اختر ملفاً');return}
+  const grade=document.getElementById('plGrade').value,subject=document.getElementById('plSubject').value,bookId=document.getElementById('plBook').value.trim(),type=document.getElementById('plType').value;
+  msg.textContent='جارٍ الرفع…';
+  try{
+    const u=await hrApi('admin/pdf-library/upload-url',{method:'POST',body:{fileName:f.name,contentType:f.type||'application/pdf'}});
+    const put=await fetch(u.uploadURL,{method:'PUT',headers:{'Content-Type':f.type||'application/pdf'},body:f});
+    if(!put.ok)throw new Error('تعذّر رفع الملف للتخزين');
+    await hrApi('admin/pdf-library',{method:'POST',body:{fileName:f.name,objectPath:u.objectPath,grade,subject,bookId,type}});
+    closeModal();plLoad();
+  }catch(e){msg.textContent='';alert('تعذّر: '+e.message)}
+}
+async function plDownload(id){try{const r=await hrApi('admin/pdf-library/'+id+'/download');if(r.url)window.open(r.url,'_blank');}catch(e){alert('تعذّر: '+e.message)}}
+async function plDelete(id){if(!confirm('حذف هذا الملف؟'))return;try{await hrApi('admin/pdf-library/'+id,{method:'DELETE'});plLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══════════ مستخرج الأسئلة (AI) ═══════════ */
+let EX_Q=null;const EXF={gradeNumber:'1',subjectId:'arabic',bookId:'',chapterId:'',lessonId:'',difficulty:'easy'};
+function hrViewExtractor(){EX_Q=null;exRender();}
+function exRender(){
+  const form=`<div class="card" style="margin-bottom:14px">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:130px">${hrLbl('الصف')}<select class="field" id="exGrade">${hrGradeOptsReq(EXF.gradeNumber)}</select></div>
+      <div style="flex:1;min-width:130px">${hrLbl('المادة')}<select class="field" id="exSubject">${hrSubjOpts(EXF.subjectId,false)}</select></div>
+      <div style="flex:1;min-width:130px">${hrLbl('الصعوبة الافتراضية')}<select class="field" id="exDiff"><option value="easy">سهل</option><option value="medium">متوسط</option><option value="hard">صعب</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:130px">${hrLbl('معرّف الكتاب *')}<input class="field" id="exBook" placeholder="arabic-g1-s1" value="${esc(EXF.bookId)}"></div>
+      <div style="flex:1;min-width:130px">${hrLbl('معرّف الفصل *')}<input class="field" id="exChapter" placeholder="ch1" value="${esc(EXF.chapterId)}"></div>
+      <div style="flex:1;min-width:130px">${hrLbl('معرّف الدرس (اختياري)')}<input class="field" id="exLesson" value="${esc(EXF.lessonId)}"></div>
+    </div>
+    ${hrLbl('ملف PDF (حدّ 20MB)')}<input type="file" accept="application/pdf" id="exFile" class="field">
+    <div style="display:flex;gap:10px;align-items:center"><button class="btn btn-gold" onclick="exExtract()"><i data-lucide="sparkles"></i> استخراج بالذكاء الاصطناعي</button><span id="exMsg" style="font-size:13px;color:var(--muted)"></span></div>
+  </div>`;
+  let review='';
+  if(EX_Q&&EX_Q.length){
+    review=`<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h3 style="margin:0">مراجعة ${HR_ar(EX_Q.length)} سؤالاً مستخرجاً</h3><button class="btn btn-gold" onclick="exSave()"><i data-lucide="save"></i> حفظ الكل في قاعدة البيانات</button></div>
+      ${EX_Q.map((q,i)=>`<div class="card" style="margin-bottom:10px">
+        ${hrLbl('السؤال '+(i+1))}<textarea class="field" oninput="EX_Q[${i}].question=this.value" style="min-height:56px">${esc(q.question)}</textarea>
+        ${hrLbl('الخيارات (سطر لكلّ خيار)')}<textarea class="field" oninput="EX_Q[${i}].options=this.value.split('\\n').map(s=>s.trim()).filter(Boolean)" style="min-height:80px">${esc((q.options||[]).join('\n'))}</textarea>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <div style="flex:1;min-width:110px">${hrLbl('الإجابة الصحيحة (0-based)')}<input class="field" type="number" value="${q.correctIndex||0}" oninput="EX_Q[${i}].correctIndex=parseInt(this.value)||0"></div>
+          <div style="flex:1;min-width:110px">${hrLbl('الصعوبة')}<select class="field" oninput="EX_Q[${i}].difficulty=this.value" onchange="EX_Q[${i}].difficulty=this.value"><option value="easy" ${q.difficulty==='easy'?'selected':''}>سهل</option><option value="medium" ${q.difficulty==='medium'?'selected':''}>متوسط</option><option value="hard" ${q.difficulty==='hard'?'selected':''}>صعب</option></select></div>
+          <div style="flex:2;min-width:130px">${hrLbl('الشرح')}<input class="field" value="${esc(q.explanation||'')}" oninput="EX_Q[${i}].explanation=this.value"></div>
+        </div>
+        <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="EX_Q.splice(${i},1);exRender()"><i data-lucide="trash-2"></i> حذف</button>
+      </div>`).join('')}</div>`;
+  }
+  hrSet(`${hrHead('مستخرج الأسئلة (AI)','file-search','')}${form}${review}`);
+}
+async function exExtract(){
+  const f=document.getElementById('exFile').files[0];const msg=document.getElementById('exMsg');
+  EXF.gradeNumber=document.getElementById('exGrade').value;EXF.subjectId=document.getElementById('exSubject').value;EXF.difficulty=document.getElementById('exDiff').value;EXF.bookId=document.getElementById('exBook').value.trim();EXF.chapterId=document.getElementById('exChapter').value.trim();EXF.lessonId=document.getElementById('exLesson').value.trim();
+  if(!f){alert('اختر ملف PDF');return}
+  if(!EXF.bookId||!EXF.chapterId){alert('معرّف الكتاب والفصل مطلوبان');return}
+  msg.textContent='جارٍ الاستخراج (قد يأخذ دقيقة)…';
+  try{const fd=new FormData();fd.append('pdf',f);fd.append('gradeNumber',EXF.gradeNumber);fd.append('subjectId',EXF.subjectId);fd.append('bookId',EXF.bookId);fd.append('chapterId',EXF.chapterId);
+    const r=await hrApiForm('admin/pdf-extractor/extract',fd);
+    EX_Q=(r.questions||[]).map(q=>Object.assign({difficulty:EXF.difficulty,points:q.points||10},q));
+    exRender();
+  }catch(e){msg.textContent='';alert('تعذّر الاستخراج: '+e.message)}
+}
+async function exSave(){
+  if(!EX_Q||!EX_Q.length)return;
+  try{const body={gradeNumber:parseInt(EXF.gradeNumber),subjectId:EXF.subjectId,bookId:EXF.bookId,chapterId:EXF.chapterId,questions:EX_Q};if(EXF.lessonId)body.lessonId=EXF.lessonId;
+    const r=await hrApi('admin/pdf-extractor/save',{method:'POST',body});
+    alert('✓ حُفظ '+HR_ar((r&&r.saved)||EX_Q.length)+' سؤالاً');EX_Q=null;exRender();
+  }catch(e){alert('تعذّر الحفظ: '+e.message)}
+}
+
+/* ═══════════ نافس ═══════════ */
+let NF=null,NF_ERR=null,NF_SEL=null;const NFF={skillIds:[],questionCount:15,teacherName:'',schoolName:'',showAnswers:false};
+function hrViewNafs(){NF=null;NF_ERR=null;NF_SEL=null;hrSet(hrLoading());nfLoad();}
+async function nfLoad(){try{const r=await hrApi('worksheets/nafs/catalog');NF=r.catalog||[];NF_ERR=null;}catch(e){NF_ERR=e.message||'خطأ';}if(hrActive('nafs'))nfRender();}
+function nfSelect(key){NF_SEL=key;NFF.skillIds=[];nfRender();}
+function nfToggleSkill(id){const i=NFF.skillIds.indexOf(id);if(i<0)NFF.skillIds.push(id);else NFF.skillIds.splice(i,1);}
+function nfRender(){
+  if(NF_ERR){hrSet(hrErr(NF_ERR,'nfLoad()'));return}
+  const cat=NF||[];const sel=cat.find(c=>c.key===NF_SEL);
+  const list=`<div class="card" style="max-height:520px;overflow:auto"><h3 style="margin:0 0 10px"><i data-lucide="list"></i> الكتالوج</h3>
+    ${cat.map(c=>`<div onclick="nfSelect('${esc(c.key)}')" style="padding:9px 10px;border-radius:8px;cursor:pointer;margin-bottom:4px;background:${NF_SEL===c.key?'var(--goldsoft)':'transparent'};border:1px solid ${NF_SEL===c.key?'var(--gold2)':'var(--line)'}">
+      <b>${esc(c.subject)}</b> — ${esc(c.grade)}<div style="font-size:11px;color:var(--muted)">${HR_ar(c.skillCount)} مهارة · ${HR_ar(c.questionCount)} سؤال</div></div>`).join('')||'<div style="color:var(--muted)">لا كتالوج.</div>'}</div>`;
+  const gen=sel?`<div class="card">
+    <h3 style="margin:0 0 10px">توليد ورقة — ${esc(sel.subject)} (${esc(sel.grade)})</h3>
+    ${hrLbl('المهارات (فارغ = الكل)')}<div style="max-height:180px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:8px;margin-bottom:12px">
+      ${(sel.skills||[]).map(s=>`<label style="display:flex;align-items:center;gap:8px;font-size:13px;padding:3px 0;cursor:pointer"><input type="checkbox" style="width:auto" onchange="nfToggleSkill('${esc(s.skillId)}')"> ${esc(s.skillName)} <span style="color:var(--muted);font-size:11px">(${HR_ar(s.questionCount)})</span></label>`).join('')}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('عدد الأسئلة')}<select class="field" id="nfCount"><option value="10">10</option><option value="15" selected>15</option><option value="20">20</option><option value="25">25</option><option value="30">30</option></select></div>
+      <div style="flex:1;min-width:120px">${hrLbl('النوع')}<select class="field" id="nfType"><option value="false">ورقة الطالب</option><option value="true">مفتاح التصحيح</option></select></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('اسم المعلّم')}<input class="field" id="nfTeacher"></div>
+      <div style="flex:1;min-width:120px">${hrLbl('اسم المدرسة')}<input class="field" id="nfSchool"></div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center"><button class="btn btn-gold" onclick="nfGenerate()"><i data-lucide="file-output"></i> توليد وفتح</button><span id="nfMsg" style="font-size:13px;color:var(--muted)"></span></div>
+  </div>`:`<div class="card" style="text-align:center;color:var(--muted);padding:40px"><i data-lucide="clipboard-list" style="width:32px;height:32px"></i><div style="margin-top:10px">اختر مادةً من الكتالوج لتوليد ورقة نافس.</div></div>`;
+  hrSet(`${hrHead('أوراق نافس','clipboard-list','<button class="btn btn-ghost btn-sm" onclick="nfLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+    <div style="display:grid;grid-template-columns:minmax(220px,1fr) 2fr;gap:16px;align-items:start">${list}${gen}</div>`);
+}
+async function nfGenerate(){
+  const msg=document.getElementById('nfMsg');
+  const body={key:NF_SEL,questionCount:parseInt(document.getElementById('nfCount').value)||15,showAnswers:document.getElementById('nfType').value==='true',teacherName:document.getElementById('nfTeacher').value.trim(),schoolName:document.getElementById('nfSchool').value.trim()};
+  if(NFF.skillIds.length)body.skillIds=NFF.skillIds;
+  msg.textContent='جارٍ التوليد…';
+  try{const r=await hrApi('worksheets/nafs/generate',{method:'POST',body});if(r.shareUrl){msg.textContent='✓ فُتحت الورقة';window.open(r.shareUrl.startsWith('http')?r.shareUrl:(HUROOF_API_BASE+r.shareUrl),'_blank');}else{msg.textContent='تمّ لكن بلا رابط';}}catch(e){msg.textContent='';alert('تعذّر: '+e.message)}
+}
+
+/* ═══════════ الأغلفة ═══════════ */
+let CV_HAVE=null,CV_ERR=null,CV_SUBJ=[],CV_GBOOKS={},CV_BUST=0;let cvPending=null;
+function hrViewCovers(){CV_HAVE=null;CV_ERR=null;hrSet(hrLoading());cvLoad();}
+async function cvLoad(){try{const [bk,cv]=await Promise.all([hrApi('admin/books'),hrApi('admin/covers')]);
+    CV_HAVE=new Set((cv.entries||[]).map(f=>String(f).replace(/\.png$/,'')));
+    const books=bk.books||bk.entries||bk||[];const subjSet=new Set();const grades={};
+    (Array.isArray(books)?books:[]).forEach(b=>{const id=b.bookId||b.id||'';const m=id.match(/^([a-z][a-z-]*)-g(\d+)-s(\d)$/);if(!m)return;const[,subj,g]=m;subjSet.add(subj);(grades[g]=grades[g]||[]).push({id,subj,title:b.title||b.name||''})});
+    CV_SUBJ=[...subjSet].sort();CV_GBOOKS=grades;CV_BUST=new Date().getTime();CV_ERR=null;
+  }catch(e){CV_ERR=e.message||'خطأ';}if(hrActive('covers'))cvRender();}
+function cvHas(name){return CV_HAVE&&CV_HAVE.has(name);}
+function cvSlot(name,label){const url='https://huroofduroos.com/covers/'+name+'.png?t='+CV_BUST;const has=cvHas(name);
+  return `<div style="display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)">
+    <div style="width:52px;height:52px;border-radius:10px;overflow:hidden;background:#0006;border:1px solid ${has?'#22c55e':'#ffffff14'};flex-shrink:0;display:grid;place-items:center">
+      ${has?`<img src="${url}" style="width:100%;height:100%;object-fit:cover">`:`<i data-lucide="image-off" style="color:var(--muted);width:18px;height:18px"></i>`}</div>
+    <div style="flex:1;min-width:0"><div style="font-weight:600;font-size:13px">${esc(label)}</div><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(name)}</div></div>
+    <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="cvPick('${esc(name)}')"><i data-lucide="upload"></i></button>${has?`<button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="cvDel('${esc(name)}')"><i data-lucide="trash-2"></i></button>`:''}</div>
+  </div>`;
+}
+function cvRender(){
+  if(CV_ERR){hrSet(hrErr(CV_ERR,'cvLoad()'));return}
+  const home=[['home-game','بطاقة: لعبة حروف ودروس'],['home-worksheets','بطاقة: أوراق العمل'],['home-tools','بطاقة: أدوات المعلم']];
+  const grades=Array.from({length:12},(_,i)=>['grade-'+(i+1),'صورة الصف '+HR_GRADES[i+1]]);
+  const subj=CV_SUBJ.map(s=>['subject-'+s,'صورة مادة '+hrSubjName(s)]);
+  const total=home.length+grades.length+subj.length+Object.values(CV_GBOOKS).reduce((a,l)=>a+l.length,0);
+  const haveN=CV_HAVE?CV_HAVE.size:0;
+  const sect=(title,slots)=>`<div class="card" style="margin-bottom:14px"><h3 style="margin:0 0 6px">${title}</h3>${slots.map(([n,l])=>cvSlot(n,l)).join('')}</div>`;
+  const bookSect=Object.keys(CV_GBOOKS).sort((a,b)=>a-b).map(g=>`<details class="card" style="margin-bottom:10px"><summary style="cursor:pointer;font-weight:800">أغلفة كتب ${HR_GRADES[g]||('الصف '+g)} (${HR_ar(CV_GBOOKS[g].length)})</summary><div style="margin-top:8px">${CV_GBOOKS[g].map(b=>cvSlot('book-'+b.id,'غلاف '+hrSubjName(b.subj)+' — '+b.id)).join('')}</div></details>`).join('');
+  hrSet(`${hrHead('الأغلفة والصور','image',`<span style="font-size:12px;color:var(--muted)">${HR_ar(haveN)}/${HR_ar(total)} مرفوعة</span> <button class="btn btn-ghost btn-sm" onclick="cvLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
+    <input type="file" accept="image/png,image/jpeg,image/webp" id="cvFile" style="display:none" onchange="cvOnFile(event)">
+    <div class="badge-note" style="margin-bottom:14px"><i data-lucide="info"></i><div>الصور تظهر على منصّة huroofduroos.com. حذف الصورة يعيد التصميم الافتراضي (أيقونة ولون). صدّر بمقاسٍ مناسب (PNG).</div></div>
+    ${sect('بطاقات الرئيسية',home)}${sect('صور الصفوف',grades)}${subj.length?sect('صور المواد',subj):''}
+    ${bookSect?`<h3 style="margin:18px 0 10px">أغلفة الكتب</h3>${bookSect}`:''}`);
+}
+function cvPick(name){cvPending=name;const f=document.getElementById('cvFile');if(f)f.click();}
+function cvOnFile(ev){const f=ev.target.files[0];ev.target.value='';if(!f||!cvPending)return;const name=cvPending;
+  const rd=new FileReader();rd.onload=async()=>{const b64=String(rd.result).split(',')[1]||'';try{await hrApi('admin/covers/'+encodeURIComponent(name),{method:'POST',body:{dataBase64:b64}});cvLoad();}catch(e){alert('تعذّر الرفع: '+e.message)}};rd.readAsDataURL(f);}
+async function cvDel(name){if(!confirm('حذف هذه الصورة؟ يعود التصميم الافتراضي.'))return;try{await hrApi('admin/covers/'+encodeURIComponent(name),{method:'DELETE'});cvLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══════════ المدوّنة ═══════════ */
+let BG=null,BG_ERR=null;
+function hrViewBlog(){BG=null;BG_ERR=null;hrSet(hrLoading());bgLoad();}
+async function bgLoad(){try{const r=await hrApi('admin/articles');BG=r.articles||r.entries||r||[];if(!Array.isArray(BG))BG=[];BG_ERR=null;}catch(e){BG_ERR=e.message||'خطأ';}if(hrActive('blog'))bgRender();}
+function bgRender(){
+  if(BG_ERR){hrSet(hrErr(BG_ERR,'bgLoad()'));return}
+  const rows=BG||[];const pub=rows.filter(a=>a.published).length;
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>العنوان</th><th>التاريخ</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>
+    ${rows.map(a=>`<tr><td><b>${esc(a.title)}</b><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(a.slug)}</div></td><td>${esc(a.date||'—')}</td><td>${a.published?hrChip('منشور','#22c55e'):hrChip('مسودّة','#f59e0b')}</td>
+      <td><div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="bgEdit('${esc(a.slug)}')"><i data-lucide="pencil"></i></button><button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="bgDelete('${esc(a.slug)}')"><i data-lucide="trash-2"></i></button></div></td></tr>`).join('')}</tbody></table></div>`
+    :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا مقالات.</div>`;
+  hrSet(`${hrHead('المدوّنة','newspaper',`<span style="font-size:12px;color:var(--muted)">${HR_ar(rows.length)} مقال · ${HR_ar(pub)} منشور</span> <button class="btn btn-gold btn-sm" onclick="bgEdit(null)"><i data-lucide="plus"></i> مقال جديد</button> <button class="btn btn-ghost btn-sm" onclick="bgLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}${body}`);
+}
+function bgEdit(slug){const a=slug?((BG||[]).find(x=>x.slug===slug)||{}):{};
+  const body=`
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:2;min-width:180px">${hrLbl('العنوان')}<input class="field" id="bgTitle" value="${esc(a.title||'')}"></div>
+      <div style="flex:1;min-width:140px">${hrLbl('المعرّف (slug)')}<input class="field" id="bgSlug" dir="ltr" value="${esc(a.slug||'')}" ${slug?'readonly':''}></div>
+    </div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;min-width:120px">${hrLbl('التاريخ')}<input class="field" id="bgDate" dir="ltr" placeholder="2026-08-18" value="${esc(a.date||'')}"></div>
+      <div style="flex:1;min-width:120px">${hrLbl('دقائق القراءة')}<input class="field" id="bgRead" type="number" value="${a.readTime||5}"></div>
+      <div style="flex:2;min-width:160px">${hrLbl('رابط الصورة')}<input class="field" id="bgImg" dir="ltr" value="${esc(a.image||'')}"></div>
+    </div>
+    ${hrLbl('الوصف')}<textarea class="field" id="bgDesc" style="min-height:50px">${esc(a.description||'')}</textarea>
+    ${hrLbl('المحتوى (HTML)')}<textarea class="field" id="bgContent" style="min-height:160px;font-family:monospace;direction:ltr;text-align:left">${esc(a.content||'')}</textarea>
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer"><input type="checkbox" id="bgPub" ${a.published?'checked':''} style="width:auto"> منشور</label>`;
+  openModal(slug?'تعديل مقال':'مقال جديد',body,async()=>{
+    const art={slug:document.getElementById('bgSlug').value.trim(),title:document.getElementById('bgTitle').value.trim(),description:document.getElementById('bgDesc').value.trim(),date:document.getElementById('bgDate').value.trim(),readTime:parseInt(document.getElementById('bgRead').value)||5,image:document.getElementById('bgImg').value.trim(),content:document.getElementById('bgContent').value,published:document.getElementById('bgPub').checked};
+    if(!art.slug||!art.title){alert('العنوان والمعرّف مطلوبان');return}
+    try{await hrApi('admin/articles',{method:'POST',body:art});closeModal();bgLoad();}catch(e){alert('تعذّر الحفظ: '+e.message)}
+  },slug?async()=>{if(!confirm('حذف المقال؟'))return;try{await hrApi('admin/articles/'+encodeURIComponent(slug),{method:'DELETE'});closeModal();bgLoad();}catch(e){alert('تعذّر: '+e.message)}}:null);
+}
+async function bgDelete(slug){if(!confirm('حذف هذا المقال؟'))return;try{await hrApi('admin/articles/'+encodeURIComponent(slug),{method:'DELETE'});bgLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══ ربط أقسام المرحلة ٢ بالتبويبات ═══ */
+Object.assign(HR_VIEWS,{questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog});
+
 function hrManageHTML(){
   return `
       <div id="hrKpis" class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:20px"></div>
