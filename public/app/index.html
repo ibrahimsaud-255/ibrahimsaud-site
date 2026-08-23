@@ -215,6 +215,10 @@
   tr:last-child td{border-bottom:none}
   tbody tr:hover{background:var(--panel2)}
   .pill{display:inline-block;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+  .hr-table{width:100%;border-collapse:collapse;font-size:13px}
+  .hr-table th{text-align:right;color:var(--muted);font-weight:700;font-size:12px;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+  .hr-table td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .hr-table tr:hover td{background:rgba(255,255,255,.03)}
   .pill.draft,.pill.lead{background:rgba(155,155,163,.16);color:var(--muted)}
   .pill.sent,.pill.contacted{background:rgba(99,102,241,.16);color:#a5b4fc}
   .pill.quoted,.pill.scheduled{background:rgba(59,130,246,.16);color:#93c5fd}
@@ -943,31 +947,272 @@ const HR_ar=n=>Number(n||0).toLocaleString('ar-SA');
 let hrFreshCodes=[];
 async function hrApi(path,opts){opts=opts||{};const {data}=await sb.auth.getSession();const tok=data&&data.session?data.session.access_token:'';const res=await fetch(HR_API+'/'+path,{method:opts.method||'GET',headers:{'x-system-token':tok,'Content-Type':'application/json'},body:opts.body?JSON.stringify(opts.body):undefined});const b=await res.json().catch(()=>({}));if(!res.ok)throw new Error(b.error||('تعذّر ('+res.status+')'));return b;}
 function hrLbl(t){return `<div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px">${t}</div>`;}
-let HR_TAB='manage';
+let HR_TAB='overview';
+/* ═══════════════════════════════════════════════════════════════════════════
+   إدارة منصّة حروف ودروس — كل الأقسام داخل نظام إبراهيم (جسر x-system-token).
+   بديلٌ كاملٌ عن huroofduroos.com/admin: نظامٌ واحدٌ لشركة الشخص الواحد.
+   ═══════════════════════════════════════════════════════════════════════════ */
+const HR_TABS=[
+  {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
+  {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
+  {id:'subscribers',name:'المشتركون',icon:'credit-card'},
+  {id:'teachers',name:'المعلمون',icon:'users'},
+  {id:'tquestions',name:'أسئلة المعلمين',icon:'inbox'},
+  {id:'tickets',name:'التذاكر',icon:'life-buoy'},
+  {id:'waitlist',name:'قائمة الانتظار',icon:'clock'},
+  {id:'content',name:'المحتوى',icon:'book-open'},
+  {id:'questions',name:'الأسئلة',icon:'help-circle',soon:true},
+  {id:'pdflib',name:'مكتبة PDF',icon:'folder',soon:true},
+  {id:'extractor',name:'مستخرج الأسئلة',icon:'file-search',soon:true},
+  {id:'nafs',name:'نافس',icon:'clipboard-list',soon:true},
+  {id:'covers',name:'الأغلفة',icon:'image',soon:true},
+  {id:'blog',name:'المدوّنة',icon:'newspaper',soon:true},
+  {id:'banners',name:'بانرات الموقع',icon:'panels-top-left'},
+  {id:'settings',name:'الإعدادات',icon:'settings'},
+];
 function renderHuroof(){
   document.getElementById('main').innerHTML=`
     <div class="desk">
       <div class="desk-head">
         <div><h1><i data-lucide="graduation-cap" style="width:26px;height:26px;vertical-align:-4px"></i> حروف ودروس</h1>
-          <p>إدارة المنصّة — المؤشرات والتفعيل والأكواد، وبانرات واجهة الموقع.</p></div>
+          <p>إدارة المنصّة كاملةً من هنا — لا حاجة لدخول huroofduroos.com/admin.</p></div>
         <a class="glass-btn" href="/admin/huroof-schools"><i data-lucide="school"></i> لوحة المدارس</a>
       </div>
-      <div style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap">
-        <button class="btn btn-sm hr-tab" data-tab="manage" onclick="hrShowTab('manage')"><i data-lucide="layout-dashboard"></i> الإدارة</button>
-        <button class="btn btn-sm hr-tab" data-tab="banners" onclick="hrShowTab('banners')"><i data-lucide="image"></i> بانرات الموقع</button>
+      <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap">
+        ${HR_TABS.map(t=>`<button class="btn btn-sm hr-tab" data-tab="${t.id}" onclick="hrShowTab('${t.id}')"><i data-lucide="${t.icon}"></i> ${t.name}</button>`).join('')}
       </div>
       <div id="hrBody"></div>
     </div>`;
   refreshIcons();
-  hrShowTab(HR_TAB||'manage');
+  hrShowTab(HR_TAB||'overview');
 }
+const HR_VIEWS={
+  overview:hrViewOverview, manage:hrViewManage, subscribers:hrViewSubscribers,
+  teachers:hrViewTeachers, tquestions:hrViewTQuestions, tickets:hrViewTickets,
+  waitlist:hrViewWaitlist, content:hrViewContent, banners:hrViewBanners, settings:hrViewSettings,
+};
 function hrShowTab(tab){
   HR_TAB=tab;
   document.querySelectorAll('.hr-tab').forEach(b=>{const on=b.getAttribute('data-tab')===tab;b.classList.toggle('btn-gold',on);b.classList.toggle('btn-ghost',!on)});
-  const body=document.getElementById('hrBody');if(!body)return;
-  if(tab==='banners'){body.innerHTML=bannersBodyHTML();refreshIcons();bannersLoad();}
-  else{body.innerHTML=hrManageHTML();refreshIcons();hrLoadStats();hrLoadCodes();}
+  const def=HR_TABS.find(t=>t.id===tab);
+  const fn=HR_VIEWS[tab];
+  if(fn){fn();return}
+  // قسمٌ من المرحلة القادمة (تأليف المحتوى)
+  hrSet(`<div class="card" style="text-align:center;color:var(--muted);padding:34px"><i data-lucide="${(def&&def.icon)||'wrench'}" style="width:34px;height:34px"></i><div style="margin-top:10px;font-weight:700;color:var(--text)">${(def&&def.name)||''}</div><div style="margin-top:6px">هذا القسم قيد الإضافة (مرحلة التأليف). العمليات اليوميّة متاحة الآن في بقيّة التبويبات.</div></div>`);
 }
+/* ── معينات مشتركة ─────────────────────────────────────────────────────── */
+function hrSet(html){const b=document.getElementById('hrBody');if(b){b.innerHTML=html;refreshIcons();}}
+function hrActive(tab){return CUR==='huroof'&&HR_TAB===tab;}
+function hrLoading(){return `<div style="color:var(--muted);padding:16px">…جارٍ التحميل</div>`;}
+function hrErr(msg,retryCall){return `<div class="card"><div class="badge-note"><i data-lucide="alert-triangle"></i><div><b>تعذّر الاتصال بخادم حروف ودروس.</b> تأكّد أنّ بريدك ضمن <b>EXTERNAL_ADMIN_EMAILS</b> وأنّ الخادم مُحدَّث.<div style="margin-top:6px;color:var(--muted);font-size:12px">${esc(msg||'')}</div>${retryCall?`<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="${retryCall}"><i data-lucide="refresh-cw"></i> إعادة</button>`:''}</div></div></div>`;}
+function hrHead(title,icon,actions){return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px"><h3 style="margin:0"><i data-lucide="${icon}"></i> ${title}</h3><div style="display:flex;gap:8px;flex-wrap:wrap">${actions||''}</div></div>`;}
+function hrTile(v,l,c){return `<div class="card" style="padding:16px"><div style="font-size:24px;font-weight:900;color:${c}">${v}</div><div style="font-size:12px;font-weight:700;margin-top:4px">${l}</div></div>`;}
+function hrDate(s){if(!s)return '—';try{return new Date(s).toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric'})}catch(e){return '—'}}
+function hrChip(txt,color){return `<span class="pill" style="font-size:11px;background:${color}22;color:${color};border-color:${color}44">${esc(txt)}</span>`;}
+
+/* ═══ الإدارة (التفعيل/الأكواد) — نلفّ الموجود ═══ */
+function hrViewManage(){const b=document.getElementById('hrBody');if(!b)return;b.innerHTML=hrManageHTML();refreshIcons();hrLoadStats();hrLoadCodes();}
+/* ═══ البانرات — نلفّ الموجود ═══ */
+function hrViewBanners(){const b=document.getElementById('hrBody');if(!b)return;b.innerHTML=bannersBodyHTML();refreshIcons();bannersLoad();}
+
+/* ═══════════ نظرة عامة (المؤشّرات) ═══════════ */
+let OV=null,OV_ERR=null;
+function hrViewOverview(){OV=null;OV_ERR=null;hrSet(hrLoading());ovLoad();}
+async function ovLoad(){try{const [s,x]=await Promise.all([hrApi('admin/stats').catch(()=>({})),hrApi('admin/stats/extended').catch(()=>({}))]);OV=Object.assign({},s,x);OV_ERR=null;}catch(e){OV_ERR=e.message||'خطأ';}if(hrActive('overview'))ovRender();}
+function ovRender(){
+  if(OV_ERR){hrSet(hrErr(OV_ERR,'ovLoad()'));return}
+  const o=OV||{};
+  const reg=(o.recentRegistrations||[]).reduce((a,r)=>a+Number(r.count||0),0);
+  const tiles=[
+    hrTile(HR_ar(o.activeSubscribers),'مشترك نشط','#22c55e'),
+    hrTile(HR_ar(o.totalTeachers),'معلّم مسجّل','#f5a623'),
+    hrTile(HR_ar(reg),'تسجيل (٣٠ يوم)','#0ea5e9'),
+    hrTile(HR_ar(o.pendingTeacherQuestions),'سؤال معلّق','#ec4899'),
+    hrTile(HR_ar(o.waitlistCount),'قائمة انتظار','#8b5cf6'),
+    hrTile(HR_ar(o.openTicketsCount),'تذكرة مفتوحة','#ef4444'),
+    hrTile(HR_ar(o.bookCount),'كتاب','#14b8a6'),
+    hrTile(HR_ar(o.pdfCount),'ملف PDF','#64748b'),
+  ].join('');
+  const regs=o.recentRegistrations||[];
+  const max=Math.max(1,...regs.map(r=>Number(r.count||0)));
+  const chart=regs.length?`<div class="card" style="margin-top:16px"><h3 style="margin:0 0 12px"><i data-lucide="bar-chart-3"></i> التسجيلات — آخر ٣٠ يوماً</h3><div style="display:flex;align-items:flex-end;gap:3px;height:120px">${regs.map(r=>{const h=Math.round(Number(r.count||0)/max*100);return `<div title="${esc(r.date)}: ${r.count}" style="flex:1;background:linear-gradient(180deg,#f5a623,#d97706);height:${Math.max(2,h)}%;border-radius:3px 3px 0 0;min-width:2px"></div>`}).join('')}</div></div>`:'';
+  hrSet(`${hrHead('نظرة عامة','layout-dashboard','<button class="btn btn-ghost btn-sm" onclick="ovLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+    <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${tiles}</div>${chart}`);
+}
+
+/* ═══════════ المشتركون ═══════════ */
+let SUBS=null,SUBS_ERR=null,SUBS_F='all';
+function hrViewSubscribers(){SUBS=null;SUBS_ERR=null;hrSet(hrLoading());subsLoad();}
+function subsFilter(f){SUBS_F=f;SUBS=null;hrSet(hrLoading());subsLoad();}
+async function subsLoad(){try{const r=await hrApi('admin/subscribers?status='+encodeURIComponent(SUBS_F));SUBS=r;SUBS_ERR=null;}catch(e){SUBS_ERR=e.message||'خطأ';}if(hrActive('subscribers'))subsRender();}
+function subsStatusChip(st){const m={active:'#22c55e',expired:'#f59e0b',cancelled:'#ef4444'};const l={active:'نشط',expired:'منتهٍ',cancelled:'ملغى'};return hrChip(l[st]||st,m[st]||'#64748b');}
+function subsRender(){
+  if(SUBS_ERR){hrSet(hrErr(SUBS_ERR,'subsLoad()'));return}
+  const st=(SUBS&&SUBS.stats)||{},rows=(SUBS&&SUBS.entries)||[];
+  const tabs=[['all','الكل',st.total],['active','النشطون',st.active],['expired','المنتهون',st.expired],['cancelled','الملغاة',st.cancelled]]
+    .map(([k,l,n])=>`<button class="btn btn-sm ${SUBS_F===k?'btn-gold':'btn-ghost'}" onclick="subsFilter('${k}')">${l}${n!=null?` (${HR_ar(n)})`:''}</button>`).join('');
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>المشترك</th><th>المنصّة</th><th>الحالة</th><th>الخطة</th><th>ينتهي</th><th>إجراءات</th></tr></thead><tbody>
+    ${rows.map(s=>`<tr>
+      <td><b>${esc(s.displayName||'—')}</b><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(s.email||'')}</div></td>
+      <td>${esc(s.platform||'—')}</td>
+      <td>${subsStatusChip(s.status)}</td>
+      <td>${esc(s.planId||'—')}</td>
+      <td>${hrDate(s.currentPeriodEnd)}</td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+        <select class="field" style="width:auto;padding:5px 8px" onchange="subsSetStatus('${esc(s.id)}',this.value)">
+          <option value="">تغيير…</option><option value="active">تفعيل</option><option value="expired">إنهاء</option><option value="cancelled">إلغاء</option></select>
+        <button class="btn btn-ghost btn-sm" onclick="subsOrders('${esc(s.userId)}','${esc(s.displayName||s.email||'')}')"><i data-lucide="receipt"></i> الطلبات</button>
+      </div></td></tr>`).join('')}</tbody></table></div>`
+    :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا مشتركين في هذا التصنيف.</div>`;
+  hrSet(`${hrHead('المشتركون','credit-card','<button class="btn btn-ghost btn-sm" onclick="subsLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tabs}</div>${body}`);
+}
+async function subsSetStatus(id,status){if(!status)return;if(!confirm('تغيير حالة الاشتراك إلى «'+status+'»؟')){subsRender();return}try{await hrApi('admin/subscribers/'+id+'/status',{method:'PATCH',body:{status}});subsLoad();}catch(e){alert('تعذّر: '+e.message)}}
+async function subsOrders(userId,name){
+  openModal('طلبات Telr — '+esc(name),'<div id="telrOrders" style="color:var(--muted)">…جارٍ التحميل</div>',null,null);
+  document.getElementById('mSave').style.display='none';
+  try{const r=await hrApi('admin/telr/orders?userId='+encodeURIComponent(userId));const orders=r.orders||r.entries||[];
+    const el=document.getElementById('telrOrders');if(!el)return;
+    el.innerHTML=orders.length?orders.map(o=>`<div class="card" style="margin-bottom:8px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><div><b dir="ltr">${esc(o.cartRef||'')}</b><div style="font-size:11px;color:var(--muted)">${esc(o.planId||'')} · ${hrDate(o.createdAt)} · ${esc(o.status||'')}</div></div><button class="btn btn-gold btn-sm" onclick="telrVerify('${esc(o.cartRef)}',this)"><i data-lucide="badge-check"></i> تحقّق</button></div></div>`).join(''):'<div style="color:var(--muted)">لا طلبات لهذا المستخدم.</div>';
+    refreshIcons();
+  }catch(e){const el=document.getElementById('telrOrders');if(el)el.innerHTML='<div style="color:var(--bad)">تعذّر: '+esc(e.message)+'</div>';}
+}
+async function telrVerify(cartRef,btn){btn.disabled=true;btn.textContent='…';try{const r=await hrApi('admin/telr/verify-payment',{method:'POST',body:{cartRef}});btn.textContent=(r&&r.status)?('✓ '+r.status):'✓ تمّ';subsLoad();}catch(e){btn.disabled=false;btn.textContent='إعادة';alert('تعذّر التحقّق: '+e.message)}}
+
+/* ═══════════ المعلمون ═══════════ */
+let TCH=null,TCH_ERR=null,TCH_Q='';
+function hrViewTeachers(){TCH=null;TCH_ERR=null;hrSet(hrLoading());tchLoad();}
+async function tchLoad(){try{const r=await hrApi('admin/teachers');TCH=r.entries||[];TCH_ERR=null;}catch(e){TCH_ERR=e.message||'خطأ';}if(hrActive('teachers'))tchRender();}
+function tchSearch(v){TCH_Q=(v||'').trim();tchRender();}
+function tchRender(){
+  if(TCH_ERR){hrSet(hrErr(TCH_ERR,'tchLoad()'));return}
+  const all=TCH||[];const q=TCH_Q.toLowerCase();
+  const rows=q?all.filter(t=>((t.displayName||'')+(t.schoolName||'')).toLowerCase().includes(q)):all;
+  const verified=all.filter(t=>t.isVerified).length;
+  const cards=rows.length?`<div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">${rows.map(t=>`<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px"><b>${esc(t.displayName||'—')}</b>${t.isVerified?hrChip('موثّق','#0ea5e9'):''}${t.isActive?'':hrChip('معطّل','#ef4444')}</div>
+    <div style="font-size:12px;color:var(--muted);margin:4px 0 10px">${esc(t.schoolName||'—')} · ${HR_ar(t.questionCount)} سؤال · ${hrDate(t.createdAt)}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="tchPatch('${esc(t.id)}','isVerified',${!t.isVerified})"><i data-lucide="badge-check"></i> ${t.isVerified?'إلغاء التوثيق':'توثيق'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="tchPatch('${esc(t.id)}','isActive',${!t.isActive})"><i data-lucide="power"></i> ${t.isActive?'تعطيل':'تفعيل'}</button>
+      <button class="btn btn-ghost btn-sm" onclick="tchQuestions('${esc(t.id)}','${esc(t.displayName||'')}')"><i data-lucide="list"></i> أسئلته</button>
+    </div></div>`).join('')}</div>`:`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا معلمين.</div>`;
+  hrSet(`${hrHead('المعلمون','users',`<span style="font-size:12px;color:var(--muted)">${HR_ar(all.length)} معلّم · ${HR_ar(verified)} موثّق</span> <button class="btn btn-ghost btn-sm" onclick="tchLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
+    <input class="field" placeholder="بحث بالاسم أو المدرسة…" value="${esc(TCH_Q)}" oninput="tchSearch(this.value)" style="margin-bottom:14px">${cards}`);
+}
+async function tchPatch(id,field,val){try{const body={};body[field]=val;await hrApi('admin/teachers/'+id,{method:'PATCH',body});tchLoad();}catch(e){alert('تعذّر: '+e.message)}}
+async function tchQuestions(id,name){
+  openModal('أسئلة المعلّم — '+esc(name),'<div id="tchQs" style="color:var(--muted)">…جارٍ التحميل</div>',null,null);
+  document.getElementById('mSave').style.display='none';
+  try{const r=await hrApi('admin/teachers/'+id+'/questions');const qs=r.entries||[];const el=document.getElementById('tchQs');if(!el)return;
+    el.innerHTML=qs.length?qs.map(q=>`<div class="card" style="margin-bottom:8px"><b>${esc(q.question)}</b><div style="font-size:12px;color:var(--muted);margin-top:6px">${(q.options||[]).map((o,i)=>`${i===q.correctIndex?'✓ ':''}${esc(o)}`).join(' · ')}</div><div style="font-size:11px;color:var(--muted);margin-top:4px">${esc(q.subject||'')} · صف ${esc(String(q.grade||''))} · ${esc(q.status||'')}</div></div>`).join(''):'<div style="color:var(--muted)">لا أسئلة لهذا المعلّم.</div>';
+    refreshIcons();
+  }catch(e){const el=document.getElementById('tchQs');if(el)el.innerHTML='<div style="color:var(--bad)">تعذّر: '+esc(e.message)+'</div>';}
+}
+
+/* ═══════════ أسئلة المعلمين (مراجعة) ═══════════ */
+let TQ=null,TQ_ERR=null,TQ_F='pending_review';
+function hrViewTQuestions(){TQ=null;TQ_ERR=null;hrSet(hrLoading());tqLoad();}
+function tqFilter(f){TQ_F=f;TQ=null;hrSet(hrLoading());tqLoad();}
+async function tqLoad(){try{const r=await hrApi('admin/teacher-questions?status='+encodeURIComponent(TQ_F));TQ=r.entries||[];TQ_ERR=null;}catch(e){TQ_ERR=e.message||'خطأ';}if(hrActive('tquestions'))tqRender();}
+function tqRender(){
+  if(TQ_ERR){hrSet(hrErr(TQ_ERR,'tqLoad()'));return}
+  const rows=TQ||[];
+  const tabs=[['pending_review','بانتظار المراجعة'],['approved','مقبول'],['rejected','مرفوض'],['all','الكل']]
+    .map(([k,l])=>`<button class="btn btn-sm ${TQ_F===k?'btn-gold':'btn-ghost'}" onclick="tqFilter('${k}')">${l}</button>`).join('');
+  const cards=rows.length?rows.map(q=>`<div class="card" style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap"><b>${esc(q.question)}</b>${q.status==='approved'?hrChip('مقبول','#22c55e'):q.status==='rejected'?hrChip('مرفوض','#ef4444'):hrChip('معلّق','#f59e0b')}</div>
+    <div style="font-size:12px;color:var(--muted);margin:8px 0">${(q.options||[]).map((o,i)=>`${i===q.correctIndex?'<b style=\"color:#22c55e\">✓ </b>':''}${esc(o)}`).join(' · ')}</div>
+    ${q.explanation?`<div style="font-size:12px;color:var(--muted)">الشرح: ${esc(q.explanation)}</div>`:''}
+    <div style="font-size:11px;color:var(--muted);margin-top:6px">${esc(q.teacherName||'')} · ${esc(q.subject||'')} · صف ${esc(String(q.grade||''))}${q.reviewNote?` · ملاحظة: ${esc(q.reviewNote)}`:''}</div>
+    ${q.status==='pending_review'?`<div style="display:flex;gap:8px;margin-top:10px"><button class="btn btn-gold btn-sm" onclick="tqReview('${esc(String(q.id))}','approve')"><i data-lucide="check"></i> قبول</button><button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="tqReview('${esc(String(q.id))}','reject')"><i data-lucide="x"></i> رفض</button></div>`:''}
+  </div>`).join(''):`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا أسئلة في هذا التصنيف.</div>`;
+  hrSet(`${hrHead('أسئلة المعلمين','inbox','<button class="btn btn-ghost btn-sm" onclick="tqLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tabs}</div>${cards}`);
+}
+async function tqReview(id,action){const note=prompt(action==='approve'?'ملاحظة (اختياري):':'سبب الرفض (اختياري):')||'';try{await hrApi('admin/teacher-questions/'+id+'/'+action,{method:'POST',body:{reviewNote:note}});tqLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══════════ التذاكر (الدعم) ═══════════ */
+let TK=null,TK_ERR=null,TK_OPEN={};
+function hrViewTickets(){TK=null;TK_ERR=null;hrSet(hrLoading());tkLoad();}
+async function tkLoad(){try{const r=await hrApi('admin/tickets');TK=r.entries||[];TK_ERR=null;}catch(e){TK_ERR=e.message||'خطأ';}if(hrActive('tickets'))tkRender();}
+function tkStatusChip(st){const m={open:'#f59e0b',replied:'#0ea5e9',resolved:'#22c55e',closed:'#64748b'};const l={open:'مفتوحة',replied:'رُدّ عليها',resolved:'محلولة',closed:'مغلقة'};return hrChip(l[st]||st,m[st]||'#64748b');}
+function tkToggle(id){TK_OPEN[id]=!TK_OPEN[id];tkRender();if(TK_OPEN[id])tkLoadReplies(id);}
+function tkRender(){
+  if(TK_ERR){hrSet(hrErr(TK_ERR,'tkLoad()'));return}
+  const rows=TK||[];
+  const cards=rows.length?rows.map(t=>`<div class="card" style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;cursor:pointer" onclick="tkToggle('${esc(String(t.id))}')">
+      <div><b>${esc(t.subject||'(بلا عنوان)')}</b><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(t.email||'')} · ${hrDate(t.createdAt)}</div></div>
+      <div style="display:flex;gap:8px;align-items:center">${tkStatusChip(t.status)}<i data-lucide="chevron-down"></i></div>
+    </div>
+    ${TK_OPEN[t.id]?`<div style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+      <div style="font-size:13px;white-space:pre-wrap;margin-bottom:10px">${esc(t.message||'')}</div>
+      <div id="tkReplies_${t.id}" style="color:var(--muted);font-size:12px">…جارٍ تحميل الردود</div>
+      <textarea class="field" id="tkReply_${t.id}" placeholder="اكتب رداً (يُرسَل بريداً للمستخدم)…" style="margin-top:10px;min-height:70px"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn btn-gold btn-sm" onclick="tkReply('${esc(String(t.id))}')"><i data-lucide="send"></i> إرسال الرد</button>
+        <button class="btn btn-ghost btn-sm" onclick="tkStatus('${esc(String(t.id))}','${t.status==='closed'?'open':'closed'}')"><i data-lucide="${t.status==='closed'?'unlock':'lock'}"></i> ${t.status==='closed'?'إعادة فتح':'إغلاق'}</button>
+        <button class="btn btn-ghost btn-sm" onclick="tkStatus('${esc(String(t.id))}','resolved')"><i data-lucide="check-circle"></i> محلولة</button>
+      </div></div>`:''}
+  </div>`).join(''):`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا تذاكر.</div>`;
+  hrSet(`${hrHead('تذاكر الدعم','life-buoy','<button class="btn btn-ghost btn-sm" onclick="tkLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}${cards}`);
+}
+async function tkLoadReplies(id){try{const r=await hrApi('admin/tickets/'+id+'/replies');const reps=r.entries||r.replies||[];const el=document.getElementById('tkReplies_'+id);if(!el)return;el.innerHTML=reps.length?reps.map(x=>`<div style="border-right:2px solid #0ea5e9;padding:4px 10px;margin:6px 0"><div style="white-space:pre-wrap">${esc(x.replyText||'')}</div><div style="font-size:10px;color:var(--muted)">${hrDate(x.sentAt)}</div></div>`).join(''):'<div style="color:var(--muted)">لا ردود بعد.</div>';}catch(e){}}
+async function tkReply(id){const ta=document.getElementById('tkReply_'+id);const replyText=(ta&&ta.value||'').trim();if(!replyText){alert('اكتب رداً أولاً');return}try{await hrApi('admin/tickets/'+id+'/reply',{method:'POST',body:{replyText}});if(ta)ta.value='';tkLoad();}catch(e){alert('تعذّر الإرسال: '+e.message)}}
+async function tkStatus(id,status){try{await hrApi('admin/tickets/'+id+'/status',{method:'PATCH',body:{status}});tkLoad();}catch(e){alert('تعذّر: '+e.message)}}
+
+/* ═══════════ قائمة الانتظار ═══════════ */
+let WL=null,WL_ERR=null,WL_UNSENT=false;
+function hrViewWaitlist(){WL=null;WL_ERR=null;hrSet(hrLoading());wlLoad();}
+async function wlLoad(){try{const r=await hrApi('admin/waitlist');WL=r.entries||[];WL_ERR=null;}catch(e){WL_ERR=e.message||'خطأ';}if(hrActive('waitlist'))wlRender();}
+function wlToggleUnsent(){WL_UNSENT=!WL_UNSENT;wlRender();}
+function wlRender(){
+  if(WL_ERR){hrSet(hrErr(WL_ERR,'wlLoad()'));return}
+  let rows=WL||[];if(WL_UNSENT)rows=rows.filter(e=>!e.emailSentAt);
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>البريد</th><th>المصدر</th><th>التسجيل</th><th>البريد المُرسَل</th><th></th></tr></thead><tbody>
+    ${rows.map(e=>`<tr><td dir="ltr">${esc(e.email)}</td><td>${esc(e.source||'—')}</td><td>${hrDate(e.createdAt)}</td><td>${e.emailSentAt?hrChip('أُرسل','#22c55e'):hrChip('لم يُرسل','#f59e0b')}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="wlResend('${esc(String(e.id))}',this)"><i data-lucide="mail"></i> إرسال</button></td></tr>`).join('')}</tbody></table></div>`
+    :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا سجلّات.</div>`;
+  hrSet(`${hrHead('قائمة الانتظار','clock',`<button class="btn btn-ghost btn-sm" onclick="wlExport()"><i data-lucide="download"></i> CSV</button><button class="btn btn-ghost btn-sm" onclick="wlLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
+    <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer;margin-bottom:12px"><input type="checkbox" ${WL_UNSENT?'checked':''} onchange="wlToggleUnsent()" style="width:auto"> «لم يُرسل» فقط</label>${body}`);
+}
+async function wlResend(id,btn){btn.disabled=true;btn.textContent='…';try{await hrApi('admin/waitlist/'+id+'/resend-email',{method:'POST'});btn.textContent='✓ أُرسل';wlLoad();}catch(e){btn.disabled=false;btn.textContent='إعادة';alert('تعذّر: '+e.message)}}
+function wlExport(){const rows=WL||[];const csv=['email,source,createdAt,emailSentAt'].concat(rows.map(e=>[e.email,e.source||'',e.createdAt||'',e.emailSentAt||''].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(','))).join('\n');const blob=new Blob([csv],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='waitlist.csv';a.click();}
+
+/* ═══════════ المحتوى (الكتب) ═══════════ */
+let CB=null,CB_ERR=null,CB_Q='';
+function hrViewContent(){CB=null;CB_ERR=null;hrSet(hrLoading());cbLoad();}
+async function cbLoad(){try{const r=await hrApi('admin/books');CB=r.books||r.entries||[];CB_ERR=null;}catch(e){CB_ERR=e.message||'خطأ';}if(hrActive('content'))cbRender();}
+function cbSearch(v){CB_Q=(v||'').trim();cbRender();}
+function cbRender(){
+  if(CB_ERR){hrSet(hrErr(CB_ERR,'cbLoad()'));return}
+  const all=CB||[];const q=CB_Q.toLowerCase();
+  const rows=q?all.filter(b=>((b.subject||'')+(b.grade||'')+(b.semester||'')).toLowerCase().includes(q)):all;
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>المادة</th><th>الصف</th><th>الفصل</th><th>عدد الأسئلة</th></tr></thead><tbody>
+    ${rows.map(b=>`<tr><td><b>${esc(b.subject)}</b></td><td>${esc(String(b.grade))}</td><td>${esc(String(b.semester))}</td><td>${HR_ar(b.questionCount)}</td></tr>`).join('')}</tbody></table></div>`
+    :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا كتب.</div>`;
+  hrSet(`${hrHead('المحتوى — الكتب','book-open',`<span style="font-size:12px;color:var(--muted)">${HR_ar(all.length)} كتاب</span> <button class="btn btn-ghost btn-sm" onclick="cbLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
+    <input class="field" placeholder="بحث بالمادة/الصف/الفصل…" value="${esc(CB_Q)}" oninput="cbSearch(this.value)" style="margin-bottom:14px">${body}`);
+}
+
+/* ═══════════ الإعدادات ═══════════ */
+let SET=null,SET_ERR=null;
+function hrViewSettings(){SET=null;SET_ERR=null;hrSet(hrLoading());setLoad();}
+async function setLoad(){try{const r=await hrApi('admin/settings');SET=r.settings||r||{};SET_ERR=null;}catch(e){SET_ERR=e.message||'خطأ';}if(hrActive('settings'))setRender();}
+function setRender(){
+  if(SET_ERR){hrSet(hrErr(SET_ERR,'setLoad()'));return}
+  const s=SET||{};
+  hrSet(`${hrHead('إعدادات الموقع','settings','')}
+    <div class="card" style="max-width:520px">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:14px">بيانات التواصل الظاهرة في تذييل الموقع وصفحة الدعم على huroofduroos.com.</div>
+      ${hrLbl('البريد الإلكترونيّ')}<input class="field" id="setEmail" dir="ltr" value="${esc(s.contact_email||'')}" style="margin-bottom:12px">
+      ${hrLbl('واتساب')}<input class="field" id="setWa" dir="ltr" value="${esc(s.contact_whatsapp||'')}" style="margin-bottom:12px">
+      ${hrLbl('الهاتف')}<input class="field" id="setPhone" dir="ltr" value="${esc(s.contact_phone||'')}" style="margin-bottom:14px">
+      <div style="display:flex;gap:10px;align-items:center"><button class="btn btn-gold" onclick="setSave()"><i data-lucide="save"></i> حفظ</button><span id="setMsg" style="font-size:13px;font-weight:700"></span></div>
+    </div>`);
+}
+async function setSave(){const body={contact_email:(document.getElementById('setEmail').value||'').trim(),contact_whatsapp:(document.getElementById('setWa').value||'').trim(),contact_phone:(document.getElementById('setPhone').value||'').trim()};const msg=document.getElementById('setMsg');msg.style.color='var(--muted)';msg.textContent='جارٍ…';try{await hrApi('admin/settings',{method:'PUT',body});msg.style.color='#22c55e';msg.textContent='حُفظ ✓';}catch(e){msg.style.color='#ef4444';msg.textContent=e.message;}}
 function hrManageHTML(){
   return `
       <div id="hrKpis" class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-bottom:20px"></div>
