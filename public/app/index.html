@@ -817,6 +817,7 @@ const APPS=[
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
+  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette'},
   {id:'products',name:'المنتجات',icon:'package'},
   {id:'pos',name:'الكاشير',icon:'scan-barcode'},
   {id:'subs',name:'الاشتراكات والمصروفات',icon:'credit-card'},
@@ -838,7 +839,7 @@ const APPS=[
   {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
@@ -850,6 +851,7 @@ const LAUNCH=[
   {id:'ai',name:'المساعد الذكي',icon:'bot',c:'#8b5cf6,#6366f1'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
+  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
   {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488'},
   {id:'pos',name:'الكاشير',icon:'scan-barcode',c:'#22c55e,#15803d'},
   {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777'},
@@ -3956,6 +3958,10 @@ function brandProfiles(){if(!S.settings.brandProfiles||!S.settings.brandProfiles
 function brandById(id){return brandProfiles().find(b=>b.id===id)||brandProfiles()[0]}
 function defaultBrandId(){return S.settings.defaultBrandId||brandProfiles()[0].id}
 function officialInfo(){const o=S.settings.official||{};const s=S.settings;return {brand:o.brand||s.brand||'',owner:o.owner||s.owner||'',email:o.email||s.email||'',phone:o.phone||s.phone||'',vat:o.vat||s.vat.number||'',cr:o.cr||s.vat.cr||'',iban:o.iban||s.iban||'',address:o.address||''}}
+/* بيانات المؤسسة الظاهرة على المستند: أولوية لبيانات التصميم نفسه، ثم العامة الرسمية */
+function designOrg(b){const o=(b&&b.org)||{};const off=officialInfo();return {
+  brand:o.brand||off.brand,owner:(o.owner!=null&&o.owner!=='')?o.owner:off.owner,email:o.email||off.email,
+  phone:o.phone||off.phone,iban:o.iban||off.iban,cr:o.cr||off.cr,vat:o.vat||off.vat,address:o.address||off.address};}
 /* أنماط زخرفية (SVG inline) — تظهر أسفل الغلاف وفوق ترويسة المستند */
 function brandPatternTop(b){
   const c1=b.accent,c2=b.accent2;
@@ -4111,7 +4117,7 @@ function docModal(type,id,presetName,cb){
         <div style="font-size:11px;color:var(--muted);margin-top:4px">يحدّد شكل الغلاف والألوان والشعار عند الطباعة/الإرسال — البيانات الرسمية تظهر أسفل الغلاف مهما كان البراند.</div>
       </div>
       <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="brandProfilesManager()"><i data-lucide="palette"></i> إدارة البراندات</button>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal();go('quotedesign')"><i data-lucide="palette"></i> تصميم عروض الأسعار</button>
       </div>
     </div>
     ${isInv?'':`
@@ -4165,78 +4171,108 @@ function zatcaBase64(seller,vatNo,iso,total,vat){const bytes=[...tlv(1,seller),.
 function qrImg(text){try{const q=qrcode(0,'M');q.addData(text);q.make();return q.createImgTag(4,8)}catch(e){return '<div style="font-size:9px;word-break:break-all;max-width:130px">'+esc(text)+'</div>'}}
 
 /* ===== PRINT — صفحة غلاف بهويّة البراند + صفحة المستند (بلا أي ذكر للنظام) ===== */
-function printDocHTML(type,id){
+function printDocHTML(type,id,previewBrand){
   const isInv=type==='invoice';const isCredit=type==='credit';const d=(isInv?S.invoices:isCredit?S.credits:S.sales).find(x=>x.id===id);
-  const s=S.settings;const b=brandById(d.brandId||defaultBrandId());const off=officialInfo();
+  const s=S.settings;const b=previewBrand||brandById(d.brandId||defaultBrandId());const org=designOrg(b);
+  const acc=b.accent||'#f5a623',acc2=b.accent2||b.accent||'#d97706',ink=b.ink||'#0a0a0b';
+  const coverStyle=b.coverStyle||'classic';const showPat=b.showPattern!==false;const showQR=b.showQR!==false;
   const gross=docGross(d);const lineSub=docLineSubtotal(d);const lineDisc=gross-lineSub;const ovr=docOverallDisc(d);const net=lineSub-ovr;const tax=d.vat?net*(Number(d.vatRate||0)/100):0;const total=net+tax;const disc=lineDisc;const paid=isInv?invPaid(d):0;const due=isInv?Math.max(0,total-paid):0;
   const kind=isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):isCredit?'إشعار دائن':'عرض سعر';
+  const titleText=(b.titleText&&String(b.titleText).trim())?String(b.titleText).trim():kind;
+  const titleSize=Number(b.titleSize||82);
   const prefix=isInv?(s.invPrefix||'INV-'):isCredit?'CN-':(s.salePrefix||'S');
   const docNo=prefix+String(d.number).padStart(5,'0');
   const ct=S.contacts.find(c=>c.id===d.contactId)||{};const cname=resolveClientName(d);const cvat=d.clientVat||ct.vat||'';const caddr=[ct.company,ct.address,ct.city].filter(Boolean).join('، ');
   let qrBlock='';
-  if(isInv||isCredit){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(off.brand||s.vat.sellerName||s.brand,off.vat||s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
-  // ===== صفحة الغلاف (Page 1) — «عرض سعر» كبير في المنتصف بتنسيق نظيف — تظهر في معاينة الواتساب
-  const cover=`
-   <div class="page cover" style="background:#fff;display:flex;flex-direction:column">
-    <div class="cover-top" style="position:relative;height:420px;flex:0 0 420px;overflow:hidden">
-      ${brandPatternTop(b)}
-      <div style="position:absolute;inset:0;padding:36px 48px;display:flex;flex-direction:column;justify-content:space-between">
-        <!-- الشعار في الزاوية العلوية اليسرى + اسم البراند في اليمنى -->
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:20px">
-          <div>${b.logo?`<img src="${esc(b.logo)}" style="height:70px;max-width:220px;object-fit:contain;filter:drop-shadow(0 3px 10px rgba(0,0,0,.22))">`:`<div style="color:#fff;font-weight:900;font-size:28px;letter-spacing:.5px;text-shadow:0 2px 8px rgba(0,0,0,.28)">${esc(b.name)}</div>`}</div>
-          <div style="text-align:left;color:#fff">
-            <div style="font-weight:900;font-size:15px;letter-spacing:.5px">${esc(b.name)}</div>
-            ${b.tagline?`<div style="font-size:11.5px;opacity:.9;margin-top:3px;max-width:220px">${esc(b.tagline)}</div>`:''}
-          </div>
-        </div>
-        <!-- العنوان الرئيسي في المنتصف — بخط ثمانية الرسمي، بلا ظل -->
-        <div style="text-align:center;color:#fff">
-          <div class="headline" style="font-size:82px;font-weight:900;line-height:1;margin:0;letter-spacing:-1px">${esc(kind)}</div>
-          <div style="display:inline-block;margin-top:16px;padding:7px 22px;border:2px solid rgba(255,255,255,.6);border-radius:30px;font-size:15px;font-weight:700;letter-spacing:3px" dir="ltr">${esc(docNo)}</div>
-        </div>
-        <div></div>
+  if(showQR&&(isInv||isCredit)){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(org.brand||s.vat.sellerName||s.brand,org.vat||s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
+  // ===== كتل مشتركة =====
+  const logoTag=(h,onDark)=>b.logo?`<img src="${esc(b.logo)}" style="height:${h}px;max-width:230px;object-fit:contain${onDark?';filter:drop-shadow(0 3px 10px rgba(0,0,0,.22))':''}">`:`<div style="color:${onDark?'#fff':ink};font-weight:900;font-size:26px;letter-spacing:.5px${onDark?';text-shadow:0 2px 8px rgba(0,0,0,.28)':''}">${esc(b.name)}</div>`;
+  const clientBlock=(dark)=>`<div style="font-size:11px;color:${dark?'rgba(255,255,255,.7)':'#94a3b8'};font-weight:800;letter-spacing:3px;margin-bottom:6px">مُقدَّم إلى</div>
+      <div style="font-size:24px;font-weight:900;color:${dark?'#fff':ink};line-height:1.25">${esc(cname)}</div>
+      ${caddr?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:6px;line-height:1.7">${esc(caddr)}</div>`:''}
+      ${ct.email?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
+      ${ct.phone?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}`;
+  const metaBlock=`<div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:14px">
+        <div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.date)}</div></div>
+        ${d.expiry?`<div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">صالح حتى</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.expiry)}</div></div>`:''}
       </div>
-    </div>
-    <!-- شريط بيانات مركزي: للعميل / التاريخ / الإجمالي — بمسافات كافية من الحواف -->
-    <div style="padding:44px 56px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:#0f172a">
-      <div>
-        <div style="font-size:11px;color:#94a3b8;font-weight:800;letter-spacing:3px;margin-bottom:6px">مُقدَّم إلى</div>
-        <div style="font-size:24px;font-weight:900;color:${esc(b.ink)};line-height:1.25">${esc(cname)}</div>
-        ${caddr?`<div style="color:#475569;font-size:13px;margin-top:6px;line-height:1.7">${esc(caddr)}</div>`:''}
-        ${ct.email?`<div style="color:#475569;font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
-        ${ct.phone?`<div style="color:#475569;font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}
-      </div>
-      <div style="border-right:2px solid ${esc(b.accent)}33;padding-right:24px">
-        <div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:14px">
-          <div>
-            <div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div>
-            <div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.date)}</div>
-          </div>
-          ${d.expiry?`<div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">صالح حتى</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.expiry)}</div></div>`:''}
-        </div>
-        <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,${esc(b.accent)}18,${esc(b.accent)}08);border:1px solid ${esc(b.accent)}44;border-radius:12px">
-          <div style="font-size:10.5px;color:${esc(b.accent2||b.accent)};font-weight:800;letter-spacing:2px">الإجمالي</div>
-          <div style="font-size:26px;font-weight:900;color:${esc(b.accent2||b.accent)};margin-top:2px;white-space:nowrap">${money(total)}</div>
-        </div>
-      </div>
-    </div>
-    <!-- البيانات الرسمية أسفل الغلاف -->
-    <div style="padding:24px 56px;margin-top:auto">
-      <div style="height:1px;background:linear-gradient(90deg,transparent,${esc(b.accent)}66,transparent);margin-bottom:18px"></div>
+      <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,${acc}18,${acc}08);border:1px solid ${acc}44;border-radius:12px">
+        <div style="font-size:10.5px;color:${acc2};font-weight:800;letter-spacing:2px">الإجمالي</div>
+        <div style="font-size:26px;font-weight:900;color:${acc2};margin-top:2px;white-space:nowrap">${money(total)}</div>
+      </div>`;
+  const officialFooter=`<div style="height:1px;background:linear-gradient(90deg,transparent,${acc}66,transparent);margin-bottom:18px"></div>
       <div style="color:#64748b;font-size:12px;line-height:1.9">
-        <div style="font-weight:800;color:${esc(b.ink)};font-size:13.5px;margin-bottom:4px">${esc(off.brand)}</div>
-        ${off.owner?`${esc(off.owner)}`:''}${off.email?(off.owner?' · ':'')+esc(off.email):''}${off.phone?' · <span dir="ltr">'+esc(off.phone)+'</span>':''}
-        ${off.address?`<br>${esc(off.address)}`:''}
-        ${off.cr||off.vat?`<br>${off.cr?'س.ت '+esc(off.cr):''}${off.cr&&off.vat?' · ':''}${off.vat?'الرقم الضريبي '+esc(off.vat):''}`:''}
+        <div style="font-weight:800;color:${ink};font-size:13.5px;margin-bottom:4px">${esc(org.brand)}</div>
+        ${org.owner?`${esc(org.owner)}`:''}${org.email?(org.owner?' · ':'')+esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
+        ${org.address?`<br>${esc(org.address)}`:''}
+        ${org.iban?`<br>آيبان: <span dir="ltr">${esc(org.iban)}</span>`:''}
+        ${org.cr||org.vat?`<br>${org.cr?'س.ت '+esc(org.cr):''}${org.cr&&org.vat?' · ':''}${org.vat?'الرقم الضريبي '+esc(org.vat):''}`:''}
+      </div>`;
+  const titleTag=(color,shadow)=>`<div class="headline" style="font-size:${titleSize}px;font-weight:900;line-height:1;margin:0;letter-spacing:-1px;color:${color}${shadow?';text-shadow:0 4px 14px rgba(0,0,0,.25)':''}">${esc(titleText)}</div>`;
+  const docNoChip=(dark)=>`<div style="display:inline-block;margin-top:16px;padding:7px 22px;border:2px solid ${dark?'rgba(255,255,255,.6)':acc};border-radius:30px;font-size:15px;font-weight:700;letter-spacing:3px;color:${dark?'#fff':acc2}" dir="ltr">${esc(docNo)}</div>`;
+  // ===== أنماط الغلاف =====
+  let cover;
+  if(coverStyle==='minimal'){
+    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+      <div style="height:8px;background:linear-gradient(90deg,${acc},${acc2})"></div>
+      <div style="padding:44px 52px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:20px">
+        <div>${logoTag(66,false)}${b.tagline?`<div style="color:#64748b;font-size:12px;margin-top:8px">${esc(b.tagline)}</div>`:''}</div>
+        <div style="text-align:left"><div style="font-weight:900;font-size:15px;color:${ink}">${esc(b.name)}</div></div>
       </div>
-    </div>
-    <div class="cover-bottom" style="position:absolute;bottom:0;left:0;right:0;height:80px;overflow:hidden">${brandPatternBottom(b)}</div>
-   </div>`;
+      <div style="text-align:center;padding:70px 40px 60px">
+        ${titleTag(ink,false)}
+        ${docNoChip(false)}
+      </div>
+      <div style="padding:0 52px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:${ink}">
+        <div>${clientBlock(false)}</div>
+        <div style="border-right:2px solid ${acc}33;padding-right:24px">${metaBlock}</div>
+      </div>
+      <div style="padding:24px 52px;margin-top:auto">${officialFooter}</div>
+      <div style="height:8px;background:linear-gradient(90deg,${acc2},${acc})"></div>
+    </div>`;
+  } else if(coverStyle==='band'){
+    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+      <div style="padding:44px 52px 20px;display:flex;justify-content:space-between;align-items:center;gap:20px">
+        <div>${logoTag(64,false)}</div>
+        <div style="text-align:left"><div style="font-weight:900;font-size:15px;color:${ink}">${esc(b.name)}</div>${b.tagline?`<div style="font-size:11.5px;color:#64748b;margin-top:3px;max-width:220px">${esc(b.tagline)}</div>`:''}</div>
+      </div>
+      <div style="position:relative;background:linear-gradient(120deg,${acc},${acc2});padding:44px 52px;text-align:center;overflow:hidden">
+        ${showPat?`<div style="position:absolute;inset:0;opacity:.5">${brandPatternTop(b)}</div>`:''}
+        <div style="position:relative">${titleTag('#fff',true)}${docNoChip(true)}</div>
+      </div>
+      <div style="padding:44px 52px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:${ink}">
+        <div>${clientBlock(false)}</div>
+        <div style="border-right:2px solid ${acc}33;padding-right:24px">${metaBlock}</div>
+      </div>
+      <div style="padding:24px 52px;margin-top:auto">${officialFooter}</div>
+      <div class="cover-bottom" style="position:absolute;bottom:0;left:0;right:0;height:70px;overflow:hidden">${brandPatternBottom(b)}</div>
+    </div>`;
+  } else { // classic
+    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+      <div class="cover-top" style="position:relative;height:420px;flex:0 0 420px;overflow:hidden;background:linear-gradient(120deg,${acc},${acc2})">
+        ${showPat?brandPatternTop(b):''}
+        <div style="position:absolute;inset:0;padding:36px 48px;display:flex;flex-direction:column;justify-content:space-between">
+          <div style="display:flex;justify-content:space-between;align-items:center;gap:20px">
+            <div>${logoTag(70,true)}</div>
+            <div style="text-align:left;color:#fff"><div style="font-weight:900;font-size:15px;letter-spacing:.5px">${esc(b.name)}</div>${b.tagline?`<div style="font-size:11.5px;opacity:.9;margin-top:3px;max-width:220px">${esc(b.tagline)}</div>`:''}</div>
+          </div>
+          <div style="text-align:center;color:#fff">${titleTag('#fff',false)}${docNoChip(true)}</div>
+          <div></div>
+        </div>
+      </div>
+      <div style="padding:44px 56px 20px;display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:${ink}">
+        <div>${clientBlock(false)}</div>
+        <div style="border-right:2px solid ${acc}33;padding-right:24px">${metaBlock}</div>
+      </div>
+      <div style="padding:24px 56px;margin-top:auto">${officialFooter}</div>
+      <div class="cover-bottom" style="position:absolute;bottom:0;left:0;right:0;height:80px;overflow:hidden">${brandPatternBottom(b)}</div>
+    </div>`;
+  }
   // ===== صفحة التفاصيل (Page 2) — الجدول والإجمالي والشروط
   const details=`
    <div class="page details" style="padding:34px 34px 40px;position:relative">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${esc(b.accent)};padding-bottom:14px;margin-bottom:20px">
-      <div>${b.logo?`<img src="${esc(b.logo)}" style="height:44px;margin-bottom:6px">`:`<div style="font-size:20px;font-weight:900">${esc(b.name)}</div>`}
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${acc};padding-bottom:14px;margin-bottom:20px">
+      <div>${b.logo?`<img src="${esc(b.logo)}" style="height:44px;margin-bottom:6px">`:`<div style="font-size:20px;font-weight:900;color:${ink}">${esc(b.name)}</div>`}
         <div style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
       </div>
       <div style="text-align:left">${qrBlock}
@@ -4253,7 +4289,7 @@ function printDocHTML(type,id){
     </div>
     <div style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
     <table style="width:100%;border-collapse:collapse;table-layout:fixed">
-      <thead><tr style="background:${esc(b.accent)};color:#fff">
+      <thead><tr style="background:${acc};color:#fff">
         <th style="padding:11px 14px;text-align:right;font-size:13px">الوصف</th>
         <th style="padding:11px 8px;width:64px;font-size:13px">الكمية</th>
         <th style="padding:11px 8px;width:110px;font-size:13px">السعر</th>
@@ -4276,17 +4312,17 @@ function printDocHTML(type,id){
         ${disc>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم البنود</span><span style="white-space:nowrap" dir="ltr">- ${disc.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
         ${ovr>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span style="white-space:nowrap" dir="ltr">- ${ovr.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
         <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${esc(b.accent)};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>الإجمالي</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${acc};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>الإجمالي</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
         ${isInv&&paid>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>المدفوع</span><span style="white-space:nowrap" dir="ltr">${paid.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
         ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
       </div>
     </div>
-    ${isInv&&(off.iban||s.iban||s.bankName)?`<div style="margin-top:14px;padding:10px 14px;background:#f0f9ff;border-right:3px solid ${esc(b.accent)};border-radius:8px;color:#0c4a6e;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName||'')} <span dir="ltr">${esc(off.iban||s.iban||'')}</span></div>`:''}
+    ${(org.iban||s.bankName)?`<div style="margin-top:14px;padding:10px 14px;background:#f8fafc;border-right:3px solid ${acc};border-radius:8px;color:#334155;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName||'')} <span dir="ltr">${esc(org.iban||'')}</span></div>`:''}
     <div style="position:absolute;bottom:0;left:0;right:0;height:60px;overflow:hidden">${brandPatternBottom(b)}</div>
     <div style="margin-top:44px;padding-bottom:70px;text-align:center;color:#94a3b8;font-size:11.5px;line-height:1.7">
-      <div style="font-weight:800;color:${esc(b.ink)};font-size:12.5px">${esc(off.brand)}</div>
-      ${off.owner?esc(off.owner)+' · ':''}${off.email?esc(off.email):''}${off.phone?' · <span dir="ltr">'+esc(off.phone)+'</span>':''}
-      ${off.cr||off.vat?`<br>${off.cr?'س.ت '+esc(off.cr):''}${off.cr&&off.vat?' · ':''}${off.vat?'الرقم الضريبي '+esc(off.vat):''}`:''}
+      <div style="font-weight:800;color:${ink};font-size:12.5px">${esc(org.brand)}</div>
+      ${org.owner?esc(org.owner)+' · ':''}${org.email?esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
+      ${org.cr||org.vat?`<br>${org.cr?'س.ت '+esc(org.cr):''}${org.cr&&org.vat?' · ':''}${org.vat?'الرقم الضريبي '+esc(org.vat):''}`:''}
     </div>
    </div>`;
   const ORIGIN=location.origin;
@@ -4319,6 +4355,142 @@ function printDoc(type,id){
   document.body.appendChild(f);
   const doc=f.contentWindow.document;doc.open();doc.write(html);doc.close();
   setTimeout(()=>{try{f.contentWindow.focus();f.contentWindow.print()}catch(e){alert('تعذّرت الطباعة: '+e.message)}setTimeout(()=>f.remove(),1500)},700);
+}
+
+/* ═══════════ تصميم عروض الأسعار — استوديو مرئي بمعاينة حيّة ═══════════ */
+let QD={sel:''};
+function qdDesign(){const b=brandById(QD.sel);QD.sel=b.id;return b;}
+function qdSampleDoc(){
+  const dd=new Date();dd.setDate(dd.getDate()+14);const exp=dd.getFullYear()+'-'+_pad2(dd.getMonth()+1)+'-'+_pad2(dd.getDate());
+  const doc={id:'__qd_sample',number:1023,client:'شركة نموذجية للتقنية',contactId:'',clientVat:'',date:today(),expiry:exp,
+    items:[{desc:'إنتاج فيديو إعلاني قصير',qty:1,price:1500,discount:0,details:'الفكرة والسكربت والتصوير والمونتاج، جاهز للنشر.'},
+           {desc:'مقاطع عمودية إضافية',qty:2,price:300,discount:0,details:'نسخ قصيرة جاهزة لتيك توك وريلز وشورتس.'}],
+    discType:'none',discVal:0,vat:false,vatRate:15,status:'draft',notes:'',templateId:quoteDef().defaultTemplateId,depositPct:50,notesAuto:true,payments:[]};
+  doc.notes=buildInitialQuoteNotes(doc);
+  return doc;
+}
+function qdPreviewHTML(design){
+  const doc=qdSampleDoc();S.sales.push(doc);
+  let html='';try{html=printDocHTML('sale',doc.id,design);}catch(e){html='<p style="padding:20px;color:#b91c1c">تعذّرت المعاينة: '+esc(e.message)+'</p>';}
+  S.sales=S.sales.filter(x=>x.id!=='__qd_sample');
+  return html;
+}
+function qdRenderPreview(){const ifr=document.getElementById('qdPreview');if(!ifr)return;ifr.srcdoc=qdPreviewHTML(qdDesign());setTimeout(qdFitPreview,60);}
+function qdFitPreview(){const wrap=document.getElementById('qdPvWrap'),sc=document.getElementById('qdPvScale');if(!wrap||!sc)return;const w=wrap.clientWidth-32;const scale=Math.max(.2,Math.min(1,w/680));sc.style.transform='scale('+scale+')';sc.style.height=(2000*scale)+'px';}
+function qdSet(f,v){const b=qdDesign();b[f]=v;save();qdRenderPreview();}
+function qdSetNum(f,v){const b=qdDesign();b[f]=Number(v)||0;save();qdRenderPreview();}
+function qdSetBool(f,v){const b=qdDesign();b[f]=!!v;save();qdRenderPreview();}
+function qdSetOrg(f,v){const b=qdDesign();if(!b.org)b.org={};b.org[f]=v;save();qdRenderPreview();}
+function qdPick(id){QD.sel=id;renderQuoteDesign();}
+function qdAdd(){const base=qdDesign();const id='b_'+uid();const copy=JSON.parse(JSON.stringify(base));copy.id=id;copy.name=(base.name||'تصميم')+' (نسخة)';brandProfiles().push(copy);save();QD.sel=id;renderQuoteDesign();}
+function qdBlank(){const id='b_'+uid();brandProfiles().push({id,name:'تصميم جديد',tagline:'',logo:'',accent:'#f5a623',accent2:'#d97706',ink:'#0a0a0b',pattern:'sun',coverStyle:'classic',showPattern:true,showQR:true,titleSize:82,org:{}});save();QD.sel=id;renderQuoteDesign();}
+function qdDel(){const arr=brandProfiles();if(arr.length<=1){alert('لا يمكن حذف آخر تصميم');return}const b=qdDesign();if(!confirm('حذف تصميم «'+b.name+'»؟'))return;S.settings.brandProfiles=arr.filter(x=>x.id!==b.id);if(defaultBrandId()===b.id)S.settings.defaultBrandId=brandProfiles()[0].id;save();QD.sel=brandProfiles()[0].id;renderQuoteDesign();}
+function qdSetDefault(){S.settings.defaultBrandId=qdDesign().id;save();renderQuoteDesign();}
+function qdUploadLogo(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const b=qdDesign();b.logo=e.target.result;save();renderQuoteDesign();};r.readAsDataURL(f);}
+function qdClearLogo(){const b=qdDesign();b.logo='';save();renderQuoteDesign();}
+function qdPrintSample(){const doc=qdSampleDoc();S.sales.push(doc);printDoc('sale','__qd_sample');setTimeout(()=>{S.sales=S.sales.filter(x=>x.id!=='__qd_sample')},1600);}
+
+function renderQuoteDesign(){
+  const b=qdDesign();const arr=brandProfiles();const org=designOrg(b);const isDef=defaultBrandId()===b.id;
+  const COVERS=[['classic','كلاسيكي — غلاف ملوّن'],['minimal','بسيط — أبيض أنيق'],['band','شريط — عنوان على شريط لوني']];
+  const PATS=[['sun','دوائر شمسية'],['letters','حروف عربية'],['grid','شبكة هندسية']];
+  const lbl=t=>`<div style="font-size:12px;font-weight:800;color:var(--muted);margin:2px 0 5px">${t}</div>`;
+  const sec=(icon,title,inner)=>`<div class="qd-sec"><div class="qd-sec-h"><i data-lucide="${icon}"></i> ${title}</div>${inner}</div>`;
+  document.getElementById('main').innerHTML=`
+    <style>
+      .qd-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
+      .qd-controls{width:430px;flex:0 0 430px;max-width:100%}
+      .qd-preview{flex:1;min-width:320px}
+      .qd-sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
+      .qd-sec-h{font-weight:800;font-size:14px;display:flex;align-items:center;gap:7px;margin-bottom:12px}
+      .qd-sec-h svg{width:16px;height:16px;color:var(--gold2)}
+      .qd-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+      .qd-field input,.qd-field select,.qd-field textarea{width:100%}
+      .qd-color{display:flex;align-items:center;gap:8px}
+      .qd-color input[type=color]{width:42px;height:38px;padding:2px;border-radius:9px;border:1px solid var(--line);background:var(--panel2);cursor:pointer}
+      .qd-designs{display:flex;flex-direction:column;gap:6px;max-height:180px;overflow:auto}
+      .qd-swatch{width:18px;height:18px;border-radius:5px;flex:none}
+      @media(max-width:900px){.qd-controls{flex:1 1 100%;width:100%}}
+    </style>
+    <div class="page-head"><h1><i data-lucide="palette"></i> تصميم عروض الأسعار</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost btn-sm" onclick="qdPrintSample()"><i data-lucide="printer"></i> طباعة نموذج تجريبي</button>
+        <button class="btn btn-gold btn-sm" onclick="go('sales')"><i data-lucide="file-text"></i> عروض الأسعار</button>
+      </div>
+    </div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="wand-2"></i> <div>صمّم شكل عروض أسعارك وفواتيرك هنا. عدّل على اليمين وشاهد المعاينة على اليسار مباشرة. احفظ أكثر من تصميم (لكل شركة/براند تصميم)، واختر تصميماً افتراضياً — ثم عند إنشاء عرض سعر تختار التصميم من قائمة «هويّة الطباعة».</div></div>
+    <div class="qd-wrap">
+      <!-- عمود التحكم (يمين) -->
+      <div class="qd-controls">
+        ${sec('layers','التصاميم المحفوظة',`
+          <div class="qd-designs">${arr.map(x=>{const on=x.id===b.id;return `<button class="btn ${on?'btn-gold':'btn-ghost'} btn-sm" style="justify-content:flex-start;gap:8px" onclick="qdPick('${esc(x.id)}')"><span class="qd-swatch" style="background:linear-gradient(135deg,${x.accent||'#f5a623'},${x.accent2||x.accent||'#d97706'})"></span> ${esc(x.name)}${defaultBrandId()===x.id?' <span style="color:var(--gold2);font-size:11px;margin-inline-start:auto">★ افتراضي</span>':''}</button>`}).join('')}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn btn-ghost btn-sm" onclick="qdBlank()"><i data-lucide="plus"></i> جديد</button>
+            <button class="btn btn-ghost btn-sm" onclick="qdAdd()"><i data-lucide="copy"></i> نسخ الحالي</button>
+            <button class="btn btn-ghost btn-sm" onclick="qdSetDefault()" ${isDef?'disabled':''}><i data-lucide="check-circle"></i> اجعله الافتراضي</button>
+            <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="qdDel()" ${arr.length<=1?'disabled':''}><i data-lucide="trash-2"></i> حذف</button>
+          </div>`)}
+
+        ${sec('tag','اسم التصميم والهوية',`
+          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم التصميم (لك فقط)')}<input value="${esc(b.name||'')}" oninput="qdSet('name',this.value)" placeholder="مثال: إبراهيم سعود — ذهبي"></div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم الشركة المعروض على المستند')}<input value="${esc(b.name||'')}" oninput="qdSet('name',this.value)" placeholder="اسم البراند"></div>
+          <div class="qd-field">${lbl('وسم تعريفي (سطر تحت الاسم)')}<input value="${esc(b.tagline||'')}" oninput="qdSet('tagline',this.value)" placeholder="مثال: فيديوهات إعلانية تبيع"></div>`)}
+
+        ${sec('image','الشعار',`
+          <input type="file" accept="image/*" onchange="qdUploadLogo(this)">
+          ${b.logo?`<div style="display:flex;align-items:center;gap:12px;margin-top:10px"><img src="${esc(b.logo)}" style="height:52px;max-width:150px;object-fit:contain;background:#fff;border-radius:8px;padding:6px"><button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="qdClearLogo()"><i data-lucide="x"></i> إزالة</button></div>`:`<div style="font-size:12px;color:var(--muted);margin-top:6px">لا شعار — يظهر اسم الشركة نصّاً.</div>`}`)}
+
+        ${sec('paintbrush','الألوان',`
+          <div class="qd-row">
+            <div class="qd-field">${lbl('اللون الرئيسي')}<div class="qd-color"><input type="color" value="${esc(b.accent||'#f5a623')}" oninput="qdSet('accent',this.value)"><input value="${esc(b.accent||'#f5a623')}" oninput="qdSet('accent',this.value)" dir="ltr" style="flex:1"></div></div>
+            <div class="qd-field">${lbl('اللون الثانوي')}<div class="qd-color"><input type="color" value="${esc(b.accent2||b.accent||'#d97706')}" oninput="qdSet('accent2',this.value)"><input value="${esc(b.accent2||b.accent||'#d97706')}" oninput="qdSet('accent2',this.value)" dir="ltr" style="flex:1"></div></div>
+          </div>
+          <div class="qd-field" style="margin-top:10px">${lbl('لون النصوص الداكنة')}<div class="qd-color"><input type="color" value="${esc(b.ink||'#0a0a0b')}" oninput="qdSet('ink',this.value)"><input value="${esc(b.ink||'#0a0a0b')}" oninput="qdSet('ink',this.value)" dir="ltr" style="flex:1"></div></div>`)}
+
+        ${sec('layout-template','الغلاف والعنوان',`
+          <div class="qd-field" style="margin-bottom:10px">${lbl('نمط الغلاف')}<select onchange="qdSet('coverStyle',this.value)">${COVERS.map(c=>`<option value="${c[0]}" ${(b.coverStyle||'classic')===c[0]?'selected':''}>${c[1]}</option>`).join('')}</select></div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('نص العنوان (فارغ = تلقائي «عرض سعر» / «فاتورة»)')}<input value="${esc(b.titleText||'')}" oninput="qdSet('titleText',this.value)" placeholder="عرض سعر"></div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('حجم العنوان: '+(b.titleSize||82)+'px')}<input type="range" min="48" max="110" value="${b.titleSize||82}" oninput="qdSetNum('titleSize',this.value);this.previousElementSibling.textContent='حجم العنوان: '+this.value+'px'" style="width:100%"></div>
+          <div class="qd-row">
+            <div class="qd-field">${lbl('النقش الزخرفي')}<select onchange="qdSet('pattern',this.value)">${PATS.map(p=>`<option value="${p[0]}" ${(b.pattern||'sun')===p[0]?'selected':''}>${p[1]}</option>`).join('')}</select></div>
+            <div class="qd-field">${lbl('إظهار النقش')}<select onchange="qdSetBool('showPattern',this.value==='1')"><option value="1" ${b.showPattern!==false?'selected':''}>نعم</option><option value="0" ${b.showPattern===false?'selected':''}>لا (سادة)</option></select></div>
+          </div>
+          <div class="qd-field" style="margin-top:10px">${lbl('رمز QR للزكاة (يظهر في الفواتير)')}<select onchange="qdSetBool('showQR',this.value==='1')"><option value="1" ${b.showQR!==false?'selected':''}>مفعّل</option><option value="0" ${b.showQR===false?'selected':''}>مخفي</option></select></div>`)}
+
+        ${sec('building-2','بيانات المؤسسة على المستند',`
+          <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px">تظهر أسفل المستند. اتركها فارغة لتُستعمل البيانات الرسمية العامة تلقائياً.</div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم المؤسسة الرسمي')}<input value="${esc((b.org&&b.org.brand)||'')}" oninput="qdSetOrg('brand',this.value)" placeholder="${esc(officialInfo().brand||'مؤسسة حروف ودروس')}"></div>
+          <div class="qd-row">
+            <div class="qd-field">${lbl('المالك / التوقيع')}<input value="${esc((b.org&&b.org.owner)||'')}" oninput="qdSetOrg('owner',this.value)" placeholder="${esc(officialInfo().owner||'')}"></div>
+            <div class="qd-field">${lbl('الجوال / واتساب')}<input value="${esc((b.org&&b.org.phone)||'')}" oninput="qdSetOrg('phone',this.value)" dir="ltr" placeholder="${esc(officialInfo().phone||'')}"></div>
+          </div>
+          <div class="qd-field" style="margin:10px 0">${lbl('البريد الإلكتروني')}<input value="${esc((b.org&&b.org.email)||'')}" oninput="qdSetOrg('email',this.value)" dir="ltr" placeholder="${esc(officialInfo().email||'')}"></div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('الآيبان (IBAN)')}<input value="${esc((b.org&&b.org.iban)||'')}" oninput="qdSetOrg('iban',this.value)" dir="ltr" placeholder="SA00 0000 0000 0000 0000 0000"></div>
+          <div class="qd-row">
+            <div class="qd-field">${lbl('السجل التجاري')}<input value="${esc((b.org&&b.org.cr)||'')}" oninput="qdSetOrg('cr',this.value)" dir="ltr"></div>
+            <div class="qd-field">${lbl('الرقم الضريبي')}<input value="${esc((b.org&&b.org.vat)||'')}" oninput="qdSetOrg('vat',this.value)" dir="ltr"></div>
+          </div>
+          <div class="qd-field" style="margin-top:10px">${lbl('العنوان')}<input value="${esc((b.org&&b.org.address)||'')}" oninput="qdSetOrg('address',this.value)" placeholder="${esc(officialInfo().address||'')}"></div>`)}
+
+        <div style="display:flex;align-items:center;gap:8px;color:var(--good);font-size:12.5px;padding:4px 2px"><i data-lucide="check-circle-2" style="width:15px;height:15px"></i> كل تعديل يُحفظ تلقائياً.</div>
+      </div>
+
+      <!-- عمود المعاينة (يسار) -->
+      <div class="qd-preview">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-weight:800;font-size:14px"><i class="inl" data-lucide="eye"></i> معاينة حيّة</div>
+          <div style="font-size:12px;color:var(--muted)">${esc(b.name)}</div>
+        </div>
+        <div id="qdPvWrap" style="background:#e5e7eb;border:1px solid var(--line);border-radius:14px;padding:16px;overflow:auto;max-height:82vh">
+          <div id="qdPvScale" style="transform-origin:top center;width:680px;margin:0 auto">
+            <iframe id="qdPreview" style="width:680px;height:2000px;border:0;background:#fff;display:block"></iframe>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  applyWallpaper();refreshIcons();
+  qdRenderPreview();
+  if(!QD._resizeBound){QD._resizeBound=true;window.addEventListener('resize',()=>{if(CUR==='quotedesign')qdFitPreview()});}
 }
 
 /* ===== SEND (WhatsApp / Email / Copy) ===== */
