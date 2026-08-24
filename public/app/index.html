@@ -4400,7 +4400,8 @@ function renderQuoteDesign(){
     <style>
       .qd-wrap{display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap}
       .qd-controls{width:430px;flex:0 0 430px;max-width:100%}
-      .qd-preview{flex:1;min-width:320px}
+      .qd-preview{flex:1;min-width:320px;position:sticky;top:12px;align-self:flex-start}
+      @media(max-width:900px){.qd-preview{position:static}}
       .qd-sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
       .qd-sec-h{font-weight:800;font-size:14px;display:flex;align-items:center;gap:7px;margin-bottom:12px}
       .qd-sec-h svg{width:16px;height:16px;color:var(--gold2)}
