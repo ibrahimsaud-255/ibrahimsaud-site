@@ -1,458 +1,570 @@
 [
   {
-    "file": "public/sarah/products/abaya-classic-1.webp",
-    "configPath": "/sarah/products/abaya-classic-1.webp",
+    "file": "public/sarah/products/abaya-classic-1.jpg",
+    "configPath": "/sarah/products/abaya-classic-1.jpg",
     "group": "منتج",
-    "title": "عباية تفصيل كلاسيك — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of an elegant deep black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, matte heavy crepe fabric with a soft luxurious drape, no embellishment, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية تفصيل كلاسيك — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "An elegant deep matte black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, heavy premium French Nida crepe fabric with a soft luxurious matte drape, no embellishment or trim, made in Riyadh atelier style, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-classic-2.webp",
-    "configPath": "/sarah/products/abaya-classic-2.webp",
+    "file": "public/sarah/products/abaya-classic-2.jpg",
+    "configPath": "/sarah/products/abaya-classic-2.jpg",
     "group": "منتج",
     "title": "عباية تفصيل كلاسيك — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of the clean finished hem and sleeve edge of a matte black crepe abaya, showing the fine invisible stitching line. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "The clean hand-finished hem edge of a matte black French Nida crepe abaya — a single perfect topstitch line, fine invisible slip-stitch, one tiny natural thread strand, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/abaya-classic-3.webp",
-    "configPath": "/sarah/products/abaya-classic-3.webp",
+    "file": "public/sarah/products/abaya-classic-3.jpg",
+    "configPath": "/sarah/products/abaya-classic-3.jpg",
     "group": "منتج",
     "title": "عباية تفصيل كلاسيك — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "An elegant deep black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, matte heavy crepe fabric with a soft luxurious drape, no embellishment, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "An elegant deep matte black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, heavy premium French Nida crepe fabric with a soft luxurious matte drape, no embellishment or trim, made in Riyadh atelier style, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-classic-4.webp",
-    "configPath": "/sarah/products/abaya-classic-4.webp",
+    "file": "public/sarah/products/abaya-classic-4.jpg",
+    "configPath": "/sarah/products/abaya-classic-4.jpg",
     "group": "منتج",
-    "title": "عباية تفصيل كلاسيك — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "An elegant deep black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, matte heavy crepe fabric with a soft luxurious drape, no embellishment, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية تفصيل كلاسيك — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "An elegant deep matte black open-front abaya, straight classic cut falling to the floor, wide flowing angel sleeves, heavy premium French Nida crepe fabric with a soft luxurious matte drape, no embellishment or trim, made in Riyadh atelier style, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-embroidered-1.webp",
-    "configPath": "/sarah/products/abaya-embroidered-1.webp",
+    "file": "public/sarah/products/abaya-embroidered-1.jpg",
+    "configPath": "/sarah/products/abaya-embroidered-1.jpg",
     "group": "منتج",
-    "title": "عباية مطرّزة — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a black open-front abaya with delicate antique-gold hand embroidery running along the sleeve cuffs and the front hem, floor length, wide angel sleeves, luxurious crepe fabric, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية مطرّزة — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A black open-front abaya with delicate antique-gold hand embroidery running along the wide angel sleeve cuffs and the front hem, floor length, luxurious heavy crepe fabric, the embroidery clearly hand-done (slight irregularity, dimensional threadwork, not machine-perfect), displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-embroidered-2.webp",
-    "configPath": "/sarah/products/abaya-embroidered-2.webp",
+    "file": "public/sarah/products/abaya-embroidered-2.jpg",
+    "configPath": "/sarah/products/abaya-embroidered-2.jpg",
     "group": "منتج",
     "title": "عباية مطرّزة — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of antique-gold hand embroidery stitched on black crepe fabric, individual metallic threads and tiny beads visible, shallow depth of field. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Antique-gold hand embroidery on black crepe, individual metallic threads clearly visible, a few tiny gold beads sewn in, one thread of the embroidery loop hanging naturally, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/abaya-embroidered-3.webp",
-    "configPath": "/sarah/products/abaya-embroidered-3.webp",
+    "file": "public/sarah/products/abaya-embroidered-3.jpg",
+    "configPath": "/sarah/products/abaya-embroidered-3.jpg",
     "group": "منتج",
     "title": "عباية مطرّزة — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A black open-front abaya with delicate antique-gold hand embroidery running along the sleeve cuffs and the front hem, floor length, wide angel sleeves, luxurious crepe fabric, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A black open-front abaya with delicate antique-gold hand embroidery running along the wide angel sleeve cuffs and the front hem, floor length, luxurious heavy crepe fabric, the embroidery clearly hand-done (slight irregularity, dimensional threadwork, not machine-perfect), hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-embroidered-4.webp",
-    "configPath": "/sarah/products/abaya-embroidered-4.webp",
+    "file": "public/sarah/products/abaya-embroidered-4.jpg",
+    "configPath": "/sarah/products/abaya-embroidered-4.jpg",
     "group": "منتج",
-    "title": "عباية مطرّزة — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A black open-front abaya with delicate antique-gold hand embroidery running along the sleeve cuffs and the front hem, floor length, wide angel sleeves, luxurious crepe fabric, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية مطرّزة — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A black open-front abaya with delicate antique-gold hand embroidery running along the wide angel sleeve cuffs and the front hem, floor length, luxurious heavy crepe fabric, the embroidery clearly hand-done (slight irregularity, dimensional threadwork, not machine-perfect), neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-prayer-1.webp",
-    "configPath": "/sarah/products/abaya-prayer-1.webp",
+    "file": "public/sarah/products/abaya-prayer-1.jpg",
+    "configPath": "/sarah/products/abaya-prayer-1.jpg",
     "group": "منتج",
-    "title": "عباية صلاة — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a soft cream two-piece prayer set for women (a loose long top and a matching wide skirt), lightweight breathable cotton, simple and modest, displayed together, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية صلاة — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A soft cream two-piece prayer set for women — a loose long over-top with wide sleeves and a matching wide gathered skirt — lightweight breathable Egyptian cotton, simple and modest, displayed side by side with the skirt slightly overlapping the top, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-prayer-2.webp",
-    "configPath": "/sarah/products/abaya-prayer-2.webp",
+    "file": "public/sarah/products/abaya-prayer-2.jpg",
+    "configPath": "/sarah/products/abaya-prayer-2.jpg",
     "group": "منتج",
     "title": "عباية صلاة — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of the soft cream cotton weave of a prayer garment with a rolled hem, gentle natural folds. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "The soft cream Egyptian cotton weave of a prayer garment, a rolled and hand-hemmed edge, one gentle natural fold, a hint of the soft raw-cotton texture, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/abaya-prayer-3.webp",
-    "configPath": "/sarah/products/abaya-prayer-3.webp",
+    "file": "public/sarah/products/abaya-prayer-3.jpg",
+    "configPath": "/sarah/products/abaya-prayer-3.jpg",
     "group": "منتج",
     "title": "عباية صلاة — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A soft cream two-piece prayer set for women (a loose long top and a matching wide skirt), lightweight breathable cotton, simple and modest, displayed together, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A soft cream two-piece prayer set for women — a loose long over-top with wide sleeves and a matching wide gathered skirt — lightweight breathable Egyptian cotton, simple and modest, displayed side by side with the skirt slightly overlapping the top, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/abaya-prayer-4.webp",
-    "configPath": "/sarah/products/abaya-prayer-4.webp",
+    "file": "public/sarah/products/abaya-prayer-4.jpg",
+    "configPath": "/sarah/products/abaya-prayer-4.jpg",
     "group": "منتج",
-    "title": "عباية صلاة — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A soft cream two-piece prayer set for women (a loose long top and a matching wide skirt), lightweight breathable cotton, simple and modest, displayed together, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "عباية صلاة — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A soft cream two-piece prayer set for women — a loose long over-top with wide sleeves and a matching wide gathered skirt — lightweight breathable Egyptian cotton, simple and modest, displayed side by side with the skirt slightly overlapping the top, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/evening-dress-1.webp",
-    "configPath": "/sarah/products/evening-dress-1.webp",
+    "file": "public/sarah/products/evening-dress-1.jpg",
+    "configPath": "/sarah/products/evening-dress-1.jpg",
     "group": "منتج",
-    "title": "فستان سهرة تفصيل — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a floor-length emerald green velvet evening gown, fitted sculpted bodice, long dramatic flared skirt, short cap sleeves, rich deep pile velvet with light-catching sheen, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "فستان سهرة تفصيل — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A floor-length emerald green silk-velvet evening gown, sculpted fitted bodice with princess seams, long dramatic flared skirt with a subtle train, short cap sleeves, rich deep pile velvet with directional light-catching sheen, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/evening-dress-2.webp",
-    "configPath": "/sarah/products/evening-dress-2.webp",
+    "file": "public/sarah/products/evening-dress-2.jpg",
+    "configPath": "/sarah/products/evening-dress-2.jpg",
     "group": "منتج",
     "title": "فستان سهرة تفصيل — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of emerald green velvet fabric close-up, dense short pile catching the light, deep color shifts, luxurious texture. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Emerald green silk velvet fabric close-up, dense short pile catching the light with directional sheen shift, one tiny lint fiber, luxurious depth of color, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/evening-dress-3.webp",
-    "configPath": "/sarah/products/evening-dress-3.webp",
+    "file": "public/sarah/products/evening-dress-3.jpg",
+    "configPath": "/sarah/products/evening-dress-3.jpg",
     "group": "منتج",
     "title": "فستان سهرة تفصيل — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A floor-length emerald green velvet evening gown, fitted sculpted bodice, long dramatic flared skirt, short cap sleeves, rich deep pile velvet with light-catching sheen, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A floor-length emerald green silk-velvet evening gown, sculpted fitted bodice with princess seams, long dramatic flared skirt with a subtle train, short cap sleeves, rich deep pile velvet with directional light-catching sheen, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/evening-dress-4.webp",
-    "configPath": "/sarah/products/evening-dress-4.webp",
+    "file": "public/sarah/products/evening-dress-4.jpg",
+    "configPath": "/sarah/products/evening-dress-4.jpg",
     "group": "منتج",
-    "title": "فستان سهرة تفصيل — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A floor-length emerald green velvet evening gown, fitted sculpted bodice, long dramatic flared skirt, short cap sleeves, rich deep pile velvet with light-catching sheen, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "فستان سهرة تفصيل — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A floor-length emerald green silk-velvet evening gown, sculpted fitted bodice with princess seams, long dramatic flared skirt with a subtle train, short cap sleeves, rich deep pile velvet with directional light-catching sheen, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/day-dress-1.webp",
-    "configPath": "/sarah/products/day-dress-1.webp",
+    "file": "public/sarah/products/day-dress-1.jpg",
+    "configPath": "/sarah/products/day-dress-1.jpg",
     "group": "منتج",
-    "title": "فستان يومي — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a sand-beige linen midi day dress, relaxed A-line cut, long straight sleeves, modest high neckline, natural soft folds, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "فستان يومي — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A sand-beige lightweight linen midi day dress with a relaxed A-line silhouette, long straight sleeves with a subtle roll-cuff, modest high round neckline, natural soft asymmetric folds from real linen drape (linen wrinkles slightly — keep that natural), displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/day-dress-2.webp",
-    "configPath": "/sarah/products/day-dress-2.webp",
+    "file": "public/sarah/products/day-dress-2.jpg",
+    "configPath": "/sarah/products/day-dress-2.jpg",
     "group": "منتج",
     "title": "فستان يومي — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of natural sand-beige linen weave close-up, visible slub threads and a stitched side seam. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Natural sand-beige linen weave close-up showing slub threads and a French-seamed side, one tiny stray linen fiber, honest matte texture with no synthetic sheen, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/day-dress-3.webp",
-    "configPath": "/sarah/products/day-dress-3.webp",
+    "file": "public/sarah/products/day-dress-3.jpg",
+    "configPath": "/sarah/products/day-dress-3.jpg",
     "group": "منتج",
     "title": "فستان يومي — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A sand-beige linen midi day dress, relaxed A-line cut, long straight sleeves, modest high neckline, natural soft folds, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A sand-beige lightweight linen midi day dress with a relaxed A-line silhouette, long straight sleeves with a subtle roll-cuff, modest high round neckline, natural soft asymmetric folds from real linen drape (linen wrinkles slightly — keep that natural), hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/day-dress-4.webp",
-    "configPath": "/sarah/products/day-dress-4.webp",
+    "file": "public/sarah/products/day-dress-4.jpg",
+    "configPath": "/sarah/products/day-dress-4.jpg",
     "group": "منتج",
-    "title": "فستان يومي — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A sand-beige linen midi day dress, relaxed A-line cut, long straight sleeves, modest high neckline, natural soft folds, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "فستان يومي — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A sand-beige lightweight linen midi day dress with a relaxed A-line silhouette, long straight sleeves with a subtle roll-cuff, modest high round neckline, natural soft asymmetric folds from real linen drape (linen wrinkles slightly — keep that natural), neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/jalabiya-1.webp",
-    "configPath": "/sarah/products/jalabiya-1.webp",
+    "file": "public/sarah/products/jalabiya-1.jpg",
+    "configPath": "/sarah/products/jalabiya-1.jpg",
     "group": "منتج",
-    "title": "جلابية مطرّزة — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a flowing dusty-rose jalabiya (loose Gulf kaftan dress), wide angel sleeves, floor length, intricate gold embroidery around the neckline and sleeve edges, soft satin-finish fabric, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "جلابية مطرّزة — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A flowing dusty-rose jalabiya (loose Gulf-style kaftan dress) with wide angel sleeves, floor length, intricate hand-done gold embroidery around the neckline and sleeve edges (goldwork clearly artisanal, not mechanically uniform), soft satin-back crepe fabric with a subtle matte-to-sheen finish, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/jalabiya-2.webp",
-    "configPath": "/sarah/products/jalabiya-2.webp",
+    "file": "public/sarah/products/jalabiya-2.jpg",
+    "configPath": "/sarah/products/jalabiya-2.jpg",
     "group": "منتج",
     "title": "جلابية مطرّزة — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of gold embroidery around the neckline of a dusty-rose jalabiya, raised metallic thread work on soft satin. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Intricate gold hand embroidery around the neckline of a dusty-rose jalabiya, raised metallic threadwork with tiny seed beads, shallow depth of field revealing every couched thread, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/jalabiya-3.webp",
-    "configPath": "/sarah/products/jalabiya-3.webp",
+    "file": "public/sarah/products/jalabiya-3.jpg",
+    "configPath": "/sarah/products/jalabiya-3.jpg",
     "group": "منتج",
     "title": "جلابية مطرّزة — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A flowing dusty-rose jalabiya (loose Gulf kaftan dress), wide angel sleeves, floor length, intricate gold embroidery around the neckline and sleeve edges, soft satin-finish fabric, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A flowing dusty-rose jalabiya (loose Gulf-style kaftan dress) with wide angel sleeves, floor length, intricate hand-done gold embroidery around the neckline and sleeve edges (goldwork clearly artisanal, not mechanically uniform), soft satin-back crepe fabric with a subtle matte-to-sheen finish, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/jalabiya-4.webp",
-    "configPath": "/sarah/products/jalabiya-4.webp",
+    "file": "public/sarah/products/jalabiya-4.jpg",
+    "configPath": "/sarah/products/jalabiya-4.jpg",
     "group": "منتج",
-    "title": "جلابية مطرّزة — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A flowing dusty-rose jalabiya (loose Gulf kaftan dress), wide angel sleeves, floor length, intricate gold embroidery around the neckline and sleeve edges, soft satin-finish fabric, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "جلابية مطرّزة — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A flowing dusty-rose jalabiya (loose Gulf-style kaftan dress) with wide angel sleeves, floor length, intricate hand-done gold embroidery around the neckline and sleeve edges (goldwork clearly artisanal, not mechanically uniform), soft satin-back crepe fabric with a subtle matte-to-sheen finish, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/kaftan-1.webp",
-    "configPath": "/sarah/products/kaftan-1.webp",
+    "file": "public/sarah/products/kaftan-1.jpg",
+    "configPath": "/sarah/products/kaftan-1.jpg",
     "group": "منتج",
-    "title": "قفطان مغربي — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a royal blue Moroccan kaftan with hand-woven gold trim (sfifa) down the center front and a matching fabric belt at the waist, floor length, wide sleeves, rich satin fabric, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "قفطان مغربي — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A royal blue Moroccan kaftan (caftan) with authentic hand-woven gold sfifa trim down the center front and a matching gold-tasseled belt at the waist, floor length, wide bell sleeves, rich medium-weight satin, worn look of a real garment (not brand-new plastic-perfect), displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/kaftan-2.webp",
-    "configPath": "/sarah/products/kaftan-2.webp",
+    "file": "public/sarah/products/kaftan-2.jpg",
+    "configPath": "/sarah/products/kaftan-2.jpg",
     "group": "منتج",
     "title": "قفطان مغربي — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of hand-woven gold sfifa trim and a knotted button on royal blue satin, traditional Moroccan detailing. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Hand-woven gold sfifa trim and a traditional knotted button on royal blue satin — the trim clearly artisanal, one tiny loose thread, traditional Moroccan Fes-style detailing, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/kaftan-3.webp",
-    "configPath": "/sarah/products/kaftan-3.webp",
+    "file": "public/sarah/products/kaftan-3.jpg",
+    "configPath": "/sarah/products/kaftan-3.jpg",
     "group": "منتج",
     "title": "قفطان مغربي — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A royal blue Moroccan kaftan with hand-woven gold trim (sfifa) down the center front and a matching fabric belt at the waist, floor length, wide sleeves, rich satin fabric, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A royal blue Moroccan kaftan (caftan) with authentic hand-woven gold sfifa trim down the center front and a matching gold-tasseled belt at the waist, floor length, wide bell sleeves, rich medium-weight satin, worn look of a real garment (not brand-new plastic-perfect), hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/kaftan-4.webp",
-    "configPath": "/sarah/products/kaftan-4.webp",
+    "file": "public/sarah/products/kaftan-4.jpg",
+    "configPath": "/sarah/products/kaftan-4.jpg",
     "group": "منتج",
-    "title": "قفطان مغربي — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A royal blue Moroccan kaftan with hand-woven gold trim (sfifa) down the center front and a matching fabric belt at the waist, floor length, wide sleeves, rich satin fabric, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "قفطان مغربي — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A royal blue Moroccan kaftan (caftan) with authentic hand-woven gold sfifa trim down the center front and a matching gold-tasseled belt at the waist, floor length, wide bell sleeves, rich medium-weight satin, worn look of a real garment (not brand-new plastic-perfect), neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/home-set-1.webp",
-    "configPath": "/sarah/products/home-set-1.webp",
+    "file": "public/sarah/products/home-set-1.jpg",
+    "configPath": "/sarah/products/home-set-1.jpg",
     "group": "منتج",
-    "title": "طقم منزلي (روب + قميص) — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a two-piece champagne silk satin loungewear set — a long belted robe and a matching slip — displayed side by side, glossy liquid sheen, elegant drape, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "طقم منزلي (روب + قميص) — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A two-piece champagne silk satin loungewear set — a long belted robe and a matching slip nightdress — displayed side by side with the robe belt casually knotted, glossy liquid sheen with realistic silk drape, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/home-set-2.webp",
-    "configPath": "/sarah/products/home-set-2.webp",
+    "file": "public/sarah/products/home-set-2.jpg",
+    "configPath": "/sarah/products/home-set-2.jpg",
     "group": "منتج",
     "title": "طقم منزلي (روب + قميص) — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of champagne silk satin close-up with a glossy sheen, a delicate piping seam and a soft fold. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Champagne silk satin close-up showing the glossy liquid sheen, a delicate French-piping seam, one natural silk fold, subtle color shifts from real silk, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/home-set-3.webp",
-    "configPath": "/sarah/products/home-set-3.webp",
+    "file": "public/sarah/products/home-set-3.jpg",
+    "configPath": "/sarah/products/home-set-3.jpg",
     "group": "منتج",
     "title": "طقم منزلي (روب + قميص) — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A two-piece champagne silk satin loungewear set — a long belted robe and a matching slip — displayed side by side, glossy liquid sheen, elegant drape, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A two-piece champagne silk satin loungewear set — a long belted robe and a matching slip nightdress — displayed side by side with the robe belt casually knotted, glossy liquid sheen with realistic silk drape, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/home-set-4.webp",
-    "configPath": "/sarah/products/home-set-4.webp",
+    "file": "public/sarah/products/home-set-4.jpg",
+    "configPath": "/sarah/products/home-set-4.jpg",
     "group": "منتج",
-    "title": "طقم منزلي (روب + قميص) — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A two-piece champagne silk satin loungewear set — a long belted robe and a matching slip — displayed side by side, glossy liquid sheen, elegant drape, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "طقم منزلي (روب + قميص) — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A two-piece champagne silk satin loungewear set — a long belted robe and a matching slip nightdress — displayed side by side with the robe belt casually knotted, glossy liquid sheen with realistic silk drape, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/skirt-1.webp",
-    "configPath": "/sarah/products/skirt-1.webp",
+    "file": "public/sarah/products/skirt-1.jpg",
+    "configPath": "/sarah/products/skirt-1.jpg",
     "group": "منتج",
-    "title": "تنورة تفصيل — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a long olive green pleated skirt, crisp accordion pleats falling from a fitted waistband to the ankle, matte crepe fabric, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "تنورة تفصيل — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A long olive green pleated skirt with crisp accordion pleats falling from a fitted flat waistband to the ankle, matte medium-weight crepe fabric, one pleat slightly out of line (real fabric behavior, not CG perfect), displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/skirt-2.webp",
-    "configPath": "/sarah/products/skirt-2.webp",
+    "file": "public/sarah/products/skirt-2.jpg",
+    "configPath": "/sarah/products/skirt-2.jpg",
     "group": "منتج",
     "title": "تنورة تفصيل — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of crisp accordion pleats of an olive green crepe skirt, sharp folds with light and shadow between them. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Crisp accordion pleats of an olive green crepe skirt close-up, sharp light-and-shadow contrast between each pleat, one pleat naturally slightly softer than the others, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/skirt-3.webp",
-    "configPath": "/sarah/products/skirt-3.webp",
+    "file": "public/sarah/products/skirt-3.jpg",
+    "configPath": "/sarah/products/skirt-3.jpg",
     "group": "منتج",
     "title": "تنورة تفصيل — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A long olive green pleated skirt, crisp accordion pleats falling from a fitted waistband to the ankle, matte crepe fabric, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A long olive green pleated skirt with crisp accordion pleats falling from a fitted flat waistband to the ankle, matte medium-weight crepe fabric, one pleat slightly out of line (real fabric behavior, not CG perfect), hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/skirt-4.webp",
-    "configPath": "/sarah/products/skirt-4.webp",
+    "file": "public/sarah/products/skirt-4.jpg",
+    "configPath": "/sarah/products/skirt-4.jpg",
     "group": "منتج",
-    "title": "تنورة تفصيل — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A long olive green pleated skirt, crisp accordion pleats falling from a fitted waistband to the ankle, matte crepe fabric, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "تنورة تفصيل — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A long olive green pleated skirt with crisp accordion pleats falling from a fitted flat waistband to the ankle, matte medium-weight crepe fabric, one pleat slightly out of line (real fabric behavior, not CG perfect), neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/blouse-1.webp",
-    "configPath": "/sarah/products/blouse-1.webp",
+    "file": "public/sarah/products/blouse-1.jpg",
+    "configPath": "/sarah/products/blouse-1.jpg",
     "group": "منتج",
-    "title": "بلوزة / قميص تفصيل — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a crisp white cotton blouse with long sleeves, classic collar, hidden button placket, tailored clean lines, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "بلوزة / قميص تفصيل — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A crisp white cotton blouse with long sleeves rolled to three-quarter, classic pointed collar, hidden button placket, tailored clean lines with authentic bench-tailoring feel (not fast-fashion perfect), displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/blouse-2.webp",
-    "configPath": "/sarah/products/blouse-2.webp",
+    "file": "public/sarah/products/blouse-2.jpg",
+    "configPath": "/sarah/products/blouse-2.jpg",
     "group": "منتج",
     "title": "بلوزة / قميص تفصيل — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of the collar and hidden button placket of a crisp white cotton shirt, fine stitching, mother-of-pearl button. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "The collar and hidden button placket of a crisp white cotton shirt, fine even stitching, one real mother-of-pearl button with natural iridescence, tiny fabric weave visible, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/blouse-3.webp",
-    "configPath": "/sarah/products/blouse-3.webp",
+    "file": "public/sarah/products/blouse-3.jpg",
+    "configPath": "/sarah/products/blouse-3.jpg",
     "group": "منتج",
     "title": "بلوزة / قميص تفصيل — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A crisp white cotton blouse with long sleeves, classic collar, hidden button placket, tailored clean lines, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A crisp white cotton blouse with long sleeves rolled to three-quarter, classic pointed collar, hidden button placket, tailored clean lines with authentic bench-tailoring feel (not fast-fashion perfect), hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/blouse-4.webp",
-    "configPath": "/sarah/products/blouse-4.webp",
+    "file": "public/sarah/products/blouse-4.jpg",
+    "configPath": "/sarah/products/blouse-4.jpg",
     "group": "منتج",
-    "title": "بلوزة / قميص تفصيل — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A crisp white cotton blouse with long sleeves, classic collar, hidden button placket, tailored clean lines, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "بلوزة / قميص تفصيل — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A crisp white cotton blouse with long sleeves rolled to three-quarter, classic pointed collar, hidden button placket, tailored clean lines with authentic bench-tailoring feel (not fast-fashion perfect), neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/alteration-1.webp",
-    "configPath": "/sarah/products/alteration-1.webp",
+    "file": "public/sarah/products/alteration-1.jpg",
+    "configPath": "/sarah/products/alteration-1.jpg",
     "group": "منتج",
-    "title": "تعديل وتضييق — الصورة الرئيسية — على مانيكان شفاف",
-    "size": "1200×1500",
-    "prompt": "Full-length front view of a tailor's dress form draped with a garment being fitted, measuring tape around it, pins marking an adjustment, tailoring scissors resting nearby, displayed on an invisible ghost mannequin (hollow inside, no body visible), garment centered and perfectly symmetrical. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "تعديل وتضييق — اللقطة الأمامية — على مانيكان شفاف",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A wooden tailor's dress form draped with a garment mid-fitting, a soft measuring tape hanging from the shoulder, dressmaker pins marking an alteration line on the waist, brass tailoring scissors resting on the surface nearby, displayed on a professional invisible ghost mannequin (the neck opening and shoulders should be completely hollow — DO NOT render a face, head, neck stump, or any body part; the garment appears to hold its own shape as if worn by an invisible person), photographed straight-on, garment centered and naturally symmetric with subtle asymmetric fabric drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/alteration-2.webp",
-    "configPath": "/sarah/products/alteration-2.webp",
+    "file": "public/sarah/products/alteration-2.jpg",
+    "configPath": "/sarah/products/alteration-2.jpg",
     "group": "منتج",
     "title": "تعديل وتضييق — تفصيلة مقرّبة — نسيج/تطريز",
-    "size": "1200×1500",
-    "prompt": "Extreme close-up macro photograph of close-up of pins and a measuring tape marking an alteration on fabric, tailoring workmanship. Fabric fills the frame, shallow depth of field, every fiber visible. vertical 4:5 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "Close-up of dressmaker pins and a soft measuring tape marking an alteration on wool fabric on a dress form — the pins glinting, the tape draped naturally, one pin slightly askew, filling the entire frame. Vertical 4:5 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/products/alteration-3.webp",
-    "configPath": "/sarah/products/alteration-3.webp",
+    "file": "public/sarah/products/alteration-3.jpg",
+    "configPath": "/sarah/products/alteration-3.jpg",
     "group": "منتج",
     "title": "تعديل وتضييق — على العلّاقة",
-    "size": "1200×1500",
-    "prompt": "A tailor's dress form draped with a garment being fitted, measuring tape around it, pins marking an adjustment, tailoring scissors resting nearby, hanging on a slim matte wooden hanger against a plain white wall, front view, natural relaxed drape, full garment visible. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1200×1500 (4:5)",
+    "prompt": "A wooden tailor's dress form draped with a garment mid-fitting, a soft measuring tape hanging from the shoulder, dressmaker pins marking an alteration line on the waist, brass tailoring scissors resting on the surface nearby, hanging on a slim natural-oak wooden hanger against a plain warm-white wall in an atelier, front view, natural relaxed drape with one sleeve slightly turned, full garment visible. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/products/alteration-4.webp",
-    "configPath": "/sarah/products/alteration-4.webp",
+    "file": "public/sarah/products/alteration-4.jpg",
+    "configPath": "/sarah/products/alteration-4.jpg",
     "group": "منتج",
-    "title": "تعديل وتضييق — مطوية (flat-lay)",
-    "size": "1200×1500",
-    "prompt": "A tailor's dress form draped with a garment being fitted, measuring tape around it, pins marking an adjustment, tailoring scissors resting nearby, neatly folded into a tidy rectangle, top-down flat-lay view on a white surface, crisp clean folds, one folded edge facing the camera. vertical 4:5 aspect ratio, full garment inside the frame with even margins. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "title": "تعديل وتضييق — مطوية (Flat-lay)",
+    "size": "1200×1500 (4:5)",
+    "prompt": "A wooden tailor's dress form draped with a garment mid-fitting, a soft measuring tape hanging from the shoulder, dressmaker pins marking an alteration line on the waist, brass tailoring scissors resting on the surface nearby, neatly folded into a crisp rectangle, top-down flat-lay view on a smooth white cotton surface with one visible fabric weave, one folded edge facing the camera. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/fabrics/nida.webp",
-    "configPath": "/sarah/fabrics/nida.webp",
+    "file": "public/sarah/fabrics/nida.jpg",
+    "configPath": "/sarah/fabrics/nida.jpg",
     "group": "خامة",
     "title": "خامة: نيدا فرنسي",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of matte black French Nida fabric, heavy opaque crepe weave, completely non-reflective, soft even folds. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of matte deep black French Nida crepe fabric, heavy opaque weave, completely non-reflective matte surface, soft even folds with one asymmetric natural crease. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/japanese-crepe.webp",
-    "configPath": "/sarah/fabrics/japanese-crepe.webp",
+    "file": "public/sarah/fabrics/japanese-crepe.jpg",
+    "configPath": "/sarah/fabrics/japanese-crepe.jpg",
     "group": "خامة",
     "title": "خامة: كريب ياباني",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of deep olive green Japanese crepe fabric, fine pebbled surface texture, heavy luxurious drape. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of deep olive green Japanese crepe fabric, fine pebbled surface texture, heavy luxurious drape, subtle matte sheen catching the raking light. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/silk-satin.webp",
-    "configPath": "/sarah/fabrics/silk-satin.webp",
+    "file": "public/sarah/fabrics/silk-satin.jpg",
+    "configPath": "/sarah/fabrics/silk-satin.jpg",
     "group": "خامة",
     "title": "خامة: ساتان حرير",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of champagne gold silk satin, glossy liquid sheen, smooth flowing folds with bright highlights. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of champagne gold pure silk satin, glossy liquid sheen with real silk color-shift, smooth flowing folds catching bright highlights, one thread of stray silk lint. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/chiffon.webp",
-    "configPath": "/sarah/fabrics/chiffon.webp",
+    "file": "public/sarah/fabrics/chiffon.jpg",
+    "configPath": "/sarah/fabrics/chiffon.jpg",
     "group": "خامة",
     "title": "خامة: شيفون حرير",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of dusty rose silk chiffon, sheer airy translucent layers, delicate floating folds, backlit. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of dusty rose real silk chiffon, sheer airy translucent layers, delicate floating folds backlit through a window, one tiny snag typical of real chiffon. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/linen.webp",
-    "configPath": "/sarah/fabrics/linen.webp",
+    "file": "public/sarah/fabrics/linen.jpg",
+    "configPath": "/sarah/fabrics/linen.jpg",
     "group": "خامة",
     "title": "خامة: كتان مخلوط",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of natural sand-beige linen blend, clearly visible woven slub texture, relaxed matte folds. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of natural sand-beige heavyweight linen blend, clearly visible woven slub texture with irregular thread thickness, relaxed matte folds with natural linen wrinkles. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/velvet.webp",
-    "configPath": "/sarah/fabrics/velvet.webp",
+    "file": "public/sarah/fabrics/velvet.jpg",
+    "configPath": "/sarah/fabrics/velvet.jpg",
     "group": "خامة",
     "title": "خامة: مخمل",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of emerald green velvet, dense short pile catching light, deep rich color with sheen variation. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of emerald green silk velvet, dense short pile catching directional light with real color-shift sheen, deep rich color, one tiny fiber standing up naturally. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/embroidered-lace.webp",
-    "configPath": "/sarah/fabrics/embroidered-lace.webp",
+    "file": "public/sarah/fabrics/embroidered-lace.jpg",
+    "configPath": "/sarah/fabrics/embroidered-lace.jpg",
     "group": "خامة",
     "title": "خامة: دانتيل مطرّز",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of off-white embroidered floral lace on fine tulle net, raised thread embroidery, scalloped edge. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of off-white embroidered floral lace on fine tulle net, raised hand-couched thread embroidery, scalloped selvedge edge, one loose thread from real hand work. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/beaded-tulle.webp",
-    "configPath": "/sarah/fabrics/beaded-tulle.webp",
+    "file": "public/sarah/fabrics/beaded-tulle.jpg",
+    "configPath": "/sarah/fabrics/beaded-tulle.jpg",
     "group": "خامة",
     "title": "خامة: تُل مطرّز بالخرز",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of champagne beaded tulle, hand-sewn crystals and pearls sparkling on a sheer net base. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of champagne beaded tulle, hand-sewn Swarovski crystals and freshwater pearls sparkling on a sheer net base, one thread visible from the couching. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/egyptian-cotton.webp",
-    "configPath": "/sarah/fabrics/egyptian-cotton.webp",
+    "file": "public/sarah/fabrics/egyptian-cotton.jpg",
+    "configPath": "/sarah/fabrics/egyptian-cotton.jpg",
     "group": "خامة",
     "title": "خامة: قطن مصري",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of white Egyptian cotton, fine smooth long-staple weave, crisp clean folds. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of pure white Egyptian long-staple cotton, fine smooth weave with visible thread structure, crisp clean folds with one natural wrinkle. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/fabrics/georgette.webp",
-    "configPath": "/sarah/fabrics/georgette.webp",
+    "file": "public/sarah/fabrics/georgette.jpg",
+    "configPath": "/sarah/fabrics/georgette.jpg",
     "group": "خامة",
     "title": "خامة: جورجيت",
-    "size": "1000×1000",
-    "prompt": "Macro studio photograph of navy blue georgette, lightweight crinkled surface, fluid rippling drape. The fabric is laid flat and fills the entire frame, photographed straight from above, showing true texture and color. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props."
+    "size": "1000×1000 (1:1)",
+    "prompt": "Macro studio photograph of deep navy blue silk georgette, lightweight crinkled surface with visible crimp, fluid rippling drape, one gentle asymmetric fold. Fabric laid flat filling the entire frame, photographed straight from directly above, showing true texture and color under soft even overhead studio light. Perfect square 1:1 aspect ratio, fabric fills the entire frame edge to edge. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/hero-1.webp",
-    "configPath": "/sarah/hero-1.webp",
-    "title": "الهيرو ١ — العباية المطرّزة (طولية)",
-    "size": "1200×1600",
-    "prompt": "Full-length front view of a black open-front abaya with fine antique-gold hand embroidery on the sleeves and hem, displayed on an invisible ghost mannequin, elegant floor-length drape. Vertical 3:4 aspect ratio. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props.",
-    "group": "هيرو"
+    "file": "public/sarah/hero-1.jpg",
+    "configPath": "/sarah/hero-1.jpg",
+    "title": "الهيرو ١ — عباية مطرّزة كاملة (طولية)",
+    "size": "1200×1600 (3:4)",
+    "group": "الواجهة",
+    "prompt": "Full-length front view of a black open-front abaya with fine antique-gold hand embroidery on the wide angel sleeves and the front hem, displayed on an invisible ghost mannequin (completely hollow — no face, no head, no neck stump), elegant floor-length natural drape. Vertical 3:4 aspect ratio. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
   },
   {
-    "file": "public/sarah/hero-2.webp",
-    "configPath": "/sarah/hero-2.webp",
-    "title": "الهيرو ٢ — تفصيلة تطريز (مربّعة)",
-    "size": "1200×1200",
-    "prompt": "Extreme close-up macro photograph of delicate gold hand embroidery on dusty-rose satin fabric, raised metallic threads and tiny beads, shallow depth of field. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props.",
-    "group": "هيرو"
+    "file": "public/sarah/hero-2.jpg",
+    "configPath": "/sarah/hero-2.jpg",
+    "title": "الهيرو ٢ — تفصيلة تطريز ذهبي (مربّعة)",
+    "size": "1200×1200 (1:1)",
+    "group": "الواجهة",
+    "prompt": "Extreme close-up macro photograph of delicate hand-done gold embroidery on dusty-rose satin fabric, raised metallic threads couched by hand, tiny seed beads, one thread hanging naturally, shallow depth of field. Perfect square 1:1 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel."
   },
   {
-    "file": "public/sarah/hero-3.webp",
-    "configPath": "/sarah/hero-3.webp",
-    "title": "الهيرو ٣ — مجموعة خامات (مربّعة)",
-    "size": "1200×1200",
-    "prompt": "Top-down photograph of four folded fabric swatches arranged in a neat two-by-two grid on a white surface — champagne silk satin, olive green crepe, emerald velvet, and sand-beige linen — each swatch clearly showing its own texture. square 1:1 aspect ratio, fills the entire frame. Professional e-commerce product photography, pure seamless white background, soft even studio lighting from the front-left with a subtle soft shadow on the floor, photorealistic, ultra sharp fabric texture, true-to-life colors, high resolution, no people, no face, no text, no logo, no watermark, no props.",
-    "group": "هيرو"
+    "file": "public/sarah/hero-3.jpg",
+    "configPath": "/sarah/hero-3.jpg",
+    "title": "الهيرو ٣ — تشكيلة خامات (مربّعة)",
+    "size": "1200×1200 (1:1)",
+    "group": "الواجهة",
+    "prompt": "Top-down knolling photograph of four folded fabric swatches arranged in a neat two-by-two grid on a warm off-white linen surface, with generous negative space around each swatch — champagne silk satin (top-left), deep olive crepe (top-right), emerald green velvet (bottom-left), sand-beige linen (bottom-right). Each swatch clearly shows its distinct texture. Soft even overhead studio light. Perfect square 1:1 aspect ratio. Shot on Hasselblad H6D-100c medium format camera with 80mm f/2.8 lens at f/8, ISO 100. Professional e-commerce lookbook photograph in the aesthetic of high-end Riyadh fashion houses like Toby's Estate and Nafisa. Pure seamless white paper backdrop (#FFFFFF, blown-out to true white with no gradient). Single soft key light from front-left through a large 1.8m octabox, plus a subtle silver bounce on the right; a gentle natural cast shadow on the ground. Extreme fabric realism: visible individual threads, natural asymmetric folds, one tiny natural imperfection (a stray thread, a subtle crease from real fabric drape). Slight warm tone from a 1/4 CTO gel on the key. Absolutely photorealistic — indistinguishable from a real photograph shot in a real studio. Strict anti-AI: NO computer-generated plastic look, NO over-smoothed surfaces, NO artificial symmetry, NO oversaturation, NO stock-photo perfection, NO AI-render tell-tales. No people, no faces, no visible mannequin head or neck, no text, no logo, no watermark, no props."
+  },
+  {
+    "file": "public/sarah/course/hero.jpg",
+    "title": "الدورة — الصورة الرئيسية للهيرو",
+    "size": "1600×2000 (4:5)",
+    "group": "الدورة",
+    "prompt": "Warm intimate editorial photograph of a Saudi woman's hands (no face, no head, only hands from mid-forearm down) sewing a beige linen garment on a vintage cream-colored Singer sewing machine in a sunlit Al-Ahsa home atelier. Her hands wear a simple wedding ring. The machine sits on a warm walnut wood table. Golden morning sunlight streams through a window behind creating rim light on the fabric. A small brass thimble and a spool of ivory thread sit beside the machine. Depth of field: hands and machine sharp, background softly out of focus revealing a hint of embroidered wall hanging. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/hero.jpg"
+  },
+  {
+    "file": "public/sarah/course/atelier.jpg",
+    "title": "الدورة — ركن الأتيليه (الأتموسفير)",
+    "size": "1600×1200 (4:3)",
+    "group": "الدورة",
+    "prompt": "Wide editorial photograph of a calm sunlit sewing atelier corner in an Al-Ahsa home. A warm walnut wood work table holds a vintage sewing machine, folded stacks of linen and crepe in earth tones (sand, olive, dusty rose), wooden thread spools, a pair of brass tailoring scissors, a soft measuring tape draped over the edge. Above the table, a small handmade wall organizer holds pattern rulers. Warm afternoon sunlight from a shuttered window paints diagonal light bars across the scene. Tone: honest, worked-in, real — not perfectly styled. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/atelier.jpg"
+  },
+  {
+    "file": "public/sarah/course/classroom.jpg",
+    "title": "الدورة — قاعة التدريب فارغة",
+    "size": "1600×1067 (16:9)",
+    "group": "الدورة",
+    "prompt": "Interior photograph of a modest but elegant women's training classroom in Al-Ahsa, Saudi Arabia. Four warm-oak worktables arranged in a horseshoe, each with a cream Singer sewing machine and a soft desk lamp. A large window on the right lets in soft natural morning light. A large chalkboard at the front shows the words «إبرة سارة» handwritten in Arabic calligraphy. Warm earth-tone rug on the floor. Empty room prepared before students arrive. Wide 16:9 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/classroom.jpg"
+  },
+  {
+    "file": "public/sarah/course/materials-flatlay.jpg",
+    "title": "الدورة — المواد المرتّبة (Flat-lay)",
+    "size": "1400×1400 (1:1)",
+    "group": "الدورة",
+    "prompt": "Top-down knolling flat-lay photograph on a warm off-white linen tablecloth: three folded fabric swatches (beige linen, olive crepe, dusty rose satin) stacked at the top-right; four wooden thread spools in ivory, sand, black and gold; a brass thimble; a pair of vintage brass tailoring scissors; a folded soft measuring tape; five different sewing needles arranged in a fan; three dressmaker pins; a small cream notebook with a leather cover and a wooden pencil. Everything spaced with generous negative space in the Kinfolk-magazine style. Soft even overhead natural light. Perfect square 1:1 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/materials-flatlay.jpg"
+  },
+  {
+    "file": "public/sarah/course/certificate.jpg",
+    "title": "الدورة — الشهادة على مكتب خشبي",
+    "size": "1400×1400 (1:1)",
+    "group": "الدورة",
+    "prompt": "Top-down photograph of a beige printed training certificate on a warm walnut wood desk — the certificate blank of any specific text and logo (write only the words «شهادة إتمام» in elegant Arabic calligraphy at the top, and a decorative Middle Eastern arabesque border in antique gold). Beside the certificate: a wooden Cross fountain pen, a small brass wax-seal stamp, one dry olive branch, and a single spool of gold thread. Soft afternoon window light from the top-left. Perfect square 1:1 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/certificate.jpg"
+  },
+  {
+    "file": "public/sarah/course/hands-cutting.jpg",
+    "title": "الدورة — يدان تقصّان قماشاً",
+    "size": "1200×1500 (4:5)",
+    "group": "الدورة",
+    "prompt": "Close-up over-the-shoulder photograph of a Saudi woman's hands (no face visible — only hands and forearms in a modest cream sleeve) cutting a piece of dusty rose satin with vintage brass tailoring scissors. A paper pattern is pinned to the fabric with dressmaker pins. The wooden work surface is worn and warm. Depth of field: hands sharp, background soft. One paper pattern edge slightly lifted. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/hands-cutting.jpg"
+  },
+  {
+    "file": "public/sarah/course/finished-piece.jpg",
+    "title": "الدورة — قطعة الخرّيجة النهائية",
+    "size": "1200×1500 (4:5)",
+    "group": "الدورة",
+    "prompt": "Editorial photograph of a finished simple sand-beige linen A-line skirt hanging on a slim natural oak wooden hanger against a soft warm-white linen curtain. A small handwritten paper tag hangs from the hanger by a jute string, reading only «إبرة سارة» in Arabic calligraphy. Soft warm afternoon window light from the left. Full garment visible with natural drape. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/finished-piece.jpg"
+  },
+  {
+    "file": "public/sarah/course/thread-spools.jpg",
+    "title": "الدورة — بكرات الخيوط (تفصيلة)",
+    "size": "1400×1400 (1:1)",
+    "group": "الدورة",
+    "prompt": "Macro photograph of a wooden crate holding twenty vintage-style thread spools in the color palette of the site: sand beige, cream, ivory, warm gray, dusty rose, olive green, deep navy, matte black, antique gold, emerald. The wooden crate sits on a warm walnut surface. Soft raking window light from the left. Shallow depth of field with only the front row of spools in perfect focus. Perfect square 1:1 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/course/thread-spools.jpg"
+  },
+  {
+    "file": "public/sarah/site/about.jpg",
+    "title": "الموقع — من نحن (يدان تحيكان)",
+    "size": "1600×1067 (16:9)",
+    "group": "الموقع",
+    "prompt": "Editorial wide photograph of a mature Saudi woman's hands (no face visible — only hands, both wearing a simple gold wedding ring) hand-embroidering delicate gold thread onto dusty rose satin. She sits at a warm walnut work table in a sunlit atelier in Al-Ahsa. A small brass embroidery hoop holds the fabric taut. Warm afternoon sunlight streams from a window on the right, creating a soft rim light on the fabric. Depth of field: hands and hoop sharp, background gently blurred showing a hint of the atelier. Wide 16:9 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/site/about.jpg"
+  },
+  {
+    "file": "public/sarah/site/packaging.jpg",
+    "title": "الموقع — تجهيز الطلب للشحن",
+    "size": "1400×1400 (1:1)",
+    "group": "الموقع",
+    "prompt": "Top-down photograph of a folded finished dusty-rose satin garment neatly placed inside an open kraft-brown gift box lined with cream tissue paper. Beside the box: a natural jute string, a small handwritten paper tag reading only «إبرة سارة» in Arabic calligraphy, a sprig of dried lavender, a small wax seal stamp with a needle-and-thread motif in ivory wax. Warm walnut wood table surface. Soft even overhead natural light. Perfect square 1:1 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/site/packaging.jpg"
+  },
+  {
+    "file": "public/sarah/site/sewing-machine.jpg",
+    "title": "الموقع — ماكينة الخياطة الفينتاج (تفصيلة)",
+    "size": "1200×1500 (4:5)",
+    "group": "الموقع",
+    "prompt": "Macro editorial photograph of the head of a cream vintage Singer 401A sewing machine with a spool of ivory thread mounted on top, and the presser foot pressing down on a piece of sand-beige linen. The machine's chrome details and etched Singer script logo are visible. Warm afternoon side-light. Depth of field: needle plate and presser foot sharp, machine body softly out of focus. Vertical 4:5 aspect ratio, full garment inside the frame with even 8% margin on all sides. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/site/sewing-machine.jpg"
+  },
+  {
+    "file": "public/sarah/site/fabric-market.jpg",
+    "title": "الموقع — سوق الأقمشة",
+    "size": "1600×1067 (16:9)",
+    "group": "الموقع",
+    "prompt": "Wide editorial photograph inside a traditional Arabian fabric souq (Al-Qaisariya in Al-Hofuf, Saudi Arabia) — tall stacked bolts of fabric in every color arranged floor to ceiling, warm incandescent light overhead, one lone dusty ray of sunlight breaking through from a high window. The frame captures the endless columns of folded fabrics receding into shallow depth of field. Muted colors overall with punctuation of one bright emerald green fabric roll in mid-frame. No people visible. Wide 16:9 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/site/fabric-market.jpg"
+  },
+  {
+    "file": "public/sarah/site/sketchbook.jpg",
+    "title": "الموقع — دفتر رسم التصاميم",
+    "size": "1400×1400 (1:1)",
+    "group": "الموقع",
+    "prompt": "Top-down photograph of an open cream sketchbook on a warm walnut wood table. The left page shows a delicate pencil sketch of an abaya design with fabric swatches (dusty rose satin, sand-beige linen, matte black crepe) pinned beside it. The right page shows handwritten notes in Arabic calligraphy (only decorative — no readable words needed). Beside the sketchbook: a wooden Cross pencil, a cup of Arabic coffee in a small brass cup, a single dried rose. Warm morning window light from the top-left. Perfect square 1:1 aspect ratio. Editorial lifestyle photograph shot on Fujifilm Pro 400H film with a Contax G2 rangefinder and 35mm f/2 lens. Soft natural window light from a north-facing window during golden hour, creamy shallow depth of field. Warm, calm, contemplative mood in the tradition of Kinfolk magazine and modern Middle Eastern craft editorials (compare to the work of Tessa Chrisp and Rasha Aljundi). Natural imperfections deliberately included: a stray thread on the table, folded fabric slightly askew, a warm wooden surface with genuine everyday wear, a coffee cup ring. Absolutely photorealistic film grain aesthetic — indistinguishable from a real photograph. Strict anti-AI: NO plastic sheen, NO artificial cleanliness, NO CG rendering, NO oversaturated colors, NO stock-photo perfection. No faces visible unless specified; no text, no logo, no watermark.",
+    "configPath": "/sarah/site/sketchbook.jpg"
+  },
+  {
+    "file": "public/sarah/site/tags-detail.jpg",
+    "title": "الموقع — تفصيلة الوسم (Branding)",
+    "size": "1400×1400 (1:1)",
+    "group": "الموقع",
+    "prompt": "Extreme close-up macro photograph of a small cream cotton tag hand-stitched to the inside neckline of a black crepe abaya. The tag reads only the words «إبرة سارة» in Arabic calligraphy embroidered in antique-gold thread. Extremely shallow depth of field with only the tag's stitching in focus, the abaya fabric behind falling to soft dark blur. Perfect square 1:1 aspect ratio. Extreme macro photograph shot on Canon EOS R5 with Canon RF 100mm f/2.8L Macro IS lens at f/4.5, 1/200s, ISO 400. Fabric fills the entire frame; every fiber, weave and thread clearly visible; shallow depth of field with only 2mm in focus, the rest gently falling to soft creamy bokeh. Natural raking side light from a single window at 45°, revealing surface texture. One tiny real-life imperfection (a stray thread, a dust mote, a subtle color variation). Photorealistic, absolutely NO CG, NO over-smoothing, NO artificial cleanliness, NO stock-photo aesthetic, NO AI-render feel.",
+    "configPath": "/sarah/site/tags-detail.jpg"
   }
 ]

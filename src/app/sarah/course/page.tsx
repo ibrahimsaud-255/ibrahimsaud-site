@@ -75,6 +75,30 @@ export default function CoursePage() {
         </div>
       </section>
 
+      {/* ============================ شراكة الاعتماد ============================ */}
+      <section className="border-y border-ecru bg-sand-deep/40 px-5 py-8">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-6">
+          <div className="flex items-center gap-4">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/sarah/accreditation/tvtc.svg"
+              alt="المؤسسة العامة للتدريب التقني والمهني"
+              className="h-10 w-auto opacity-70 grayscale-[25%]"
+              loading="lazy"
+            />
+          </div>
+          <div className="max-w-md text-center sm:text-right">
+            <p className="text-xs font-black text-espresso">
+              الشهادة قيد التنسيق مع معهد أهلي مرخّص من TVTC
+            </p>
+            <p className="mt-1 text-[11px] leading-relaxed text-cocoa">
+              الدورة تُقام تحت مبادرة «المدرّب المعتمد» من المؤسسة العامة للتدريب
+              التقني والمهني، وشهادتها تصدر باعتماد المعهد الشريك.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ============================ الوعد — بطاقات مربّعة ============================ */}
       <section className="bg-sand-deep/50 px-5 py-16">
         <div className="mx-auto max-w-6xl">
