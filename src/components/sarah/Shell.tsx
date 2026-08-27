@@ -14,6 +14,7 @@ const navLinks = [
   { href: "/sarah/sizes", label: "المقاسات" },
   { href: "/sarah#fabrics", label: "الخامات" },
   { href: "/sarah#shipping", label: "الشحن" },
+  { href: "/sarah/course", label: "الدورة" },
   { href: "/sarah/order", label: "اطلبي الآن" },
 ];
 
