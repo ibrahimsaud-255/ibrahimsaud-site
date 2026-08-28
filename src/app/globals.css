@@ -33,6 +33,21 @@
   --color-clay-deep: #8c5a39;
   --color-blush: #d8b3a3;
   --color-sage: #7c8a6f;
+
+  /* ===== ألوان تطبيق «نما» (هوية زيتونية فاتحة) ===== */
+  --color-nforest: #315a45; /* الأخضر الأساسي */
+  --color-nleaf: #6f9672;
+  --color-nmoss: #9cb69a;
+  --color-ncream: #f7f4ed; /* الخلفية */
+  --color-nsand: #ece5d8; /* بطاقات وأقسام */
+  --color-nline: #e2ded4; /* حدود */
+  --color-nink: #24332b; /* النص الأساسي */
+  --color-nmuted: #68746d; /* نص ثانوي */
+  --color-nblue: #6484a4; /* المجال العلمي */
+  --color-namber: #c58a36; /* المهاري */
+  --color-nsuccess: #4f8a61; /* الصحي */
+  --color-nrose: #c97779; /* الاجتماعي */
+  --color-ngold: #cc9a3e; /* المالي */
 }
 
 :root {
@@ -289,4 +304,43 @@ h1, h2, .font-serif-display {
 @media (prefers-reduced-motion: reduce) {
   .chat-msg { opacity: 1; animation: none; }
   .chat-dot { animation: none; }
+}
+
+/* ===================================================================
+   «نما» — هوية فاتحة زيتونية مستقلة عن هوية الموقع الداكنة
+   (ألوان معرّفة في @theme أعلاه؛ مأخوذة من ثيم تطبيق نما الرسمي)
+   =================================================================== */
+.nama-scope {
+  background:
+    radial-gradient(46rem 32rem at 88% -6%, rgba(111, 150, 114, 0.16), transparent 60%),
+    radial-gradient(40rem 30rem at 0% 4%, rgba(156, 182, 154, 0.16), transparent 55%),
+    var(--color-ncream);
+  color: var(--color-nink);
+  min-height: 100vh;
+}
+.nama-scope h1,
+.nama-scope h2,
+.nama-scope h3 {
+  font-family: "Thmanyah Serif", "Thmanyah Sans", serif;
+}
+.nama-scope ::selection {
+  background: var(--color-nforest);
+  color: #fff;
+}
+
+/* حلقة تقدّم زخرفية للنموذج */
+@keyframes nama-ring {
+  from { stroke-dashoffset: 264; }
+}
+.nama-ring-anim {
+  animation: nama-ring 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nama-ring-anim { animation: none; }
+}
+
+/* شبكة نقطية خفيفة داخل إطار الجوال */
+.nama-dotgrid {
+  background-image: radial-gradient(rgba(49, 90, 69, 0.09) 1px, transparent 1px);
+  background-size: 18px 18px;
 }

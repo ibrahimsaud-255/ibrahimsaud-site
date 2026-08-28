@@ -10,21 +10,29 @@ permissions:
   pages: write
   id-token: write
 
+# نشرة واحدة في كل مرة — ولا نلغي نشرة جارية.
+#
+# مهم: كانت هنا `cancel-in-progress: true`، وهي سبب فشل النشر المتكرّر
+# برسالة «Timeout reached, aborting!». عند دفع عدّة كوميتات متقاربة كان
+# الإلغاء يقطع نشرة GitHub Pages في منتصفها، فيبقى طلب النشر عالقاً عندهم
+# وتنتهي مهلة كل نشرة تالية بعد عشر دقائق. التوصية الرسمية لصفحات Pages
+# هي تخطّي الطلبات المنتظرة دون إلغاء الجارية.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       - name: Install dependencies
@@ -37,20 +45,29 @@ jobs:
         run: touch ./out/.nojekyll
 
       - name: Setup Pages
-        uses: actions/configure-pages@v5
+        uses: actions/configure-pages@v6
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./out
+          # الإصدار الخامس يستبعد الملفات المخفيّة افتراضياً، وهذا يُسقط
+          # ملف .nojekyll الذي أنشأناه للتوّ — وبدونه يتجاهل Pages مجلد
+          # ‏_next‏ (لأنه يبدأ بشرطة سفلية) فتنكسر كل ملفات الموقع.
+          include-hidden-files: true
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
+        with:
+          # الموقع كبير نسبياً (‏٥٣م.ب‏ و‏٧٠٠+‏ ملف) فنمنح النشر مهلة أوسع
+          # من الافتراضية (عشر دقائق) بدل أن يُجهَض وهو على وشك الاكتمال.
+          timeout: 900000
