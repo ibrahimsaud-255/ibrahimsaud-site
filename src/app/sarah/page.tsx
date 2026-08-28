@@ -1,6 +1,7 @@
 import Link from "next/link";
 import FaqChat from "@/components/sarah/FaqChat";
 import HowToOrder from "@/components/sarah/HowToOrder";
+import AtelierStrip from "@/components/sarah/AtelierStrip";
 import ProductCard from "@/components/sarah/ProductCard";
 import SlotImage from "@/components/sarah/SlotImage";
 import {
@@ -152,6 +153,9 @@ export default function SarahHome() {
           })}
         </div>
       </section>
+
+      {/* ============================ الأتيليه ============================ */}
+      <AtelierStrip />
 
       {/* ============================ الخامات ============================ */}
       <section id="fabrics" className="scroll-mt-20 bg-sand-deep/50 px-5 py-16">

@@ -23,7 +23,8 @@ export default function CoursePage() {
     <main>
       {/* ============================ الهيرو ============================ */}
       <section className="px-5 pt-14 pb-16">
-        <div className="mx-auto max-w-5xl">
+        <div className="mx-auto grid max-w-6xl gap-10 lg:grid-cols-[1fr_1fr] lg:items-center">
+        <div>
           <p className="text-xs font-bold tracking-[0.14em] text-clay">
             دورة تدريبية · {course.city}
           </p>
@@ -73,6 +74,23 @@ export default function CoursePage() {
             ما اكتمل، يُردّ حجزك كاملاً.
           </p>
         </div>
+
+        {/* صورة الأتيليه بجانب الهيرو */}
+        <div className="relative">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/sarah/course/hero.jpg"
+            alt="سارة أثناء تفصيل قماش وردي في أتيليه الأحساء"
+            className="aspect-[4/5] w-full rounded-3xl object-cover shadow-xl shadow-espresso/10"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/sarah/course/thread-spools.jpg"
+            alt="بكرات الخيوط"
+            className="absolute -bottom-6 -left-6 hidden aspect-square w-40 rounded-2xl border-4 border-sand object-cover shadow-lg sm:block"
+          />
+        </div>
+        </div>
       </section>
 
       {/* ============================ شراكة الاعتماد ============================ */}
@@ -120,6 +138,29 @@ export default function CoursePage() {
                 </div>
               );
             })}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================ لحظات من الأتيليه ============================ */}
+      <section className="px-5 pb-4 pt-16">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-xs font-black tracking-[0.14em] text-clay">لحظات من الأتيليه</p>
+          <h2 className="mt-2 text-3xl font-black text-espresso">حيث ستقضين ٣ أيام</h2>
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+            {[
+              { src: "/sarah/course/atelier.jpg", cls: "col-span-2 aspect-[16/9]", alt: "ركن الأتيليه" },
+              { src: "/sarah/course/hands-cutting.jpg", cls: "aspect-square", alt: "قصّ القماش" },
+              { src: "/sarah/course/materials-flatlay.jpg", cls: "aspect-square", alt: "المواد" },
+              { src: "/sarah/course/finished-piece.jpg", cls: "aspect-square", alt: "قطعة الخرّيجة" },
+              { src: "/sarah/site/sewing-machine.jpg", cls: "aspect-square", alt: "ماكينة الخياطة" },
+              { src: "/sarah/site/fabric-market.jpg", cls: "col-span-2 aspect-[16/9]", alt: "سوق الأقمشة" },
+            ].map((im, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <div key={i} className={`overflow-hidden rounded-2xl bg-sand-deep ${im.cls}`}>
+                <img src={im.src} alt={im.alt} loading="lazy" className="size-full object-cover transition duration-700 hover:scale-105" />
+              </div>
+            ))}
           </div>
         </div>
       </section>
