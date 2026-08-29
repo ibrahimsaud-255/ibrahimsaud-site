@@ -4197,7 +4197,7 @@ function printDocHTML(type,id,previewBrand){
   }
   // ===== صفحة التفاصيل (Page 2) — الجدول والإجمالي والشروط
   const details=`
-   <div class="page details" style="padding:34px 34px 0;position:relative;display:flex;flex-direction:column">
+   <div class="page details" style="padding:48px 48px 0;position:relative;display:flex;flex-direction:column">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${acc};padding-bottom:14px;margin-bottom:20px">
       <div>${b.logo?`<img src="${esc(b.logo)}" style="height:44px;margin-bottom:6px">`:`<div style="font-size:20px;font-weight:900;color:${ink}">${esc(b.name)}</div>`}
         <div style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
@@ -4251,7 +4251,7 @@ function printDocHTML(type,id,previewBrand){
       ${org.owner?esc(org.owner)+' · ':''}${org.email?esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
       ${org.cr||org.vat?`<br>${org.cr?'س.ت '+esc(org.cr):''}${org.cr&&org.vat?' · ':''}${org.vat?'الرقم الضريبي '+esc(org.vat):''}`:''}
     </div>
-    <div style="height:7px;background:linear-gradient(90deg,${acc},${acc2});margin:0 -34px"></div>
+    <div style="height:7px;background:linear-gradient(90deg,${acc},${acc2});margin:0 -48px"></div>
    </div>`;
   const ORIGIN=location.origin;
   return `<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><title>${esc(kind)} ${esc(docNo)}</title>
@@ -4263,12 +4263,12 @@ function printDocHTML(type,id,previewBrand){
       @font-face{font-family:"Thmanyah Sans";src:url("${ORIGIN}/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:900;font-display:swap}
       @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
       @font-face{font-family:"Thmanyah Serif";src:url("${ORIGIN}/fonts/thmanyah/thmanyahserifdisplay-Black.woff2") format("woff2");font-weight:900;font-display:swap}
-      /* الصفحة أضيق من أسوأ حالة هامش طباعة ممكنة (حتى 17mm) — فلا يُقصّ أي محتوى مهما كانت إعدادات المتصفح */
-      @page{size:A4;margin:12mm}
+      /* صفحة A4 كاملة full-bleed — التصميم يصل حافة الورقة (بلا إطار أبيض) في معاينة الواتساب/PDF.
+         النصوص والجداول بهامش داخلي آمن (المنطقة الآمنة) فلا يُقصّ محتوى. */
+      @page{size:A4;margin:0}
       html,body{margin:0;padding:0;background:#e5e7eb;font-family:"Thmanyah Sans","Tajawal",Arial,sans-serif;color:#0f172a;-webkit-font-smoothing:antialiased}
       *{box-sizing:border-box}
-      /* 176mm عرض: يبقى داخل المنطقة القابلة للطباعة في كل المتصفحات وكل إعدادات الهامش */
-      .page{width:176mm;min-height:250mm;background:#fff;margin:0 auto;position:relative;page-break-after:always;overflow:hidden;border-radius:2px}
+      .page{width:210mm;min-height:297mm;background:#fff;margin:0 auto;position:relative;page-break-after:always;overflow:hidden}
       .page:last-child{page-break-after:auto}
       .headline{font-family:"Thmanyah Serif","Thmanyah Sans","Tajawal",serif}
       @media screen{.page{margin:14px auto;box-shadow:0 8px 24px rgba(0,0,0,.15)}}
@@ -4304,7 +4304,7 @@ function qdPreviewHTML(design){
   return html;
 }
 function qdRenderPreview(){const ifr=document.getElementById('qdPreview');if(!ifr)return;ifr.srcdoc=qdPreviewHTML(qdDesign());setTimeout(qdFitPreview,60);}
-function qdFitPreview(){const wrap=document.getElementById('qdPvWrap'),sc=document.getElementById('qdPvScale');if(!wrap||!sc)return;const w=wrap.clientWidth-32;const scale=Math.max(.2,Math.min(1,w/680));sc.style.transform='scale('+scale+')';sc.style.height=(2000*scale)+'px';}
+function qdFitPreview(){const wrap=document.getElementById('qdPvWrap'),sc=document.getElementById('qdPvScale');if(!wrap||!sc)return;const w=wrap.clientWidth-32;const scale=Math.max(.2,Math.min(1,w/794));sc.style.transform='scale('+scale+')';sc.style.height=(2380*scale)+'px';}
 function qdSet(f,v){const b=qdDesign();b[f]=v;save();qdRenderPreview();}
 function qdSetNum(f,v){const b=qdDesign();b[f]=Number(v)||0;save();qdRenderPreview();}
 function qdSetBool(f,v){const b=qdDesign();b[f]=!!v;save();qdRenderPreview();}
@@ -4411,8 +4411,8 @@ function renderQuoteDesign(){
           <div style="font-size:12px;color:var(--muted)">${esc(b.name)}</div>
         </div>
         <div id="qdPvWrap" style="background:#e5e7eb;border:1px solid var(--line);border-radius:14px;padding:16px;overflow:auto;max-height:82vh">
-          <div id="qdPvScale" style="transform-origin:top center;width:680px;margin:0 auto">
-            <iframe id="qdPreview" style="width:680px;height:2000px;border:0;background:#fff;display:block"></iframe>
+          <div id="qdPvScale" style="transform-origin:top center;width:794px;margin:0 auto">
+            <iframe id="qdPreview" style="width:794px;height:2380px;border:0;background:#fff;display:block"></iframe>
           </div>
         </div>
       </div>
