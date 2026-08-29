@@ -14,9 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
-<script src="./techco-admin.js?v=1"></script>
 <script src="./growth-apps.js?v=5"></script>
-<script src="./sites-admin.js?v=4"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
@@ -614,8 +612,7 @@ const def={
         template:''},
     ],
     vat:{enabled:false,rate:15,number:'',sellerName:'مؤسسة حروف ودروس',address:'الرياض، السعودية',cr:''},
-    wallpaper:{type:'url',key:'tahoe-dark',url:'./wallpapers/tahoe-dark.jpg'},wallpapers:[],
-    ai:{provider:'groq',groqKey:'',model:'llama-3.3-70b-versatile',allowWrite:false,tools:{business_summary:true,list_products:true,search_contacts:true,list_invoices:true,list_suppliers:true,sales_report:true,create_product:false,create_invoice:false,add_supplier:false}}},
+    wallpaper:{type:'url',key:'tahoe-dark',url:'./wallpapers/tahoe-dark.jpg'},wallpapers:[]},
   products:[
     {id:'p_pod',name:'إنتاج حلقة بودكاست',price:2000,unit:'حلقة',desc:'تصوير + مونتاج + ١٠ مقاطع قصيرة + تصاميم'},
     {id:'p_studio',name:'Studio Video Production – Filming & Editing',price:1500,unit:'فيديو',desc:''},
@@ -625,7 +622,6 @@ const def={
     {id:'p_design',name:'تصاميم منشورات التواصل الاجتماعي',price:0,unit:'',desc:''}
   ],
   contacts:[],crm:[],sales:[],invoices:[],credits:[],projects:[],appointments:[],freelancers:[],boards:[],
-  guestMeta:{},
   subscriptions:[
     {id:'sub_apple',name:'حساب مطوّر آبل',usd:99,sar:371,cycle:'yearly',date:'',url:'https://developer.apple.com/account',note:'لنشر تطبيق حروف ودروس على آب ستور',active:true},
     {id:'sub_opus',name:'Opus Clip',usd:29,sar:109,cycle:'monthly',date:'',url:'https://www.opus.pro',note:'قص اللقطات القصيرة من حلقات البودكاست',active:true},
@@ -763,31 +759,6 @@ function flAdd(){openModal('فريلانسر جديد',`
   async()=>{const name=document.getElementById('f_name').value.trim();const icon=document.getElementById('f_icon').value.trim()||'clapperboard';const email=document.getElementById('f_email').value.trim();if(!name){alert('أدخل الاسم');return}const {data,error}=await sb.from('freelancers').insert({name,icon,email,owner:USER.id}).select().single();if(error){alert('خطأ: '+error.message);return}S.freelancers.push(data);closeModal();renderTeam()});pickFlIcon('clapperboard')}
 async function flDel(id){if(!confirm('حذف الفريلانسر؟'))return;await sb.from('freelancers').delete().eq('id',id);S.freelancers=S.freelancers.filter(f=>f.id!==id);renderTeam()}
 
-/* ===== عنتر — المساعد ===== */
-async function renderAntar(){
-  document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><i data-lucide="sparkles"></i> عنتر — مساعدك</h1></div>
-    <div class="badge-note"><i data-lucide="mic"></i> <div>اكتب أي مهمة هنا وتُضاف مباشرةً إلى لوحة <b>المهام</b>. حدّد الأهمية بالعَلَم من «فتح». (الإدخال الصوتي «يا Siri، عنتر» يُفعّل عند ربط الذكاء.)</div></div>
-    <div class="card" style="margin-bottom:16px"><div style="display:flex;gap:8px;flex-wrap:wrap"><input id="antarInput" placeholder="اكتب مهمة لعنتر…" onkeydown="if(event.key==='Enter')antarQuickAdd()" style="flex:1;min-width:160px"><button class="btn btn-gold" onclick="antarQuickAdd()"><i data-lucide="plus"></i> إضافة للمهام</button></div></div>
-    <div id="antarList"></div>`;
-  refreshIcons();antarLoad();
-}
-function antarLoad(){
-  const el=document.getElementById('antarList');if(!el)return;
-  const doneKey=taskDoneKey();
-  let tasks=(S.crm||[]).filter(t=>t.stageKey!==doneKey);
-  tasks=tasks.slice().sort((a,b)=>(PRIO_ORDER[a.priority||'none'])-(PRIO_ORDER[b.priority||'none']));
-  if(!tasks.length){el.innerHTML=emptyBox('sparkles','لا مهام مفتوحة. اكتب مهمة فوق وتنضاف مباشرة إلى اللوحة.');refreshIcons();return}
-  el.innerHTML='<table><thead><tr><th>المهمة</th><th>المرحلة</th><th>الاستحقاق</th><th></th></tr></thead><tbody>'+tasks.map(t=>{
-    const st=(S.crmStages.find(s=>s.key===t.stageKey)||{}).label||'';
-    const dchip=dueChip(t.due)||'<span style="color:var(--muted)">—</span>';
-    return `<tr><td><span style="display:inline-flex;align-items:center;gap:7px">${prioFlag(t.priority)}<b>${esc(t.title)}</b></span></td><td><span class="pill scheduled">${esc(st)}</span></td><td>${dchip}</td><td style="white-space:nowrap"><button class="link-btn" onclick="crmModal('${t.id}')"><i class="inl" data-lucide="pencil"></i> فتح</button><button class="link-btn" onclick="antarDone('${t.id}')"><i class="inl" data-lucide="check"></i> تم</button><button class="link-btn del" onclick="antarDel('${t.id}')">حذف</button></td></tr>`;}).join('')+'</tbody></table>';
-  refreshIcons();
-}
-function antarQuickAdd(){const i=document.getElementById('antarInput');const v=i.value.trim();if(!v)return;if(!S.crm)S.crm=[];S.crm.push({id:uid(),title:v,priority:'none',due:'',stageKey:S.crmStages[0].key,notes:'',clientName:'',value:0,contactId:'',date:today()});save();i.value='';antarLoad()}
-function antarDone(id){const t=(S.crm||[]).find(x=>x.id===id);if(t){t.stageKey=taskDoneKey();save()}antarLoad()}
-function antarDel(id){if(!confirm('حذف؟'))return;S.crm=(S.crm||[]).filter(x=>x.id!==id);save();antarLoad()}
-
 /* ===== FREELANCER VIEW (?ft=token) ===== */
 async function renderFreelancer(token){
   document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.add('hidden');
@@ -830,25 +801,19 @@ const APPS=[
   {id:'projects',name:'المشروع',icon:'clapperboard'},
   {id:'boards',name:'الخرائط الذهنية',icon:'git-fork'},
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe'},
-  {id:'sites',name:'مواقعي',icon:'layout-template'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
-  {id:'autopub',name:'النشر التلقائي',icon:'send'},
-  {id:'guests',name:'ضيوف سَعي',icon:'mic'},
   {id:'lab',name:'تحت التجربة',icon:'flask-conical'},
-  {id:'plan',name:'خطة المشروع',icon:'target'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
-const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,antar:renderAntar,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,sites:renderSites,blog:renderBlog,newsletter:renderNewsletter,autopub:renderAutoPub,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,ai:renderAI,guests:renderGuests,techco:renderTechco,lab:renderLab,plan:renderPlan,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},{id:'antar',name:'عنتر',icon:'sparkles'},...APPS,{id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/'},{id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html'},{id:'team',name:'الفريق',icon:'users'}];
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
 const LAUNCH=[
-  {id:'antar',name:'عنتر',icon:'sparkles',c:'#8b5cf6,#6366f1'},
   {id:'workspace',name:'مساحة العمل',icon:'layout-dashboard',c:'#0ea5e9,#6366f1'},
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#f5a623,#d97706'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
-  {id:'ai',name:'المساعد الذكي',icon:'bot',c:'#8b5cf6,#6366f1'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
@@ -864,20 +829,10 @@ const LAUNCH=[
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
   {id:'boards',name:'الخرائط الذهنية',icon:'git-fork',c:'#6366f1,#4338ca'},
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe',c:'#e11d48,#9f1239'},
-  {id:'sites',name:'مواقعي',icon:'layout-template',c:'#0ea5e9,#0369a1'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
-  {id:'autopub',name:'النشر التلقائي',icon:'send',c:'#8b5cf6,#6d28d9'},
-  {id:'guests',name:'ضيوف سَعي',icon:'mic',c:'#10b981,#059669'},
-  {id:'techco',name:'الأنظمة المباعة',icon:'building-2',c:'#06b6d4,#0e7490'},
-  {id:'plan',name:'خطة المشروع',icon:'target',c:'#22c55e,#15803d'},
   {id:'ideas',name:'بنك الأفكار',icon:'lightbulb',c:'#f59e0b,#b45309'},
   {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
-  {id:'plans',name:'الخطط والدراسات',icon:'presentation',href:'../plans/',c:'#f5a623,#b45309'},
-  {id:'radar',name:'رادار المحتوى',icon:'radar',href:'./studio.html',c:'#06b6d4,#0891b2'},
-  {id:'mersad',name:'مرصاد',icon:'camera',href:'../mersad/',c:'#f97316,#c2410c'},
-  {id:'prompts',name:'مكتبة البرومتات',icon:'library',href:'../prompts/',c:'#eab308,#a16207'},
-  {id:'identity',name:'الهوية البصرية',icon:'palette',href:'../identity/',c:'#d946ef,#a21caf'},
 ];
 function hexA(h,al){h=String(h).trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${al})`}
 function gGrad(c,al){return c.split(',').map(x=>hexA(x,al)).join(',')}
@@ -887,7 +842,7 @@ function lpTile(a){
               :`<button class="lp-tile" type="button" onclick="go('${a.id}')">${inner}</button>`;
 }
 /* ===== «تحت التجربة» — حاوية التطبيقات قيد التجربة/غير الشخصية ===== */
-const LAB_DEFAULT=['workspace','ai','techco','mersad'];
+const LAB_DEFAULT=['workspace'];
 function labApps(){if(!Array.isArray(S.labApps))S.labApps=LAB_DEFAULT.slice();return S.labApps}
 function inLab(id){return labApps().includes(id)}
 const LAB_TILE={id:'lab',name:'تحت التجربة',icon:'flask-conical',c:'#a855f7,#6366f1'};
@@ -3072,73 +3027,6 @@ async function swImport(kind){
   await swLoad(true);
 }
 
-/* ===== النشر التلقائي (تيك توك ← يوتيوب شورتس عبر GitHub Actions) ===== */
-let PQ={items:null,loading:false,err:null};
-async function pqLoad(force){
-  if(PQ.loading)return;PQ.loading=true;PQ.err=null;if(force&&CUR==='autopub')renderAutoPub();
-  try{const r=await sb.from('publish_queue').select('*').order('created_at',{ascending:false}).limit(100);if(r.error)throw r.error;PQ.items=r.data||[];}
-  catch(e){PQ.err=(e&&e.message)||'تعذّر الاتصال';}
-  PQ.loading=false;if(CUR==='autopub')renderAutoPub();
-}
-const PQ_STATUS={pending:['بالانتظار','scheduled'],processing:['جارٍ النشر','scheduled'],done:['تم النشر ✓','done'],error:['خطأ','overdue']};
-function renderAutoPub(){
-  const main=document.getElementById('main');
-  if(PQ.items===null&&!PQ.err){if(!PQ.loading)pqLoad();main.innerHTML=`<div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1></div><p style="color:var(--muted)">…جارٍ التحميل</p>`;applyWallpaper();refreshIcons();return}
-  if(PQ.err){main.innerHTML=`<div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1><button class="btn btn-ghost" onclick="pqLoad(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>
-    <div class="card"><div class="badge-note"><i data-lucide="database"></i> <div><b>لتفعيل النشر التلقائي:</b><br>١) شغّل ملف <b>supabase/publish_queue.sql</b> في Supabase ← SQL Editor.<br>٢) اتبع دليل <b>docs/AUTOPUBLISH_SETUP.md</b> لإضافة مفاتيح يوتيوب وأسرار GitHub (مرة واحدة).<div style="margin-top:6px;color:var(--muted);font-size:12px">التفاصيل: ${esc(PQ.err)}</div></div></div></div>`;applyWallpaper();refreshIcons();return}
-  const items=PQ.items||[];
-  main.innerHTML=`
-    <div class="page-head"><h1><i data-lucide="send"></i> النشر التلقائي</h1>
-      <button class="btn btn-ghost" onclick="pqLoad(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
-    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="zap"></i> <div>الصق رابط مقطع تيك توك ← GitHub Actions ينشره على <b>يوتيوب شورتس</b> تلقائياً خلال ≈٣٠ دقيقة (مجاناً — بدل اشتراك repurpose.io). أول مرة؟ اتبع <b>docs/AUTOPUBLISH_SETUP.md</b>.</div></div>
-    <div class="card" style="margin-bottom:18px">
-      <div class="field"><label>رابط المقطع (تيك توك)</label><input id="pq_url" placeholder="https://www.tiktok.com/@ibrahimsaud/video/..."></div>
-      <div class="row2">
-        <div class="field"><label>عنوان المقطع</label><input id="pq_title" placeholder="يظهر عنواناً للشورت"></div>
-        <div class="field"><label>الوصف/الكابشن (اختياري)</label><input id="pq_caption" placeholder="وصف + هاشتاقات"></div>
-      </div>
-      <div class="field"><label>المنصات</label>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
-          <label style="display:flex;gap:6px;align-items:center;font-weight:700"><input type="checkbox" id="pq_yt" checked style="width:auto"> يوتيوب شورتس</label>
-          <span style="color:var(--muted);font-size:12px">لينكدإن وإنستقرام — مراحل قادمة</span>
-        </div>
-      </div>
-      <button class="btn btn-gold" onclick="pqAdd()"><i data-lucide="plus"></i> أضف للطابور</button>
-      <span id="pq_msg" style="color:var(--muted);font-size:12px;margin-inline-start:8px"></span>
-    </div>
-    <div class="grid">
-    ${items.length?items.map(q=>{const st=PQ_STATUS[q.status]||[q.status,'scheduled'];const res=q.results||{};return `
-      <div class="card">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:8px">
-          <span class="pill ${st[1]}">${esc(st[0])}</span>
-          <span style="font-size:12px;color:var(--muted)">${new Date(q.created_at).toLocaleString('ar-SA')}</span>
-        </div>
-        <div style="font-weight:800">${esc(q.title||'بدون عنوان')}</div>
-        <div style="font-size:12px;color:var(--muted);margin:4px 0 10px;direction:ltr;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(q.video_url)}</div>
-        ${res.youtube?`<a class="btn btn-ghost btn-sm" href="${esc(res.youtube)}" target="_blank" rel="noopener"><i data-lucide="youtube"></i> شاهد الشورت</a>`:''}
-        ${res.error?`<div style="color:var(--bad);font-size:12px;margin-bottom:8px">⚠️ ${esc(res.error)}</div>`:''}
-        <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:6px">
-          ${q.status==='error'?`<button class="btn btn-ghost btn-sm" onclick="pqRetry('${q.id}')"><i data-lucide="rotate-ccw"></i> أعد المحاولة</button>`:''}
-          <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="pqDel('${q.id}')"><i data-lucide="trash-2"></i></button>
-        </div>
-      </div>`}).join(''):`<div class="card"><p style="color:var(--muted)">الطابور فاضي — أضف أول مقطع فوق.</p></div>`}
-    </div>`;
-  applyWallpaper();refreshIcons();
-}
-async function pqAdd(){
-  const url=document.getElementById('pq_url').value.trim();
-  if(!url||!/^https?:\/\//.test(url)){alert('الصق رابط المقطع أولاً');return}
-  const msg=document.getElementById('pq_msg');if(msg)msg.textContent='…جارٍ الإضافة';
-  const row={id:'pq_'+uid(),video_url:url,title:document.getElementById('pq_title').value.trim(),
-    caption:document.getElementById('pq_caption').value.trim(),
-    platforms:document.getElementById('pq_yt').checked?['youtube']:[],status:'pending'};
-  const {error}=await sb.from('publish_queue').insert(row);
-  if(error){if(msg)msg.textContent='تعذّر: '+error.message;return}
-  await pqLoad(true);
-}
-async function pqRetry(id){await sb.from('publish_queue').update({status:'pending',results:{}}).eq('id',id);await pqLoad(true)}
-async function pqDel(id){if(!confirm('حذف من الطابور؟'))return;await sb.from('publish_queue').delete().eq('id',id);await pqLoad(true)}
-
 /* ===== القائمة البريدية (اشتراك + إرسال المدونة عبر Resend) ===== */
 let NL={subs:null,campaigns:null,loading:false,err:null,editId:null,_posts:null};
 async function nlLoad(force){
@@ -4804,123 +4692,6 @@ async function loadVisits(){const box=document.getElementById('visitsBox');if(!b
     <div><div style="font-size:26px;font-weight:800">${fmt(day.count)}</div><div style="color:var(--muted);font-size:13px">آخر ٢٤ ساعة</div></div></div>`;
 }catch(e){box.innerHTML='<p style="color:var(--muted);font-size:13px">لتفعيل العدّاد: شغّل ملف <b>supabase/analytics.sql</b> في Supabase (جدول ziyarat/pageviews). يبدأ العدّ بعدها تلقائياً.</p>'}}
 
-/* ===== ضيوف سَعي — تسجيلات استبيان البودكاست (guest_registrations) ===== */
-const GUEST_FIELDS=[
-  ['full_name','الاسم الكامل'],['nickname','نناديه بـ'],['email','البريد'],['phone','الجوال/واتساب'],
-  ['field','المجال'],['value','الفائدة للمستمع'],['journey','السعي/الرحلة'],['turning_point','موقف/تحوّل'],
-  ['misconception','مفهوم يُبسّطه'],['dream_question','سؤال يتمناه'],['avoid','أشياء يتجنّبها'],
-  ['website','موقع/بودكاست'],['x','X'],['instagram','إنستقرام'],['linkedin','لينكدإن'],
-  ['youtube','يوتيوب'],['tiktok','تيك توك'],['bio_links','نبذة/روابط'],
-];
-const GUEST_LONG=['value','journey','turning_point','misconception','dream_question','avoid','bio_links'];
-const GUEST_STATUS=[
-  {k:'new',l:'جديد'},{k:'contacted',l:'تم التواصل'},{k:'scheduled',l:'مجدول للتصوير'},
-  {k:'recorded',l:'تم التسجيل'},{k:'archived',l:'مؤرشف'},
-];
-const GS_PILL={new:'lead',contacted:'contacted',scheduled:'scheduled',recorded:'done',archived:'cancelled'};
-let GUESTS=null,GUESTS_ERR=null,GUESTS_LOADING=false;
-function gMeta(id){if(!S.guestMeta)S.guestMeta={};return S.guestMeta[id]||(S.guestMeta[id]={status:'new',recordDate:'',axes:'',notes:''})}
-function gName(r){return esc(r.full_name||r.nickname||'ضيف')}
-function gStatusOf(r){return (S.guestMeta&&S.guestMeta[r.id]&&S.guestMeta[r.id].status)||'new'}
-function gStatusLabel(k){const s=GUEST_STATUS.find(x=>x.k===k);return s?s.l:k}
-async function loadGuests(force){
-  if(GUESTS_LOADING)return; if(GUESTS&&!force){renderGuestsBody();return;}
-  GUESTS_LOADING=true;GUESTS_ERR=null;renderGuestsBody();
-  try{
-    const{data,error}=await sb.from('guest_registrations').select('*').order('created_at',{ascending:false});
-    if(error)throw error;
-    GUESTS=data||[];
-  }catch(e){GUESTS_ERR=(e&&e.message)||String(e);}
-  GUESTS_LOADING=false;renderGuestsBody();
-}
-
-
-function renderGuests(){
-  document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><i data-lucide="mic"></i> ضيوف سَعي</h1>
-      <button class="btn btn-ghost btn-sm" onclick="loadGuests(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
-    <div class="badge-note"><i data-lucide="info"></i><div>كل من يسجّل في <b>استبيان الضيوف</b> يصل هنا تلقائياً بكل أجوبته. افتح الضيف لقراءة إجاباته، ونسّق <b>محاور الحلقة</b> وحالته وموعد التصوير — كل التنسيق يُحفظ في حسابك.</div></div>
-    <div id="guestsBody"></div>`;
-  refreshIcons();
-  if(GUESTS&&!GUESTS_ERR)renderGuestsBody(); else loadGuests();
-}
-function renderGuestsBody(){
-  const box=document.getElementById('guestsBody');if(!box)return;
-  if(GUESTS_LOADING&&!GUESTS){box.innerHTML='<p style="color:var(--muted)">…جارٍ تحميل تسجيلات الضيوف</p>';return;}
-  if(GUESTS_ERR){
-    box.innerHTML=`<div class="empty"><div class="big"><i data-lucide="lock"></i></div>
-      <p style="margin:0 0 6px">تعذّر قراءة تسجيلات الضيوف من السحابة.</p>
-      <p style="font-size:12.5px;color:var(--muted);max-width:560px;margin:0 auto 12px">السبب غالباً صلاحيات القراءة (RLS). شغّل هذا في Supabase SQL لتمكين قراءة المالك:</p>
-      <pre dir="ltr" style="text-align:left;background:#0e0e10;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:11.5px;overflow:auto;max-width:560px;margin:0 auto">create policy "owner reads guests"
-on public.guest_registrations for select
-to authenticated using (true);</pre>
-      <p style="font-size:11px;color:var(--muted);margin-top:10px">${esc(GUESTS_ERR)}</p>
-      <button class="btn btn-ghost btn-sm" style="margin-top:12px" onclick="loadGuests(true)"><i data-lucide="refresh-cw"></i> إعادة المحاولة</button></div>`;
-    refreshIcons();return;
-  }
-  const list=GUESTS||[];
-  if(!list.length){box.innerHTML='<div class="empty"><div class="big"><i data-lucide="mic-off"></i></div>لا توجد تسجيلات ضيوف بعد. أول من يعبّئ الاستبيان سيظهر هنا.</div>';refreshIcons();return;}
-  const counts={};list.forEach(r=>{const k=gStatusOf(r);counts[k]=(counts[k]||0)+1});
-  box.innerHTML=`
-    <div class="stats" style="margin-bottom:18px">
-      <div class="stat"><span class="ic"><i data-lucide="users"></i></span><div class="v">${list.length}</div><div class="l">إجمالي الضيوف</div></div>
-      <div class="stat"><span class="ic"><i data-lucide="sparkle"></i></span><div class="v">${counts.new||0}</div><div class="l">جدد بانتظار التواصل</div></div>
-      <div class="stat"><span class="ic"><i data-lucide="calendar-check"></i></span><div class="v">${counts.scheduled||0}</div><div class="l">مجدولون للتصوير</div></div>
-      <div class="stat"><span class="ic"><i data-lucide="check-circle"></i></span><div class="v">${counts.recorded||0}</div><div class="l">تم تسجيلهم</div></div>
-    </div>
-    <div class="grid">${list.map(guestCard).join('')}</div>`;
-  refreshIcons();
-}
-function guestCard(r){
-  const st=gStatusOf(r);const m=(S.guestMeta&&S.guestMeta[r.id])||{};
-  const date=(r.created_at||'').slice(0,10);
-  const wa=String(r.phone||'').replace(/[^\d]/g,'');
-  return `<div class="card" style="cursor:pointer" onclick="openGuest('${esc(r.id)}')">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-      <div><h3 style="margin:0 0 2px">${gName(r)}</h3>
-        <div style="color:var(--muted);font-size:13px">${esc(r.field||'')}${r.nickname&&r.full_name?` · نناديه ${esc(r.nickname)}`:''}</div></div>
-      ${pill2(GS_PILL[st]||'lead',gStatusLabel(st))}</div>
-    <div style="margin:10px 0;color:var(--muted);font-size:13px;line-height:1.7;max-height:66px;overflow:hidden">${esc((r.value||r.journey||r.misconception||'').slice(0,150))||'—'}</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:9px">
-      ${r.phone?`<span class="inl"><i data-lucide="phone"></i></span> ${esc(r.phone)}`:''}
-      ${date?`<span class="inl"><i data-lucide="calendar"></i></span> ${date}`:''}
-      ${m.recordDate?`<span style="color:var(--gold2)"><span class="inl"><i data-lucide="clapperboard"></i></span> ${esc(m.recordDate)}</span>`:''}
-    </div></div>`;
-}
-function pill2(cls,txt){return `<span class="pill ${cls}">${esc(txt)}</span>`}
-function openGuest(id){
-  const r=(GUESTS||[]).find(x=>String(x.id)===String(id));if(!r)return;
-  const m=gMeta(id);
-  const answers=GUEST_FIELDS.filter(([k])=>r[k]!=null&&String(r[k]).trim()!=='').map(([k,label])=>{
-    const long=GUEST_LONG.includes(k);const val=esc(r[k]);
-    return `<div style="padding:9px 0;border-bottom:1px solid var(--line)">
-      <div style="font-size:12px;color:var(--muted);margin-bottom:${long?'4px':'2px'}">${label}</div>
-      <div style="font-weight:${long?'500':'700'};line-height:1.7;white-space:pre-wrap">${val}</div></div>`;
-  }).join('');
-  const wa=String(r.phone||'').replace(/[^\d]/g,'');
-  const statusOpts=GUEST_STATUS.map(s=>`<option value="${s.k}" ${m.status===s.k?'selected':''}>${s.l}</option>`).join('');
-  openModal(`الضيف: ${gName(r)}`,`
-    <div class="row2" style="align-items:start">
-      <div>
-        <div class="wp-sec-title"><i data-lucide="file-text"></i> أجوبة الضيف في الاستبيان</div>
-        ${answers||'<p style="color:var(--muted)">لا توجد أجوبة.</p>'}
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-          ${wa?`<a class="btn btn-ghost btn-sm" href="https://wa.me/${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> واتساب</a>`:''}
-          ${r.email?`<a class="btn btn-ghost btn-sm" href="mailto:${esc(r.email)}"><i data-lucide="mail"></i> إيميل</a>`:''}
-        </div>
-      </div>
-      <div>
-        <div class="wp-sec-title"><i data-lucide="sliders-horizontal"></i> تنسيق الحلقة</div>
-        <div class="field"><label>الحالة</label><select id="g_status">${statusOpts}</select></div>
-        <div class="field"><label>موعد التصوير المقترح</label><input id="g_record" value="${esc(m.recordDate||'')}" placeholder="مثال: الأحد 6 يوليو 4 عصراً"></div>
-        <div class="field"><label>محاور الحلقة (محور في كل سطر)</label><textarea id="g_axes" rows="6" placeholder="• المحور الأول&#10;• المحور الثاني&#10;• ...">${esc(m.axes||'')}</textarea></div>
-        <div class="field"><label>ملاحظات داخلية</label><textarea id="g_notes" rows="3" placeholder="ملاحظات للتنسيق…">${esc(m.notes||'')}</textarea></div>
-      </div>
-    </div>`,
-    ()=>{const g=i=>document.getElementById(i);m.status=g('g_status').value;m.recordDate=g('g_record').value.trim();m.axes=g('g_axes').value;m.notes=g('g_notes').value;S.guestMeta[id]=m;save();closeModal();renderGuestsBody();});
-}
-
-/* ===== SETTINGS ===== */
 /* ===== المدونة (داخل النظام) — كتابة + تنسيق بالذكاء + نشر ===== */
 let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'تقنية أعمال وبودكاست',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
 const BLOG_AV_FALLBACK='https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg';
@@ -5219,119 +4990,6 @@ async function posCameraScan(){
 }
 function posStopCamera(){if(POS_STREAM){POS_STREAM.getTracks().forEach(t=>t.stop());POS_STREAM=null}closeModal()}
 
-/* ===== المساعد الذكي (Groq · أدوات على بيانات النظام) ===== */
-const GROQ_URL='https://api.groq.com/openai/v1/chat/completions';
-const AI_TOOL_DEFS={
-  business_summary:{desc:'ملخص الأعمال: الإيرادات المحصّلة، المبالغ المستحقة، وعدد الفواتير والمنتجات والعملاء والموردين',params:{type:'object',properties:{}}},
-  list_products:{desc:'قائمة المنتجات والخدمات بأسعارها ومخزونها',params:{type:'object',properties:{}}},
-  search_contacts:{desc:'ابحث عن عميل بالاسم أو الجوال أو الشركة',params:{type:'object',properties:{query:{type:'string',description:'نص البحث'}},required:['query']}},
-  list_invoices:{desc:'قائمة الفواتير مع الإجمالي والمتبقي، يمكن تصفيتها بالحالة',params:{type:'object',properties:{status:{type:'string',enum:['unpaid','partial','paid']}}}},
-  list_suppliers:{desc:'قائمة الموردين وملفاتهم وأعمار الملفات',params:{type:'object',properties:{}}},
-  sales_report:{desc:'تقرير المبالغ المحصّلة خلال فترة (اليوم/الشهر/الكل)',params:{type:'object',properties:{period:{type:'string',enum:['today','month','all']}}}},
-  create_product:{desc:'أضف منتجاً جديداً للكتالوج',params:{type:'object',properties:{name:{type:'string'},price:{type:'number'},unit:{type:'string'},barcode:{type:'string'},stock:{type:'number'}},required:['name','price']},write:true},
-  create_invoice:{desc:'أنشئ فاتورة جديدة لعميل',params:{type:'object',properties:{client:{type:'string'},items:{type:'array',items:{type:'object',properties:{desc:{type:'string'},qty:{type:'number'},price:{type:'number'}},required:['desc','qty','price']}}},required:['client','items']},write:true},
-  add_supplier:{desc:'أضف مورّداً جديداً',params:{type:'object',properties:{name:{type:'string'},phone:{type:'string'},category:{type:'string'}},required:['name']},write:true}
-};
-function aiActiveTools(){const cfg=S.settings.ai||{};const t=cfg.tools||{};const out=[];for(const k in AI_TOOL_DEFS){const d=AI_TOOL_DEFS[k];if(!t[k])continue;if(d.write&&!cfg.allowWrite)continue;out.push({type:'function',function:{name:k,description:d.desc,parameters:d.params}})}return out}
-function aiRunTool(name,args){args=args||{};try{
-  if(name==='business_summary'){const invs=S.invoices||[];return {currency:S.settings.currency,revenue_collected:invs.reduce((a,i)=>a+invPaid(i),0),outstanding:invs.reduce((a,i)=>a+invDue(i),0),invoices:invs.length,products:(S.products||[]).length,contacts:(S.contacts||[]).length,suppliers:(S.suppliers||[]).length}}
-  if(name==='list_products'){return (S.products||[]).map(p=>({name:p.name,price:p.price,unit:p.unit||'',stock:p.stock==null?'خدمة':p.stock,barcode:p.barcode||'',category:p.category||''}))}
-  if(name==='search_contacts'){const q=(args.query||'').toLowerCase();return (S.contacts||[]).filter(c=>[c.name,c.phone,c.company,c.email].some(x=>(x||'').toLowerCase().includes(q))).slice(0,20).map(c=>({name:c.name,phone:c.phone,company:c.company,email:c.email,vat:c.vat}))}
-  if(name==='list_invoices'){let l=(S.invoices||[]);if(args.status)l=l.filter(i=>i.status===args.status);return l.slice(-40).map(i=>({number:i.number,client:resolveClientName(i),date:i.date,total:invTotal(i),due:invDue(i),status:i.status}))}
-  if(name==='list_suppliers'){return (S.suppliers||[]).map(s=>({name:s.name,category:s.category||'',phone:s.phone||'',files:(s.files||[]).map(f=>({name:f.name,type:f.type,received:f.received,age:ageLabel(f.received)}))}))}
-  if(name==='sales_report'){const period=args.period||'month';const now=new Date();const inRange=dt0=>{if(period==='all')return true;if(!dt0)return false;if(period==='today')return dt0===today();const dt=new Date(dt0+'T12:00:00');return dt.getMonth()===now.getMonth()&&dt.getFullYear()===now.getFullYear()};let total=0,count=0;(S.invoices||[]).forEach(i=>(i.payments||[]).forEach(p=>{if(inRange(p.date)){total+=Number(p.amount||0);count++}}));return {period,collected:total,payments:count,currency:S.settings.currency}}
-  const cfg=S.settings.ai||{};if(AI_TOOL_DEFS[name]&&AI_TOOL_DEFS[name].write&&!cfg.allowWrite)return {error:'أدوات التعديل مقفلة. فعّلها صاحب النظام من الإعدادات.'};
-  if(name==='create_product'){const p={id:uid(),name:args.name,price:Number(args.price||0),cost:0,unit:args.unit||'',barcode:args.barcode||'',stock:args.stock==null?null:Number(args.stock),category:'',image:'',desc:''};if(!S.products)S.products=[];S.products.push(p);save();return {ok:true,created:p.name}}
-  if(name==='create_invoice'){const items=(args.items||[]).map(it=>({desc:it.desc,qty:Number(it.qty||1),price:Number(it.price||0),discount:0}));if(!items.length)return {error:'لا بنود'};const inv={id:uid(),number:++S.counters.invoice,client:args.client,contactId:findOrCreateContact(args.client),clientVat:'',date:today(),items,discType:'none',discVal:0,notes:'أُنشئت بالمساعد الذكي',status:'unpaid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:'',payments:[]};if(!S.invoices)S.invoices=[];S.invoices.push(inv);save();return {ok:true,invoice_number:inv.number,total:invTotal(inv)}}
-  if(name==='add_supplier'){const sp={id:uid(),name:args.name,phone:args.phone||'',category:args.category||'',notes:'',active:true,files:[]};if(!S.suppliers)S.suppliers=[];S.suppliers.push(sp);save();return {ok:true,created:sp.name}}
-  return {error:'أداة غير معروفة'};
-}catch(e){return {error:String(e.message||e)}}}
-let AI_CUR=null;let AI_TYPING=false;
-function aiCurrentChat(){return (S.aiData.chats||[]).find(c=>c.id===AI_CUR)||null}
-function aiNewChat(folderId,noRender){const c={id:uid(),folderId:folderId||'',title:'محادثة جديدة',messages:[],created:today()};if(!S.aiData.chats)S.aiData.chats=[];S.aiData.chats.unshift(c);AI_CUR=c.id;save();if(!noRender)renderAI();return c}
-function aiOpenChat(id){AI_CUR=id;renderAI()}
-function aiDelChat(id){if(!confirm('حذف المحادثة؟'))return;S.aiData.chats=(S.aiData.chats||[]).filter(c=>c.id!==id);if(AI_CUR===id)AI_CUR=null;save();renderAI()}
-function aiNewFolder(){const n=prompt('اسم المجلد:');if(!n||!n.trim())return;if(!S.aiData.folders)S.aiData.folders=[];S.aiData.folders.push({id:uid(),name:n.trim()});save();renderAI()}
-function aiDelFolder(id){if(!confirm('حذف المجلد؟ (المحادثات تبقى بدون مجلد)'))return;S.aiData.folders=(S.aiData.folders||[]).filter(f=>f.id!==id);(S.aiData.chats||[]).forEach(c=>{if(c.folderId===id)c.folderId=''});save();renderAI()}
-function aiSideHTML(){
-  const chats=S.aiData.chats||[];const folders=S.aiData.folders||[];
-  const item=c=>`<div class="ai-chatitem ${c.id===AI_CUR?'on':''}" onclick="aiOpenChat('${c.id}')" title="${esc(c.title)}"><span onclick="event.stopPropagation();aiDelChat('${c.id}')" style="float:left;color:var(--muted);padding:0 4px">×</span><i class="inl" data-lucide="message-square"></i> ${esc(c.title||'محادثة')}</div>`;
-  let html=`<button class="btn btn-gold btn-sm" style="width:100%" onclick="aiNewChat('')"><i data-lucide="plus"></i> محادثة جديدة</button>
-    <div style="display:flex;gap:6px;margin:8px 0"><button class="btn btn-ghost btn-sm" style="flex:1" onclick="aiNewFolder()"><i data-lucide="folder-plus"></i> مجلد</button><button class="btn btn-ghost btn-sm" style="flex:1" onclick="aiSettingsModal()"><i data-lucide="settings"></i> إعداد</button></div>`;
-  folders.forEach(f=>{const fc=chats.filter(c=>c.folderId===f.id);html+=`<div style="margin-top:10px;font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center"><span><i class="inl" data-lucide="folder"></i> ${esc(f.name)}</span><span><button class="link-btn" onclick="aiNewChat('${f.id}')">+</button> <button class="link-btn del" onclick="aiDelFolder('${f.id}')">×</button></span></div>${fc.map(item).join('')||`<div style="color:var(--muted);font-size:12px;padding:2px 10px">—</div>`}`});
-  const ungrouped=chats.filter(c=>!c.folderId);
-  if(folders.length&&ungrouped.length)html+=`<div style="margin-top:10px;font-size:12px;color:var(--muted)"><i class="inl" data-lucide="inbox"></i> بدون مجلد</div>`;
-  html+=ungrouped.map(item).join('')||(chats.length?'':`<div style="color:var(--muted);font-size:13px;padding:10px 4px">لا محادثات بعد.</div>`);
-  return html;
-}
-function renderAI(){
-  ensureExtStyles();if(!S.aiData)S.aiData={folders:[],chats:[]};if(!S.settings.ai)S.settings.ai=JSON.parse(JSON.stringify(def.settings.ai));const cfg=S.settings.ai;const hasKey=!!(cfg.groqKey||'').trim();
-  document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>المساعد الذكي</h1><button class="btn btn-ghost" onclick="aiSettingsModal()"><i data-lucide="settings"></i> الإعدادات والأدوات</button></div>
-    ${!hasKey?`<div class="badge-note" style="border-color:var(--warn)"><i data-lucide="key"></i> <div>لتشغيل المساعد أدخل مفتاح Groq المجاني من الإعدادات. احصل عليه من <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--gold2)">console.groq.com/keys</a>.</div></div>`:''}
-    <div class="ai-wrap">
-      <div class="ai-side" id="aiSide">${aiSideHTML()}</div>
-      <div class="ai-main"><div class="ai-msgs" id="aiMsgs"></div>
-        <div class="ai-inbar"><textarea id="aiInput" placeholder="اكتب رسالتك… (Enter للإرسال)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();aiSend()}"></textarea><button class="btn btn-gold" onclick="aiSend()"><i data-lucide="send"></i></button></div>
-      </div>
-    </div>`;
-  aiRenderChat();refreshIcons();
-}
-function aiScroll(){const el=document.getElementById('aiMsgs');if(el)el.scrollTop=el.scrollHeight}
-function aiRenderChat(){const el=document.getElementById('aiMsgs');if(!el)return;const chat=aiCurrentChat();
-  if(!chat){el.innerHTML=`<div style="margin:auto;text-align:center;color:var(--muted)"><i data-lucide="bot" style="width:42px;height:42px"></i><div style="margin-top:8px">اسألني عن مبيعاتك، فواتيرك، عملائك، مخزونك أو مورّديك.</div></div>`;refreshIcons();return}
-  el.innerHTML=chat.messages.map(m=>`<div class="ai-msg ${m.role==='user'?'user':'assistant'}">${esc(m.content)}</div>`).join('')+(AI_TYPING?`<div class="ai-msg assistant" style="opacity:.55">…</div>`:'');
-  refreshIcons();aiScroll();
-}
-async function aiSend(){
-  const cfg=S.settings.ai||{};const key=(cfg.groqKey||'').trim();
-  const ta=document.getElementById('aiInput');const text=ta?(ta.value||'').trim():'';
-  if(!key){aiSettingsModal();return}
-  if(!text||AI_TYPING)return;
-  let chat=aiCurrentChat();let created=false;if(!chat){chat=aiNewChat('',true);created=true}
-  chat.messages.push({role:'user',content:text});if(!chat.title||chat.title==='محادثة جديدة')chat.title=text.slice(0,40);
-  if(ta)ta.value='';save();
-  if(created)renderAI();else aiRenderChat();
-  const sys={role:'system',content:`أنت «مساعد ${S.settings.brand||'النظام'}» الذكي داخل نظام أعمال إبراهيم سعود. تحدّث بالعربية باختصار ووضوح. تاريخ اليوم ${today()}. العملة ${S.settings.currency}. عندما يسأل المستخدم عن بيانات النظام (مبيعات، فواتير، عملاء، منتجات، مخزون، موردين) استخدم الأدوات المتاحة لجلب الأرقام الحقيقية قبل الإجابة، ولا تخمّن الأرقام.`};
-  let api=[sys,...chat.messages.map(m=>({role:m.role,content:m.content}))];
-  const tools=aiActiveTools();
-  AI_TYPING=true;aiRenderChat();
-  try{
-    for(let step=0;step<6;step++){
-      const body={model:cfg.model||'llama-3.3-70b-versatile',messages:api,temperature:0.3};
-      if(tools.length){body.tools=tools;body.tool_choice='auto'}
-      const res=await fetch(GROQ_URL,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+key},body:JSON.stringify(body)});
-      if(!res.ok){const t=await res.text();throw new Error('Groq '+res.status+': '+t.slice(0,240))}
-      const data=await res.json();const msg=data.choices[0].message;
-      if(msg.tool_calls&&msg.tool_calls.length){
-        api.push({role:'assistant',content:msg.content||'',tool_calls:msg.tool_calls});
-        for(const tc of msg.tool_calls){let a={};try{a=JSON.parse(tc.function.arguments||'{}')}catch(e){}const result=aiRunTool(tc.function.name,a);api.push({role:'tool',tool_call_id:tc.id,content:JSON.stringify(result)});}
-        continue;
-      }
-      AI_TYPING=false;chat.messages.push({role:'assistant',content:msg.content||'(لا يوجد رد)'});save();aiRenderChat();return;
-    }
-    AI_TYPING=false;chat.messages.push({role:'assistant',content:'تعذّر إكمال الطلب (خطوات أدوات كثيرة).'});save();aiRenderChat();
-  }catch(e){AI_TYPING=false;chat.messages.push({role:'assistant',content:'⚠️ خطأ في الاتصال بـ Groq: '+(e.message||e)+'\nتأكد من صحة المفتاح والاتصال.'});save();aiRenderChat();}
-}
-function aiSettingsModal(){
-  const cfg=S.settings.ai||{};const t=cfg.tools||{};
-  const row=(k,lbl,write)=>`<label style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 2px;border-bottom:1px solid var(--line);cursor:pointer;font-size:14px${write?';color:var(--warn)':''}"><span>${lbl}${write?' <span style="font-size:11px;opacity:.7">(تعديل)</span>':''}</span><input type="checkbox" id="ait_${k}" ${t[k]?'checked':''} style="width:18px;height:18px;accent-color:var(--gold);flex:none;cursor:pointer"></label>`;
-  openModal('إعدادات المساعد والأدوات',`
-    <div class="field"><label>مفتاح Groq API</label><input id="ai_key" value="${esc(cfg.groqKey||'')}" placeholder="gsk_..." dir="ltr"></div>
-    <div style="font-size:12px;color:var(--muted);margin:-4px 2px 10px">مجاني من <a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color:var(--gold2)">console.groq.com/keys</a> · يُحفظ في بياناتك الخاصة فقط.</div>
-    <div class="field"><label>النموذج</label><select id="ai_model">
-      <option value="llama-3.3-70b-versatile" ${cfg.model==='llama-3.3-70b-versatile'?'selected':''}>Llama 3.3 70B (الأقوى)</option>
-      <option value="llama-3.1-8b-instant" ${cfg.model==='llama-3.1-8b-instant'?'selected':''}>Llama 3.1 8B (الأسرع)</option></select></div>
-    <div class="card" style="background:var(--panel2)"><div style="font-weight:800;margin-bottom:4px"><i class="inl" data-lucide="wrench"></i> الأدوات المتاحة للمساعد (قراءة)</div>
-      ${row('business_summary','ملخص الأعمال')}${row('list_products','المنتجات والمخزون')}${row('search_contacts','بحث العملاء')}${row('list_invoices','الفواتير')}${row('list_suppliers','الموردون')}${row('sales_report','تقرير المبيعات')}
-      <div style="height:1px;background:var(--line);margin:14px 0"></div>
-      <label style="display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:800;color:var(--warn);cursor:pointer"><span>تفعيل أدوات التعديل <span style="font-size:12px;font-weight:600;opacity:.85">(السماح للمساعد بالكتابة)</span></span><input type="checkbox" id="ai_write" ${cfg.allowWrite?'checked':''} style="width:18px;height:18px;accent-color:var(--warn);flex:none;cursor:pointer"></label>
-      <div style="font-size:12.5px;color:var(--muted);margin:6px 0 4px">عند التفعيل يقدر المساعد يضيف/ينشئ حسب الأدوات المفعّلة أدناه.</div>
-      ${row('create_product','إنشاء منتج',true)}${row('create_invoice','إنشاء فاتورة',true)}${row('add_supplier','إضافة مورّد',true)}
-    </div>`,
-  ()=>{const g=i=>document.getElementById(i);S.settings.ai=S.settings.ai||{};const a=S.settings.ai;a.groqKey=g('ai_key').value.trim();a.model=g('ai_model').value;a.allowWrite=g('ai_write').checked;a.tools=a.tools||{};['business_summary','list_products','search_contacts','list_invoices','list_suppliers','sales_report','create_product','create_invoice','add_supplier'].forEach(k=>{const el=g('ait_'+k);if(el)a.tools[k]=el.checked});save();closeModal();renderAI()});
-}
-
 function renderSettings(){
   const s=S.settings;const v=s.vat;
   document.getElementById('main').innerHTML=`
@@ -5518,7 +5176,6 @@ function wsBoardHtml(){
     <div class="card" style="min-width:240px"><h3><i data-lucide="zap"></i> روابط سريعة</h3>
       <div style="display:flex;flex-direction:column;gap:8px">
         <a href="https://calendar.google.com" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start"><i data-lucide="calendar"></i> Google Calendar</a>
-        <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="go('ai')"><i data-lucide="bot"></i> المساعد الذكي</button>
         <a href="https://chatgpt.com" target="_blank" class="btn btn-ghost btn-sm" style="justify-content:flex-start"><i data-lucide="message-square"></i> ChatGPT</a>
         <button class="btn btn-ghost btn-sm" style="justify-content:flex-start" onclick="go('newsletter')"><i data-lucide="mail"></i> البريد</button>
       </div>
