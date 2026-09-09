@@ -4508,7 +4508,8 @@ function renderAccounting(){
     </style>
     <div class="page-head"><h1><i data-lucide="calculator"></i> المحاسبة</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-ghost btn-sm" onclick="accImportInvoices()"><i data-lucide="download"></i> استيراد مدفوعات الفواتير</button>
+        <button class="btn btn-ghost btn-sm" onclick="accPasteModal()"><i data-lucide="clipboard-paste"></i> استيراد بلصق</button>
+        <button class="btn btn-ghost btn-sm" onclick="accImportInvoices()"><i data-lucide="download"></i> مدفوعات الفواتير</button>
         <button class="btn btn-gold btn-sm" onclick="accTxModal()"><i data-lucide="plus"></i> قيد جديد</button>
       </div></div>
     <div class="acc-tabs">${tabs.map(t=>`<button class="acc-tab${tab===t[0]?' on':''}" onclick="accGo('${t[0]}')"><i data-lucide="${t[2]}"></i>${t[1]}</button>`).join('')}</div>
@@ -4562,7 +4563,7 @@ function accJournalHTML(){
       <td>${esc(t.desc||'')}${t.category?`<div style="font-size:11px;color:var(--muted)">${esc(t.category)}</div>`:''}</td>
       <td style="font-size:12px"><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:${accUnit(t.unit).color}"></span>${esc(accUnit(t.unit).name)}</span></td>
       <td style="font-size:12px">${esc(ACC_ACCOUNTS[t.account]||t.account||'—')}</td>
-      <td style="white-space:nowrap;font-weight:800;color:${k.sign>0?'#22c55e':k.sign<0?'#ef4444':'var(--ink)'}">${k.sign<0?'−':k.sign>0?'+':''}${accMoney(t.amount)}</td>
+      <td style="white-space:nowrap;font-weight:800;color:${k.sign>0?'#22c55e':k.sign<0?'#ef4444':'var(--ink)'}">${k.sign<0?'−':k.sign>0?'+':''}${accMoney(t.amount)}${t.origCur==='USD'?`<div style="font-size:10.5px;color:var(--muted);font-weight:600" dir="ltr">$${t.origAmount} × ${t.rate||''}</div>`:''}</td>
       <td style="white-space:nowrap"><button class="link-btn" onclick="accTxModal('${t.id}')">تعديل</button><button class="link-btn del" onclick="accTxDel('${t.id}')">حذف</button></td>
     </tr>`}).join('')}
   </tbody></table>`;
@@ -4627,6 +4628,10 @@ function accStatementsHTML(){
 function accSetupHTML(){
   const A=acc();
   return `<div class="grid">
+    <div class="card" style="grid-column:span 2"><h3><i data-lucide="coins"></i> سعر صرف الدولار</h3>
+      <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">يُستخدم لتحويل المصاريف/الاشتراكات بالدولار (كلود، Adobe، Replit…) إلى ريال تلقائياً.</div>
+      <div style="display:flex;align-items:center;gap:10px"><span>١ دولار =</span><input type="number" step="0.01" value="${Number(A.usdRate||USD_RATE||3.75)}" oninput="acc().usdRate=Number(this.value)||3.75;save()" style="width:110px"><span>ريال ﷼</span></div>
+    </div>
     <div class="card" style="grid-column:span 2"><h3><i data-lucide="briefcase"></i> وحدات العمل (المشاريع)</h3>
       <div style="font-size:12.5px;color:var(--muted);margin-bottom:10px">صنّف كل قيد ضمن وحدة لتعرف ربحية كل نشاط على حدة.</div>
       ${A.units.map(u=>`<div style="display:flex;align-items:center;gap:9px;padding:7px 0;border-bottom:1px solid var(--line)">
@@ -4653,22 +4658,33 @@ function accUnitDel(id){if(acc().units.length<=1)return;if(!confirm('حذف ال
 function accTxModal(id){
   const A=acc();let t=id?{...A.tx.find(x=>x.id===id)}:{id:'',date:today(),kind:'expense',category:'اشتراكات',amount:0,unit:'general',account:'bank',toAccount:'cash',desc:''};
   const kinds=Object.entries(ACC_KINDS).filter(([k])=>k!=='asset'); // الأصول تُضاف من تبويبها
+  const rate=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
+  const inUsd=t.origCur==='USD';const shownAmt=inUsd?(t.origAmount||''):(t.amount||'');
   openModal(id?'تعديل قيد':'قيد جديد',`
     <div class="row2"><div class="field"><label>النوع</label><select id="ax_kind" onchange="accTxKindToggle()">${kinds.map(([k,v])=>`<option value="${k}" ${t.kind===k?'selected':''}>${v.label}</option>`).join('')}</select></div>
-      <div class="field"><label>المبلغ (${esc(S.settings.currency)})</label><input id="ax_amt" type="number" inputmode="decimal" min="0" value="${t.amount||''}" onfocus="this.select()"></div></div>
+      <div class="field"><label>المبلغ</label>
+        <div style="display:flex;gap:6px"><input id="ax_amt" type="number" inputmode="decimal" min="0" value="${shownAmt}" onfocus="this.select()" oninput="accAmtConv()" style="flex:1">
+          <select id="ax_cur" onchange="accAmtConv()" style="width:auto"><option value="SAR" ${!inUsd?'selected':''}>ريال ﷼</option><option value="USD" ${inUsd?'selected':''}>دولار $</option></select></div>
+        <div id="ax_conv" style="font-size:12px;color:var(--muted);margin-top:4px"></div>
+      </div></div>
     <div class="row2"><div class="field"><label>التاريخ</label><input id="ax_date" type="date" value="${esc(t.date)}"></div>
       <div class="field"><label>الوحدة (المشروع)</label><select id="ax_unit">${A.units.map(u=>`<option value="${u.id}" ${t.unit===u.id?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div></div>
     <div class="row2"><div class="field" id="ax_catwrap"><label>فئة المصروف</label><select id="ax_cat">${ACC_EXP_CATS.map(x=>`<option ${t.category===x?'selected':''}>${x}</option>`).join('')}</select></div>
       <div class="field"><label>الحساب</label><select id="ax_acct">${Object.entries(ACC_ACCOUNTS).map(([k,v])=>`<option value="${k}" ${t.account===k?'selected':''}>${v}</option>`).join('')}</select></div></div>
     <div class="field" id="ax_towrap" style="display:none"><label>إلى الحساب</label><select id="ax_to">${Object.entries(ACC_ACCOUNTS).map(([k,v])=>`<option value="${k}" ${t.toAccount===k?'selected':''}>${v}</option>`).join('')}</select></div>
     <div class="field"><label>البيان / الوصف</label><input id="ax_desc" value="${esc(t.desc||'')}" placeholder="مثال: اشتراك Adobe الشهري"></div>`,
-    ()=>{const g=i=>document.getElementById(i);const kind=g('ax_kind').value;const amt=Number(g('ax_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}
+    ()=>{const g=i=>document.getElementById(i);const kind=g('ax_kind').value;const raw=Number(g('ax_amt').value||0);if(raw<=0){alert('أدخل مبلغاً صحيحاً');return}
+      const cur=g('ax_cur').value;const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);const amt=cur==='USD'?Number((raw*r).toFixed(2)):raw;
       t.kind=kind;t.amount=amt;t.date=g('ax_date').value;t.unit=g('ax_unit').value;t.account=g('ax_acct').value;t.desc=g('ax_desc').value;
+      if(cur==='USD'){t.origCur='USD';t.origAmount=raw;t.rate=r;}else{delete t.origCur;delete t.origAmount;delete t.rate;}
       t.category=(kind==='expense')?g('ax_cat').value:'';if(kind==='transfer')t.toAccount=g('ax_to').value;
       if(id){const i=A.tx.findIndex(x=>x.id===id);A.tx[i]=t}else{t.id='tx_'+uid();A.tx.push(t)}save();closeModal();renderAccounting();},
     id?()=>{accTxDel(id);}:null);
-  setTimeout(accTxKindToggle,0);
+  setTimeout(()=>{accTxKindToggle();accAmtConv();},0);
 }
+function accAmtConv(){const a=document.getElementById('ax_amt'),c=document.getElementById('ax_cur'),o=document.getElementById('ax_conv');if(!a||!c||!o)return;const v=Number(a.value||0);const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
+  if(c.value==='USD')o.innerHTML=v>0?`= <b style="color:var(--gold2)">${money(v*r)}</b> <span style="opacity:.7">(بسعر ${r})</span>`:`سيُحفظ بالريال بسعر صرف ${r}`;
+  else o.textContent='';}
 function accTxKindToggle(){const k=document.getElementById('ax_kind');if(!k)return;const v=k.value;const cat=document.getElementById('ax_catwrap'),to=document.getElementById('ax_towrap');if(cat)cat.style.display=(v==='expense')?'':'none';if(to)to.style.display=(v==='transfer')?'':'none';}
 function accTxDel(id){if(!confirm('حذف القيد؟'))return;acc().tx=acc().tx.filter(x=>x.id!==id);closeModal&&document.getElementById('modalRoot')&&(document.getElementById('modalRoot').innerHTML='');save();renderAccounting();}
 function accAssetModal(id){
@@ -4706,6 +4722,73 @@ function accImportInvoices(){
   });
   save();renderAccounting();
   alert(added?('استُوردت '+added+' دفعة كإيرادات ✓ — راجعها في دفتر اليومية وصنّفها حسب الوحدة.'):'لا مدفوعات جديدة لاستيرادها.');
+}
+/* ===== استيراد قيود بلصق كشف حساب (كلود، Adobe، استضافة…) ===== */
+function accParseDate(s){s=String(s).trim();const d=new Date(s);if(!isNaN(d)&&/[0-9]{4}|,/.test(s)&&/[A-Za-z؀-ۿ]/.test(s.replace(/[0-9,\s\/.-]/g,'')+s))return d;
+  // صيغ رقمية: 2026-08-22 / 22/08/2026
+  const m=s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);
+  const m2=s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})$/);if(m2)return new Date(+m2[3],+m2[2]-1,+m2[1]);
+  return isNaN(d)?null:d;}
+function accIsoLocal(d){return d.getFullYear()+'-'+_pad2(d.getMonth()+1)+'-'+_pad2(d.getDate());}
+function accParsePaste(text){
+  const tokens=String(text).split(/[\n\t]|\s{2,}/).map(t=>t.trim()).filter(Boolean);
+  const dates=[],amounts=[],statuses=[];
+  const skipHdr=/^(date|total|amount|status|actions|invoice|التاريخ|المبلغ|الإجمالي|الحالة|الإجراءات|عرض|view|download|receipt|إيصال|فاتورة)$/i;
+  tokens.forEach(t=>{
+    if(skipHdr.test(t))return;
+    const clean=t.replace(/[\sً-ْ]/g,'');
+    const isMoney=/^[$€£¥﷼ر.س]*-?[0-9][0-9,]*\.?[0-9]*[$€£¥﷼ر.س]*$/.test(clean)&&/[0-9]/.test(clean);
+    const st=t.match(/paid|refunded|failed|pending|declined|مدفوع|مسترد|فشل|قيد|ملغى|ناجح/i);
+    if(isMoney){const n=parseFloat(clean.replace(/[^0-9.]/g,''));if(!isNaN(n))amounts.push(n);return;}
+    if(st){statuses.push(st[0].toLowerCase());return;}
+    const d=accParseDate(t);if(d)dates.push(accIsoLocal(d));
+  });
+  const n=Math.min(dates.length,amounts.length);const rows=[];
+  for(let i=0;i<n;i++){const stt=(statuses[i]||'paid');const amt=amounts[i];const skip=/refund|fail|decline|مسترد|فشل|ملغى/i.test(stt)||!(amt>0);rows.push({date:dates[i],amount:amt,status:!(amt>0)?'صفري':stt,skip});}
+  return rows;
+}
+function accPasteModal(){
+  const A=acc();
+  openModal('استيراد قيود بلصق كشف حساب',`
+    <div class="badge-note"><i data-lucide="clipboard-paste"></i> <div>الصق كشف مدفوعات (من كلود، Adobe، الاستضافة، البنك…). يستخرج التاريخ والمبلغ والحالة تلقائياً، ويتجاهل المستردّ/الفاشل.</div></div>
+    <div class="field"><label>الصق الكشف هنا</label><textarea id="ap_text" rows="6" placeholder="Aug 22, 2026	$115	Paid&#10;Jul 22, 2026	$115	Paid" oninput="accPastePreview()"></textarea></div>
+    <div class="row2">
+      <div class="field"><label>النوع</label><select id="ap_kind"><option value="expense" selected>مصروف</option><option value="income">إيراد</option></select></div>
+      <div class="field"><label>الوحدة</label><select id="ap_unit">${A.units.map(u=>`<option value="${u.id}" ${u.id==='general'?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>الفئة</label><select id="ap_cat">${ACC_EXP_CATS.map(x=>`<option ${x==='اشتراكات'?'selected':''}>${x}</option>`).join('')}</select></div>
+      <div class="field"><label>الوصف/المصدر</label><input id="ap_desc" value="اشتراك Claude" placeholder="مثال: اشتراك Claude"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>العملة</label><select id="ap_cur" onchange="accPastePreview()"><option value="USD" selected>دولار $ (يُحوَّل لريال)</option><option value="SAR">ريال ﷼ (كما هو)</option></select></div>
+      <div class="field"><label>سعر صرف الدولar</label><input id="ap_rate" type="number" step="0.01" value="3.75" oninput="accPastePreview()"></div>
+    </div>
+    <div id="ap_preview" style="margin-top:6px"></div>`,
+    ()=>{accPasteConfirm();});
+  setTimeout(accPastePreview,0);
+}
+function accPastePreview(){
+  const el=document.getElementById('ap_preview');if(!el)return;
+  const rows=accParsePaste((document.getElementById('ap_text')||{}).value||'');
+  const cur=(document.getElementById('ap_cur')||{}).value||'USD';const rate=Number((document.getElementById('ap_rate')||{}).value||3.75);
+  const conv=v=>cur==='USD'?v*rate:v;
+  const use=rows.filter(r=>!r.skip);const tot=use.reduce((a,r)=>a+conv(r.amount),0);
+  if(!rows.length){el.innerHTML='<div style="color:var(--muted);font-size:13px">…الصق كشفاً لعرض المعاينة</div>';return;}
+  el.innerHTML=`<div style="border:1px solid var(--line);border-radius:10px;overflow:hidden">
+    <div style="background:rgba(16,185,129,.1);padding:9px 12px;font-weight:800;font-size:13px;display:flex;justify-content:space-between"><span>${use.length} قيد صالح${rows.length-use.length?` · ${rows.length-use.length} متجاهَل (مستردّ/فاشل)`:''}</span><span>الإجمالي ${money(tot)}</span></div>
+    <div style="max-height:180px;overflow:auto">${rows.map(r=>`<div style="display:flex;justify-content:space-between;padding:6px 12px;border-top:1px solid var(--line);font-size:12.5px;${r.skip?'opacity:.45;text-decoration:line-through':''}"><span dir="ltr">${esc(r.date)}</span><span>${esc(r.status)}</span><span dir="ltr" style="font-weight:700">${money(conv(r.amount))}</span></div>`).join('')}</div>
+  </div>`;
+}
+function accPasteConfirm(){
+  const A=acc();const g=i=>document.getElementById(i);
+  const rows=accParsePaste(g('ap_text').value||'').filter(r=>!r.skip);
+  if(!rows.length){alert('لا توجد قيود صالحة في النص.');return;}
+  const kind=g('ap_kind').value,unit=g('ap_unit').value,cat=g('ap_cat').value,desc=g('ap_desc').value.trim()||'قيد مستورد';
+  const cur=g('ap_cur').value,rate=Number(g('ap_rate').value||3.75);const conv=v=>cur==='USD'?v*rate:v;
+  rows.forEach(r=>{A.tx.push({id:'tx_'+uid(),date:r.date,kind,amount:Number(conv(r.amount).toFixed(2)),unit,account:'bank',category:kind==='expense'?cat:'',desc:desc+(cur==='USD'?` ($${r.amount})`:'')});});
+  save();closeModal();renderAccounting();
+  alert('أُضيف '+rows.length+' قيد ✓');
 }
 
 /* ===== SEND (WhatsApp / Email / Copy) ===== */
