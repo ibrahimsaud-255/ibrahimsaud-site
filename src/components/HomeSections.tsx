@@ -10,6 +10,7 @@
 
 import { useContent } from "@/lib/cms";
 import AdReels from "./AdReels";
+import OfficialWorks from "./OfficialWorks";
 import Brands from "./Brands";
 import Process from "./Process";
 import Faq from "./Faq";
@@ -19,6 +20,7 @@ import Contact from "./Contact";
 
 const SECTIONS: Record<string, React.ComponentType> = {
   works: AdReels,
+  official: OfficialWorks,
   brands: Brands,
   process: Process,
   faq: Faq,
@@ -30,8 +32,10 @@ const SECTIONS: Record<string, React.ComponentType> = {
 // الترتيب المعتمد للصفحة + الحالة الافتراضية لكل قسم
 // «الباقات» مطفأ: الأسعار لا تظهر في الصفحة الرئيسية (تبقى في /ad-packages/
 // لمن يُرسل له الرابط) — فعّله من اللوحة متى أردت إظهارها.
+// «official» = قسم الأعمال الرسمية (جهات حكومية وشركات مؤسسية).
 const ORDER = [
   { id: "works", on: true },
+  { id: "official", on: true },
   { id: "brands", on: true },
   { id: "process", on: true },
   { id: "faq", on: true },

@@ -187,6 +187,63 @@ export type Work = {
 };
 
 export const works: Work[] = [
+  // ===== أعمال رسمية لجهات حكومية وشبه حكومية =====
+  {
+    id: "abshr-official",
+    client: "الأحوال المدنية — أبشر",
+    title: "فيلم رسمي — الأحوال المدنية",
+    category: "أفلام حكومية",
+    audience: "companies",
+    roles: ["إخراج", "تصوير", "مونتاج", "موشن جرافيك"],
+    desc: "فيلم رسمي للأحوال المدنية (منصة أبشر) — تصوير ومونتاج وموشن جرافيك بهوية بصرية تليق بالجهة الحكومية.",
+    videoUrl: "https://drive.google.com/file/d/151zNx35cgFp1SbKkB8d-__nyaNgCztV_/view",
+    featured: true,
+  },
+  {
+    id: "tga-official",
+    client: "الهيئة العامة للنقل (TGA)",
+    title: "فيلم رسمي — الهيئة العامة للنقل",
+    category: "أفلام حكومية",
+    audience: "companies",
+    roles: ["إخراج", "تصوير", "مونتاج"],
+    desc: "فيلم مؤسسي للهيئة العامة للنقل — إنتاج كامل بجودة تليق برسالة الهيئة وحضورها.",
+    videoUrl: "https://drive.google.com/file/d/1_1qRTwo2asjRWT4lN42bwcOdjFhzjEcw/view",
+    logo: "/tga.png",
+    featured: true,
+  },
+  {
+    id: "healthon-final-full",
+    client: "جامعة الملك سعود — المدينة الطبية الجامعية",
+    title: "هاكاثون هيلثون — الفيلم النهائي الكامل",
+    category: "أفلام حكومية",
+    audience: "companies",
+    roles: ["إخراج", "تصوير", "مونتاج", "موشن"],
+    desc: "الفيلم النهائي الكامل لهاكاثون هيلثون بالمدينة الطبية الجامعية بجامعة الملك سعود — يوثّق الحدث بهوية بصرية متكاملة.",
+    videoUrl: "https://drive.google.com/file/d/1H0evE2c3jnNMzKx-jGX0_52E812eq-5R/view",
+    featured: true,
+  },
+  {
+    id: "rmg-innovation-lab",
+    client: "مجموعة ريناد المجد (RMG)",
+    title: "مختبر الابتكار — ريناد المجد",
+    category: "أفلام مؤسسية",
+    audience: "companies",
+    roles: ["إخراج", "تصوير", "مونتاج"],
+    desc: "فيلم تعريفي بمختبر الابتكار في شركة ريناد المجد لتقنية المعلومات — يبرز البيئة والأدوات والفرق.",
+    videoUrl: "https://drive.google.com/file/d/1b_ERZ-GHL-oQbmby4gsm9wFBzIjIheyo/view",
+    logo: "/LOGO_RMG.png",
+  },
+  {
+    id: "zayadat-podcast",
+    client: "بودكاست الزيادات — أحمد الزيادات",
+    title: "منصّة لكل مهني عربي — لقاء أحمد الزيادات",
+    category: "بودكاست وحوارات",
+    audience: "companies",
+    roles: ["إنتاج", "تصوير", "إخراج", "مونتاج"],
+    desc: "حلقة بودكاست حوارية مع أحمد الزيادات حول منصّة القوالب والأدوات المهنية العربية — إنتاج كامل بهوية سينمائية.",
+    videoUrl: "https://drive.google.com/file/d/1iajYRyNP0Zt0GWQa0AJLMzO998KUMZJG/view",
+  },
+
   // ===== تغطية فعاليات (هاكاثونات ومؤتمرات) =====
   {
     id: "healthon-open",

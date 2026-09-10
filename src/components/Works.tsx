@@ -7,17 +7,15 @@
 import { useMemo, useState } from "react";
 import { type Work } from "@/lib/site";
 import { useWorks } from "@/lib/siteData";
+import { toThumb } from "@/lib/embed";
 import Reveal from "./Reveal";
 
-// صورة مصغّرة للعمل: المخصّصة → أول صورة معرض → صورة يوتيوب المشتقة.
+// صورة مصغّرة للعمل: المخصّصة → أول صورة معرض → صورة الفيديو (يوتيوب/درايف).
 export function workThumb(w: Work): string {
   if (w.thumb) return w.thumb;
   if (w.images?.length) return w.images[0];
   const u = w.videoUrl || w.videos?.[0] || "";
-  const m = u.match(
-    /(?:youtube\.com\/(?:watch\?v=|shorts\/|embed\/)|youtu\.be\/)([\w-]{11})/,
-  );
-  return m ? `https://img.youtube.com/vi/${m[1]}/hqdefault.jpg` : "";
+  return toThumb(u) || "";
 }
 
 function WorkCard({ work, delay }: { work: Work; delay: number }) {
