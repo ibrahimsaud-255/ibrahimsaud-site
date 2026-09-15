@@ -584,26 +584,81 @@
     .modal-foot{gap:8px}
     .modal-foot .btn{flex:1 1 auto;min-width:120px}
 
-    /* ===== الجداول على الجوال ===== */
-    /* حاوية تمرير مع ظل يوضّح إمكانية السحب */
-    table{
-      box-shadow:inset -12px 0 12px -12px rgba(255,255,255,.22),
-                 inset 12px 0 12px -12px rgba(255,255,255,.08);
+    /* ===== الجداول على الجوال — نمط البطاقات ===== */
+    /* كل صف يصير بطاقة عمودية، بلا جدول أفقي مقصوص */
+    .main table:not([class]):not(.no-cardify){
+      display:block;
+      background:transparent !important;
+      border:none !important;
+      box-shadow:none !important;
+      overflow:visible;
     }
-    th,td{padding:10px 12px;font-size:13.5px}
-    /* عمود الإجراءات (آخر td/th) يبقى ثابتاً في اليسار عند التمرير */
-    /* «آخر عمود» في RTL هو نهاية الجدول = يسار الشاشة */
-    table td:last-child,table th:last-child{
-      position:sticky;
-      left:0;
-      background:linear-gradient(90deg,rgba(20,20,24,.98),rgba(20,20,24,.94) 60%,rgba(20,20,24,.85));
-      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
-      box-shadow:-6px 0 8px -8px rgba(0,0,0,.5);
-      z-index:2;
+    .main table:not([class]):not(.no-cardify) thead{display:none}
+    .main table:not([class]):not(.no-cardify) tbody{display:block}
+    .main table:not([class]):not(.no-cardify) tr{
+      display:block;
+      background:linear-gradient(160deg,rgba(255,255,255,.065),rgba(255,255,255,.022));
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:14px;
+      padding:12px 14px;
+      margin-bottom:10px;
+      backdrop-filter:blur(12px) saturate(150%);-webkit-backdrop-filter:blur(12px) saturate(150%);
     }
-    table th:last-child{background:rgba(20,20,24,.98)}
-    /* الأزرار داخل الجدول لمس مريح */
-    table .link-btn{min-height:32px;padding:6px 8px;display:inline-block;font-weight:700}
+    .main table:not([class]):not(.no-cardify) td{
+      display:block;
+      padding:5px 0;
+      border:none;
+      text-align:right;
+      font-size:14px;
+      white-space:normal;
+      color:var(--ink);
+    }
+    /* أول خلية = عنوان البطاقة */
+    .main table:not([class]):not(.no-cardify) td:first-child{
+      font-weight:800;
+      font-size:15.5px;
+      color:var(--ink);
+      margin-bottom:4px;
+    }
+    /* آخر خلية = صف الأزرار (تعديل/حذف/فتح...) */
+    .main table:not([class]):not(.no-cardify) td:last-child{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid rgba(255,255,255,.08);
+      justify-content:flex-start;
+    }
+    .main table:not([class]):not(.no-cardify) td:last-child .link-btn,
+    .main table:not([class]):not(.no-cardify) td:last-child button{
+      flex:1 1 auto;
+      min-height:38px;
+      padding:8px 12px;
+      border-radius:10px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.12);
+      text-align:center;
+      font-weight:700;
+      font-size:13px;
+    }
+    .main table:not([class]):not(.no-cardify) td:last-child .link-btn.del,
+    .main table:not([class]):not(.no-cardify) td:last-child .del{
+      color:#fca5a5;
+      border-color:rgba(239,68,68,.3);
+      background:rgba(239,68,68,.08);
+    }
+    /* صف الإجمالي في الأسفل — يميّز نفسه */
+    .main table:not([class]):not(.no-cardify) tr[style*="font-weight:800"],
+    .main table:not([class]):not(.no-cardify) tr[style*="panel2"]{
+      background:linear-gradient(160deg,rgba(245,166,35,.14),rgba(245,166,35,.04)) !important;
+      border-color:rgba(245,166,35,.28) !important;
+    }
+    /* colspan في الصفوف الخاصة (الإجمالي): إظهار مسطّح */
+    .main table:not([class]):not(.no-cardify) td[colspan]{
+      color:var(--muted);
+      font-size:13px;
+    }
   }
 
   /* درجة ثانية: ≤٤٨٠px — جوال عادي */
