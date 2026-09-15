@@ -1100,9 +1100,10 @@ let HR_TAB='overview';
    ═══════════════════════════════════════════════════════════════════════════ */
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
-  {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
+  {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
-  {id:'teachers',name:'المعلمون',icon:'users'},
+  {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
+  {id:'teachers',name:'المعلمون',icon:'graduation-cap'},
   {id:'tquestions',name:'أسئلة المعلمين',icon:'inbox'},
   {id:'tickets',name:'التذاكر',icon:'life-buoy'},
   {id:'waitlist',name:'قائمة الانتظار',icon:'clock'},
@@ -1133,7 +1134,7 @@ function renderHuroof(){
   hrShowTab(HR_TAB||'overview');
 }
 const HR_VIEWS={
-  overview:hrViewOverview, manage:hrViewManage, subscribers:hrViewSubscribers,
+  overview:hrViewOverview, users:hrViewUsers, manage:hrViewManage, subscribers:hrViewSubscribers,
   teachers:hrViewTeachers, tquestions:hrViewTQuestions, tickets:hrViewTickets,
   waitlist:hrViewWaitlist, content:hrViewContent, banners:hrViewBanners, settings:hrViewSettings,
 };
@@ -1165,26 +1166,283 @@ function hrViewBanners(){const b=document.getElementById('hrBody');if(!b)return;
 let OV=null,OV_ERR=null;
 function hrViewOverview(){OV=null;OV_ERR=null;hrSet(hrLoading());ovLoad();}
 async function ovLoad(){try{const [s,x]=await Promise.all([hrApi('admin/stats').catch(()=>({})),hrApi('admin/stats/extended').catch(()=>({}))]);OV=Object.assign({},s,x);OV_ERR=null;}catch(e){OV_ERR=e.message||'خطأ';}if(hrActive('overview'))ovRender();}
+
+/* بطاقةُ مؤشّرٍ رئيسية — رقم كبير + عنوان + دلتا اختياريّة + شريط تلميح. */
+function ovHero(icon,label,value,color,sub,onclick){
+  const clickable=onclick?` onclick="${onclick}" style="cursor:pointer"`:'';
+  return `<div class="card"${clickable} style="padding:18px;border-inline-start:4px solid ${color};position:relative;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="width:38px;height:38px;border-radius:10px;background:${color}1c;color:${color};display:flex;align-items:center;justify-content:center"><i data-lucide="${icon}" style="width:20px;height:20px"></i></div>
+      <div style="font-size:11px;color:var(--muted);font-weight:700">${esc(label)}</div>
+    </div>
+    <div style="font-size:32px;font-weight:900;color:var(--ink);line-height:1.1">${value}</div>
+    ${sub?`<div style="font-size:12px;color:var(--muted);margin-top:6px">${sub}</div>`:''}
+  </div>`;
+}
+
+/* رسمٌ خطّي بسيط لتسجيلات ٣٠ يوماً — SVG بدل divs، فيتّسع أفقيّاً بنفسه. */
+function ovLineChart(data){
+  if(!data||!data.length)return '';
+  const W=680,H=180,P=28;
+  const max=Math.max(1,...data.map(r=>Number(r.count||0)));
+  const step=data.length>1?(W-P*2)/(data.length-1):0;
+  const pts=data.map((r,i)=>{const x=P+i*step;const y=H-P-(Number(r.count||0)/max)*(H-P*2);return [x,y,r]});
+  const path=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+  const area=path+` L${(P+step*(data.length-1)).toFixed(1)},${H-P} L${P},${H-P} Z`;
+  const gridY=[0,.25,.5,.75,1].map(f=>{const y=P+f*(H-P*2);return `<line x1="${P}" y1="${y}" x2="${W-P}" y2="${y}" stroke="var(--line)" stroke-width="1"/>`}).join('');
+  const labels=pts.filter((_,i)=>i%Math.ceil(data.length/6)===0||i===data.length-1).map(p=>{const d=new Date(p[2].date);const t=isNaN(d)?p[2].date:(d.getMonth()+1)+'/'+d.getDate();return `<text x="${p[0]}" y="${H-8}" fill="var(--muted)" font-size="10" text-anchor="middle">${esc(t)}</text>`}).join('');
+  const yLabels=[max,Math.round(max*.5),0].map((v,i)=>`<text x="${P-6}" y="${(P+i*(H-P*2)/2)+3}" fill="var(--muted)" font-size="10" text-anchor="end">${HR_ar(v)}</text>`).join('');
+  const dots=pts.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="#f5a623"><title>${esc(p[2].date)}: ${p[2].count}</title></circle>`).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:220px;display:block">
+    <defs><linearGradient id="ovg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#f5a623" stop-opacity=".35"/><stop offset="1" stop-color="#f5a623" stop-opacity="0"/></linearGradient></defs>
+    ${gridY}${yLabels}
+    <path d="${area}" fill="url(#ovg)"/>
+    <path d="${path}" fill="none" stroke="#f5a623" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    ${dots}${labels}
+  </svg>`;
+}
+
+/* مخطّطٌ دائريّ لتوزيع الأدوار — SVG. اللون حسب الدور، والنسبة على القوس. */
+function ovDonut(rows,total,size){
+  size=size||160;
+  if(!total)return `<div style="color:var(--muted);text-align:center;padding:30px">لا بيانات</div>`;
+  const cx=size/2,cy=size/2,R=size/2-6,r=R-24;
+  let a=-Math.PI/2;
+  const arcs=rows.map(row=>{
+    const frac=row.value/total;const a2=a+frac*Math.PI*2;
+    const large=frac>.5?1:0;
+    const x1=cx+R*Math.cos(a),y1=cy+R*Math.sin(a),x2=cx+R*Math.cos(a2),y2=cy+R*Math.sin(a2);
+    const xi1=cx+r*Math.cos(a2),yi1=cy+r*Math.sin(a2),xi2=cx+r*Math.cos(a),yi2=cy+r*Math.sin(a);
+    const d=`M${x1},${y1} A${R},${R} 0 ${large} 1 ${x2},${y2} L${xi1},${yi1} A${r},${r} 0 ${large} 0 ${xi2},${yi2} Z`;
+    a=a2;
+    return `<path d="${d}" fill="${row.color}"><title>${esc(row.label)}: ${HR_ar(row.value)} (${Math.round(frac*100)}%)</title></path>`;
+  }).join('');
+  return `<svg viewBox="0 0 ${size} ${size}" style="width:${size}px;height:${size}px;display:block">${arcs}
+    <text x="${cx}" y="${cy-4}" text-anchor="middle" fill="var(--ink)" font-size="22" font-weight="900">${HR_ar(total)}</text>
+    <text x="${cx}" y="${cy+14}" text-anchor="middle" fill="var(--muted)" font-size="11" font-weight="700">الإجمالي</text>
+  </svg>`;
+}
+
+function ovRoleLabel(k){return {student:'طالب',teacher:'معلّم',parent:'وليّ أمر',admin:'مسؤول'}[k]||k}
+function ovPlatformLabel(k){return {manual:'منحة يدويّة',telr:'Telr (بطاقة)',apple:'متجر آبل',google:'متجر جوجل',organization:'مؤسّسة/مدرسة',stripe:'Stripe'}[k]||k}
+
 function ovRender(){
   if(OV_ERR){hrSet(hrErr(OV_ERR,'ovLoad()'));return}
   const o=OV||{};
-  const reg=(o.recentRegistrations||[]).reduce((a,r)=>a+Number(r.count||0),0);
-  const tiles=[
-    hrTile(HR_ar(o.activeSubscribers),'مشترك نشط','#22c55e'),
-    hrTile(HR_ar(o.totalTeachers),'معلّم مسجّل','#f5a623'),
-    hrTile(HR_ar(reg),'تسجيل (٣٠ يوم)','#0ea5e9'),
-    hrTile(HR_ar(o.pendingTeacherQuestions),'سؤال معلّق','#ec4899'),
-    hrTile(HR_ar(o.waitlistCount),'قائمة انتظار','#8b5cf6'),
-    hrTile(HR_ar(o.openTicketsCount),'تذكرة مفتوحة','#ef4444'),
-    hrTile(HR_ar(o.bookCount),'كتاب','#14b8a6'),
-    hrTile(HR_ar(o.pdfCount),'ملف PDF','#64748b'),
+  const rb=o.roleBreakdown||{student:o.totalStudents||0,teacher:o.totalTeachers||0,parent:o.totalParents||0,admin:o.totalAdmins||0};
+  const totalUsers=Number(o.totalUsers||((rb.student||0)+(rb.teacher||0)+(rb.parent||0)+(rb.admin||0)));
+  const activeSubs=Number(o.activeSubscribers||0);
+  const conv=totalUsers?Math.round(activeSubs/totalUsers*1000)/10:0;
+  const reg7=Number(o.signups7d||0);
+  const reg30=Number(o.signups30d||(o.recentRegistrations||[]).reduce((a,r)=>a+Number(r.count||0),0));
+
+  /* أربعة مؤشّرات رئيسة يقود اتّخاذَ القرار: إجمالي، مشترك، معدّل التحويل، جديد ٧ يوم */
+  const hero=[
+    ovHero('users','المستخدمون المسجّلون',HR_ar(totalUsers),'#0ea5e9',`+${HR_ar(reg30)} خلال ٣٠ يوماً`,`hrShowTab('users')`),
+    ovHero('badge-check','مشترك نشط',HR_ar(activeSubs),'#22c55e',`معدّل التحويل ${conv}%`,`hrShowTab('subscribers')`),
+    ovHero('user-plus','تسجيلات ٧ أيام',HR_ar(reg7),'#8b5cf6',`مقابل ${HR_ar(reg30)} في ٣٠ يوماً`),
+    ovHero('life-buoy','تذاكر مفتوحة',HR_ar(o.openTicketsCount||0),'#ef4444',`+${HR_ar(o.pendingTeacherQuestions||0)} سؤال معلّق`,`hrShowTab('tickets')`),
   ].join('');
-  const regs=o.recentRegistrations||[];
-  const max=Math.max(1,...regs.map(r=>Number(r.count||0)));
-  const chart=regs.length?`<div class="card" style="margin-top:16px"><h3 style="margin:0 0 12px"><i data-lucide="bar-chart-3"></i> التسجيلات — آخر ٣٠ يوماً</h3><div style="display:flex;align-items:flex-end;gap:3px;height:120px">${regs.map(r=>{const h=Math.round(Number(r.count||0)/max*100);return `<div title="${esc(r.date)}: ${r.count}" style="flex:1;background:linear-gradient(180deg,#f5a623,#d97706);height:${Math.max(2,h)}%;border-radius:3px 3px 0 0;min-width:2px"></div>`}).join('')}</div></div>`:'';
-  hrSet(`${hrHead('نظرة عامة','layout-dashboard','<button class="btn btn-ghost btn-sm" onclick="ovLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
-    <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">${tiles}</div>${chart}`);
+
+  /* توزيع الأدوار — دائريّة + قائمة */
+  const roleColors={student:'#0ea5e9',teacher:'#f5a623',parent:'#8b5cf6',admin:'#ef4444'};
+  const roleRows=['student','teacher','parent','admin'].filter(k=>rb[k]).map(k=>({key:k,label:ovRoleLabel(k),value:Number(rb[k]||0),color:roleColors[k]}));
+  const roleLegend=roleRows.map(r=>{const pct=totalUsers?Math.round(r.value/totalUsers*100):0;return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+    <span style="width:10px;height:10px;border-radius:2px;background:${r.color}"></span>
+    <span style="flex:1;font-weight:700">${esc(r.label)}</span>
+    <span style="color:var(--muted);font-size:12px">${HR_ar(r.value)} · ${pct}%</span>
+  </div>`}).join('');
+
+  /* توزيع منصّات الدفع بين المشتركين النشطين */
+  const pb=o.platformBreakdown||{};
+  const pKeys=Object.keys(pb).filter(k=>pb[k]);
+  const platColors={manual:'#94a3b8',telr:'#22c55e',apple:'#0f172a',google:'#3b82f6',organization:'#f59e0b',stripe:'#8b5cf6'};
+  const platTotal=pKeys.reduce((a,k)=>a+Number(pb[k]||0),0);
+  const platRows=pKeys.map(k=>({key:k,label:ovPlatformLabel(k),value:Number(pb[k]||0),color:platColors[k]||'#64748b'}));
+  const platBars=platTotal?platRows.map(r=>{const pct=Math.round(r.value/platTotal*100);return `<div style="margin-bottom:10px">
+    <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px"><b style="color:var(--ink)">${esc(r.label)}</b><span style="color:var(--muted)">${HR_ar(r.value)} · ${pct}%</span></div>
+    <div style="height:8px;background:var(--panel2);border-radius:4px;overflow:hidden"><div style="height:100%;width:${pct}%;background:${r.color}"></div></div>
+  </div>`}).join(''):'<div style="color:var(--muted);text-align:center;padding:20px">لا اشتراكات نشطة بعد.</div>';
+
+  /* أحدث ١٠ مسجّلين */
+  const rs=o.recentSignups||[];
+  const signupsList=rs.length?`<div style="max-height:340px;overflow:auto">${rs.map(u=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 6px;border-bottom:1px solid var(--line)">
+      <div style="width:36px;height:36px;border-radius:50%;background:${roleColors[u.role]||'#64748b'}22;color:${roleColors[u.role]||'#64748b'};display:flex;align-items:center;justify-content:center;font-weight:900">${esc((u.displayName||u.email||'؟').charAt(0).toUpperCase())}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-weight:700;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(u.displayName||'—')}</div>
+        <div style="font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" dir="ltr">${esc(u.email||'')}</div>
+      </div>
+      <div style="text-align:end">${hrChip(ovRoleLabel(u.role),roleColors[u.role]||'#64748b')}<div style="font-size:10px;color:var(--muted);margin-top:3px">${hrDate(u.createdAt)}</div></div>
+    </div>`).join('')}</div>`:'<div style="color:var(--muted);text-align:center;padding:20px">لا مسجّلين بعد.</div>';
+
+  /* المؤشّرات الثانوية */
+  const sec=[
+    {label:'قائمة الانتظار',val:o.waitlistCount||0,color:'#8b5cf6',icon:'clock'},
+    {label:'ملفات PDF',val:o.pdfCount||0,color:'#14b8a6',icon:'file-text'},
+    {label:'الكتب',val:o.bookCount||0,color:'#f59e0b',icon:'book-open'},
+    {label:'أسئلة المعلّمين المعلّقة',val:o.pendingTeacherQuestions||0,color:'#ec4899',icon:'inbox'},
+  ].map(s=>`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--panel2);border-radius:10px">
+    <div style="width:32px;height:32px;border-radius:8px;background:${s.color}22;color:${s.color};display:flex;align-items:center;justify-content:center"><i data-lucide="${s.icon}" style="width:16px;height:16px"></i></div>
+    <div style="flex:1"><div style="font-size:12px;color:var(--muted)">${esc(s.label)}</div><div style="font-weight:900;color:var(--ink)">${HR_ar(s.val)}</div></div>
+  </div>`).join('');
+
+  hrSet(`${hrHead('نظرة عامة','layout-dashboard','<button class="btn btn-gold btn-sm" onclick="hrGrantOpen()"><i data-lucide="gift"></i> منح اشتراك</button> <button class="btn btn-ghost btn-sm" onclick="ovLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+
+    <!-- المؤشّرات الرئيسة -->
+    <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px">${hero}</div>
+
+    <!-- المخطط الزمنيّ للتسجيلات -->
+    <div class="card" style="margin-bottom:16px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <h3 style="margin:0"><i data-lucide="line-chart"></i> منحنى التسجيل — آخر ٣٠ يوماً</h3>
+        <span style="color:var(--muted);font-size:12px">إجمالي: <b style="color:var(--ink)">${HR_ar(reg30)}</b></span>
+      </div>
+      ${ovLineChart(o.recentRegistrations||[])||'<div style="color:var(--muted);text-align:center;padding:30px">لا تسجيلات في هذه الفترة.</div>'}
+    </div>
+
+    <!-- توزيع الأدوار + منصّات الدفع -->
+    <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-bottom:16px">
+      <div class="card">
+        <h3 style="margin-top:0"><i data-lucide="pie-chart"></i> توزيع الأدوار</h3>
+        <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap">
+          <div style="flex:0 0 auto">${ovDonut(roleRows.map(r=>({label:r.label,value:r.value,color:r.color})),totalUsers,150)}</div>
+          <div style="flex:1;min-width:150px">${roleLegend||'<div style="color:var(--muted)">لا بيانات</div>'}</div>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0"><i data-lucide="credit-card"></i> منصّات الاشتراك النشط</h3>
+        ${platBars}
+      </div>
+    </div>
+
+    <!-- أحدث المسجّلين + مؤشرات ثانوية -->
+    <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <h3 style="margin:0"><i data-lucide="user-plus"></i> أحدث المسجّلين</h3>
+          <button class="btn btn-ghost btn-sm" onclick="hrShowTab('users')">عرض الكل <i data-lucide="arrow-left"></i></button>
+        </div>
+        ${signupsList}
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0"><i data-lucide="activity"></i> مؤشّرات ثانويّة</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">${sec}</div>
+      </div>
+    </div>`);
 }
+
+/* modal سريع لمنح اشتراكٍ يدويّاً — يُستدعى من زرّ نظرة عامة أو من صفوف المستخدمين.
+   openModal(title,body,onSave,onDelete): زرّ الحفظ ثابت النصّ «حفظ»، ونعيد تسميته بعد. */
+function hrGrantOpen(email){
+  const preset=email?esc(email):'';
+  openModal('منح اشتراك مجانيّ',
+    `<div style="color:var(--muted);font-size:13px;margin-bottom:14px;padding:10px;background:var(--panel2);border-radius:8px">
+       <b style="color:var(--ink)">شرط أساسيّ:</b> يجب أن يكون المستخدم قد سجّل دخوله في التطبيق مرّةً واحدةً على الأقلّ حتى نجدَ بريده.
+     </div>
+     <div class="field"><label>البريد الإلكترونيّ للمستخدم</label><input id="grEmail" type="email" dir="ltr" value="${preset}" placeholder="user@example.com"></div>
+     <div class="field"><label>المدّة بالأشهر (اترك فارغاً لاشتراكٍ دائم)</label><input id="grMonths" type="number" min="1" max="120" placeholder="١٢"></div>
+     <div class="field"><label>ملاحظة (اختياريّ)</label><input id="grNote" type="text" maxlength="200" placeholder="سببُ المنح…"></div>
+     <div id="grMsg" style="font-size:13px;color:var(--muted);margin-top:6px;min-height:18px"></div>`,
+    async ()=>{
+      const em=(document.getElementById('grEmail').value||'').trim();
+      const m=(document.getElementById('grMonths').value||'').trim();
+      const note=(document.getElementById('grNote').value||'').trim();
+      const msg=document.getElementById('grMsg');
+      if(!/.+@.+\..+/.test(em)){msg.style.color='var(--bad)';msg.textContent='بريد غير صالح';return}
+      msg.style.color='var(--muted)';msg.textContent='جارٍ المنح…';
+      try{const body=Object.assign({email:em},m?{months:+m}:{},note?{note}:{});
+        const r=await hrApi('admin/grants',{method:'POST',body});
+        msg.style.color='var(--good)';msg.textContent='✓ فُعّل حساب '+(r.name||r.email)+(r.currentPeriodEnd?(' حتى '+new Date(r.currentPeriodEnd).toLocaleDateString('ar-SA')):' (دائم)');
+        setTimeout(()=>{closeModal();if(hrActive('overview'))ovLoad();if(hrActive('users'))usLoad();if(hrActive('subscribers'))subsLoad();},1100);
+      }catch(e){msg.style.color='var(--bad)';msg.textContent=e.message;}
+    });
+  /* أعِد تسمية زرّ الحفظ ليصير «منح» بدلَ «حفظ» — أوضح للإدارة */
+  const btn=document.getElementById('mSave');if(btn){btn.innerHTML='<i data-lucide="gift"></i> منح';refreshIcons();}
+}
+
+/* ═══════════ المستخدمون (كل المسجّلين — مع حالة الاشتراك) ═══════════ */
+let US=null,US_ERR=null,US_Q='',US_ROLE='',US_SUB='all',US_PAGE=1;
+const US_LIMIT=50;
+function hrViewUsers(){US=null;US_ERR=null;US_PAGE=1;hrSet(hrLoading());usLoad();}
+function usSetRole(r){US_ROLE=r;US_PAGE=1;US=null;hrSet(hrLoading());usLoad();}
+function usSetSub(s){US_SUB=s;US_PAGE=1;US=null;hrSet(hrLoading());usLoad();}
+function usSetPage(p){US_PAGE=Math.max(1,p);US=null;hrSet(hrLoading());usLoad();}
+let usSearchTimer=null;
+function usSearch(v){US_Q=(v||'').trim();clearTimeout(usSearchTimer);usSearchTimer=setTimeout(()=>{US_PAGE=1;US=null;usLoad();},280);}
+async function usLoad(){try{
+  const p=new URLSearchParams({page:String(US_PAGE),limit:String(US_LIMIT)});
+  if(US_ROLE)p.set('role',US_ROLE);
+  if(US_Q)p.set('search',US_Q);
+  if(US_SUB&&US_SUB!=='all')p.set('subscription',US_SUB);
+  const r=await hrApi('admin/users?'+p.toString());
+  US=r;US_ERR=null;
+}catch(e){US_ERR=e.message||'خطأ';}if(hrActive('users'))usRender();}
+
+function usRoleLabel(k){return {student:'طالب',teacher:'معلّم',parent:'وليّ أمر',admin:'مسؤول'}[k]||k}
+function usSubBadge(u){
+  if(!u.subscription)return `<span class="pill" style="background:rgba(148,163,184,.16);color:#94a3b8">مجانيّ</span>`;
+  const s=u.subscription;const isManual=s.isManual;
+  const color=isManual?'#8b5cf6':'#22c55e';const label=isManual?'منحة':'مدفوع';
+  const platform={manual:'يدويّ',telr:'Telr',apple:'آبل',google:'جوجل',organization:'مؤسّسة',stripe:'Stripe'}[s.platform]||s.platform;
+  const end=s.currentPeriodEnd?(' · حتى '+new Date(s.currentPeriodEnd).toLocaleDateString('ar-SA',{year:'numeric',month:'short',day:'numeric'})):' · دائم';
+  return `<span class="pill" style="background:${color}22;color:${color}">${label} · ${esc(platform)}${end}</span>`;
+}
+
+function usRender(){
+  if(US_ERR){hrSet(hrErr(US_ERR,'usLoad()'));return}
+  const d=US||{};const rows=d.users||[];const total=Number(d.total||0);
+  const pages=Math.max(1,Math.ceil(total/US_LIMIT));
+  const roleTabs=[['','الكل'],['student','الطلاب'],['teacher','المعلّمون'],['parent','أولياء الأمور'],['admin','المسؤولون']]
+    .map(([k,l])=>`<button class="btn btn-sm ${US_ROLE===k?'btn-gold':'btn-ghost'}" onclick="usSetRole('${k}')">${l}</button>`).join('');
+  const subTabs=[['all','كل حالات الاشتراك'],['subscribed','المشتركون فقط'],['free','بلا اشتراك']]
+    .map(([k,l])=>`<button class="btn btn-sm ${US_SUB===k?'btn-gold':'btn-ghost'}" onclick="usSetSub('${k}')">${l}</button>`).join('');
+
+  const tbody=rows.length?rows.map(u=>`<tr>
+    <td>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--goldsoft);color:var(--gold2);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px">${esc((u.displayName||u.email||'؟').charAt(0).toUpperCase())}</div>
+        <div style="min-width:0"><b style="color:var(--ink)">${esc(u.displayName||'—')}</b><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(u.email||'')}</div></div>
+      </div>
+    </td>
+    <td>${hrChip(usRoleLabel(u.role),{student:'#0ea5e9',teacher:'#f5a623',parent:'#8b5cf6',admin:'#ef4444'}[u.role]||'#64748b')}${u.gradeNumber?`<div style="font-size:11px;color:var(--muted);margin-top:3px">صف ${HR_ar(u.gradeNumber)}${u.schoolName?' · '+esc(u.schoolName):''}</div>`:''}</td>
+    <td>${usSubBadge(u)}</td>
+    <td style="font-size:12px;color:var(--muted)">${hrDate(u.createdAt)}</td>
+    <td><div style="display:flex;gap:6px;flex-wrap:wrap">
+      ${u.subscription&&u.subscription.isManual?
+        `<button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="usRevoke('${esc(u.subscription.id)}','${esc(u.displayName||u.email||'')}')"><i data-lucide="x-circle"></i> إلغاء المنحة</button>`:
+        (u.subscription?`<span style="font-size:11px;color:var(--muted)">اشتراكٌ مدفوع</span>`:
+          `<button class="btn btn-gold btn-sm" onclick="hrGrantOpen('${esc(u.email)}')"><i data-lucide="gift"></i> منح اشتراك</button>`)
+      }
+      <button class="btn btn-ghost btn-sm" title="نسخ البريد" onclick="usCopyEmail('${esc(u.email)}',this)"><i data-lucide="mail"></i></button>
+    </div></td>
+  </tr>`).join(''):`<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:26px">لا مستخدمين في هذا التصنيف.</td></tr>`;
+
+  /* شريط ترقيم بسيط */
+  const pager=pages>1?`<div style="display:flex;justify-content:center;align-items:center;gap:6px;margin-top:14px;flex-wrap:wrap">
+    <button class="btn btn-ghost btn-sm" ${US_PAGE<=1?'disabled':''} onclick="usSetPage(${US_PAGE-1})"><i data-lucide="chevron-right"></i> السابق</button>
+    <span style="color:var(--muted);font-size:13px;padding:0 10px">صفحة <b style="color:var(--ink)">${HR_ar(US_PAGE)}</b> من ${HR_ar(pages)} — إجمالي ${HR_ar(total)}</span>
+    <button class="btn btn-ghost btn-sm" ${US_PAGE>=pages?'disabled':''} onclick="usSetPage(${US_PAGE+1})">التالي <i data-lucide="chevron-left"></i></button>
+  </div>`:'';
+
+  hrSet(`${hrHead('المستخدمون','users',
+    `<button class="btn btn-gold btn-sm" onclick="hrGrantOpen()"><i data-lucide="gift"></i> منح اشتراك بالبريد</button>
+     <button class="btn btn-ghost btn-sm" onclick="usLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
+    <div class="card" style="margin-bottom:12px;padding:12px">
+      <input class="field" placeholder="بحث بالاسم أو البريد…" value="${esc(US_Q)}" oninput="usSearch(this.value)" style="margin-bottom:10px">
+      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${roleTabs}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${subTabs}</div>
+    </div>
+    <div class="card" style="padding:0">
+      <div style="overflow:auto"><table class="hr-table"><thead><tr><th>المستخدم</th><th>الدور</th><th>الاشتراك</th><th>تاريخ التسجيل</th><th>إجراءات</th></tr></thead><tbody>${tbody}</tbody></table></div>
+    </div>${pager}`);
+}
+
+async function usRevoke(id,name){
+  if(!confirm('إلغاء منحة الاشتراك لِ«'+name+'»؟'))return;
+  try{await hrApi('admin/grants/'+id,{method:'DELETE'});usLoad();}catch(e){alert('تعذّر الإلغاء: '+e.message)}
+}
+function usCopyEmail(em,btn){if(!em)return;try{navigator.clipboard.writeText(em);const old=btn.innerHTML;btn.innerHTML='<i data-lucide="check"></i>';refreshIcons();setTimeout(()=>{btn.innerHTML=old;refreshIcons();},900);}catch(e){alert(em)}}
 
 /* ═══════════ المشتركون ═══════════ */
 let SUBS=null,SUBS_ERR=null,SUBS_F='all';
@@ -1210,7 +1468,9 @@ function subsRender(){
         <button class="btn btn-ghost btn-sm" onclick="subsOrders('${esc(s.userId)}','${esc(s.displayName||s.email||'')}')"><i data-lucide="receipt"></i> الطلبات</button>
       </div></td></tr>`).join('')}</tbody></table></div>`
     :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا مشتركين في هذا التصنيف.</div>`;
-  hrSet(`${hrHead('المشتركون','credit-card','<button class="btn btn-ghost btn-sm" onclick="subsLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+  hrSet(`${hrHead('المشتركون','credit-card',
+    `<button class="btn btn-gold btn-sm" onclick="hrGrantOpen()"><i data-lucide="gift"></i> منح اشتراك مجاني</button>
+     <button class="btn btn-ghost btn-sm" onclick="subsLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
     <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tabs}</div>${body}`);
 }
 async function subsSetStatus(id,status){if(!status)return;if(!confirm('تغيير حالة الاشتراك إلى «'+status+'»؟')){subsRender();return}try{await hrApi('admin/subscribers/'+id+'/status',{method:'PATCH',body:{status}});subsLoad();}catch(e){alert('تعذّر: '+e.message)}}
