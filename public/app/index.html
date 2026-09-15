@@ -555,12 +555,23 @@
     .nav a .nic svg{width:20px;height:20px}
     .nav-foot a{padding:12px 12px;font-size:15px}
 
-    /* الشريط العلوي: أرشق ومقروء */
-    .content-top{height:56px;padding:0 12px;gap:10px}
-    .menu-toggle{display:grid !important;place-items:center;width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
-    .menu-toggle:hover{background:rgba(255,255,255,.12);border-color:var(--gold)}
+    /* الشريط العلوي: أرشق + مسافة آمنة لشريط المتصفح/الناتش على الجوال */
+    .content-top{
+      height:auto;
+      min-height:calc(56px + env(safe-area-inset-top,0px));
+      padding-top:env(safe-area-inset-top,0px);
+      padding-inline:12px;
+      gap:10px;
+      box-sizing:border-box;
+    }
+    /* زر hamburger كبير ومنفصل بوضوح من الحافة */
+    .menu-toggle{display:grid !important;place-items:center;width:44px;height:44px;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);flex:0 0 44px}
+    .menu-toggle:hover,.menu-toggle:active{background:rgba(255,255,255,.16);border-color:var(--gold)}
+    .menu-toggle svg{width:22px;height:22px}
     .ct-title{font-size:15px;font-weight:800;max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .ct-left{gap:10px;min-width:0;flex:1}
+    /* تاريخ الشريط العلوي مختصر أو مخفي على الجوال (يزاحم العنوان) */
+    .content-top .ct-date{font-size:12px;color:var(--muted);white-space:nowrap}
 
     /* البطاقات وحواف مريحة */
     .card{padding:16px;border-radius:14px}
@@ -573,9 +584,26 @@
     .modal-foot{gap:8px}
     .modal-foot .btn{flex:1 1 auto;min-width:120px}
 
-    /* جداول: مؤشر تمرير أفقي واضح */
-    table{box-shadow:inset -10px 0 10px -10px rgba(255,255,255,.18)}
+    /* ===== الجداول على الجوال ===== */
+    /* حاوية تمرير مع ظل يوضّح إمكانية السحب */
+    table{
+      box-shadow:inset -12px 0 12px -12px rgba(255,255,255,.22),
+                 inset 12px 0 12px -12px rgba(255,255,255,.08);
+    }
     th,td{padding:10px 12px;font-size:13.5px}
+    /* عمود الإجراءات (آخر td/th) يبقى ثابتاً في اليسار عند التمرير */
+    /* «آخر عمود» في RTL هو نهاية الجدول = يسار الشاشة */
+    table td:last-child,table th:last-child{
+      position:sticky;
+      left:0;
+      background:linear-gradient(90deg,rgba(20,20,24,.98),rgba(20,20,24,.94) 60%,rgba(20,20,24,.85));
+      backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+      box-shadow:-6px 0 8px -8px rgba(0,0,0,.5);
+      z-index:2;
+    }
+    table th:last-child{background:rgba(20,20,24,.98)}
+    /* الأزرار داخل الجدول لمس مريح */
+    table .link-btn{min-height:32px;padding:6px 8px;display:inline-block;font-weight:700}
   }
 
   /* درجة ثانية: ≤٤٨٠px — جوال عادي */
@@ -4473,6 +4501,14 @@ function renderQuoteDesign(){
       .qd-controls{width:430px;flex:0 0 430px;max-width:100%}
       .qd-preview{flex:1;min-width:320px;position:sticky;top:12px;align-self:flex-start}
       @media(max-width:900px){.qd-preview{position:static}}
+      /* على الجوال: تصغير معاينة A4 لتناسب الشاشة بلا فيضان */
+      @media(max-width:760px){
+        .qd-preview{overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%}
+        .qd-preview .page{
+          zoom:calc((100vw - 40px) / 794);
+          transform-origin:top right;
+        }
+      }
       .qd-sec{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin-bottom:12px}
       .qd-sec-h{font-weight:800;font-size:14px;display:flex;align-items:center;gap:7px;margin-bottom:12px}
       .qd-sec-h svg{width:16px;height:16px;color:var(--gold2)}
