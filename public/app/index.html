@@ -513,6 +513,113 @@
   .blog-pv .blog-body p{margin:0 0 14px}
   .blog-pv .blog-body ul,.blog-pv .blog-body ol{margin:0 0 14px;padding-inline-start:22px}
   .blog-pv .blog-body li{margin-bottom:7px}
+
+  /* ================================================
+     تحسينات الجوال — طبقة موحّدة (٢٠٢٦-٠٩-١٥)
+     ١) لمسات مريحة (٤٤px)
+     ٢) تفادي زوم iOS (font-size ≥ ١٦px)
+     ٣) الدرَج (drawer) + غطاء خلفي شفّاف
+     ٤) شريط علوي أرشق ومقروء
+     ٥) modal-foot أزرار عمودية على الجوال
+     ٦) جداول: مؤشر تمرير أفقي واضح
+     ٧) قائمة التنقّل: خط وأيقونات أكبر
+  ================================================ */
+
+  /* تفادي زوم iOS — inputs لازم ١٦px على أجهزة Apple */
+  @supports(-webkit-touch-callout:none){
+    input,select,textarea{font-size:16px}
+  }
+
+  /* غطاء خلفي عند فتح الدرَج (يستخدم :has — مدعوم iOS 15.4+/Chrome 105+) */
+  @media(max-width:860px){
+    .shell:has(.sidebar.open)::before{
+      content:"";position:fixed;inset:0;background:rgba(0,0,0,.55);
+      backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+      z-index:58;animation:sb-fade .18s ease-out;
+    }
+    @keyframes sb-fade{from{opacity:0}to{opacity:1}}
+    body:has(.sidebar.open){overflow:hidden}
+  }
+
+  /* درجة أولى: ≤٧٦٠px — جوال كبير وتابلت صغير */
+  @media(max-width:760px){
+    /* لمسات مريحة */
+    .btn{min-height:44px}
+    .btn-sm{min-height:36px;padding:8px 14px;font-size:13.5px}
+    input,select,textarea{padding:12px 14px}
+
+    /* قائمة التنقّل: عناصر أكبر وأوضح */
+    .sidebar{width:min(84vw,320px);padding:18px 12px;box-shadow:-24px 0 60px rgba(0,0,0,.55)}
+    .nav a{padding:13px 12px;font-size:16px;border-radius:12px}
+    .nav a .nic{width:24px}
+    .nav a .nic svg{width:20px;height:20px}
+    .nav-foot a{padding:12px 12px;font-size:15px}
+
+    /* الشريط العلوي: أرشق ومقروء */
+    .content-top{height:56px;padding:0 12px;gap:10px}
+    .menu-toggle{display:grid !important;place-items:center;width:42px;height:42px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)}
+    .menu-toggle:hover{background:rgba(255,255,255,.12);border-color:var(--gold)}
+    .ct-title{font-size:15px;font-weight:800;max-width:58%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ct-left{gap:10px;min-width:0;flex:1}
+
+    /* البطاقات وحواف مريحة */
+    .card{padding:16px;border-radius:14px}
+
+    /* toolbar تلتف بشكل نظيف */
+    .toolbar > *{min-height:40px}
+    .toolbar > input,.toolbar > select{flex:1 1 100%;min-width:0}
+
+    /* modal-foot أزرار كبيرة */
+    .modal-foot{gap:8px}
+    .modal-foot .btn{flex:1 1 auto;min-width:120px}
+
+    /* جداول: مؤشر تمرير أفقي واضح */
+    table{box-shadow:inset -10px 0 10px -10px rgba(255,255,255,.18)}
+    th,td{padding:10px 12px;font-size:13.5px}
+  }
+
+  /* درجة ثانية: ≤٤٨٠px — جوال عادي */
+  @media(max-width:480px){
+    /* عناوين أرشق */
+    .page-head{gap:6px;margin-bottom:16px}
+    .page-head h1{font-size:19px}
+    .desk-head h1{font-size:22px}
+    .stat .v{font-size:22px}
+    .card h3{font-size:16px}
+
+    /* شبكة الإحصائيات عمود واحد */
+    .stats{grid-template-columns:1fr !important}
+
+    /* شبكات أيقونات التطبيقات: ٣ أعمدة (أوضح من ٤ على الشاشات الصغيرة) */
+    .lp-grid{grid-template-columns:repeat(3,1fr) !important}
+    .desk-grid{grid-template-columns:repeat(3,1fr) !important;gap:22px 12px}
+    .lp-ic{width:58px;height:58px;border-radius:18px}
+
+    /* modal-foot عمود واحد بترتيب معكوس (الفعل الرئيسي فوق) */
+    .modal-foot{flex-direction:column-reverse;padding:14px}
+    .modal-foot .btn{width:100%;min-width:0;min-height:46px}
+
+    /* الشريط العلوي أقصر */
+    .content-top{height:52px;padding:0 10px}
+    .ct-title{font-size:14px;max-width:52%}
+
+    /* الشريط الجانبي أوسع لسهولة الوصول */
+    .sidebar{width:88vw}
+
+    /* بطاقات المنتجات: أزرار الإجراء تلتف بلطف */
+    .prod-actions{flex-wrap:wrap;gap:6px}
+    .prod-actions button{flex:1 1 45%;min-height:40px}
+
+    /* FAB (زر المكتب العائم) — لا يزاحم المحتوى */
+    .fab-desk{padding:11px 14px;font-size:13px;border-radius:14px;left:12px;bottom:12px}
+
+    /* filterbar: شرائح واضحة كأزرار */
+    .filterbar{gap:6px}
+    .filterbar .fchip{padding:8px 12px;min-height:38px;font-size:12.5px}
+
+    /* شرائط الحالة تتمرّر أفقياً */
+    .statusbar{border-radius:10px}
+  }
 </style>
 </head>
 <body>
@@ -1622,7 +1729,27 @@ function navItems(){
   return NAV.filter(n=>n.id==='lab'||!lab.has(n.id));
 }
 function renderNav(){const items=navItems();document.getElementById('nav').innerHTML=items.map(n=>n.href?`<a href="${n.href}"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`:`<a data-v="${n.id}" onclick="go('${n.id}')"><span class="nic"><i data-lucide="${n.icon}"></i></span> ${esc(n.name)}</a>`).join('');refreshIcons()}
-function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open')}
+function toggleSidebar(){
+  const sb=document.getElementById('sidebar');
+  const open=sb.classList.toggle('open');
+  // على الجوال: اقفل الدرَج عند الضغط خارجه (خلف الغطاء)
+  if(open){
+    setTimeout(()=>{
+      const closeOnOutside=(e)=>{
+        if(!sb.contains(e.target) && !e.target.closest('.menu-toggle')){
+          sb.classList.remove('open');
+          document.removeEventListener('click',closeOnOutside,true);
+        }
+      };
+      document.addEventListener('click',closeOnOutside,true);
+    },0);
+  }
+}
+// اقفل الدرَج تلقائياً عند اختيار عنصر من القائمة (تنقّل)
+document.addEventListener('click',(e)=>{
+  const link=e.target.closest('.sidebar .nav a, .sidebar .nav-foot a');
+  if(link){document.getElementById('sidebar')?.classList.remove('open');}
+});
 /* طي/فتح القائمة على سطح المكتب */
 function toggleSidebarCollapse(){
   const sh=document.querySelector('.shell');if(!sh)return;
