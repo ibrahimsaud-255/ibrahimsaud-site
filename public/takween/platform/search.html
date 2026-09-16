@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>البحث المتقدّم — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — البحث المتقدّم</div><a href="dashboard.html">← عودة للوحة</a></div>
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> البحث المتقدّم</div>
+          <h1>ابحث عن شريك حياتك</h1>
+        </div>
+        <div class="head-actions">
+          <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 4v16M4 12h16"/></svg> حفظ البحث</button>
+          <button class="btn-p primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg> بحث سريع</button>
+        </div>
+      </div>
+
+      <!-- Filter card -->
+      <div class="search-card-lg">
+        <div class="filter-grid">
+          <div class="filter">
+            <label>نوع العضويّة</label>
+            <div class="with-arrow"><select><option>ابحث عن زوجة</option><option>ابحث عن زوج</option></select></div>
+          </div>
+          <div class="filter">
+            <label>الجنسيّة</label>
+            <div class="with-arrow"><select><option>سعوديّة</option><option>مصريّة</option><option>يمنيّة</option><option>أخرى</option></select></div>
+          </div>
+          <div class="filter">
+            <label>الإقامة</label>
+            <div class="with-arrow"><select><option>كلّ المدن</option><option>الرياض</option><option>جدّة</option><option>الخبر</option><option>مكّة</option></select></div>
+          </div>
+          <div class="filter">
+            <label>الحالة الاجتماعيّة</label>
+            <div class="with-arrow"><select><option>الكلّ</option><option>بكر</option><option>مطلّقة</option><option>أرملة</option></select></div>
+          </div>
+          <div class="filter">
+            <label>العمر (من — إلى)</label>
+            <div class="range-box"><input type="number" value="22" /><span class="sep">—</span><input type="number" value="35" /><span style="color:var(--muted);font-size:11px">سنة</span></div>
+          </div>
+          <div class="filter">
+            <label>الطول (سم)</label>
+            <div class="range-box"><input type="number" value="150" /><span class="sep">—</span><input type="number" value="180" /></div>
+          </div>
+          <div class="filter">
+            <label>المستوى التعليمي</label>
+            <div class="with-arrow"><select><option>الكلّ</option><option>ثانويّ</option><option>دبلوم</option><option>جامعيّ</option><option>ماجستير فأعلى</option></select></div>
+          </div>
+          <div class="filter">
+            <label>القبيلة</label>
+            <div class="with-arrow"><select><option>الكلّ</option><option>قبيليّ</option><option>غير قبيليّ</option></select></div>
+          </div>
+        </div>
+
+        <div class="search-actions-row">
+          <div class="chip-list">
+            <span class="chip">سعوديّة <button>✕</button></span>
+            <span class="chip">22-35 سنة <button>✕</button></span>
+            <span class="chip">بكر <button>✕</button></span>
+            <span style="color:var(--muted);font-size:12px">4 فلاتر مفعّلة</span>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn-p">مسح</button>
+            <button class="btn-p primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg> بحث</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results header -->
+      <div class="results-header">
+        <h3>النتائج (<b>127</b> نتيجة)</h3>
+        <div class="sort">
+          ترتيب:
+          <select>
+            <option>الأعلى توافقاً</option>
+            <option>الأحدث تسجيلاً</option>
+            <option>آخر ظهور</option>
+            <option>الأكثر تفاعلاً</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Results grid -->
+      <div class="res-grid">
+
+        <div class="res-card">
+          <span class="score-badge">٩٤٪</span>
+          <div class="avatar-lg av-p1">ر</div>
+          <h4>رند٢٥</h4>
+          <div class="meta"><span class="en">#142870</span></div>
+          <div class="meta">سعوديّة · الرياض · بكر · ٢٥</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html" title="عرض"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html" title="رسالة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold" title="طلب توافق"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red" title="مفضّلة"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge">٨٧٪</span>
+          <div class="avatar-lg av-p3">ع</div>
+          <h4>عسل٧</h4>
+          <div class="meta"><span class="en">#128412</span></div>
+          <div class="meta">سعوديّة · الخبر · بكر · ٢١</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge">٨٢٪</span>
+          <div class="avatar-lg av-p5">ن</div>
+          <h4>نورة</h4>
+          <div class="meta"><span class="en">#109331</span></div>
+          <div class="meta">سعوديّة · جدّة · بكر · ٢٦</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge">٧٨٪</span>
+          <div class="avatar-lg av-p2">م</div>
+          <h4>مريم</h4>
+          <div class="meta"><span class="en">#134221</span></div>
+          <div class="meta">سعوديّة · الدمّام · مطلّقة · ٣٢</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge mid">٧٣٪</span>
+          <div class="avatar-lg av-p4">ه</div>
+          <h4>هيا</h4>
+          <div class="meta"><span class="en">#118552</span></div>
+          <div class="meta">سعوديّة · الدمّام · بكر · ٢٤</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge mid">٦٨٪</span>
+          <div class="avatar-lg av-p6">ل</div>
+          <h4>لينا</h4>
+          <div class="meta"><span class="en">#095321</span></div>
+          <div class="meta">سعوديّة · بريدة · أرملة · ٣٠</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge mid">٦٥٪</span>
+          <div class="avatar-lg av-p7">ر</div>
+          <h4>رهف</h4>
+          <div class="meta"><span class="en">#087654</span></div>
+          <div class="meta">سعوديّة · مكّة · بكر · ٢٦</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+        <div class="res-card">
+          <span class="score-badge mid">٦١٪</span>
+          <div class="avatar-lg av-p8">س</div>
+          <h4>سوار</h4>
+          <div class="meta"><span class="en">#076544</span></div>
+          <div class="meta">سعوديّة · مكّة · بكر · ٣٠</div>
+          <div class="row-actions">
+            <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+            <a class="icon-mini" href="chat.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></a>
+            <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></a>
+            <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg></a>
+          </div>
+        </div>
+
+      </div>
+
+      <div style="text-align:center;margin-top:26px">
+        <button class="btn-p">تحميل المزيد <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>mountShell('search');</script>
+</body>
+</html>

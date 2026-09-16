@@ -1,0 +1,324 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>بياناتي وشروطي — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — بياناتي، شروطي، الأسئلة المخصّصة، الخصوصيّة</div><a href="dashboard.html">← عودة</a></div>
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> بياناتي وشروطي</div>
+          <h1>بياناتي وشروطي</h1>
+        </div>
+        <div class="head-actions">
+          <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg> عرض ملفي كما يراه الآخرون</button>
+          <button class="btn-p primary">حفظ التغييرات</button>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <nav class="settings-nav">
+          <a href="#basic" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+            المعلومات الأساسيّة
+          </a>
+          <a href="#specs">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="18" rx="2"/></svg>
+            مواصفاتي التفصيليّة
+          </a>
+          <a href="#requirements">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            شروطي في الطرف الآخر
+          </a>
+          <a href="#custom">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v4M18 14v7M15 17h6"/></svg>
+            أسئلتي المخصّصة
+          </a>
+          <a href="#privacy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            الخصوصيّة
+          </a>
+          <a href="#account">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09A1.65 1.65 0 0015 4.6a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+            إعدادات الحساب
+          </a>
+        </nav>
+
+        <div class="settings-content">
+
+          <!-- Basic info -->
+          <div class="setting-panel" id="basic">
+            <h3>المعلومات الأساسيّة</h3>
+            <p class="sub">هذه المعلومات <b style="color:var(--navy)">تظهر لجميع الأعضاء</b> عند تصفّح ملفّك.</p>
+            <div class="form-grid">
+              <div class="form-field"><label>الاسم على المنصّة</label><input value="أبو سعود" /></div>
+              <div class="form-field"><label>العمر</label><input value="32" /></div>
+              <div class="form-field">
+                <label>الجنسيّة</label>
+                <select><option>سعوديّ</option><option>مصريّ</option><option>يمنيّ</option><option>أخرى</option></select>
+              </div>
+              <div class="form-field">
+                <label>المدينة</label>
+                <select><option>الرياض</option><option>جدّة</option><option>الخبر</option><option>مكّة</option></select>
+              </div>
+              <div class="form-field"><label>الوظيفة</label><input value="مهندس مدنيّ" /></div>
+              <div class="form-field">
+                <label>الحالة الاجتماعيّة</label>
+                <select><option>أعزب</option><option>مطلّق</option><option>أرمل</option><option>متزوّج</option></select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Detailed specs -->
+          <div class="setting-panel" id="specs">
+            <h3>مواصفاتي التفصيليّة</h3>
+            <p class="sub"><b style="color:var(--warn)">تظهر هذه المعلومات فقط بعد قبول طلب التوافق</b> — نحفظ خصوصيّتك.</p>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>الأصل</label>
+                <select><option>الجنوب</option><option>نجد</option><option>الحجاز</option><option>الشمال</option><option>الشرقيّة</option></select>
+              </div>
+              <div class="form-field">
+                <label>القبيلة</label>
+                <select><option>قبيليّ</option><option>غير قبيليّ</option></select>
+              </div>
+              <div class="form-field">
+                <label>المستوى التعليمي</label>
+                <select><option>ابتدائي</option><option>متوسّط</option><option>ثانويّ</option><option>دبلوم</option><option>جامعيّ</option><option>ماجستير</option><option>دكتوراه</option></select>
+              </div>
+              <div class="form-field">
+                <label>مستوى الجمال</label>
+                <select><option>عاديّ</option><option>مقبول</option><option>جميل</option><option>جميل جدّاً</option><option>ممتاز</option></select>
+              </div>
+              <div class="form-field">
+                <label>الحجاب (للفتيات)</label>
+                <select><option>منقبة</option><option>محجّبة</option><option>بدون حجاب</option></select>
+              </div>
+              <div class="form-field">
+                <label>التعدّد</label>
+                <select><option>أقبل</option><option>يحتاج إلى تفكير</option><option>لا أقبل</option></select>
+              </div>
+              <div class="form-field">
+                <label>طبيعة العمل</label>
+                <select><option>موظّف حكوميّ</option><option>موظّف قطاع خاص</option><option>عسكريّ</option><option>أعمال حرّة</option><option>مهندس</option><option>طبيب</option><option>معلّم</option><option>لا يعمل</option></select>
+              </div>
+              <div class="form-field">
+                <label>الحالة الماديّة</label>
+                <select><option>متوسّطة</option><option>جيّدة</option><option>جيّدة جدّاً</option><option>ممتازة</option></select>
+              </div>
+              <div class="form-field">
+                <label>الالتزام الديني — الصلاة</label>
+                <select>
+                  <option>محافظ على الصلاة في المسجد</option>
+                  <option>محافظ على الصلاة في البيت</option>
+                  <option>أصلّي أحياناً</option>
+                  <option>لا أصلّي</option>
+                </select>
+              </div>
+              <div class="form-field">
+                <label>الصحّة</label>
+                <select><option>سليمة</option><option>حالة صحيّة يمكن التعايش معها</option><option>حالة صحيّة صعبة</option></select>
+              </div>
+              <div class="form-field">
+                <label>لون البشرة</label>
+                <select><option>بيضاء</option><option>حنطيّة</option><option>سمراء فاتحة</option><option>سمراء</option></select>
+              </div>
+              <div class="form-field"><label>الطول (سم)</label><input value="178" /></div>
+              <div class="form-field"><label>الوزن (كغ)</label><input value="82" /></div>
+              <div class="form-field full">
+                <label>نبذة تفصيليّة عن شخصيّتي</label>
+                <textarea placeholder="اكتب نبذة قصيرة تُعبّر عنك…">مهندس محافظ على صلواته، أحبّ العمل والقراءة والعائلة. أبحث عن شريكة حياة جادّة تُقدّر الأسرة.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Requirements -->
+          <div class="setting-panel" id="requirements">
+            <h3>شروطي في الطرف الآخر</h3>
+            <p class="sub">ما الذي تبحث عنه في شريك الحياة؟ — اترك أي حقل «بدون شروط» لتوسيع خياراتك.</p>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>الجنسيّة</label>
+                <select><option>سعوديّة</option><option>بدون شروط</option></select>
+              </div>
+              <div class="form-field">
+                <label>الإقامة</label>
+                <select><option>السعوديّة</option><option>بدون شروط</option></select>
+              </div>
+              <div class="form-field">
+                <label>المدينة</label>
+                <select><option>بدون شروط</option><option>الرياض</option><option>جدّة</option><option>الخبر</option></select>
+              </div>
+              <div class="form-field">
+                <label>الحالة الاجتماعيّة</label>
+                <select><option>بدون شروط</option><option>بكر</option><option>مطلّقة</option><option>أرملة</option></select>
+              </div>
+              <div class="form-field"><label>العمر من</label><input value="22" /></div>
+              <div class="form-field"><label>إلى</label><input value="30" /></div>
+              <div class="form-field">
+                <label>الأصل</label>
+                <select><option>بدون شروط</option><option>الجنوب</option><option>نجد</option><option>الحجاز</option></select>
+              </div>
+              <div class="form-field">
+                <label>القبيلة</label>
+                <select><option>بدون شروط</option><option>قبيليّة</option><option>غير قبيليّة</option></select>
+              </div>
+              <div class="form-field">
+                <label>عدد الأطفال</label>
+                <select><option>لا يوجد</option><option>بدون شروط</option><option>طفل واحد</option><option>طفلان</option></select>
+              </div>
+              <div class="form-field">
+                <label>المستوى التعليمي</label>
+                <select><option>بدون شروط</option><option>ثانويّ فأعلى</option><option>جامعيّ فأعلى</option></select>
+              </div>
+              <div class="form-field">
+                <label>الحجاب</label>
+                <select><option>منقبة</option><option>محجّبة</option><option>بدون شروط</option></select>
+              </div>
+              <div class="form-field">
+                <label>الالتزام الديني</label>
+                <select><option>محافظة على الصلوات</option><option>بدون شروط</option></select>
+              </div>
+              <div class="form-field full">
+                <label>مواصفات إضافيّة تبحث عنها</label>
+                <textarea placeholder="اكتب مواصفات إضافيّة…">جادّة، كريمة، تخاف الله، من منطقة الرياض.</textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Custom questions -->
+          <div class="setting-panel" id="custom">
+            <h3>أسئلتي المخصّصة للطرف الآخر</h3>
+            <p class="sub">
+              أسئلة تُريد أن يُجيب عنها الطرف الآخر — تظهر له عند طلب التوافق. <b style="color:var(--gold);">ميزة مميّزة</b> تُسرّع القرار وتوفّر الوقت.
+            </p>
+
+            <div style="display:grid;gap:12px">
+              <div style="background:var(--cream-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px">
+                <div style="flex:1">
+                  <div style="font-weight:800;color:var(--ink);margin-bottom:4px">هل تفضّلين السكن مع الأهل أو باستقلاليّة؟</div>
+                  <div style="color:var(--muted);font-size:12px">إجابة نصيّة قصيرة · ظاهر</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></button>
+                  <button class="btn-p danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14h10l1-14"/></svg></button>
+                </div>
+              </div>
+
+              <div style="background:var(--cream-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px">
+                <div style="flex:1">
+                  <div style="font-weight:800;color:var(--ink);margin-bottom:4px">ما رأيك في استمرار المرأة بعملها بعد الزواج؟</div>
+                  <div style="color:var(--muted);font-size:12px">اختيار من متعدّد · ظاهر</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></button>
+                  <button class="btn-p danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14h10l1-14"/></svg></button>
+                </div>
+              </div>
+
+              <div style="background:var(--cream-2);border:1px solid var(--line);border-radius:12px;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px">
+                <div style="flex:1">
+                  <div style="font-weight:800;color:var(--ink);margin-bottom:4px">كم عدد الأولاد الذين تُفضّلينهم؟</div>
+                  <div style="color:var(--muted);font-size:12px">إجابة نصيّة قصيرة · ظاهر</div>
+                </div>
+                <div style="display:flex;gap:6px">
+                  <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></button>
+                  <button class="btn-p danger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14h10l1-14"/></svg></button>
+                </div>
+              </div>
+
+              <button style="padding:14px;border:1.5px dashed var(--navy-mid);background:var(--navy-ghost);color:var(--navy);border-radius:12px;font-weight:700;font-size:13.5px;display:flex;align-items:center;justify-content:center;gap:8px">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                أضف سؤالاً جديداً (متاح لك حتى ٥ أسئلة)
+              </button>
+            </div>
+
+            <div class="tip-banner" style="margin-top:20px;background:var(--navy-ghost);border:1px dashed var(--navy-mid);padding:14px 18px;border-radius:12px;display:flex;gap:12px">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--navy);flex-shrink:0;margin-top:2px"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+              <p style="margin:0;color:var(--ink-2);font-size:13px;line-height:1.75">
+                <b style="color:var(--navy)">اقتراح الذكاء الاصطناعي:</b> بناءً على شروطك، ننصح بإضافة سؤال «ما موقفك من صلاة الجماعة؟» — الأعضاء المتوافقون معك يهتمّون بهذا الجانب.
+              </p>
+            </div>
+          </div>
+
+          <!-- Privacy -->
+          <div class="setting-panel" id="privacy">
+            <h3>الخصوصيّة والظهور</h3>
+            <p class="sub">تحكّم كامل بمن يرى ماذا من بياناتك.</p>
+
+            <div style="display:grid;gap:14px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--cream-2);border:1px solid var(--line);border-radius:12px">
+                <div>
+                  <div style="font-weight:800;font-size:14px">إظهار ملفّي في نتائج البحث</div>
+                  <div style="color:var(--muted);font-size:12px">إذا أوقفته، لن يظهر ملفّك في البحث ولن يصلك طلبات جديدة.</div>
+                </div>
+                <label style="position:relative;width:44px;height:24px"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--navy);border-radius:999px;transition:.2s"><span style="position:absolute;height:18px;width:18px;right:3px;top:3px;background:#fff;border-radius:999px;transition:.2s"></span></span></label>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--cream-2);border:1px solid var(--line);border-radius:12px">
+                <div>
+                  <div style="font-weight:800;font-size:14px">تظهر مواصفاتي التفصيليّة</div>
+                  <div style="color:var(--muted);font-size:12px">تظهر <b>بعد قبول طلب التوافق فقط</b> (افتراضيّاً).</div>
+                </div>
+                <label style="position:relative;width:44px;height:24px"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--navy);border-radius:999px"><span style="position:absolute;height:18px;width:18px;right:3px;top:3px;background:#fff;border-radius:999px"></span></span></label>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--cream-2);border:1px solid var(--line);border-radius:12px">
+                <div>
+                  <div style="font-weight:800;font-size:14px">السماح للوسطاء برؤية ملفّي</div>
+                  <div style="color:var(--muted);font-size:12px">يزيد فرصك عبر شبكة الوسطاء المعتمدين.</div>
+                </div>
+                <label style="position:relative;width:44px;height:24px"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--navy);border-radius:999px"><span style="position:absolute;height:18px;width:18px;right:3px;top:3px;background:#fff;border-radius:999px"></span></span></label>
+              </div>
+
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:var(--cream-2);border:1px solid var(--line);border-radius:12px">
+                <div>
+                  <div style="font-weight:800;font-size:14px">إشعارات SMS للأحداث المهمّة</div>
+                  <div style="color:var(--muted);font-size:12px">طلب توافق، ردّ وليّ الأمر، إنهاء الخطبة.</div>
+                </div>
+                <label style="position:relative;width:44px;height:24px"><input type="checkbox" checked style="opacity:0;width:0;height:0"><span style="position:absolute;inset:0;background:var(--navy);border-radius:999px"><span style="position:absolute;height:18px;width:18px;right:3px;top:3px;background:#fff;border-radius:999px"></span></span></label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account -->
+          <div class="setting-panel" id="account">
+            <h3>إعدادات الحساب</h3>
+            <p class="sub">إدارة رقم الجوّال وكلمة المرور وحذف الحساب.</p>
+            <div class="form-grid">
+              <div class="form-field"><label>رقم الجوّال (موثّق ✓)</label><input value="+966 555 824 155" disabled style="opacity:.7" /></div>
+              <div class="form-field"><label>البريد الإلكتروني</label><input value="user@example.com" /></div>
+              <div class="form-field"><label>كلمة المرور</label><input type="password" value="********" /></div>
+              <div class="form-field"><label>تأكيد كلمة المرور</label><input type="password" value="********" /></div>
+            </div>
+            <div class="form-footer">
+              <button class="btn-p primary">حفظ التغييرات</button>
+              <button class="btn-p danger">حذف الحساب نهائيّاً</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>mountShell('settings');</script>
+</body>
+</html>

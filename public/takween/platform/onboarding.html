@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ابدأ رحلتك — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+<style>
+  .onboard-wrap { max-width: 720px; margin: 0 auto; padding: 40px 24px 80px; }
+  .step-hero { text-align: center; margin-bottom: 40px; }
+  .step-hero .pill { display: inline-flex; padding: 6px 14px; border-radius: 999px; background: var(--gold-soft); color: #8A6D2E; font-weight: 700; font-size: 12px; letter-spacing: 2px; margin-bottom: 20px; }
+  .step-hero h1 { font-size: clamp(28px, 4vw, 40px); font-weight: 800; margin: 0 0 12px; color: var(--ink); letter-spacing: -.5px; }
+  .step-hero h1 .accent { color: var(--navy); }
+  .step-hero p { color: var(--muted); font-size: 15px; margin: 0; }
+
+  .steps-progress { display: flex; align-items: center; gap: 14px; margin-bottom: 30px; justify-content: center; }
+  .step-dot {
+    display: inline-flex; align-items: center; gap: 8px;
+    color: var(--muted); font-size: 12.5px; font-weight: 700;
+  }
+  .step-dot .num {
+    width: 28px; height: 28px; border-radius: 999px; background: var(--paper);
+    border: 2px solid var(--line); display: inline-flex; align-items: center;
+    justify-content: center; font-family: var(--font-en); font-size: 12px;
+  }
+  .step-dot.active { color: var(--navy); }
+  .step-dot.active .num { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .step-dot.done { color: var(--success); }
+  .step-dot.done .num { background: var(--success); color: #fff; border-color: var(--success); }
+  .steps-progress .line { flex: 0 0 40px; height: 2px; background: var(--line); }
+
+  .step-panel {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 20px;
+    padding: 36px 40px; box-shadow: var(--shadow-sm);
+  }
+  .step-panel h2 {
+    margin: 0 0 6px; font-size: 22px; font-weight: 800; color: var(--ink);
+  }
+  .step-panel h2 .accent { color: var(--navy); }
+  .step-panel .p-sub { color: var(--muted); font-size: 14px; margin: 0 0 26px; }
+
+  .quick-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .quick-fields .full { grid-column: 1 / -1; }
+  .quick-fields label { font-size: 12.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 6px; display: block; }
+  .quick-fields select, .quick-fields input {
+    width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--line);
+    background: var(--cream-2); font-size: 14px; color: var(--ink);
+    outline: none; font-family: var(--font);
+  }
+  .quick-fields select:focus, .quick-fields input:focus { border-color: var(--navy); }
+
+  .radio-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .radio-card {
+    text-align: center; padding: 12px 8px; background: var(--paper);
+    border: 1.5px solid var(--line); border-radius: 12px; cursor: pointer;
+    font-size: 13px; font-weight: 700; color: var(--ink-2);
+    transition: all .12s;
+  }
+  .radio-card:hover { border-color: var(--navy-soft); }
+  .radio-card.selected { border-color: var(--navy); background: var(--navy-ghost); color: var(--navy); }
+
+  .step-actions {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 30px; padding-top: 24px; border-top: 1px solid var(--line-3);
+  }
+  .step-actions .helper { color: var(--muted); font-size: 12.5px; }
+
+  .tip-banner {
+    background: var(--gold-soft); border: 1px dashed var(--gold); border-radius: 12px;
+    padding: 14px 18px; margin-top: 22px; display: flex; gap: 12px; align-items: flex-start;
+  }
+  .tip-banner svg { color: #8A6D2E; flex-shrink: 0; margin-top: 2px; }
+  .tip-banner p { margin: 0; font-size: 13px; color: #5A4A1E; line-height: 1.75; }
+  .tip-banner p b { color: #3D3220; }
+
+  .exit-link {
+    text-align: center; margin-top: 20px; font-size: 12.5px; color: var(--muted);
+  }
+  .exit-link a { color: var(--navy); font-weight: 700; }
+</style>
+</head>
+<body style="background:linear-gradient(180deg,var(--navy-ghost) 0%,var(--cream) 40%,var(--cream) 100%);min-height:100vh">
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — التسجيل السريع (٣ خطوات)</div><a href="login.html">← عودة</a></div>
+
+<div class="onboard-wrap">
+
+  <div class="step-hero">
+    <span class="pill">الخطوة ١ من ٣</span>
+    <h1>ابدأ رحلة <span class="accent">التوافق</span> في دقيقة.</h1>
+    <p>نبدأ بأسئلة سريعة — نعرض لك متوافقين قبل أن تُكمل ملفّك الكامل.</p>
+  </div>
+
+  <div class="steps-progress">
+    <div class="step-dot active"><span class="num">١</span> البيانات الأساسيّة</div>
+    <div class="line"></div>
+    <div class="step-dot"><span class="num">٢</span> اطّلع على النتائج</div>
+    <div class="line"></div>
+    <div class="step-dot"><span class="num">٣</span> أكمل ملفّك</div>
+  </div>
+
+  <div class="step-panel">
+    <h2>معلوماتك <span class="accent">الأساسيّة</span></h2>
+    <p class="p-sub">٦ حقول فقط — لا نطلب تفاصيل شخصيّة إلا بعد أن تُقرّر الاستمرار.</p>
+
+    <div class="quick-fields">
+      <div>
+        <label>الاسم الأول</label>
+        <input type="text" placeholder="محمد" />
+      </div>
+      <div>
+        <label>العمر</label>
+        <input type="number" placeholder="٢٨" />
+      </div>
+      <div>
+        <label>الجنسيّة</label>
+        <select>
+          <option>سعوديّ</option>
+          <option>مصريّ</option>
+          <option>يمنيّ</option>
+          <option>أخرى</option>
+        </select>
+      </div>
+      <div>
+        <label>المدينة</label>
+        <select>
+          <option>الرياض</option>
+          <option>جدّة</option>
+          <option>الخبر</option>
+          <option>مكّة</option>
+          <option>الدمّام</option>
+        </select>
+      </div>
+      <div>
+        <label>الوظيفة</label>
+        <input type="text" placeholder="مهندس / موظّف / أعمال حرّة…" />
+      </div>
+      <div>
+        <label>الحالة الاجتماعيّة</label>
+        <div class="radio-cards" style="grid-template-columns:1fr 1fr">
+          <div class="radio-card selected">أعزب</div>
+          <div class="radio-card">مطلّق</div>
+          <div class="radio-card">أرمل</div>
+          <div class="radio-card">متزوّج</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip-banner">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+      <p><b>الذكاء الاصطناعي جاهز:</b> بعد إكمال هذه الحقول، سنُظهر لك مقترحين متوافقين معك مباشرةً، ثم يمكنك إكمال ملفّك بعد الاطّلاع عليهم.</p>
+    </div>
+
+    <div class="step-actions">
+      <span class="helper">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px"><path d="M12 22s7-7 7-13a7 7 0 10-14 0c0 6 7 13 7 13z"/><circle cx="12" cy="9" r="2"/></svg>
+        وقت مُتوقّع: ٦٠ ثانية
+      </span>
+      <button class="btn-p primary btn-lg" onclick="location.href='dashboard.html'" style="padding:12px 26px;font-size:14.5px">
+        عرض النتائج المتوافقة
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="exit-link">
+    تخطّى الآن — <a href="dashboard.html">اذهب مباشرةً للمنصّة</a>
+  </div>
+
+</div>
+</body>
+</html>

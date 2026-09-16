@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>لوحة الإدارة — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — لوحة إدارة السوبر أدمن</div><a href="dashboard.html">← عودة</a></div>
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> الإدارة</div>
+          <h1>لوحة الإدارة — سوبر أدمن</h1>
+        </div>
+        <div class="head-actions">
+          <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg> إعدادات المنصّة</button>
+          <button class="btn-p primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> إضافة موظّف</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="admin-stats">
+        <div class="a-stat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21a6 6 0 0112 0"/></svg></div>
+          <div class="val">1,847</div>
+          <div class="lab">إجمالي الأعضاء</div>
+          <div class="trend">+٩٢ هذا الأسبوع</div>
+        </div>
+        <div class="a-stat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></svg></div>
+          <div class="val">312</div>
+          <div class="lab">أعضاء نشطون الآن</div>
+          <div class="trend">+٢٤ خلال ساعة</div>
+        </div>
+        <div class="a-stat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg></div>
+          <div class="val">64</div>
+          <div class="lab">خطبات نشطة</div>
+          <div class="trend">+٧ اليوم</div>
+        </div>
+        <div class="a-stat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21V4M4 15h16l-3-5 3-5H4"/></svg></div>
+          <div class="val">3</div>
+          <div class="lab">شكاوى قيد المراجعة</div>
+          <div class="trend down">+١ اليوم</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">الأعضاء</div>
+        <div class="tab">الموظّفون والصلاحيّات</div>
+        <div class="tab">الشكاوى (3)</div>
+        <div class="tab">قصص النجاح</div>
+        <div class="tab">سجلّ العمليّات (Audit)</div>
+        <div class="tab">إعدادات SMS</div>
+      </div>
+
+      <!-- Members table -->
+      <div class="data-card">
+        <div class="dc-head">
+          <div>
+            <h3>إدارة الأعضاء</h3>
+            <div style="color:var(--muted);font-size:12px;margin-top:2px">1,847 عضواً · بحث وتصفية وتحكّم كامل</div>
+          </div>
+          <div class="head-btns">
+            <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg> بحث</button>
+            <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg> تصفية</button>
+            <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> تصدير</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>الاسم</th>
+              <th>النوع</th>
+              <th>الجنسيّة · المدينة</th>
+              <th>الحالة</th>
+              <th>مخالفات</th>
+              <th>آخر ظهور</th>
+              <th>إجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="en">142870</td>
+              <td><b>رند٢٥</b></td>
+              <td><span class="tag role">فتاة</span></td>
+              <td>سعوديّة · الرياض</td>
+              <td><span class="tag on">نشطة</span></td>
+              <td class="en">0</td>
+              <td>الآن</td>
+              <td class="row-actions">
+                <a class="icon-mini" href="profile.html"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">128412</td>
+              <td><b>عسل٧</b></td>
+              <td><span class="tag role">فتاة</span></td>
+              <td>سعوديّة · الخبر</td>
+              <td><span class="tag on">نشطة</span></td>
+              <td class="en">0</td>
+              <td>منذ ساعة</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">109331</td>
+              <td><b>نورة</b></td>
+              <td><span class="tag role">فتاة</span></td>
+              <td>سعوديّة · جدّة</td>
+              <td><span class="tag warn">تحت المراجعة</span></td>
+              <td class="en">2</td>
+              <td>منذ ٦ ساعات</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">134221</td>
+              <td><b>سعد٩٩</b></td>
+              <td><span class="tag role">شابّ</span></td>
+              <td>سعوديّ · الرياض</td>
+              <td><span class="tag on">نشط</span></td>
+              <td class="en">0</td>
+              <td>الآن</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">087654</td>
+              <td><b>أبو نايف</b></td>
+              <td><span class="tag role">وليّ أمر</span></td>
+              <td>سعوديّ · الدمّام</td>
+              <td><span class="tag on">نشط</span></td>
+              <td class="en">0</td>
+              <td>منذ ١٥ دقيقة</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">076125</td>
+              <td><b>عبدالله٧</b></td>
+              <td><span class="tag role">وسيط</span></td>
+              <td>سعوديّ · بريدة</td>
+              <td><span class="tag on">نشط</span> · <span style="font-size:11px;color:var(--muted)">12 مستفيداً</span></td>
+              <td class="en">0</td>
+              <td>منذ يوم</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M4.9 4.9l14.2 14.2"/></svg></a>
+              </td>
+            </tr>
+            <tr>
+              <td class="en">065432</td>
+              <td><b>خالد٤٤</b></td>
+              <td><span class="tag role">شابّ</span></td>
+              <td>سعوديّ · مكّة</td>
+              <td><span class="tag danger">محظور</span></td>
+              <td class="en">10</td>
+              <td>منذ أسبوع</td>
+              <td class="row-actions">
+                <a class="icon-mini"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></a>
+                <a class="icon-mini gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></a>
+                <a class="icon-mini red"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14h10l1-14"/></svg></a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Audit log section -->
+      <div style="margin-top:24px" class="data-card">
+        <div class="dc-head">
+          <div>
+            <h3>سجلّ العمليّات — Audit Log</h3>
+            <div style="color:var(--muted);font-size:12px;margin-top:2px">آخر ٢٤ ساعة · لا يمكن حذف السجلّ</div>
+          </div>
+          <div class="head-btns">
+            <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg> تصفية بالمستخدم</button>
+            <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> تنزيل</button>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>الوقت</th>
+              <th>المستخدم</th>
+              <th>العمليّة</th>
+              <th>الهدف</th>
+              <th>IP</th>
+              <th>الحالة</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="en">12:04:32</td>
+              <td>أبو سعود (سوبر أدمن)</td>
+              <td>حظر عضو</td>
+              <td>خالد٤٤ (#065432) — سبب: 10 مخالفات</td>
+              <td class="en">10.0.34.22</td>
+              <td><span class="tag on">نجاح</span></td>
+            </tr>
+            <tr>
+              <td class="en">11:47:15</td>
+              <td>سارة (موظّفة دعم)</td>
+              <td>عرض بيانات عضو</td>
+              <td>نورة (#109331) — الملف الكامل</td>
+              <td class="en">10.0.34.55</td>
+              <td><span class="tag on">نجاح</span></td>
+            </tr>
+            <tr>
+              <td class="en">11:30:08</td>
+              <td>المستشار الأسريّ</td>
+              <td>إضافة ملاحظة</td>
+              <td>حالة #142870 ↔ #134221</td>
+              <td class="en">10.0.34.19</td>
+              <td><span class="tag on">نجاح</span></td>
+            </tr>
+            <tr>
+              <td class="en">10:15:42</td>
+              <td>سارة (موظّفة دعم)</td>
+              <td>محاولة رؤية أرقام</td>
+              <td>الملف #142870</td>
+              <td class="en">10.0.34.55</td>
+              <td><span class="tag danger">مرفوض — بلا صلاحيّة</span></td>
+            </tr>
+            <tr>
+              <td class="en">09:20:11</td>
+              <td>أبو سعود (سوبر أدمن)</td>
+              <td>تعديل قالب SMS</td>
+              <td>«قبول طلب توافق»</td>
+              <td class="en">10.0.34.22</td>
+              <td><span class="tag on">نجاح</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>mountShell('admin');</script>
+</body>
+</html>

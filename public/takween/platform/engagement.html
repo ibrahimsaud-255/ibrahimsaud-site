@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>طلبات التوافق — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — طلبات التوافق (الخطبة)</div><a href="dashboard.html">← عودة للوحة</a></div>
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> طلبات التوافق</div>
+          <h1>طلبات التوافق (الخطبة)</h1>
+        </div>
+        <div class="head-actions">
+          <button class="btn-p">تصدير CSV</button>
+          <button class="btn-p primary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> طلب جديد</button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="eng-stats">
+        <div class="eng-stat pending">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><div class="num">2</div><div class="lab">قيد الانتظار</div></div>
+        </div>
+        <div class="eng-stat accepted">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <div><div class="num">1</div><div class="lab">مقبولة (خطبة نشطة)</div></div>
+        </div>
+        <div class="eng-stat followup">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.4 2.1L8 9.8a16 16 0 006 6l1.4-1.4a2 2 0 012.1-.4c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg></div>
+          <div><div class="num">1</div><div class="lab">تحتاج متابعة</div></div>
+        </div>
+        <div class="eng-stat married">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg></div>
+          <div><div class="num">0</div><div class="lab">تمّ الارتباط</div></div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="tabs">
+        <div class="tab active">جميع الطلبات (4)</div>
+        <div class="tab">المُرسَلة (2)</div>
+        <div class="tab">الواردة (2)</div>
+        <div class="tab">النشطة (1)</div>
+        <div class="tab">المنتهية</div>
+      </div>
+
+      <!-- Engagements list -->
+
+      <div class="eng-card">
+        <div>
+          <span class="status-tag accepted">مقبولة — خطبة نشطة</span>
+          <div class="party">
+            <span class="a av-p1">ر</span>
+            <div class="n">رند٢٥<small>سعوديّة · الرياض · ٢٥ · ٩٤٪ توافق</small></div>
+          </div>
+          <div class="info-note" style="margin-top:10px">قُبِلَ طلبك · تمّ حجب التواصل مع الآخرين</div>
+        </div>
+        <div>
+          <div class="arrow">←</div>
+          <div class="info-note" style="text-align:center;margin-top:8px">
+            <div style="color:var(--muted);font-size:11px">آخر تواصل</div>
+            <b style="color:var(--ink)">اليوم ١٠:٤٢</b>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-p primary" onclick="location.href='chat.html'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> محادثة</button>
+          <button class="btn-p">طلب بيانات وليّ الأمر</button>
+          <button class="btn-p danger">إنهاء الخطبة</button>
+        </div>
+      </div>
+
+      <div class="eng-card">
+        <div>
+          <span class="status-tag pending">مُرسَل — في انتظار الردّ</span>
+          <div class="party">
+            <span class="a av-p3">ع</span>
+            <div class="n">عسل٧<small>سعوديّة · الخبر · ٢١ · ٨٧٪ توافق</small></div>
+          </div>
+          <div class="info-note" style="margin-top:10px">أُرسل الطلب منذ يومين · ينتظر ردّ وليّ الأمر</div>
+        </div>
+        <div>
+          <div class="arrow">←</div>
+          <div class="info-note" style="text-align:center;margin-top:8px">
+            <div style="color:var(--muted);font-size:11px">تاريخ الإرسال</div>
+            <b style="color:var(--ink)">١٤ سبتمبر</b>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-p">عرض الملف</button>
+          <button class="btn-p danger">إلغاء الطلب</button>
+        </div>
+      </div>
+
+      <div class="eng-card">
+        <div>
+          <span class="status-tag pending">وارد — يحتاج ردّك</span>
+          <div class="party">
+            <span class="a av-p5">ن</span>
+            <div class="n">نورة<small>سعوديّة · جدّة · ٢٦ · ٨٢٪ توافق</small></div>
+          </div>
+          <div class="info-note" style="margin-top:10px">طلبت التوافق معك · تفاصيل الطلب: «معجبة بشروطك ومواصفاتك»</div>
+        </div>
+        <div>
+          <div class="arrow">←</div>
+          <div class="info-note" style="text-align:center;margin-top:8px">
+            <div style="color:var(--muted);font-size:11px">وصل منذ</div>
+            <b style="color:var(--ink)">4 ساعات</b>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-p success"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg> قبول</button>
+          <button class="btn-p danger">رفض</button>
+        </div>
+      </div>
+
+      <div class="eng-card">
+        <div>
+          <span class="status-tag followup">تعثّر — بحاجة لمتابعة المستشار</span>
+          <div class="party">
+            <span class="a av-p2">م</span>
+            <div class="n">مريم<small>سعوديّة · الدمّام · ٣٢ · ٧٨٪ توافق</small></div>
+          </div>
+          <div class="info-note" style="margin-top:10px">مقبولة منذ 7 أيّام · لم يتمّ تواصل خارج المنصّة بعد · تمّ إخطار المستشار</div>
+        </div>
+        <div>
+          <div class="arrow">←</div>
+          <div class="info-note" style="text-align:center;margin-top:8px">
+            <div style="color:var(--muted);font-size:11px">حالة المتابعة</div>
+            <b style="color:var(--danger)">تنبيه للمستشار</b>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-p primary">تواصل مع المستشار</button>
+          <button class="btn-p">استئناف المحادثة</button>
+          <button class="btn-p danger">إنهاء الخطبة</button>
+        </div>
+      </div>
+
+      <div style="margin-top:30px;padding:20px;background:var(--gold-soft);border:1px solid var(--gold);border-radius:var(--radius);display:flex;gap:14px;align-items:center">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--gold);color:#3D3220;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6z"/></svg>
+        </div>
+        <div>
+          <div style="font-weight:800;color:#5A4A1E;margin-bottom:4px">محاولات الخطبة المتبقّية</div>
+          <div style="color:#5A4A1E;font-size:13px">لديك <b style="font-family:var(--font-en)">3</b> محاولات من أصل <b style="font-family:var(--font-en)">7</b>. عند نفادها ستحتاج تجديد رسم الجديّة (٥٧٥ ﷼).</div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>mountShell('engagement');</script>
+</body>
+</html>
