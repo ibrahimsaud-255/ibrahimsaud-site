@@ -22,6 +22,7 @@
       items: [
         { key: "search",    label: "البحث المتقدّم", href: "search.html", icon: "search" },
         { key: "matches",   label: "المتوافقون معي", href: "search.html?matched=1", icon: "match" },
+        { key: "maps",      label: "الخريطة التفاعليّة", href: "maps.html", icon: "map" },
         { key: "counselor", label: "المستشار الأسريّ", href: "counselor.html", icon: "phone" },
       ],
     },
@@ -53,6 +54,7 @@
     family:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="10" r="3"/><path d="M3 21a6 6 0 0112 0M14 21a5 5 0 018-4"/></svg>',
     network:   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v3M12 10l-6 7M12 10l6 7"/></svg>',
     shield:    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg>',
+    map:       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>',
   };
 
   function renderSidebar(activeKey) {

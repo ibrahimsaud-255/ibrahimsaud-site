@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>الخريطة التفاعليّة — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  /* Map layout */
+  .map-layout {
+    display: grid; grid-template-columns: 1fr 340px; gap: 16px;
+    height: calc(100vh - 200px); min-height: 560px;
+  }
+  .map-frame {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; position: relative;
+  }
+  #saudi-map { width: 100%; height: 100%; background: var(--navy-ghost); }
+
+  .map-side {
+    display: flex; flex-direction: column; gap: 12px; overflow-y: auto;
+    padding-inline-end: 4px;
+  }
+  .map-legend {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .map-legend h4 { margin: 0 0 10px; font-size: 13px; font-weight: 800; color: var(--ink); }
+  .lg-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .lg-dot { width: 12px; height: 12px; border-radius: 999px; }
+
+  .map-filters {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px;
+  }
+  .map-filters h4 { margin: 0 0 12px; font-size: 13px; font-weight: 800; }
+  .map-filters .fld { margin-bottom: 10px; }
+  .map-filters .fld label { display: block; font-size: 11.5px; font-weight: 700; color: var(--ink-2); margin-bottom: 4px; }
+  .map-filters .fld select {
+    width: 100%; padding: 8px 12px; background: var(--cream-2); border: 1px solid var(--line);
+    border-radius: 8px; font-size: 13px; color: var(--ink); outline: none; font-family: var(--font);
+  }
+  .map-filters .fld input { width: 100%; padding: 8px 12px; background: var(--cream-2); border: 1px solid var(--line); border-radius: 8px; font-size: 13px; }
+
+  .city-panel {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px; min-height: 200px;
+  }
+  .city-panel .cp-empty {
+    text-align: center; padding: 30px 10px; color: var(--muted); font-size: 12.5px;
+  }
+  .city-panel .cp-empty svg { width: 32px; height: 32px; color: var(--line); margin: 0 auto 10px; }
+  .city-panel .cp-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px dashed var(--line-2); }
+  .city-panel .cp-head h4 { margin: 0; font-size: 15px; font-weight: 800; color: var(--navy); display: inline-flex; align-items: center; gap: 6px; }
+  .city-panel .cp-head svg { width: 14px; height: 14px; }
+  .city-panel .cp-head b { color: var(--gold); font-family: var(--font-en); }
+  .cp-members { display: grid; gap: 8px; }
+  .cp-m {
+    display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+    background: var(--cream-2); border-radius: 10px; cursor: pointer;
+    transition: background .12s;
+  }
+  .cp-m:hover { background: var(--navy-ghost); }
+  .cp-m .a { width: 34px; height: 34px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 12px; flex-shrink: 0; }
+  .cp-m .n { font-weight: 700; font-size: 12.5px; color: var(--ink); }
+  .cp-m .n small { display: block; color: var(--muted); font-size: 10.5px; font-weight: 500; margin-top: 1px; }
+  .cp-m .score { margin-inline-start: auto; font-family: var(--font-en); font-weight: 800; font-size: 12px; color: var(--success); background: rgba(76,175,123,0.12); padding: 2px 8px; border-radius: 999px; }
+
+  /* Custom leaflet marker */
+  .region-marker {
+    background: transparent; border: 0;
+  }
+  .region-bubble {
+    background: var(--navy); color: #fff; border-radius: 999px;
+    padding: 6px 12px; font-family: var(--font-en); font-weight: 700;
+    font-size: 13px; box-shadow: 0 6px 18px rgba(61,90,128,0.35);
+    border: 2.5px solid var(--gold); display: inline-flex; align-items: center; gap: 6px;
+    transform: translate(-50%, -50%); cursor: pointer;
+    transition: transform .12s;
+  }
+  .region-bubble:hover { transform: translate(-50%, -50%) scale(1.08); }
+  .region-bubble .rb-city { font-family: var(--font); font-weight: 700; }
+  .region-bubble.small { padding: 4px 8px; font-size: 11px; border-width: 2px; }
+  .region-bubble.large { padding: 8px 16px; font-size: 15px; }
+
+  /* Regions list view */
+  .regions-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .region-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 16px 18px; cursor: pointer; transition: all .12s;
+  }
+  .region-card:hover { border-color: var(--navy-soft); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
+  .region-card .rc-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .region-card h4 { margin: 0; font-size: 15px; font-weight: 800; color: var(--ink); }
+  .region-card .rc-count { font-family: var(--font-en); font-weight: 800; font-size: 20px; color: var(--navy); }
+  .region-card .rc-meta { color: var(--muted); font-size: 11.5px; margin-bottom: 10px; }
+  .region-card .rc-bars { display: flex; gap: 3px; height: 5px; margin-top: 8px; border-radius: 999px; overflow: hidden; }
+  .rb-1 { background: var(--navy); flex: 3; }
+  .rb-2 { background: var(--gold); flex: 2; }
+  .rb-3 { background: var(--success); flex: 1; }
+
+  .view-tabs {
+    display: inline-flex; background: var(--paper); padding: 4px; border: 1px solid var(--line);
+    border-radius: 999px;
+  }
+  .view-tabs button {
+    padding: 8px 18px; border-radius: 999px; font-weight: 700; font-size: 13px;
+    color: var(--muted); background: transparent; display: inline-flex; align-items: center; gap: 6px;
+  }
+  .view-tabs button.active { background: var(--navy); color: #fff; }
+  .view-tabs svg { width: 14px; height: 14px; }
+
+  /* Popup style overrides */
+  .leaflet-popup-content-wrapper { border-radius: 10px !important; font-family: var(--font); }
+  .leaflet-popup-content { margin: 12px 14px !important; font-family: var(--font); }
+  .leaflet-container { font-family: var(--font); }
+
+  @media (max-width: 900px) {
+    .map-layout { grid-template-columns: 1fr; height: auto; }
+    #saudi-map { min-height: 400px; }
+    .map-side { max-height: none; }
+  }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — خريطة توزيع المتوافقين على مدن المملكة</div><a href="dashboard.html">← عودة</a></div>
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> الخريطة التفاعليّة</div>
+          <h1>خريطة توزيع المتوافقين</h1>
+        </div>
+        <div class="view-tabs">
+          <button class="active" onclick="switchView('map')" id="btn-map">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            خريطة
+          </button>
+          <button onclick="switchView('list')" id="btn-list">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+            قائمة بالمناطق
+          </button>
+        </div>
+      </div>
+
+      <!-- MAP VIEW -->
+      <div id="view-map" class="map-layout">
+        <div class="map-frame">
+          <div id="saudi-map"></div>
+        </div>
+
+        <aside class="map-side">
+          <div class="map-filters">
+            <h4>تصفية النتائج</h4>
+            <div class="fld">
+              <label>الجنسيّة</label>
+              <select><option>سعوديّة</option><option>الكلّ</option></select>
+            </div>
+            <div class="fld">
+              <label>الحالة الاجتماعيّة</label>
+              <select><option>الكلّ</option><option>بكر</option><option>مطلّقة</option><option>أرملة</option></select>
+            </div>
+            <div class="fld">
+              <label>العمر (من — إلى)</label>
+              <div style="display:flex;gap:6px">
+                <input type="number" value="22" style="width:50%" />
+                <input type="number" value="35" style="width:50%" />
+              </div>
+            </div>
+            <button class="btn-p primary" style="width:100%;justify-content:center;margin-top:6px">تحديث الخريطة</button>
+          </div>
+
+          <div class="map-legend">
+            <h4>مفتاح الخريطة</h4>
+            <div class="lg-item"><span class="lg-dot" style="background:var(--gold)"></span> حجم الدائرة = عدد الأعضاء</div>
+            <div class="lg-item"><span class="lg-dot" style="background:var(--navy)"></span> اللون الأزرق = مدن نشطة</div>
+            <div class="lg-item"><span class="lg-dot" style="background:var(--success)"></span> الأخضر = توافق ≥ ٨٠٪</div>
+            <div class="lg-item" style="color:var(--ink-2);font-weight:700;margin-top:8px">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+              اضغط على أيّ مدينة لعرض الأعضاء
+            </div>
+          </div>
+
+          <div class="city-panel" id="city-panel">
+            <div class="cp-empty">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7 7-13a7 7 0 10-14 0c0 6 7 13 7 13z"/><circle cx="12" cy="9" r="2"/></svg>
+              <h4 style="margin:0 0 4px;color:var(--ink);font-size:13px">اختر مدينة</h4>
+              <p style="margin:0">اضغط على أيّ فقاعة في الخريطة لرؤية الأعضاء المتوافقين هناك.</p>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <!-- LIST VIEW -->
+      <div id="view-list" style="display:none">
+        <div class="regions-list">
+
+          <div class="region-card">
+            <div class="rc-head"><h4>الرياض</h4><span class="rc-count">42</span></div>
+            <div class="rc-meta">منطقة الرياض · العاصمة</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-2"></span><span class="rb-3"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>جدّة</h4><span class="rc-count">28</span></div>
+            <div class="rc-meta">منطقة مكّة</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-2" style="flex:1.5"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>الخبر</h4><span class="rc-count">24</span></div>
+            <div class="rc-meta">المنطقة الشرقيّة · مقرّ الجمعيّة</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-2"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>مكّة المكرّمة</h4><span class="rc-count">19</span></div>
+            <div class="rc-meta">منطقة مكّة</div>
+            <div class="rc-bars"><span class="rb-1" style="flex:2"></span><span class="rb-2"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>الدمّام</h4><span class="rc-count">17</span></div>
+            <div class="rc-meta">المنطقة الشرقيّة</div>
+            <div class="rc-bars"><span class="rb-1" style="flex:2"></span><span class="rb-2"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>المدينة المنوّرة</h4><span class="rc-count">15</span></div>
+            <div class="rc-meta">منطقة المدينة</div>
+            <div class="rc-bars"><span class="rb-1" style="flex:1.5"></span><span class="rb-2"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>بريدة</h4><span class="rc-count">12</span></div>
+            <div class="rc-meta">منطقة القصيم</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-2"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>الطائف</h4><span class="rc-count">9</span></div>
+            <div class="rc-meta">منطقة مكّة</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-3"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>أبها</h4><span class="rc-count">8</span></div>
+            <div class="rc-meta">منطقة عسير · الجنوب</div>
+            <div class="rc-bars"><span class="rb-1"></span><span class="rb-3"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>تبوك</h4><span class="rc-count">6</span></div>
+            <div class="rc-meta">منطقة تبوك · الشمال</div>
+            <div class="rc-bars"><span class="rb-1"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>حائل</h4><span class="rc-count">5</span></div>
+            <div class="rc-meta">منطقة حائل</div>
+            <div class="rc-bars"><span class="rb-1"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>جيزان</h4><span class="rc-count">4</span></div>
+            <div class="rc-meta">منطقة جازان · الجنوب</div>
+            <div class="rc-bars"><span class="rb-1"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>نجران</h4><span class="rc-count">3</span></div>
+            <div class="rc-meta">منطقة نجران</div>
+            <div class="rc-bars"><span class="rb-1"></span></div>
+          </div>
+          <div class="region-card">
+            <div class="rc-head"><h4>الأحساء</h4><span class="rc-count">7</span></div>
+            <div class="rc-meta">المنطقة الشرقيّة</div>
+            <div class="rc-bars"><span class="rb-1"></span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="assets/shell.js"></script>
+<script>
+  mountShell('maps');
+
+  // Saudi cities data
+  const cities = [
+    { name: "الرياض", lat: 24.7136, lng: 46.6753, count: 42, size: "large",
+      members: [
+        { n: "رند٢٥", id: "#142870", av: "av-p1", score: 94 },
+        { n: "سعد٩٩", id: "#134221", av: "av-p2", score: 91 },
+        { n: "أحمد٧", id: "#128465", av: "av-p3", score: 87 },
+      ]
+    },
+    { name: "جدّة", lat: 21.4858, lng: 39.1925, count: 28, size: "large",
+      members: [
+        { n: "عبدالعزيز", id: "#128499", av: "av-p2", score: 88 },
+        { n: "خالد٣٣", id: "#118552", av: "av-p4", score: 82 },
+      ]
+    },
+    { name: "مكّة", lat: 21.4225, lng: 39.8262, count: 19, size: "normal",
+      members: [
+        { n: "رهف", id: "#087654", av: "av-p7", score: 65 },
+        { n: "سوار", id: "#076544", av: "av-p8", score: 61 },
+      ]
+    },
+    { name: "المدينة", lat: 24.4667, lng: 39.6117, count: 15, size: "normal", members: [{ n: "نور", id: "#132165", av: "av-p5", score: 78 }] },
+    { name: "الدمّام", lat: 26.4207, lng: 50.0888, count: 17, size: "normal", members: [{ n: "هيا", id: "#118552", av: "av-p4", score: 73 }] },
+    { name: "الخبر", lat: 26.2172, lng: 50.1971, count: 24, size: "large",
+      members: [
+        { n: "عسل٧", id: "#128412", av: "av-p3", score: 87 },
+        { n: "فهد", id: "#141235", av: "av-p6", score: 85 },
+      ]
+    },
+    { name: "الطائف", lat: 21.2703, lng: 40.4158, count: 9, size: "small", members: [{ n: "لينا", id: "#095321", av: "av-p6", score: 68 }] },
+    { name: "بريدة", lat: 26.3260, lng: 43.9750, count: 12, size: "normal", members: [{ n: "ملك", id: "#082144", av: "av-p1", score: 74 }] },
+    { name: "أبها", lat: 18.2465, lng: 42.5117, count: 8, size: "small", members: [{ n: "دلين", id: "#065432", av: "av-p8", score: 66 }] },
+    { name: "تبوك", lat: 28.3838, lng: 36.5550, count: 6, size: "small", members: [{ n: "أميرة", id: "#054321", av: "av-p2", score: 72 }] },
+    { name: "حائل", lat: 27.5219, lng: 41.7008, count: 5, size: "small", members: [{ n: "نوني", id: "#052113", av: "av-p6", score: 69 }] },
+    { name: "جيزان", lat: 16.8892, lng: 42.5511, count: 4, size: "small", members: [] },
+    { name: "نجران", lat: 17.4924, lng: 44.1277, count: 3, size: "small", members: [] },
+    { name: "الأحساء", lat: 25.3805, lng: 49.5834, count: 7, size: "small", members: [{ n: "مريم", id: "#134221", av: "av-p2", score: 78 }] },
+  ];
+
+  // Init map
+  const map = L.map('saudi-map', {
+    zoomControl: true, scrollWheelZoom: true, attributionControl: true,
+  }).setView([24.5, 45.0], 5);
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    maxZoom: 18,
+  }).addTo(map);
+
+  // Custom markers
+  cities.forEach(c => {
+    const html = `<div class="region-bubble ${c.size}">
+      <span>${c.count}</span>
+      <span class="rb-city">${c.name}</span>
+    </div>`;
+    const icon = L.divIcon({ className: 'region-marker', html, iconSize: [0, 0] });
+    const marker = L.marker([c.lat, c.lng], { icon }).addTo(map);
+    marker.on('click', () => showCity(c));
+  });
+
+  function showCity(c) {
+    const panel = document.getElementById('city-panel');
+    let membersHtml = '';
+    if (c.members.length === 0) {
+      membersHtml = `<div style="color:var(--muted);font-size:12px;text-align:center;padding:14px 0">لا يوجد متوافقون معك في هذه المدينة حاليًا.</div>`;
+    } else {
+      membersHtml = c.members.map(m => `
+        <a class="cp-m" href="profile.html">
+          <span class="a ${m.av}">${m.n[0]}</span>
+          <div class="n">${m.n}<small>${m.id}</small></div>
+          <span class="score">${m.score}٪</span>
+        </a>
+      `).join('');
+    }
+    panel.innerHTML = `
+      <div class="cp-head">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s7-7 7-13a7 7 0 10-14 0c0 6 7 13 7 13z"/><circle cx="12" cy="9" r="2"/></svg>
+          ${c.name}
+        </h4>
+        <span><b>${c.count}</b> عضواً</span>
+      </div>
+      <div class="cp-members">${membersHtml}</div>
+      ${c.members.length > 0 ? `<a href="search.html" style="display:block;text-align:center;margin-top:12px;padding:8px;background:var(--navy-ghost);color:var(--navy);border-radius:8px;font-size:12px;font-weight:700">عرض جميع الـ ${c.count} عضواً</a>` : ''}
+    `;
+  }
+
+  function switchView(mode) {
+    document.getElementById('view-map').style.display = mode === 'map' ? 'grid' : 'none';
+    document.getElementById('view-list').style.display = mode === 'list' ? 'block' : 'none';
+    document.getElementById('btn-map').classList.toggle('active', mode === 'map');
+    document.getElementById('btn-list').classList.toggle('active', mode === 'list');
+    if (mode === 'map') setTimeout(() => map.invalidateSize(), 100);
+  }
+</script>
+</body>
+</html>

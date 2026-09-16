@@ -101,9 +101,86 @@
         </div>
       </div>
 
+      <!-- Flow explanation -->
+      <div style="background:linear-gradient(135deg,var(--navy-ghost) 0%,var(--paper) 100%);border:1px solid var(--navy-soft);border-radius:var(--radius);padding:18px 22px;margin-bottom:22px">
+        <div style="display:flex;gap:14px;align-items:flex-start">
+          <div style="width:40px;height:40px;border-radius:10px;background:var(--navy);color:#fff;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="10"/></svg>
+          </div>
+          <div style="flex:1">
+            <div style="font-weight:800;color:var(--ink);margin-bottom:6px">تدفّق ثلاث خطوات لحماية ابنتك</div>
+            <div style="display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:10px">
+              <div style="background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-align:center;font-size:12px">
+                <div style="color:var(--gold);font-weight:800;font-family:var(--font-en);margin-bottom:2px">١</div>
+                <b style="color:var(--ink)">قبول مبدئيّ</b>
+              </div>
+              <div style="color:var(--muted);font-weight:800">←</div>
+              <div style="background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-align:center;font-size:12px">
+                <div style="color:var(--navy);font-weight:800;font-family:var(--font-en);margin-bottom:2px">٢</div>
+                <b style="color:var(--ink)">محادثة مع المتقدّم</b>
+              </div>
+              <div style="color:var(--muted);font-weight:800">←</div>
+              <div style="background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:8px 12px;text-align:center;font-size:12px">
+                <div style="color:var(--success);font-weight:800;font-family:var(--font-en);margin-bottom:2px">٣</div>
+                <b style="color:var(--ink)">قرار نهائيّ</b>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cases in conversation phase (accepted initially, now chatting) -->
+      <div class="sec-head">
+        <h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          في مرحلة التواصل المبدئيّ (٢)
+        </h3>
+      </div>
+
+      <div class="data-card" style="margin-bottom:22px">
+        <table class="data-table">
+          <thead>
+            <tr><th>المتقدّم</th><th>الابنة</th><th>الجنسيّة · المدينة</th><th>المرحلة</th><th>آخر رسالة</th><th>إجراء</th></tr>
+          </thead>
+          <tbody>
+            <tr style="background:linear-gradient(90deg,var(--navy-ghost) 0%,transparent 40%)">
+              <td><b>خالد٧٢</b><br/><small style="color:var(--muted)" class="en">#112458</small></td>
+              <td>هند</td>
+              <td>سعوديّ · الرياض</td>
+              <td><span class="tag" style="background:var(--navy-ghost);color:var(--navy)">مبدئيّ · يوم ٤</span></td>
+              <td style="color:var(--muted);font-size:12px">«شكراً على تجاوبكم…»</td>
+              <td class="row-actions">
+                <button class="btn-p primary" onclick="location.href='chat.html'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  متابعة المحادثة
+                </button>
+                <button class="btn-p success">قبول نهائيّ</button>
+                <button class="btn-p danger">اعتذار</button>
+              </td>
+            </tr>
+            <tr style="background:linear-gradient(90deg,var(--navy-ghost) 0%,transparent 40%)">
+              <td><b>يوسف٨</b><br/><small style="color:var(--muted)" class="en">#098762</small></td>
+              <td>مها</td>
+              <td>سعوديّ · الخبر</td>
+              <td><span class="tag" style="background:var(--navy-ghost);color:var(--navy)">مبدئيّ · يوم ٢</span></td>
+              <td style="color:var(--muted);font-size:12px">«أرحّب بأيّ استفسار…»</td>
+              <td class="row-actions">
+                <button class="btn-p primary" onclick="location.href='chat.html'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  متابعة المحادثة
+                </button>
+                <button class="btn-p success">قبول نهائيّ</button>
+                <button class="btn-p danger">اعتذار</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
       <!-- Incoming requests -->
       <div class="sec-head">
         <h3><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg> طلبات التقدّم الواردة (٦)</h3>
+        <span style="color:var(--muted);font-size:12px">القبول المبدئيّ يفتح قناة محادثة بينك وبين المتقدّم — لا يعني الموافقة النهائيّة.</span>
       </div>
 
       <div class="data-card">
@@ -120,7 +197,10 @@
               <td><span class="tag on" style="font-family:var(--font-en)">٩٢٪</span></td>
               <td>منذ ساعتين</td>
               <td class="row-actions">
-                <button class="btn-p success">قبول</button>
+                <button class="btn-p success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  قبول مبدئيّ
+                </button>
                 <button class="btn-p danger">رفض</button>
               </td>
             </tr>
@@ -132,7 +212,10 @@
               <td><span class="tag on" style="font-family:var(--font-en)">٨٧٪</span></td>
               <td>أمس</td>
               <td class="row-actions">
-                <button class="btn-p success">قبول</button>
+                <button class="btn-p success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  قبول مبدئيّ
+                </button>
                 <button class="btn-p danger">رفض</button>
               </td>
             </tr>
@@ -144,7 +227,10 @@
               <td><span class="tag warn" style="font-family:var(--font-en)">٧١٪</span></td>
               <td>أمس</td>
               <td class="row-actions">
-                <button class="btn-p success">قبول</button>
+                <button class="btn-p success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  قبول مبدئيّ
+                </button>
                 <button class="btn-p danger">رفض</button>
               </td>
             </tr>
@@ -156,7 +242,10 @@
               <td><span class="tag on" style="font-family:var(--font-en)">٨٩٪</span></td>
               <td>الأحد</td>
               <td class="row-actions">
-                <button class="btn-p success">قبول</button>
+                <button class="btn-p success">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                  قبول مبدئيّ
+                </button>
                 <button class="btn-p danger">رفض</button>
               </td>
             </tr>
