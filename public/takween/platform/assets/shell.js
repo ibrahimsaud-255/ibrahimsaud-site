@@ -87,6 +87,9 @@
   function renderTopbar(pageTitle) {
     return `
       <div class="topbar-app">
+        <button class="hamburger-btn" onclick="toggleSidebar()" aria-label="القائمة">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
         <div class="searchbar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
           <input type="text" placeholder="ابحث بالاسم أو رقم العضويّة…" />
@@ -96,11 +99,11 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
             <span class="dot-badge">3</span>
           </a>
-          <a class="icon-round" title="الإشعارات">
+          <a class="icon-round hide-mobile" href="notifications.html" title="الإشعارات">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M14 21a2 2 0 01-4 0"/></svg>
             <span class="dot-badge">5</span>
           </a>
-          <a class="icon-round" href="counselor.html" title="المستشار الأسريّ">
+          <a class="icon-round hide-mobile" href="counselor.html" title="المستشار الأسريّ">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 01-2.2 2 19.8 19.8 0 01-8.6-3.1 19.5 19.5 0 01-6-6A19.8 19.8 0 012.1 4.2 2 2 0 014.1 2h3a2 2 0 012 1.7c.1.9.3 1.8.6 2.6a2 2 0 01-.4 2.1L8 9.8a16 16 0 006 6l1.4-1.4a2 2 0 012.1-.4c.8.3 1.7.5 2.6.6a2 2 0 011.7 2z"/></svg>
           </a>
           <a class="me" href="settings.html">
@@ -109,8 +112,15 @@
           </a>
         </div>
       </div>
+      <div class="side-backdrop" onclick="toggleSidebar()"></div>
     `;
   }
+
+  window.toggleSidebar = function () {
+    document.querySelector('.side')?.classList.toggle('open');
+    document.querySelector('.side-backdrop')?.classList.toggle('open');
+    document.body.classList.toggle('side-open');
+  };
 
   window.mountShell = function (activeKey) {
     const sideMount = document.querySelector('[data-shell="side"]');
