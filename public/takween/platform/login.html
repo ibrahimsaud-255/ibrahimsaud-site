@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>الدخول والتسجيل — منصّة التوافق الأسريّ | تكوين الأسرة</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.0" />
+</head>
+<body>
+
+<div class="proto-ribbon">
+  <div class="msg"><span class="dot"></span> نموذج تفاعليّ (Prototype) — منصّة التوافق الأسريّ</div>
+  <a href="../index.html">← عودة للموقع التعريفيّ</a>
+</div>
+
+<div class="auth-page">
+  <header class="auth-header">
+    <a href="../index.html" class="brand"><img src="../assets/logo.webp" alt="تكوين الأسرة" /></a>
+    <a href="../index.html" class="home-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
+      الصفحة الرئيسيّة
+    </a>
+  </header>
+
+  <div class="auth-body">
+    <div class="auth-wrap">
+      <div class="auth-title-row">
+        <span class="pill"><span class="dot"></span> منصّة رقميّة آمنة · بإشراف الجمعيّة</span>
+        <h1>مرحباً بك في <span class="accent">منصّة التوافق الأسريّ</span></h1>
+        <p>ابحث عن شريك حياتك في بيئة موثوقة وفق ضوابط شرعيّة، بإشراف مستشاري جمعيّة تكوين الأسرة.</p>
+      </div>
+
+      <div class="auth-split">
+        <!-- Signup card -->
+        <div class="auth-card">
+          <h2>تسجيل عضويّة جديدة</h2>
+          <p class="sub">اختر نوع الحساب المناسب لك</p>
+
+          <div class="role-btns">
+            <button class="role-btn man" onclick="location.href='dashboard.html?role=man'">
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+              </span>
+              <span class="body">
+                <span class="t">أنا شابّ وأرغب في الزواج</span>
+                <span class="d">أسجّل مواصفاتي وأبحث عن الطرف المناسب</span>
+              </span>
+            </button>
+
+            <button class="role-btn woman" onclick="location.href='dashboard.html?role=woman'">
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+              </span>
+              <span class="body">
+                <span class="t">أنا فتاة وأرغب في الزواج</span>
+                <span class="d">أسجّل مواصفاتي وأستعرض طلبات التقدّم</span>
+              </span>
+            </button>
+
+            <button class="role-btn guardian" onclick="location.href='dashboard.html?role=guardian'">
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M23 21v-2a4 4 0 00-3-3.9M16 3.1a4 4 0 010 7.8"/><circle cx="9" cy="7" r="4"/></svg>
+              </span>
+              <span class="body">
+                <span class="t">أنا وليّ أمر أُدير حسابات بناتي</span>
+                <span class="d">أضيف عدّة بروفايلات وأتابع الطلبات نيابةً عنهنّ</span>
+              </span>
+            </button>
+
+            <button class="role-btn broker" onclick="location.href='dashboard.html?role=broker'">
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21a6 6 0 0112 0M16 3a4 4 0 010 8M22 21a6 6 0 00-4-5.6"/></svg>
+              </span>
+              <span class="body">
+                <span class="t">أنا وسيط وعندي مستفيدون</span>
+                <span class="d">حسابي يجمع المستفيدين تحته ويحفظ لي حقّي</span>
+              </span>
+            </button>
+          </div>
+
+          <p class="terms">
+            بالتسجيل، أنت توافق على <a href="#">شروط الاستخدام</a> و <a href="#">سياسة الخصوصيّة</a>
+          </p>
+        </div>
+
+        <!-- Login card -->
+        <div class="auth-card">
+          <h2>تسجيل الدخول</h2>
+          <p class="sub">للأعضاء المسجّلين مسبقاً</p>
+
+          <div class="form-stack">
+            <div class="field-row">
+              <span class="flag">SA</span>
+              <span class="code">+966</span>
+              <input type="tel" placeholder="رقم الجوّال" value="555824155" />
+            </div>
+            <div class="field-row">
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+              </span>
+              <input type="password" placeholder="كلمة المرور" value="********" />
+              <span class="ic">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </span>
+            </div>
+            <div class="form-row">
+              <label class="chk"><input type="checkbox" checked /> تذكّرني</label>
+              <a href="#">نسيت كلمة المرور؟</a>
+            </div>
+            <button class="submit-btn" onclick="location.href='dashboard.html'">تسجيل الدخول</button>
+          </div>
+
+          <p class="auth-footer-note">
+            جديد على المنصّة؟ <a href="#" onclick="event.preventDefault();document.querySelector('.role-btns').scrollIntoView({behavior:'smooth'})">ابدأ التسجيل ←</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
