@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>شروطي — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  body { background: var(--cream); min-height: 100vh; }
+  .wiz { min-height: 100vh; display: flex; flex-direction: column; }
+  .wiz-top { padding: 16px 30px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 20px; }
+  .wiz-top .exit { color: var(--muted); font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+  .wiz-top .exit svg { width: 14px; height: 14px; }
+  .wiz-top .brand { text-align: center; color: var(--gold); font-weight: 800; font-size: 18px; display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+  .wiz-top .brand svg { width: 22px; height: 22px; }
+  .wiz-top .counter { background: var(--gold-soft); color: #7A5F1E; padding: 6px 14px; border-radius: 999px; font-family: var(--font-en); font-weight: 700; font-size: 13px; }
+
+  .wiz-progress { padding: 0 30px 14px; display: flex; gap: 6px; }
+  .wiz-progress .seg { flex: 1; height: 5px; background: var(--line-2); border-radius: 999px; transition: background .25s; }
+  .wiz-progress .seg.done { background: var(--gold); }
+
+  .wiz-controls { display: flex; justify-content: flex-end; padding: 4px 30px 20px; color: var(--muted); font-size: 12.5px; }
+  .wiz-controls label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .wiz-controls input { accent-color: var(--gold); }
+
+  .wiz-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px 30px 40px; position: relative; }
+  .wiz-content { max-width: 720px; width: 100%; text-align: center; }
+  .wiz-hint { color: var(--gold); font-weight: 700; font-size: 13px; margin-bottom: 20px; letter-spacing: 1px; }
+  .wiz-title { color: var(--gold); font-size: clamp(30px, 5vw, 48px); font-weight: 800; margin: 0 0 40px; letter-spacing: -.5px; }
+
+  .opts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .opt { padding: 12px 24px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 999px; font-size: 15px; font-weight: 700; color: var(--ink-2); cursor: pointer; transition: all .12s; user-select: none; }
+  .opt:hover { border-color: var(--gold); color: #8A6D2E; }
+  .opt.selected { background: var(--gold); color: #3D3220; border-color: var(--gold); box-shadow: 0 8px 20px rgba(201,169,97,.32); }
+
+  .dropdown-input { max-width: 480px; margin: 0 auto; position: relative; }
+  .dropdown-input select, .dropdown-input input { width: 100%; padding: 18px 60px 18px 20px; border: 1.5px solid var(--line); background: var(--paper); border-radius: 16px; font-size: 20px; color: #8A6D2E; font-weight: 700; text-align: center; outline: none; appearance: none; font-family: var(--font); }
+  .dropdown-input::after { content: ""; position: absolute; left: 22px; top: 50%; width: 10px; height: 10px; border-right: 2.5px solid var(--muted); border-bottom: 2.5px solid var(--muted); transform: translateY(-70%) rotate(45deg); pointer-events: none; }
+
+  .range-wiz { max-width: 480px; margin: 0 auto; display: flex; gap: 20px; align-items: center; justify-content: center; }
+  .range-wiz .range-fld { flex: 1; }
+  .range-wiz .range-fld label { display: block; font-size: 14px; color: var(--muted); font-weight: 700; margin-bottom: 8px; }
+  .range-wiz .range-fld input { width: 100%; padding: 15px; border: 1.5px solid var(--line); border-radius: 12px; text-align: center; font-family: var(--font-en); font-weight: 800; font-size: 22px; color: #8A6D2E; background: var(--paper); outline: none; }
+
+  .textarea-box { max-width: 640px; margin: 0 auto; }
+  .textarea-box textarea { width: 100%; min-height: 200px; padding: 20px; border: 2px solid var(--gold); background: var(--paper); border-radius: 20px; font-size: 15px; color: var(--ink); font-family: var(--font); outline: none; resize: vertical; text-align: right; line-height: 1.85; }
+  .save-btn { margin: 24px auto 0; display: block; padding: 15px 60px; border-radius: 14px; background: var(--gold); color: #3D3220; font-weight: 800; font-size: 16px; border: 0; cursor: pointer; box-shadow: 0 8px 24px rgba(201,169,97,.32); }
+  .save-btn:hover { background: #B8974E; color: #fff; }
+
+  .wiz-arrows { display: flex; justify-content: space-between; align-items: center; padding: 0 30px 30px; position: absolute; bottom: 20px; right: 0; left: 0; pointer-events: none; }
+  .arrow-btn { width: 54px; height: 54px; border-radius: 999px; background: var(--gold); color: #3D3220; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 8px 22px rgba(201,169,97,.35); cursor: pointer; pointer-events: all; transition: transform .12s; }
+  .arrow-btn:hover { transform: scale(1.08); }
+  .arrow-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+  .arrow-btn svg { width: 22px; height: 22px; }
+
+  @media (max-width: 720px) {
+    .wiz-top { padding: 14px 18px; gap: 10px; }
+    .wiz-top .brand { font-size: 15px; }
+    .wiz-top .exit span { display: none; }
+    .wiz-top .counter { padding: 5px 10px; font-size: 12px; }
+    .wiz-progress { padding: 0 18px 12px; gap: 3px; }
+    .wiz-body { padding: 20px 18px 100px; }
+    .wiz-title { font-size: 28px; margin-bottom: 30px; }
+    .opts { gap: 8px; } .opt { padding: 10px 18px; font-size: 14px; }
+    .wiz-arrows { padding: 0 18px 20px; } .arrow-btn { width: 46px; height: 46px; }
+    .dropdown-input select, .dropdown-input input { padding: 15px 50px 15px 15px; font-size: 17px; }
+    .range-wiz { gap: 10px; }
+    .range-wiz .range-fld input { font-size: 18px; padding: 12px; }
+  }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — شروطي في الطرف الآخر (١٦ خطوة)</div><a href="wizard-profile.html">← عودة</a> <span style="margin-inline-start:14px;padding-inline-start:14px;border-inline-start:1px solid rgba(232,206,138,0.3);color:#fff;opacity:.9">تصميم <b style="color:#E8CE8A">إبراهيم سعود</b></span></div>
+
+<div class="wiz">
+  <div class="wiz-top">
+    <a href="dashboard.html" class="exit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>
+      <span>خروج</span>
+    </a>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      شروطي في الطرف الآخر
+    </div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">16</span></div>
+  </div>
+
+  <div class="wiz-progress" id="progress"></div>
+
+  <div class="wiz-controls">
+    <label><input type="checkbox" id="autoAdvance" checked /> التقدّم التلقائي بعد الاختيار</label>
+  </div>
+
+  <div class="wiz-body">
+    <div class="wiz-content">
+      <div class="wiz-hint" id="hint">اترك أيّ شرط «بدون شروط» لتوسيع خياراتك</div>
+      <h1 class="wiz-title" id="title"></h1>
+      <div id="input-area"></div>
+    </div>
+
+    <div class="wiz-arrows">
+      <button class="arrow-btn" id="prev" onclick="prev()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg></button>
+      <button class="arrow-btn" id="next" onclick="next()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STEPS = [
+    { key: "status", title: "الحالة الاجتماعيّة", type: "pills-multi",
+      opts: ["بكر", "مطلّقة", "أرملة", "بدون شروط"] },
+    { key: "nationality", title: "الجنسيّة", type: "select",
+      opts: ["الجنسيّة", "بدون شروط", "سعوديّة", "مصريّة", "يمنيّة", "سوريّة", "أخرى"] },
+    { key: "residence", title: "الإقامة", type: "select",
+      opts: ["الإقامة", "بدون شروط", "السعوديّة", "الإمارات", "الكويت", "قطر"] },
+    { key: "city", title: "المدينة", type: "select",
+      opts: ["المدينة", "بدون شروط", "الرياض", "جدّة", "الخبر", "مكّة", "المدينة", "الدمّام", "بريدة"] },
+    { key: "age", title: "العمر (من — إلى)", type: "range",
+      from: "من", to: "إلى", suffix: "سنة", defaultFrom: 22, defaultTo: 35 },
+    { key: "tribe", title: "القبيلة", type: "pills",
+      opts: ["قبيليّ", "غير قبيليّ", "بدون شروط"] },
+    { key: "origin", title: "الأصل", type: "pills-multi",
+      opts: ["الشرقيّة", "الحجاز", "الجنوب", "الشمال", "القصيم", "نجد", "بدون شروط"] },
+    { key: "children", title: "عدد الأطفال", type: "pills",
+      opts: ["لا يوجد", "طفل واحد", "طفلان", "بدون شروط"] },
+    { key: "education", title: "المستوى التعليميّ", type: "pills",
+      opts: ["ثانوي فأعلى", "جامعيّ فأعلى", "ماجستير فأعلى", "بدون شروط"] },
+    { key: "beauty", title: "الجمال", type: "pills",
+      opts: ["مقبول فأعلى", "متوسّط فأعلى", "بدون شروط"] },
+    { key: "work", title: "طبيعة العمل", type: "pills",
+      opts: ["موظّف حكوميّ", "قطاع خاصّ", "أعمال حرّة", "بدون شروط"] },
+    { key: "financial", title: "الحالة الماديّة", type: "pills",
+      opts: ["متوسّطة فأعلى", "جيّدة فأعلى", "ممتازة", "بدون شروط"] },
+    { key: "prayer", title: "الالتزام الديني (الصلاة)", type: "pills",
+      opts: ["محافظ على الصلاة في المسجد", "محافظ على الصلاة", "بدون شروط"] },
+    { key: "smoking", title: "التدخين", type: "pills",
+      opts: ["لا يدخّن", "بدون شروط"] },
+    { key: "height", title: "الطول (من — إلى)", type: "range",
+      from: "من", to: "إلى", suffix: "سم", defaultFrom: 165, defaultTo: 190 },
+    { key: "bio", title: "مواصفات إضافيّة تبحث عنها", type: "textarea",
+      hint: "اختياريّ · بالأحرف العربيّة فقط",
+      placeholder: "اكتب ما تبحث عنه في شريك الحياة…" },
+  ];
+
+  const answers = {};
+  let idx = 0;
+
+  document.getElementById('tot').textContent = STEPS.length;
+
+  function render() {
+    const step = STEPS[idx];
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('title').textContent = step.title;
+
+    const prog = document.getElementById('progress');
+    prog.innerHTML = STEPS.map((_, i) => `<div class="seg ${i <= idx ? 'done' : ''}"></div>`).join('');
+
+    const hint = document.getElementById('hint');
+    hint.textContent = step.hint || 'اترك أيّ شرط «بدون شروط» لتوسيع خياراتك';
+
+    const area = document.getElementById('input-area');
+    if (step.type === 'pills') {
+      area.innerHTML = `<div class="opts">` + step.opts.map(o =>
+        `<div class="opt ${answers[step.key] === o ? 'selected' : ''}" onclick="pick('${step.key}', '${o.replace(/'/g, "\\'")}')">${o}</div>`
+      ).join('') + `</div>`;
+    } else if (step.type === 'pills-multi') {
+      const current = answers[step.key] || [];
+      area.innerHTML = `<div class="opts">` + step.opts.map(o => {
+        const sel = current.includes(o);
+        return `<div class="opt ${sel ? 'selected' : ''}" onclick="toggle('${step.key}', '${o.replace(/'/g, "\\'")}')">${o}</div>`;
+      }).join('') + `</div>`;
+    } else if (step.type === 'select') {
+      area.innerHTML = `<div class="dropdown-input"><select onchange="setValue('${step.key}', this.value)">` +
+        step.opts.map((o, i) =>
+          `<option value="${i === 0 ? '' : o}" ${answers[step.key] === o ? 'selected' : ''}>${o}</option>`
+        ).join('') + `</select></div>`;
+    } else if (step.type === 'range') {
+      const cur = answers[step.key] || { from: step.defaultFrom, to: step.defaultTo };
+      area.innerHTML = `<div class="range-wiz">
+        <div class="range-fld"><label>${step.from}</label><input type="number" value="${cur.from}" onchange="setRange('${step.key}','from',this.value)" /></div>
+        <div style="font-size:24px;color:var(--muted);font-weight:800">—</div>
+        <div class="range-fld"><label>${step.to}</label><input type="number" value="${cur.to}" onchange="setRange('${step.key}','to',this.value)" /></div>
+        <div style="color:var(--muted);font-size:14px;font-weight:700">${step.suffix}</div>
+      </div>`;
+      if (!answers[step.key]) answers[step.key] = cur;
+    } else if (step.type === 'textarea') {
+      area.innerHTML = `<div class="textarea-box"><textarea placeholder="${step.placeholder || ''}" oninput="setValue('${step.key}', this.value)">${answers[step.key] || ''}</textarea><button class="save-btn" onclick="finish()">حفظ شروطي · دخول المنصّة</button></div>`;
+    }
+
+    document.getElementById('prev').disabled = idx === 0;
+    document.getElementById('next').disabled = idx === STEPS.length - 1;
+  }
+
+  function pick(key, val) {
+    answers[key] = val; render();
+    if (document.getElementById('autoAdvance').checked && idx < STEPS.length - 1) setTimeout(next, 220);
+  }
+  function toggle(key, val) {
+    const cur = answers[key] || [];
+    const i = cur.indexOf(val);
+    if (i >= 0) cur.splice(i, 1); else cur.push(val);
+    answers[key] = cur; render();
+  }
+  function setValue(key, val) { answers[key] = val; }
+  function setRange(key, side, val) {
+    if (!answers[key]) answers[key] = {};
+    answers[key][side] = val;
+  }
+
+  function next() { if (idx < STEPS.length - 1) { idx++; render(); window.scrollTo({top:0,behavior:'smooth'}); } }
+  function prev() { if (idx > 0) { idx--; render(); window.scrollTo({top:0,behavior:'smooth'}); } }
+
+  function finish() {
+    try { localStorage.setItem('takween_preferences', JSON.stringify(answers)); } catch (e) {}
+    location.href = 'dashboard.html';
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') next();
+    if (e.key === 'ArrowRight') prev();
+  });
+
+  render();
+</script>
+</body>
+</html>

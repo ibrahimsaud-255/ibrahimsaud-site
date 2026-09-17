@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>مواصفاتي — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  body { background: var(--cream); min-height: 100vh; }
+  .wiz {
+    min-height: 100vh; display: flex; flex-direction: column;
+  }
+  .wiz-top {
+    padding: 16px 30px; display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 20px;
+  }
+  .wiz-top .exit {
+    color: var(--muted); font-size: 13px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .wiz-top .exit svg { width: 14px; height: 14px; }
+  .wiz-top .brand {
+    text-align: center; color: var(--navy); font-weight: 800; font-size: 18px;
+    display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+  }
+  .wiz-top .brand svg { width: 22px; height: 22px; color: var(--navy); }
+  .wiz-top .counter {
+    background: var(--navy-ghost); color: var(--navy);
+    padding: 6px 14px; border-radius: 999px;
+    font-family: var(--font-en); font-weight: 700; font-size: 13px;
+  }
+
+  .wiz-progress {
+    padding: 0 30px 14px; display: flex; gap: 6px;
+  }
+  .wiz-progress .seg {
+    flex: 1; height: 5px; background: var(--line-2); border-radius: 999px;
+    transition: background .25s;
+  }
+  .wiz-progress .seg.done { background: var(--navy); }
+
+  .wiz-controls {
+    display: flex; justify-content: flex-end; padding: 4px 30px 20px;
+    color: var(--muted); font-size: 12.5px;
+  }
+  .wiz-controls label { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+  .wiz-controls input { accent-color: var(--navy); }
+
+  .wiz-body {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    padding: 20px 30px 40px; position: relative;
+  }
+  .wiz-content {
+    max-width: 720px; width: 100%; text-align: center;
+  }
+  .wiz-hint {
+    color: var(--gold); font-weight: 700; font-size: 13px; margin-bottom: 20px;
+    letter-spacing: 1px; opacity: 0; transition: opacity .3s;
+  }
+  .wiz-hint.show { opacity: 1; }
+  .wiz-title {
+    color: var(--navy); font-size: clamp(30px, 5vw, 48px); font-weight: 800;
+    margin: 0 0 40px; letter-spacing: -.5px;
+  }
+
+  .opts { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+  .opt {
+    padding: 12px 24px; background: var(--paper); border: 1.5px solid var(--line);
+    border-radius: 999px; font-size: 15px; font-weight: 700; color: var(--ink-2);
+    cursor: pointer; transition: all .12s; user-select: none;
+  }
+  .opt:hover { border-color: var(--navy-soft); color: var(--navy); }
+  .opt.selected { background: var(--navy); color: #fff; border-color: var(--navy); box-shadow: 0 8px 20px rgba(61,90,128,.28); }
+
+  .dropdown-input {
+    max-width: 480px; margin: 0 auto; position: relative;
+  }
+  .dropdown-input select, .dropdown-input input {
+    width: 100%; padding: 18px 60px 18px 20px; border: 1.5px solid var(--line);
+    background: var(--paper); border-radius: 16px; font-size: 20px; color: var(--navy);
+    font-weight: 700; text-align: center; outline: none; appearance: none;
+    font-family: var(--font);
+  }
+  .dropdown-input::after {
+    content: ""; position: absolute; left: 22px; top: 50%;
+    width: 10px; height: 10px; border-right: 2.5px solid var(--muted);
+    border-bottom: 2.5px solid var(--muted);
+    transform: translateY(-70%) rotate(45deg); pointer-events: none;
+  }
+
+  .textarea-box {
+    max-width: 640px; margin: 0 auto;
+  }
+  .textarea-box textarea {
+    width: 100%; min-height: 200px; padding: 20px; border: 2px solid var(--gold);
+    background: var(--paper); border-radius: 20px; font-size: 15px; color: var(--ink);
+    font-family: var(--font); outline: none; resize: vertical; text-align: right;
+    line-height: 1.85;
+  }
+  .save-btn {
+    margin: 24px auto 0; display: block; padding: 15px 60px; border-radius: 14px;
+    background: var(--navy); color: #fff; font-weight: 800; font-size: 16px;
+    border: 0; cursor: pointer; box-shadow: 0 8px 24px rgba(61,90,128,.28);
+  }
+  .save-btn:hover { background: var(--navy-dark); }
+
+  .wiz-arrows {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 0 30px 30px; position: absolute; bottom: 20px; right: 0; left: 0;
+    pointer-events: none;
+  }
+  .arrow-btn {
+    width: 54px; height: 54px; border-radius: 999px; background: var(--navy);
+    color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 22px rgba(61,90,128,.32); cursor: pointer; pointer-events: all;
+    transition: transform .12s, opacity .15s;
+  }
+  .arrow-btn:hover { transform: scale(1.08); }
+  .arrow-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+  .arrow-btn svg { width: 22px; height: 22px; }
+
+  @media (max-width: 720px) {
+    .wiz-top { padding: 14px 18px; grid-template-columns: auto 1fr auto; gap: 10px; }
+    .wiz-top .brand { font-size: 15px; }
+    .wiz-top .exit span { display: none; }
+    .wiz-top .counter { padding: 5px 10px; font-size: 12px; }
+    .wiz-progress { padding: 0 18px 12px; gap: 3px; }
+    .wiz-body { padding: 20px 18px 100px; }
+    .wiz-title { font-size: 28px; margin-bottom: 30px; }
+    .opts { gap: 8px; }
+    .opt { padding: 10px 18px; font-size: 14px; }
+    .wiz-arrows { padding: 0 18px 20px; }
+    .arrow-btn { width: 46px; height: 46px; }
+    .dropdown-input select, .dropdown-input input { padding: 15px 50px 15px 15px; font-size: 17px; }
+  }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — تعبئة المواصفات (١٨ خطوة)</div><a href="signup.html">← عودة</a> <span style="margin-inline-start:14px;padding-inline-start:14px;border-inline-start:1px solid rgba(232,206,138,0.3);color:#fff;opacity:.9">تصميم <b style="color:#E8CE8A">إبراهيم سعود</b></span></div>
+
+<div class="wiz">
+  <div class="wiz-top">
+    <a href="signup.html" class="exit">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>
+      <span>خروج</span>
+    </a>
+    <div class="brand">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.6l-1-1a5.5 5.5 0 00-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 000-7.6z"/></svg>
+      تكوين الأسرة
+    </div>
+    <div class="counter"><span id="cur">1</span> / <span id="tot">18</span></div>
+  </div>
+
+  <div class="wiz-progress" id="progress"></div>
+
+  <div class="wiz-controls">
+    <label><input type="checkbox" id="autoAdvance" checked /> التقدّم التلقائي بعد الاختيار</label>
+  </div>
+
+  <div class="wiz-body">
+    <div class="wiz-content">
+      <div class="wiz-hint" id="hint"></div>
+      <h1 class="wiz-title" id="title"></h1>
+      <div id="input-area"></div>
+    </div>
+
+    <div class="wiz-arrows">
+      <button class="arrow-btn" id="prev" onclick="prev()" title="السابق">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <button class="arrow-btn" id="next" onclick="next()" title="التالي">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const STEPS = [
+    { key: "status", title: "الحالة الاجتماعيّة", type: "pills",
+      opts: ["أعزب", "مطلّق", "أرمل", "متزوّج"] },
+    { key: "nationality", title: "الجنسيّة", type: "select",
+      opts: ["الجنسيّة", "سعوديّ", "مصريّ", "يمنيّ", "سوريّ", "إماراتيّ", "أردنيّ", "مغربيّ", "أخرى"] },
+    { key: "residence", title: "الإقامة", type: "select",
+      opts: ["الإقامة", "السعوديّة", "الإمارات", "الكويت", "قطر", "البحرين", "عُمان", "أخرى"] },
+    { key: "city", title: "المدينة", type: "select",
+      opts: ["المدينة", "الرياض", "جدّة", "الخبر", "مكّة", "المدينة", "الدمّام", "بريدة", "أبها", "الطائف", "تبوك", "حائل"] },
+    { key: "age", title: "العمر", type: "select",
+      opts: (() => { let a = ["العمر"]; for (let i = 18; i <= 70; i++) a.push(`${i} سنة`); return a; })() },
+    { key: "tribe", title: "القبيلة", type: "pills",
+      opts: ["قبيليّ", "غير قبيليّ", "لا تنطبق عليّ هذه الصفة"] },
+    { key: "origin", title: "الأصل", type: "pills",
+      opts: ["الشرقيّة", "الحجاز", "الجنوب", "الشمال", "القصيم", "نجد", "زبيري", "أخرى"] },
+    { key: "children", title: "عدد الأطفال", type: "select",
+      opts: ["عدد الأطفال", "لا يوجد", "١", "٢", "٣", "٤", "٥", "أكثر من ٥"] },
+    { key: "education", title: "المستوى التعليميّ", type: "pills",
+      opts: ["أمّي", "ابتدائي", "متوسّط", "ثانوي", "دبلوم", "جامعي", "ماجستير", "دكتوراه"] },
+    { key: "beauty", title: "الجمال", type: "pills",
+      opts: ["وسيم", "متوسّط", "مقبول"] },
+    { key: "work", title: "طبيعة العمل", type: "pills",
+      opts: ["موظّف حكوميّ", "قطاع خاصّ", "عسكريّ", "أعمال حرّة", "طالب", "لا يعمل"] },
+    { key: "financial", title: "الحالة الماديّة", type: "pills",
+      opts: ["ضعيفة", "متوسّطة", "جيّدة", "ممتازة"] },
+    { key: "prayer", title: "الصلاة", type: "pills",
+      opts: ["كلّ الصلوات في وقتها", "أغلب الصلوات في وقتها", "بعض الصلوات في وقتها", "غير محافظ على الصلاة"] },
+    { key: "health", title: "الحالة الصحيّة", type: "pills",
+      opts: ["سليم", "إعاقة حركيّة", "كفيف", "أعرج", "أصمّ", "عقيم"] },
+    { key: "skin", title: "لون البشرة", type: "pills",
+      opts: ["أبيض", "حنطيّ", "حنطيّ غامق", "أسمر فاتح", "أسمر غامق"] },
+    { key: "height", title: "الطول", type: "select",
+      opts: (() => { let a = ["الطول"]; for (let i = 150; i <= 210; i++) a.push(`${i} سم`); return a; })() },
+    { key: "weight", title: "الوزن", type: "select",
+      opts: (() => { let a = ["الوزن"]; for (let i = 40; i <= 150; i++) a.push(`${i} كجم`); return a; })() },
+    { key: "bio", title: "نبذة تفصيليّة عن مواصفاتي", type: "textarea",
+      hint: "بالأحرف العربيّة فقط",
+      placeholder: "اكتب عن نفسك…" },
+  ];
+
+  const answers = {};
+  let idx = 0;
+
+  document.getElementById('tot').textContent = STEPS.length;
+
+  function render() {
+    const step = STEPS[idx];
+    document.getElementById('cur').textContent = idx + 1;
+    document.getElementById('title').textContent = step.title;
+
+    // Progress bar
+    const prog = document.getElementById('progress');
+    prog.innerHTML = STEPS.map((_, i) =>
+      `<div class="seg ${i <= idx ? 'done' : ''}"></div>`
+    ).join('');
+
+    // Hint
+    const hint = document.getElementById('hint');
+    if (step.hint) { hint.textContent = step.hint; hint.classList.add('show'); }
+    else { hint.classList.remove('show'); hint.textContent = ''; }
+
+    // Input area
+    const area = document.getElementById('input-area');
+    if (step.type === 'pills') {
+      area.innerHTML = `<div class="opts">` + step.opts.map(o =>
+        `<div class="opt ${answers[step.key] === o ? 'selected' : ''}" onclick="pick('${step.key}', '${o.replace(/'/g, "\\'")}')">${o}</div>`
+      ).join('') + `</div>`;
+    } else if (step.type === 'select') {
+      area.innerHTML = `<div class="dropdown-input"><select onchange="setValue('${step.key}', this.value)">` +
+        step.opts.map((o, i) =>
+          `<option value="${i === 0 ? '' : o}" ${answers[step.key] === o ? 'selected' : ''}>${o}</option>`
+        ).join('') + `</select></div>`;
+    } else if (step.type === 'textarea') {
+      area.innerHTML = `<div class="textarea-box"><textarea placeholder="${step.placeholder || ''}" oninput="setValue('${step.key}', this.value)">${answers[step.key] || ''}</textarea><button class="save-btn" onclick="finish()">حفظ المواصفات</button></div>`;
+    }
+
+    // Arrows state
+    document.getElementById('prev').disabled = idx === 0;
+    document.getElementById('next').disabled = idx === STEPS.length - 1;
+  }
+
+  function pick(key, val) {
+    answers[key] = val;
+    render();
+    if (document.getElementById('autoAdvance').checked && idx < STEPS.length - 1) {
+      setTimeout(next, 220);
+    }
+  }
+  function setValue(key, val) { answers[key] = val; }
+
+  function next() { if (idx < STEPS.length - 1) { idx++; render(); window.scrollTo({top:0,behavior:'smooth'}); } }
+  function prev() { if (idx > 0) { idx--; render(); window.scrollTo({top:0,behavior:'smooth'}); } }
+
+  function finish() {
+    // Save answers (prototype: just proceed)
+    try { localStorage.setItem('takween_profile', JSON.stringify(answers)); } catch (e) {}
+    location.href = 'wizard-preferences.html';
+  }
+
+  // Keyboard navigation
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') next();      // In RTL, left arrow = next
+    if (e.key === 'ArrowRight') prev();
+  });
+
+  render();
+</script>
+</body>
+</html>
