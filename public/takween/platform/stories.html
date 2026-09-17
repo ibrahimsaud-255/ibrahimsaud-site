@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>القصص الناجحة — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  .stories-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+    color: #fff; border-radius: var(--radius-lg); padding: 30px 34px;
+    display: flex; gap: 20px; align-items: center; margin-bottom: 22px;
+    background-image:
+      radial-gradient(circle at 90% 20%, rgba(201,169,97,0.2) 0%, transparent 45%),
+      linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  }
+  .stories-hero .icon {
+    width: 64px; height: 64px; border-radius: 16px; background: rgba(255,255,255,0.15);
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .stories-hero .icon svg { width: 30px; height: 30px; color: var(--gold); }
+  .stories-hero .info h2 { margin: 0 0 6px; font-size: 22px; font-weight: 800; }
+  .stories-hero .info p { margin: 0; color: #C8D2E4; font-size: 13.5px; line-height: 1.75; }
+  .stories-hero .info p b { color: var(--gold); }
+  .stories-hero .btn {
+    background: var(--gold); color: #3D3220; padding: 12px 22px; border-radius: 12px;
+    font-weight: 700; font-size: 13.5px; white-space: nowrap;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .stories-hero .btn:hover { background: #B8974E; color: #fff; }
+  .stories-hero .btn svg { width: 14px; height: 14px; }
+
+  .stories-feed { display: grid; gap: 18px; max-width: 720px; margin: 0 auto; }
+
+  .story-card {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius-lg);
+    overflow: hidden; box-shadow: var(--shadow-sm);
+    border-inline-start: 3px solid var(--gold);
+  }
+  .story-head {
+    padding: 16px 22px; display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--line-3);
+  }
+  .story-head .left { display: flex; align-items: center; gap: 12px; }
+  .story-head .avatars { display: inline-flex; }
+  .story-head .a {
+    width: 40px; height: 40px; border-radius: 999px; display: inline-flex;
+    align-items: center; justify-content: center; font-weight: 800; font-size: 14px;
+    border: 2px solid var(--paper); margin-inline-start: -8px;
+  }
+  .story-head .a:first-child { margin-inline-start: 0; }
+  .story-head .info h3 {
+    margin: 0; font-size: 14.5px; font-weight: 800; color: var(--ink);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .story-head .info h3 .badge {
+    background: var(--gold-soft); color: #7A5F1E; padding: 2px 8px; border-radius: 999px;
+    font-size: 10px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .story-head .info h3 .badge svg { width: 10px; height: 10px; }
+  .story-head .info .meta { color: var(--muted); font-size: 12px; margin-top: 2px; }
+  .story-head .meta-r { color: var(--muted); font-size: 12px; }
+
+  .story-body {
+    padding: 20px 24px;
+  }
+  .story-body p {
+    color: var(--ink-2); font-size: 14.5px; line-height: 1.9; margin: 0;
+  }
+
+  .story-actions {
+    display: flex; align-items: center; gap: 20px; padding: 12px 22px;
+    border-top: 1px solid var(--line-3); background: var(--cream-2);
+  }
+  .story-actions .btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--muted); font-size: 13px; font-weight: 700;
+    background: transparent; border: 0; cursor: pointer; padding: 4px 8px;
+    border-radius: 8px; transition: background .12s;
+  }
+  .story-actions .btn:hover { background: var(--paper); color: var(--ink); }
+  .story-actions .btn svg { width: 15px; height: 15px; }
+  .story-actions .btn.liked { color: var(--danger); }
+  .story-actions .btn .en { font-family: var(--font-en); font-weight: 700; }
+  .story-actions .spacer { flex: 1; }
+
+  .story-comments {
+    padding: 12px 22px 18px; border-top: 1px solid var(--line-3);
+    background: var(--paper);
+  }
+  .comment-input {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 14px;
+    padding: 10px 14px; background: var(--cream-2); border: 1px solid var(--line);
+    border-radius: 12px;
+  }
+  .comment-input .avatar {
+    width: 32px; height: 32px; border-radius: 999px; background: var(--navy);
+    color: #fff; font-weight: 800; font-size: 12px;
+    display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .comment-input input {
+    flex: 1; padding: 6px 10px; background: transparent; border: 0; outline: none;
+    font-size: 13px; color: var(--ink);
+  }
+  .comment-input button {
+    width: 32px; height: 32px; border-radius: 999px; background: var(--navy);
+    color: #fff; display: inline-flex; align-items: center; justify-content: center;
+    border: 0; cursor: pointer;
+  }
+  .comment-input button svg { width: 14px; height: 14px; }
+
+  .comment-list { display: grid; gap: 10px; }
+  .comment {
+    display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: flex-start;
+  }
+  .comment .a-c {
+    width: 34px; height: 34px; border-radius: 999px; display: inline-flex;
+    align-items: center; justify-content: center; font-weight: 800; font-size: 12px;
+  }
+  .comment .body {
+    background: var(--cream-2); border-radius: 12px; padding: 10px 14px;
+  }
+  .comment .name { font-weight: 800; font-size: 13px; color: var(--ink); margin-bottom: 2px; }
+  .comment .text { color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+
+  .show-more {
+    text-align: center; padding: 10px; color: var(--navy); font-weight: 700; font-size: 12.5px; cursor: pointer;
+  }
+
+  @media (max-width: 720px) {
+    .stories-hero { padding: 22px; flex-direction: column; align-items: flex-start; text-align: right; }
+    .stories-hero .btn { width: 100%; justify-content: center; }
+    .story-head { flex-direction: column; align-items: flex-start; gap: 10px; padding: 14px 18px; }
+    .story-body { padding: 16px 18px; }
+    .story-actions { padding: 10px 18px; }
+    .story-comments { padding: 10px 18px 16px; }
+    .comment-list { max-height: 340px; overflow-y: auto; }
+  }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — القصص الناجحة</div><a href="dashboard.html">← عودة</a> <span style="margin-inline-start:14px;padding-inline-start:14px;border-inline-start:1px solid rgba(232,206,138,0.3);color:#fff;opacity:.9">تصميم <b style="color:#E8CE8A">إبراهيم سعود</b></span></div>
+
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> القصص الناجحة</div>
+          <h1>القصص الناجحة</h1>
+        </div>
+        <div class="head-actions">
+          <button class="btn-p"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 3H2l8 9.5V19l4 2v-8.5z"/></svg> تصفية</button>
+          <button class="btn-p gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> شارك قصّتك</button>
+        </div>
+      </div>
+
+      <!-- Hero banner -->
+      <div class="stories-hero">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg>
+        </div>
+        <div class="info">
+          <h2>قصص أزواج توافقوا معنا</h2>
+          <p>أكثر من <b>١٥٠</b> قصّة نجاح موثّقة منذ ٢٠٢٠ · شارك قصّتك واحصل على <b>+١٠٠٠ نقطة</b> ومكافأة العضو المميّز.</p>
+        </div>
+        <a class="btn">
+          شارك قصّتي
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="stories-feed">
+
+        <!-- Story 1 -->
+        <article class="story-card">
+          <div class="story-head">
+            <div class="left">
+              <div class="avatars">
+                <span class="a av-p1">ز</span>
+                <span class="a av-p2">أ</span>
+              </div>
+              <div class="info">
+                <h3>وكفى بالله وكيلاً · زهرة الروض
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg> موثّق</span>
+                </h3>
+                <div class="meta">تزوّجت منذ ٥ أيّام</div>
+              </div>
+            </div>
+            <div class="meta-r">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+              منذ ٥ أيّام
+            </div>
+          </div>
+          <div class="story-body">
+            <p>تزوّجت من رجل ذي دين وخُلُقٍ ومروءةٍ وأصالةٍ، صار لي مدّةً طويلة في الموقع، إلى أن أذِنَ الله لزوجي أن يأتي وله الحمد. شكراً لكم، والصبر زين.</p>
+          </div>
+          <div class="story-actions">
+            <button class="btn liked"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg> <span class="en">168</span> إعجاب</button>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span class="en">88</span> تعليق</button>
+            <div class="spacer"></div>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5L8.6 10.5"/></svg> مشاركة</button>
+          </div>
+          <div class="story-comments">
+            <div class="comment-input">
+              <span class="avatar">أ</span>
+              <input placeholder="اكتب تعليقاً لهم…" />
+              <button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg></button>
+            </div>
+            <div class="comment-list">
+              <div class="comment">
+                <span class="a-c av-p1">ن</span>
+                <div class="body"><div class="name">نور الفجر</div><div class="text">الله يُسعدكم يا ربّ ويوفّق بينكم دائماً.</div></div>
+              </div>
+              <div class="comment">
+                <span class="a-c av-p3">ع</span>
+                <div class="body"><div class="name">عجل جدّاً بليز</div><div class="text">ما شاء الله تبارك الله، يديم لكم السعادة والرضا والله يرزقنا بالخير.</div></div>
+              </div>
+              <div class="comment">
+                <span class="a-c av-p5">و</span>
+                <div class="body"><div class="name">وسيط باحث</div><div class="text">الذريّة الطيّبة والحياة السعيدة.</div></div>
+              </div>
+              <div class="show-more">عرض ٨٥ تعليقاً إضافيّاً</div>
+            </div>
+          </div>
+        </article>
+
+        <!-- Story 2 -->
+        <article class="story-card">
+          <div class="story-head">
+            <div class="left">
+              <div class="avatars">
+                <span class="a av-p5">ع</span>
+                <span class="a av-p4">أ</span>
+              </div>
+              <div class="info">
+                <h3>وأتَمَروا بينكم بمعروف · عبير ١١١١
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg> موثّق</span>
+                </h3>
+                <div class="meta">تزوّجت منذ ٦ أيّام</div>
+              </div>
+            </div>
+            <div class="meta-r"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> منذ ٦ أيّام</div>
+          </div>
+          <div class="story-body">
+            <p>جزاكم الله خير الجزاء. وفّقني ربّي بزوجي عبر المنصّة بعد ٤ أشهر من البحث، وكانت مواصفاته أعلى توافقاً ٩٣٪. الحمد لله على تيسير الأمور.</p>
+          </div>
+          <div class="story-actions">
+            <button class="btn liked"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg> <span class="en">121</span> إعجاب</button>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span class="en">55</span> تعليق</button>
+            <div class="spacer"></div>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5L8.6 10.5"/></svg> مشاركة</button>
+          </div>
+        </article>
+
+        <!-- Story 3 -->
+        <article class="story-card">
+          <div class="story-head">
+            <div class="left">
+              <div class="avatars">
+                <span class="a av-p3">م</span>
+                <span class="a av-p6">أ</span>
+              </div>
+              <div class="info">
+                <h3>محامي · أنيقة
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg> موثّق</span>
+                </h3>
+                <div class="meta">تزوّجا منذ ٧ أيّام</div>
+              </div>
+            </div>
+            <div class="meta-r"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> منذ ٧ أيّام</div>
+          </div>
+          <div class="story-body">
+            <p>الحمد لله على التمام في البدء والختام والدوام، ثمّ الصلاة والسلام على النبي وصحبه والتابع. اللهمّ لك الحمدلله حمداً يوافي نعمك ويكافئ مزيدك ويستزيد فضلك ويستمطر رضوانك. أسأل الله أن يوفّقني معه كما يحبّ ويرضى ويوفّقه معي كما أحبّ وأرضى. موقع بارك الله لكم فيه، ووفّقكم الله وزادكم من فضله.</p>
+          </div>
+          <div class="story-actions">
+            <button class="btn liked"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg> <span class="en">149</span> إعجاب</button>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span class="en">67</span> تعليق</button>
+            <div class="spacer"></div>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5L8.6 10.5"/></svg> مشاركة</button>
+          </div>
+        </article>
+
+        <!-- Story 4 -->
+        <article class="story-card">
+          <div class="story-head">
+            <div class="left">
+              <div class="avatars">
+                <span class="a av-p7">ط</span>
+                <span class="a av-p8">و</span>
+              </div>
+              <div class="info">
+                <h3>فأل طيّب · وردة أمل
+                  <span class="badge"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 12l2 2 4-4M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg> موثّق</span>
+                </h3>
+                <div class="meta">تزوّجا منذ ٨ أيّام</div>
+              </div>
+            </div>
+            <div class="meta-r"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> منذ ٨ أيّام</div>
+          </div>
+          <div class="story-body">
+            <p>الحمد لله ربّ العالمين. الموقع بارك الله في القائمين عليه، رزقنا بشريك الحياة الطيّب، أسأل الله أن يكتب لنا الذريّة الصالحة.</p>
+          </div>
+          <div class="story-actions">
+            <button class="btn liked"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7-4.5-7-11a5 5 0 019-3 5 5 0 019 3c0 6.5-7 11-7 11h-4z"/></svg> <span class="en">98</span> إعجاب</button>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H8l-5 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg> <span class="en">42</span> تعليق</button>
+            <div class="spacer"></div>
+            <button class="btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5L8.6 10.5"/></svg> مشاركة</button>
+          </div>
+        </article>
+
+        <div class="show-more" style="padding:20px">
+          <button class="btn-p" style="padding:12px 30px">تحميل المزيد من القصص</button>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>mountShell('stories');</script>
+</body>
+</html>

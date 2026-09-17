@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>حسابك قيد المراجعة — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  body { background: var(--cream); }
+  .pending-page {
+    min-height: 100vh; display: flex; flex-direction: column;
+    background:
+      radial-gradient(circle at 20% 20%, var(--navy-ghost) 0%, transparent 45%),
+      radial-gradient(circle at 80% 80%, var(--gold-soft) 0%, transparent 40%),
+      var(--cream);
+  }
+  .p-head {
+    padding: 18px 30px; display: flex; justify-content: space-between; align-items: center;
+  }
+  .p-head .brand img { height: 42px; }
+  .p-head .logout {
+    color: var(--danger); font-weight: 700; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .p-head .logout svg { width: 14px; height: 14px; }
+
+  .pending-body {
+    flex: 1; display: flex; align-items: center; justify-content: center; padding: 30px 24px;
+  }
+  .pending-card {
+    max-width: 540px; text-align: center;
+  }
+  .pending-icon {
+    width: 130px; height: 130px; margin: 0 auto 30px;
+    background: var(--paper); border: 2px solid var(--gold); border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    color: var(--gold); box-shadow: 0 20px 40px rgba(201,169,97,0.2);
+    position: relative;
+  }
+  .pending-icon svg { width: 56px; height: 56px; }
+  .pending-icon::before {
+    content: ""; position: absolute; inset: -8px; border-radius: 999px;
+    border: 2px dashed var(--gold); opacity: .3; animation: spin 24s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  h1 {
+    font-size: clamp(24px, 3.5vw, 32px); font-weight: 800; color: var(--ink);
+    margin: 0 0 14px; letter-spacing: -.3px;
+  }
+  .msg {
+    font-size: 15.5px; color: var(--ink-2); margin: 0 0 30px; line-height: 1.85;
+  }
+  .msg b { color: var(--navy); }
+
+  .info-box {
+    background: var(--paper); border: 1px solid var(--line); border-radius: 16px;
+    padding: 20px 24px; margin-bottom: 20px; text-align: right;
+    box-shadow: 0 4px 20px rgba(28,34,55,0.04);
+  }
+  .info-box h4 {
+    margin: 0 0 12px; font-size: 13px; font-weight: 800; color: var(--navy);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .info-box h4 svg { width: 14px; height: 14px; }
+  .info-list { display: grid; gap: 8px; }
+  .info-list .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed var(--line-2); font-size: 13px; }
+  .info-list .row:last-child { border-bottom: 0; }
+  .info-list .row .k { color: var(--muted); }
+  .info-list .row .v { font-weight: 700; color: var(--ink); }
+  .info-list .row .v.en { font-family: var(--font-en); }
+
+  .cta-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .cta-row a {
+    padding: 12px 22px; border-radius: 12px; font-weight: 700; font-size: 14px;
+    display: inline-flex; align-items: center; gap: 8px;
+  }
+  .cta-row .primary { background: var(--navy); color: #fff; }
+  .cta-row .primary:hover { background: var(--navy-dark); }
+  .cta-row .ghost { background: var(--paper); color: var(--ink-2); border: 1px solid var(--line); }
+  .cta-row .ghost:hover { background: var(--cream-2); }
+  .cta-row .whatsapp { background: #25D366; color: #fff; }
+  .cta-row .whatsapp:hover { background: #1DA851; }
+  .cta-row svg { width: 16px; height: 16px; }
+
+  .status-line {
+    margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--line);
+    color: var(--muted); font-size: 13px;
+  }
+  .status-line .dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 999px;
+    background: var(--warn); margin-inline-end: 6px;
+    animation: pulse 1.5s ease-in-out infinite;
+    box-shadow: 0 0 0 4px rgba(232,166,74,0.2);
+  }
+  @keyframes pulse { 50% { opacity: .5; } }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — شاشة انتظار مراجعة الحساب</div><a href="signup.html">← عودة</a> <span style="margin-inline-start:14px;padding-inline-start:14px;border-inline-start:1px solid rgba(232,206,138,0.3);color:#fff;opacity:.9">تصميم <b style="color:#E8CE8A">إبراهيم سعود</b></span></div>
+
+<div class="pending-page">
+  <header class="p-head">
+    <a href="../index.html" class="brand"><img src="../assets/logo.webp" alt="تكوين الأسرة" /></a>
+    <a href="login.html" class="logout">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 11-12.73 0M12 2v10"/></svg>
+      خروج
+    </a>
+  </header>
+
+  <div class="pending-body">
+    <div class="pending-card">
+
+      <div class="pending-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="12" height="18" rx="2"/><path d="M9 3h6v3H9z"/><path d="M9 12h6M9 16h4"/></svg>
+      </div>
+
+      <h1>حسابك قيد المراجعة</h1>
+      <p class="msg">
+        شكراً لتسجيلك في <b>منصّة التوافق الأسريّ</b>. سيتمّ مراجعة بياناتك
+        من فريق جمعيّة تكوين الأسرة، ومعالجة طلبك خلال <b>٦ ساعات</b> كحدّ أقصى.
+        ستصلك رسالة SMS عند التفعيل.
+      </p>
+
+      <div class="info-box">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          مراحل المراجعة
+        </h4>
+        <div class="info-list">
+          <div class="row"><span class="k">١ · التسجيل الأوّليّ</span><span class="v" style="color:var(--success)">✓ مكتمل</span></div>
+          <div class="row"><span class="k">٢ · التحقّق من رقم الجوّال</span><span class="v" style="color:var(--success)">✓ موثّق</span></div>
+          <div class="row"><span class="k">٣ · مراجعة البيانات من الإدارة</span><span class="v" style="color:var(--warn)">⏳ قيد المعالجة</span></div>
+          <div class="row"><span class="k">٤ · تفعيل الحساب وإرسال SMS</span><span class="v" style="color:var(--muted)">قريباً</span></div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <h4>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></svg>
+          بياناتك المسجّلة
+        </h4>
+        <div class="info-list">
+          <div class="row"><span class="k">الاسم</span><span class="v">عنتر بن شدّاد</span></div>
+          <div class="row"><span class="k">رقم الجوّال</span><span class="v en">+966 50 612 7478</span></div>
+          <div class="row"><span class="k">نوع العضويّة</span><span class="v">شابّ</span></div>
+          <div class="row"><span class="k">رقم العضويّة</span><span class="v en">#28126</span></div>
+        </div>
+      </div>
+
+      <div class="cta-row">
+        <a href="https://wa.me/966555824155" target="_blank" rel="noopener" class="whatsapp">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 00-8.4 15.4L2 22l4.7-1.5A10 10 0 1012 2z"/></svg>
+          الدعم الفنّي
+        </a>
+        <a href="dashboard.html" class="primary">
+          دخول تجريبيّ للمنصّة
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="status-line">
+        <span class="dot"></span> آخر تحديث للحالة: قبل دقيقة واحدة · الصفحة تُحدَّث تلقائيّاً
+      </div>
+
+    </div>
+  </div>
+</div>
+</body>
+</html>

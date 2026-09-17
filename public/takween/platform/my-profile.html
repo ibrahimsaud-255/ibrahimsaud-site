@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>ملفي الشخصي — منصّة التوافق الأسريّ</title>
+<meta name="theme-color" content="#3D5A80" />
+<link rel="icon" type="image/webp" href="../assets/logo.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
+<link rel="stylesheet" href="assets/platform.css?v=1.0.2" />
+<style>
+  .me-hero {
+    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+    color: #fff; border-radius: var(--radius-lg); padding: 30px;
+    display: grid; grid-template-columns: 100px 1fr auto; gap: 24px; align-items: center;
+    margin-bottom: 20px;
+    background-image:
+      radial-gradient(circle at 90% 20%, rgba(201,169,97,0.2) 0%, transparent 45%),
+      linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
+  }
+  .me-hero .a {
+    width: 100px; height: 100px; border-radius: 999px; background: rgba(255,255,255,0.14);
+    border: 3px solid rgba(255,255,255,0.2); display: inline-flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 36px; font-weight: 800;
+  }
+  .me-hero .info h2 { margin: 0 0 4px; font-size: 22px; font-weight: 800; display: inline-flex; align-items: center; gap: 10px; }
+  .me-hero .info .online { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(76,175,123,0.2); color: #7EDBA0; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .me-hero .info .online .dot { width: 6px; height: 6px; background: #4CAF7B; border-radius: 999px; box-shadow: 0 0 0 3px rgba(76,175,123,0.3); }
+  .me-hero .info .meta-row { display: flex; gap: 16px; margin-top: 12px; color: #C8D2E4; font-size: 13px; flex-wrap: wrap; }
+  .me-hero .info .id { background: rgba(201,169,97,0.18); color: var(--gold); padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 700; font-family: var(--font-en); }
+  .me-hero .quick { text-align: left; }
+  .me-hero .quick .lab { font-size: 10.5px; letter-spacing: 2px; color: #C8D2E4; font-weight: 600; margin-bottom: 4px; }
+  .me-hero .quick .val { font-family: var(--font-en); font-size: 28px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .me-hero .quick small { font-size: 12px; color: #C8D2E4; font-weight: 500; margin-inline-start: 4px; }
+
+  .me-toggle {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 14px 20px; margin-bottom: 20px;
+    display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap;
+  }
+  .me-toggle .info { display: flex; align-items: center; gap: 12px; }
+  .me-toggle .info .badge {
+    width: 40px; height: 40px; border-radius: 12px; background: rgba(76,175,123,0.14);
+    color: var(--success); display: inline-flex; align-items: center; justify-content: center;
+  }
+  .me-toggle .info .badge svg { width: 20px; height: 20px; }
+  .me-toggle .info b { display: block; font-size: 14px; font-weight: 800; color: var(--ink); }
+  .me-toggle .info span { color: var(--muted); font-size: 12.5px; }
+  .me-toggle .switch-wrap { display: inline-flex; align-items: center; gap: 10px; }
+  .me-toggle .switch-wrap .lbl { font-size: 13px; font-weight: 700; color: var(--success); }
+  .switch {
+    position: relative; width: 44px; height: 24px;
+  }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .track {
+    position: absolute; inset: 0; background: var(--success);
+    border-radius: 999px; transition: background .15s; cursor: pointer;
+  }
+  .switch .track::after {
+    content: ""; position: absolute; height: 18px; width: 18px; right: 3px; top: 3px;
+    background: #fff; border-radius: 999px; transition: right .15s;
+  }
+  .switch input:not(:checked) + .track { background: var(--muted-2); }
+  .switch input:not(:checked) + .track::after { right: 22px; }
+
+  .me-actions-grid {
+    display: grid; grid-template-columns: 1fr; gap: 8px;
+  }
+  .me-section {
+    background: var(--paper); border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 8px; margin-bottom: 20px;
+  }
+  .me-section .sec-title {
+    padding: 12px 16px 8px; font-size: 12px; font-weight: 800; color: var(--navy);
+    letter-spacing: 1.5px;
+  }
+  .me-row {
+    display: flex; align-items: center; gap: 14px; padding: 14px 16px;
+    border-radius: 10px; text-align: right; cursor: pointer;
+    transition: background .12s;
+  }
+  .me-row:hover { background: var(--cream-2); }
+  .me-row .ic {
+    width: 40px; height: 40px; border-radius: 10px; background: var(--navy-ghost);
+    color: var(--navy); display: inline-flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .me-row .ic svg { width: 18px; height: 18px; }
+  .me-row.danger .ic { background: rgba(216,105,95,0.12); color: var(--danger); }
+  .me-row.warn .ic { background: rgba(232,166,74,0.14); color: var(--warn); }
+  .me-row .body { flex: 1; }
+  .me-row .body b { display: block; font-size: 14px; font-weight: 700; color: var(--ink); }
+  .me-row .body span { font-size: 12px; color: var(--muted); }
+  .me-row.danger .body b { color: var(--danger); }
+  .me-row .chev svg { width: 14px; height: 14px; color: var(--muted); }
+
+  .divider { height: 1px; background: var(--line-2); margin: 4px 12px; }
+
+  /* Modal */
+  .modal-backdrop {
+    position: fixed; inset: 0; background: rgba(28,34,55,0.6);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200; padding: 20px; backdrop-filter: blur(4px);
+  }
+  .modal-backdrop.open { display: flex; }
+  .modal {
+    background: var(--paper); border-radius: 20px; padding: 34px 28px;
+    max-width: 420px; width: 100%; text-align: center;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+  }
+  .modal .ic-big {
+    width: 68px; height: 68px; border-radius: 999px; background: rgba(216,105,95,0.12);
+    color: var(--danger); display: inline-flex; align-items: center; justify-content: center;
+    margin: 0 auto 18px;
+  }
+  .modal .ic-big svg { width: 34px; height: 34px; }
+  .modal h3 { margin: 0 0 10px; font-size: 18px; font-weight: 800; }
+  .modal p { margin: 0 0 22px; color: var(--muted); font-size: 13.5px; line-height: 1.85; }
+  .modal p b { color: var(--warn); }
+  .modal .btn-row { display: flex; gap: 10px; }
+  .modal .btn-row button {
+    flex: 1; padding: 12px; border-radius: 12px; font-weight: 700; font-size: 14px;
+    border: 0; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .modal .btn-row .confirm { background: var(--success); color: #fff; }
+  .modal .btn-row .cancel { background: rgba(216,105,95,0.12); color: var(--danger); }
+  .modal .btn-row .confirm:hover { background: #3E9866; }
+  .modal .btn-row .cancel:hover { background: rgba(216,105,95,0.2); }
+  .modal .btn-row svg { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+<div class="proto-ribbon"><div class="msg"><span class="dot"></span> نموذج تفاعليّ — ملفي الشخصيّ وإدارة الحساب</div><a href="dashboard.html">← عودة</a> <span style="margin-inline-start:14px;padding-inline-start:14px;border-inline-start:1px solid rgba(232,206,138,0.3);color:#fff;opacity:.9">تصميم <b style="color:#E8CE8A">إبراهيم سعود</b></span></div>
+
+<div class="app-shell">
+  <div data-shell="side"></div>
+  <main class="main">
+    <div data-shell="top"></div>
+    <div class="content">
+
+      <div class="page-head">
+        <div>
+          <div class="crumbs"><a href="dashboard.html">الرئيسيّة</a><span class="sep">›</span> ملفي الشخصيّ</div>
+          <h1>ملفي الشخصيّ</h1>
+        </div>
+        <div class="head-actions">
+          <span class="tag on" style="padding:6px 12px;font-size:12px">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" style="display:inline;vertical-align:middle"><path d="M20 6L9 17l-5-5"/></svg>
+            رقم العضويّة: <span class="en">#28126</span>
+          </span>
+        </div>
+      </div>
+
+      <!-- Hero -->
+      <div class="me-hero">
+        <div class="a">أ</div>
+        <div class="info">
+          <h2>أبو سعود <span class="online"><span class="dot"></span> متّصل الآن</span></h2>
+          <div class="meta-row">
+            <span class="id">#28126</span>
+            <span>٣٠ سنة · سعوديّ · الرياض</span>
+            <span>مسجّل منذ ٢٠٢٦-٠١-١٥</span>
+          </div>
+        </div>
+        <div class="quick">
+          <div class="lab">عدد الخطبات</div>
+          <div class="val">0<small>من ٧</small></div>
+        </div>
+      </div>
+
+      <!-- Online toggle -->
+      <div class="me-toggle">
+        <div class="info">
+          <span class="badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          </span>
+          <div>
+            <b>حالة الاتّصال</b>
+            <span>الأعضاء يرون أنّك متّصل الآن</span>
+          </div>
+        </div>
+        <div class="switch-wrap">
+          <span class="lbl">متّصل</span>
+          <label class="switch">
+            <input type="checkbox" checked />
+            <span class="track"></span>
+          </label>
+        </div>
+      </div>
+
+      <!-- Preview my profile dropdown -->
+      <div class="me-toggle" style="cursor:pointer" onclick="location.href='profile.html?self=1'">
+        <div class="info">
+          <span class="badge" style="background:var(--navy-ghost);color:var(--navy)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          </span>
+          <div>
+            <b>معاينة ملفي</b>
+            <span>شاهد كيف يرى الأعضاء الآخرون ملفّك</span>
+          </div>
+        </div>
+        <span class="chev" style="color:var(--muted)">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </span>
+      </div>
+
+      <!-- Settings section -->
+      <div class="me-section">
+        <div class="sec-title">إعدادات الحساب</div>
+        <a class="me-row" href="wizard-profile.html">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 013 3L12 15l-4 1 1-4z"/></svg></span>
+          <div class="body"><b>تعديل مواصفاتي</b><span>معالج ١٨ خطوة</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+        <div class="divider"></div>
+        <a class="me-row" href="wizard-preferences.html">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
+          <div class="body"><b>تعديل شروطي</b><span>معالج ١٦ خطوة</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+        <div class="divider"></div>
+        <a class="me-row" href="settings.html#custom">
+          <span class="ic" style="background:var(--gold-soft);color:#8A6D2E"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v4M18 14v7M15 17h6"/></svg></span>
+          <div class="body"><b>أسئلتي المخصّصة والمهر</b><span>محميّة بالدفع للجادّين فقط</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+        <div class="divider"></div>
+        <a class="me-row">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></span>
+          <div class="body"><b>تغيير كلمة المرور</b><span>حماية إضافيّة لحسابك</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+        <div class="divider"></div>
+        <a class="me-row" href="settings.html#privacy">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 9-8 10-4.5-1-8-5-8-10V6z"/></svg></span>
+          <div class="body"><b>الخصوصيّة والإشعارات</b><span>تحكّم بمن يرى ماذا</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+      </div>
+
+      <!-- Account actions -->
+      <div class="me-section">
+        <div class="sec-title">إجراءات الحساب</div>
+        <a class="me-row danger" onclick="openDelete()">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2M6 6l1 14h10l1-14"/></svg></span>
+          <div class="body"><b>حذف نهائيّ للحساب</b><span>مع فترة سماح ٢ أسبوع للاسترجاع</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+        <div class="divider"></div>
+        <a class="me-row warn" href="login.html">
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg></span>
+          <div class="body"><b>تسجيل الخروج</b><span>الخروج من الجلسة الحاليّة</span></div>
+          <span class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></span>
+        </a>
+      </div>
+
+      <div style="text-align:center;color:var(--muted);font-size:12px;margin-top:24px">
+        <span>© <span class="en">2005</span> جمعيّة تكوين الأسرة</span>
+        <span style="margin:0 8px;opacity:.5">·</span>
+        <a href="../index.html#about" style="color:var(--navy);font-weight:600">حول</a>
+        <span style="margin:0 8px;opacity:.5">·</span>
+        <a href="#" style="color:var(--navy);font-weight:600">الشروط</a>
+        <span style="margin:0 8px;opacity:.5">·</span>
+        <a href="#" style="color:var(--navy);font-weight:600">السياسة</a>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- Delete Modal -->
+<div class="modal-backdrop" id="delModal">
+  <div class="modal">
+    <div class="ic-big">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+    </div>
+    <h3>حذف نهائيّ للحساب</h3>
+    <p>
+      سيتمّ حذف حسابك نهائيّاً في غضون <b>أسبوعين من الآن</b>،
+      كما يُمكنك العودة في أيّ وقت قبل انتهاء هذه المدّة.
+    </p>
+    <div class="btn-row">
+      <button class="confirm" onclick="closeDelete()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+        تأكيد
+      </button>
+      <button class="cancel" onclick="closeDelete()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 6l12 12M6 18L18 6"/></svg>
+        إلغاء
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/shell.js"></script>
+<script>
+  mountShell('profile');
+  function openDelete() { document.getElementById('delModal').classList.add('open'); }
+  function closeDelete() { document.getElementById('delModal').classList.remove('open'); }
+</script>
+</body>
+</html>
