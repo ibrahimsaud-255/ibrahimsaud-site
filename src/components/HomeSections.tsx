@@ -12,6 +12,7 @@ import { useContent } from "@/lib/cms";
 import AdReels from "./AdReels";
 import OfficialWorks from "./OfficialWorks";
 import Brands from "./Brands";
+import Tools from "./Tools";
 import Process from "./Process";
 import Faq from "./Faq";
 import PackagesSection from "./PackagesSection";
@@ -22,6 +23,7 @@ const SECTIONS: Record<string, React.ComponentType> = {
   works: AdReels,
   official: OfficialWorks,
   brands: Brands,
+  tools: Tools,
   process: Process,
   faq: Faq,
   packages: PackagesSection,
@@ -34,11 +36,12 @@ const SECTIONS: Record<string, React.ComponentType> = {
 // لمن يُرسل له الرابط) — فعّله من اللوحة متى أردت إظهارها.
 // «official» = قسم الأعمال الرسمية (جهات حكومية وشركات مؤسسية).
 const ORDER = [
+  { id: "brands", on: true },
   { id: "official", on: true },
   { id: "works", on: true },
-  { id: "brands", on: true },
-  { id: "process", on: true },
-  { id: "faq", on: true },
+  { id: "tools", on: true },
+  { id: "process", on: false },
+  { id: "faq", on: false },
   { id: "packages", on: false },
   { id: "newsletter", on: false },
   { id: "contact", on: true },

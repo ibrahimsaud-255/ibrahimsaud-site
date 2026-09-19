@@ -11,9 +11,11 @@ export default function Brands() {
   return (
     <section className="border-b border-line/60 py-12">
       <div className="mx-auto mb-8 max-w-6xl px-5 text-center">
-        <p className="text-sm font-bold tracking-widest text-gold">ثقة</p>
+        <p className="text-sm font-bold tracking-widest text-cream/60">
+          شركاء وعملاء
+        </p>
         <h2 className="mt-2 text-xl font-black text-cream/90 sm:text-2xl">
-          علامات وجهات وثّقت فيني وصوّرت لها
+          جهات وعلامات اشتغلت معها
         </h2>
       </div>
 

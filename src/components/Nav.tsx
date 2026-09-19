@@ -6,8 +6,9 @@ import { site, waLink } from "@/lib/site";
 // لا رابط للأسعار في الناف — صفحة الباقات /ad-packages/ تبقى موجودة لمن تُرسل له
 // الرابط مباشرة، لكنها لا تُعلَن في الموقع.
 const links = [
-  { href: "/#works", label: "الأعمال" },
-  { href: "/#process", label: "كيف نشتغل" },
+  { href: "/#official", label: "الأعمال" },
+  { href: "/#tools", label: "الأدوات" },
+  { href: "/#contact", label: "تواصل" },
   { href: "/blog/", label: "المدونة" },
 ];
 
@@ -57,13 +58,13 @@ export default function Nav() {
         <div className="flex items-center gap-3">
           <a
             href={waLink(
-              "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+              "السلام عليكم إبراهيم، حاب أتواصل معك بخصوص مشروع 🎬\nالفكرة: ",
             )}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden rounded-full bg-cream px-5 py-2 text-sm font-bold text-ink transition hover:bg-white sm:inline-block"
           >
-            اطلب إعلانك
+            لنعمل معاً
           </a>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -90,13 +91,13 @@ export default function Nav() {
             ))}
             <a
               href={waLink(
-              "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: ",
+              "السلام عليكم إبراهيم، حاب أتواصل معك بخصوص مشروع 🎬\nالفكرة: ",
             )}
               target="_blank"
               rel="noopener noreferrer"
               className="rounded-full bg-cream px-5 py-2 text-center text-sm font-bold text-ink"
             >
-              اطلب إعلانك عبر واتساب
+              تواصل عبر واتساب
             </a>
           </div>
         </div>

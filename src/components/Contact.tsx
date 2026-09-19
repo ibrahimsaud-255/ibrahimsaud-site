@@ -8,16 +8,15 @@ import { useContent, goldParts, waHref } from "@/lib/cms";
 import { SocialIcon } from "./SocialIcons";
 
 const contactFallback = {
-  title: "جاهز؟ *أرسل منتجك الحين.*",
-  sub: "رسالة واحدة تكفي: وش المنتج ومين جمهورك — وأرجع لك بفكرة الإعلان وعرض السعر، وبعدها بـ٣ أيام يكون إعلانك جاهز للنشر.",
+  title: "عندك مشروع؟ *لنعمل معاً.*",
+  sub: "سواء كان فيلماً، حملة، بودكاست، أو محتوى مرئياً لعلامتك — تواصل معي مباشرة ونناقش فكرتك وأرجع لك بالتفاصيل.",
   cta1: {
-    label: "أرسل منتجك عبر واتساب",
-    waMsg:
-      "السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: \nهدفي من الإعلان: ",
+    label: "تواصل عبر واتساب",
+    waMsg: "السلام عليكم إبراهيم، حاب أتواصل معك بخصوص مشروع 🎬\nالفكرة: ",
   },
   cta2: {
-    label: "عندي سؤال قبل ما أطلب",
-    waMsg: "السلام عليكم إبراهيم، عندي سؤال عن خدمة الفيديو الإعلاني: ",
+    label: "راسلني على البريد",
+    waMsg: "",
   },
 };
 
@@ -51,7 +50,7 @@ export default function Contact() {
           <h2 className="text-4xl font-black leading-tight [text-shadow:0_2px_30px_rgba(0,0,0,.9)] sm:text-5xl">
             {goldParts(c.title).map((p, i) =>
               p.gold ? (
-                <span key={i} className="gold-text">
+                <span key={i} className="text-white">
                   {p.text}
                 </span>
               ) : (
@@ -69,16 +68,14 @@ export default function Contact() {
               href={waHref(info.whatsapp, c.cta1.waMsg)}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2.5 rounded-full bg-[#25D366] px-7 py-3.5 text-sm font-black text-white transition hover:brightness-110"
+              className="inline-flex items-center gap-2.5 rounded-full bg-cream px-7 py-3.5 text-sm font-black text-ink transition hover:bg-white"
             >
               <SocialIcon name="whatsapp" className="size-5" />
               {c.cta1.label}
             </a>
             <a
-              href={waHref(info.whatsapp, c.cta2.waMsg)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream backdrop-blur-sm transition hover:border-gold hover:text-gold"
+              href={`mailto:${info.email}`}
+              className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream backdrop-blur-sm transition hover:border-cream"
             >
               {c.cta2.label}
             </a>
