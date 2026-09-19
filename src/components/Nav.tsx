@@ -61,7 +61,7 @@ export default function Nav() {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden rounded-full bg-gold px-5 py-2 text-sm font-bold text-ink transition hover:bg-gold-soft sm:inline-block"
+            className="hidden rounded-full bg-cream px-5 py-2 text-sm font-bold text-ink transition hover:bg-white sm:inline-block"
           >
             اطلب إعلانك
           </a>
@@ -94,7 +94,7 @@ export default function Nav() {
             )}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-gold px-5 py-2 text-center text-sm font-bold text-ink"
+              className="rounded-full bg-cream px-5 py-2 text-center text-sm font-bold text-ink"
             >
               اطلب إعلانك عبر واتساب
             </a>

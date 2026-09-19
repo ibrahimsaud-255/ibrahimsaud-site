@@ -34,8 +34,8 @@ const SECTIONS: Record<string, React.ComponentType> = {
 // لمن يُرسل له الرابط) — فعّله من اللوحة متى أردت إظهارها.
 // «official» = قسم الأعمال الرسمية (جهات حكومية وشركات مؤسسية).
 const ORDER = [
-  { id: "works", on: true },
   { id: "official", on: true },
+  { id: "works", on: true },
   { id: "brands", on: true },
   { id: "process", on: true },
   { id: "faq", on: true },

@@ -104,8 +104,8 @@ export const reels: Reel[] = [
     roles: ["إنتاج", "تصوير", "مونتاج"],
     desc: "ما يشترط تظهر بنفسك: هنا الوجه للعميل، والفكرة والتصوير والمونتاج عندي.",
     logo: "/LOGO_kwentra.png",
-    driveId: "1GXyc7qji8IHlkI8LOmVdkybSf1B7_Nxj",
-    href: "https://drive.google.com/file/d/1GXyc7qji8IHlkI8LOmVdkybSf1B7_Nxj/view",
+    ytId: "CCgiYl-cvxI",
+    href: "https://www.youtube.com/shorts/CCgiYl-cvxI",
   },
   {
     id: "tad-1",

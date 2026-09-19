@@ -16,8 +16,10 @@
   --color-ink-soft: #111114;
   --color-ink-card: #16161b;
   --color-line: #26262e;
-  --color-gold: #e7b24c;
-  --color-gold-soft: #f3cd83;
+  /* أحادي: أسود + أبيض + رمادي. الرمز محتفظ باسمه (gold) لكن قيمته رماديّة فضّية
+     فيتحوّل كل الموقع للأحادي دون تعديل كل ملف. الأزرار الرئيسية بيضاء (cream). */
+  --color-gold: #c9c7c1;
+  --color-gold-soft: #ecebe7;
   --color-cream: #f5f2ea;
   --color-muted: #9a9aa6;
   --font-sans: "Thmanyah Sans", var(--font-tajawal), system-ui, sans-serif;
@@ -120,6 +122,31 @@ h1, h2, .font-serif-display {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+}
+
+/* سلايدر أفقي بلا شريط تمرير ظاهر */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* دمج البورتريه في الخلفية: حوافّ متلاشية + معالجة أحادية خفيفة.
+   يعمل مع صورة بخلفية عادية أو مع PNG بخلفية شفافة (يزيد نظافةً). */
+.portrait-blend {
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 90% at 50% 40%,
+    #000 40%,
+    transparent 82%
+  );
+  mask-image: radial-gradient(
+    ellipse 80% 90% at 50% 40%,
+    #000 40%,
+    transparent 82%
+  );
+  filter: grayscale(0.35) contrast(1.04);
 }
 
 /* Reveal-on-scroll */
