@@ -5684,16 +5684,19 @@ function ensureExtStyles(){if(document.getElementById('extCSS'))return;const st=
   .ai-inbar textarea{flex:1;resize:none;min-height:46px;max-height:150px}
 `;document.head.appendChild(st)}
 function waLink(phone,text){return 'https://wa.me/'+String(phone||'').replace(/[^0-9]/g,'')+'?text='+encodeURIComponent(text||'')}
-function daysSince(dateStr){if(!dateStr)return null;const d=new Date(dateStr+'T12:00:00');if(isNaN(d))return null;return Math.floor((Date.now()-d.getTime())/86400000)}
-function ageLabel(dateStr){const n=daysSince(dateStr);if(n==null)return '—';if(n<=0)return 'اليوم';if(n===1)return 'أمس';if(n<30)return 'منذ '+n+' يوم';const m=Math.floor(n/30);if(m<12)return 'منذ '+m+' شهر';return 'منذ '+Math.floor(m/12)+' سنة'}
-function ageColor(dateStr){const n=daysSince(dateStr);if(n==null)return 'var(--muted)';if(n>=90)return 'var(--bad)';if(n>=45)return 'var(--warn)';return 'var(--good)'}
+/* كانت باسم daysSince فتطغى على daysSince الأولى (سطر ~2373) في النطاق
+   العامّ الواحد — تلك تُرجع 0 عند الخطأ وهذه null، فاختلّ سلوك ما كُتب على
+   الأولى. الاسم المميّز يفكّ التصادم. */
+function daysAgoOrNull(dateStr){if(!dateStr)return null;const d=new Date(dateStr+'T12:00:00');if(isNaN(d))return null;return Math.floor((Date.now()-d.getTime())/86400000)}
+function ageLabel(dateStr){const n=daysAgoOrNull(dateStr);if(n==null)return '—';if(n<=0)return 'اليوم';if(n===1)return 'أمس';if(n<30)return 'منذ '+n+' يوم';const m=Math.floor(n/30);if(m<12)return 'منذ '+m+' شهر';return 'منذ '+Math.floor(m/12)+' سنة'}
+function ageColor(dateStr){const n=daysAgoOrNull(dateStr);if(n==null)return 'var(--muted)';if(n>=90)return 'var(--bad)';if(n>=45)return 'var(--warn)';return 'var(--good)'}
 
 /* ===== الموردون ===== */
 function renderSuppliers(){
   ensureExtStyles();const list=S.suppliers||[];
   const body=!list.length?emptyBox('truck','لا يوجد موردون بعد. أضف مورّدك الأول.'):`<div class="grid">${list.map(s=>{
     const files=s.files||[];const latest=files.map(f=>f.received).filter(Boolean).sort().slice(-1)[0];
-    const stale=files.some(f=>{const n=daysSince(f.received);return n!=null&&n>=90});
+    const stale=files.some(f=>{const n=daysAgoOrNull(f.received);return n!=null&&n>=90});
     return `<div class="card">
       <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
         <div><div style="font-weight:800;font-size:16px">${esc(s.name)}</div>${s.category?`<div style="color:var(--muted);font-size:13px">${esc(s.category)}</div>`:''}</div>
