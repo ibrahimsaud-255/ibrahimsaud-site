@@ -768,7 +768,9 @@ let STATE_ID=null, USER=null, saveTimer=null;
 const KEY='ibsaud_erp_v1';
 const def={
   settings:{brand:'مؤسسة حروف ودروس',owner:'إبراهيم سعود',email:'ibrahimsaud25@gmail.com',phone:'966504895213',
-    currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',salePrefix:'S',salesperson:'إبراهيم سعود',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',bankName:'',iban:'',
+    currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',salePrefix:'S',salesperson:'إبراهيم سعود',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',
+    // الحساب البنكي الأساسي للمؤسسة (افتراضي — يظهر في كل عروض الأسعار والفواتير)
+    bankName:'البنك الأهلي السعودي',iban:'SA8810000001400036240910',accName:'مؤسسة حروف و دروس',bankLogo:'',
     // مكتبة قوالب شروط عرض السعر — تُختار بضغطة داخل نموذج العرض، وتُلصَق مع أرقام محدَّثة تلقائياً.
     // الرموز المتاحة داخل النص:
     //   {DEPOSIT_PCT}     نسبة العربون %
@@ -4315,6 +4317,34 @@ function brandProfiles(){if(!S.settings.brandProfiles||!S.settings.brandProfiles
 function brandById(id){return brandProfiles().find(b=>b.id===id)||brandProfiles()[0]}
 function defaultBrandId(){return S.settings.defaultBrandId||brandProfiles()[0].id}
 function officialInfo(){const o=S.settings.official||{};const s=S.settings;return {brand:o.brand||s.brand||'',owner:o.owner||s.owner||'',email:o.email||s.email||'',phone:o.phone||s.phone||'',vat:o.vat||s.vat.number||'',cr:o.cr||s.vat.cr||'',iban:o.iban||s.iban||'',address:o.address||''}}
+/* الحساب البنكي الأساسي للمؤسسة — يُعتمد افتراضياً في كل مستند بلا إدخال يدويّ */
+const DEFAULT_BANK={name:'البنك الأهلي السعودي',iban:'SA8810000001400036240910',accName:'مؤسسة حروف و دروس',logo:''};
+function bankInfo(org){const s=S.settings;const ibn=(org&&org.iban)||s.iban||DEFAULT_BANK.iban;return {name:s.bankName||DEFAULT_BANK.name,iban:ibn,accName:s.accName||DEFAULT_BANK.accName,logo:s.bankLogo||DEFAULT_BANK.logo};}
+/* كتلة الدفع في المستند: بيانات البنك + آيبان قابل للنسخ + باركود رابط الدفع السريع (قابل للنقر) */
+function payBlockHTML(d,org,acc,ink){
+  const bk=bankInfo(org);const payUrl=(d.payUrl||'').trim();
+  const qrSrc=(d.payQr||'').trim();
+  let qr='';
+  if(qrSrc){qr=`<img src="${esc(qrSrc)}" style="width:96px;height:96px;object-fit:contain;display:block">`;}
+  else if(payUrl){qr=qrImg(payUrl).replace('<img ','<img style="width:96px;height:96px" ');}
+  const qrCell=qr?`<a href="${esc(payUrl||'#')}" target="_blank" style="flex:none;text-align:center;text-decoration:none">
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:6px">${qr}</div>
+        <div style="font-size:10px;color:${acc};font-weight:800;margin-top:4px">ادفع الآن — امسح أو اضغط</div></a>`:'';
+  const logo=bk.logo?`<img src="${esc(bk.logo)}" style="height:22px;object-fit:contain;vertical-align:middle;margin-left:6px">`:'';
+  const ibanClean=bk.iban.replace(/\s+/g,'');
+  return `<div style="margin-top:14px;padding:14px 16px;background:#f8fafc;border-right:3px solid ${acc};border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:16px">
+      <div style="flex:1;min-width:0;color:#334155;font-size:13px;line-height:1.9">
+        <div style="font-weight:800;color:${ink};margin-bottom:2px"><i style="font-style:normal">🏦</i> بيانات الدفع${logo?' — '+logo:''}</div>
+        <div>${esc(bk.name)}${bk.accName?` · <span style="color:#64748b">${esc(bk.accName)}</span>`:''}</div>
+        <div style="margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="color:#64748b">آيبان:</span>
+          <b dir="ltr" style="letter-spacing:.5px">${esc(bk.iban)}</b>
+          <button type="button" onclick="(function(b){navigator.clipboard&&navigator.clipboard.writeText('${esc(ibanClean)}');b.textContent='✔ نُسخ';setTimeout(()=>b.textContent='نسخ',1500)})(this)" style="cursor:pointer;border:1px solid ${acc};background:#fff;color:${acc};border-radius:6px;padding:2px 10px;font-size:11px;font-weight:800;font-family:inherit">نسخ</button>
+        </div>
+      </div>
+      ${qrCell}
+    </div>`;
+}
 /* بيانات المؤسسة الظاهرة على المستند: أولوية لبيانات التصميم نفسه، ثم العامة الرسمية */
 function designOrg(b){const o=(b&&b.org)||{};const off=officialInfo();return {
   brand:o.brand||off.brand,owner:(o.owner!=null&&o.owner!=='')?o.owner:off.owner,email:o.email||off.email,
@@ -4445,7 +4475,8 @@ function docModal(type,id,presetName,cb){
   const isInv=type==='invoice';const k=isInv?'invoices':'sales';
   const _defTplId=quoteDef().defaultTemplateId;const _defTpl=quoteTemplateById(_defTplId);
   let d=id?JSON.parse(JSON.stringify(S[k].find(x=>x.id===id))):
-    {id:'',number:S.counters[type]+1,client:'',clientVat:'',date:today(),expiry:isInv?'':(function(){const dd=new Date();dd.setDate(dd.getDate()+Number(_defTpl.validityDays||14));return dd.toISOString().slice(0,10)})(),salesperson:S.settings.salesperson||'',items:[{desc:'',qty:1,price:0,discount:0}],discType:'none',discVal:0,notes:'',notesAuto:!isInv,templateId:isInv?null:_defTplId,depositPct:isInv?null:Number(_defTpl.depositPct||50),brandId:defaultBrandId(),status:isInv?'unpaid':'draft',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:'',payments:[]};
+    {id:'',number:S.counters[type]+1,client:'',clientVat:'',date:today(),expiry:isInv?'':(function(){const dd=new Date();dd.setDate(dd.getDate()+Number(_defTpl.validityDays||14));return dd.toISOString().slice(0,10)})(),salesperson:S.settings.salesperson||'',items:[{desc:'',qty:1,price:0,discount:0}],discType:'none',discVal:0,notes:'',notesAuto:!isInv,templateId:isInv?null:_defTplId,depositPct:isInv?null:Number(_defTpl.depositPct||50),brandId:defaultBrandId(),status:isInv?'unpaid':'draft',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:'',payments:[],payUrl:'',payQr:''};
+  if(d.payUrl===undefined)d.payUrl='';if(d.payQr===undefined)d.payQr='';
   if(!id&&presetName){d.client=presetName;const pc=S.contacts.find(c=>(c.name||'').trim().toLowerCase()===presetName.trim().toLowerCase());if(pc){d.contactId=pc.id;if(pc.vat)d.clientVat=pc.vat}}
   if(d.vat===undefined)d.vat=false;
   // ملء تلقائي للملاحظات لعرض السعر الجديد فقط
@@ -4479,6 +4510,14 @@ function docModal(type,id,presetName,cb){
       </div>
       <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
         <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal();go('quotedesign')"><i data-lucide="palette"></i> تصميم عروض الأسعار</button>
+      </div>
+    </div>
+    <div class="field"><label style="display:flex;align-items:center;gap:6px"><i class="inl" data-lucide="qr-code"></i> رابط الدفع السريع + باركود <span style="font-weight:400;color:var(--muted);font-size:11px">(خاص بهذا العميل والمبلغ)</span></label>
+      <input id="d_payurl" value="${esc(d.payUrl||'')}" dir="ltr" placeholder="https://secure.telr.com/gateway/ql/..." oninput="qPayUrl(this.value)">
+      <div style="font-size:11px;color:var(--muted);margin-top:4px">الصق رابط الدفع من البوابة — يتحوّل تلقائياً إلى باركود قابل للمسح والنقر داخل ملف PDF. كل عرض له رابطه ومبلغه.</div>
+      <div style="display:flex;align-items:center;gap:14px;margin-top:8px;flex-wrap:wrap">
+        <div><input type="file" accept="image/*" id="d_payqr_file" onchange="qPayQrUpload(event)"><div style="font-size:11px;color:var(--muted);margin-top:2px">أو ارفع صورة الباركود (PNG من البوابة) بدل توليده</div></div>
+        <div id="qPayQrPrev">${d.payQr?`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${esc(d.payQr)}" style="width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px"><button type="button" class="link-btn del" onclick="qPayQrClear()">حذف</button></span>`:''}</div>
       </div>
     </div>
     ${isInv?'':`
@@ -4515,13 +4554,16 @@ function docModal(type,id,presetName,cb){
   window.qNotesReset=()=>{if(!confirm('استبدال الملاحظات الحالية بالقالب المختار مع ملاحظات المنتجات؟'))return;collect();d.notes=buildInitialQuoteNotes(d);d.notesAuto=true;const ta=document.getElementById('d_notes');if(ta)ta.value=d.notes;paintQNotesPreview();};
   window.qMgrOpen=()=>quoteTemplateManager(d.templateId,newId=>{d.templateId=newId;const sel=document.getElementById('d_tpl');if(sel){/* أعِد بناء القائمة */sel.innerHTML=quoteTemplates().map(t=>`<option value="${esc(t.id)}" ${d.templateId===t.id?'selected':''}>${esc(t.name)}</option>`).join('');}qTplChange(newId);});
   window.qBrandChange=id=>{d.brandId=id;};
+  window.qPayUrl=v=>{d.payUrl=v;};
+  window.qPayQrUpload=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{d.payQr=r.result;const pv=document.getElementById('qPayQrPrev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${d.payQr}" style="width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px"><button type="button" class="link-btn del" onclick="qPayQrClear()">حذف</button></span>`;};r.readAsDataURL(f);};
+  window.qPayQrClear=()=>{d.payQr='';const pv=document.getElementById('qPayQrPrev');if(pv)pv.innerHTML='';const f=document.getElementById('d_payqr_file');if(f)f.value='';};
   openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);
     bumpStage(d.contactId,isInv?'won':'quoted',isInv?('فاتورة #'+d.number):('عرض سعر #'+d.number));if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>renderDocs(type)))()});
   window.addItem=()=>{collect();d.items.push({desc:'',qty:1,price:0,discount:0});refresh()};
   window.addProduct=pid=>{collect();const p=(S.products||[]).find(x=>x.id===pid);if(!p)return;const line={desc:p.name,qty:1,price:Number(p.price||0),discount:0,details:p.desc||'',productId:p.id};if(d.items.length===1&&!d.items[0].desc)d.items[0]=line;else d.items.push(line);if(!isInv){const auto=pickTemplateFromProducts(d);if(auto&&auto!==d.templateId){d.templateId=auto;const t=quoteTemplateById(auto);if(t)d.depositPct=Number(t.depositPct||50);}if(d.notesAuto)d.notes=buildInitialQuoteNotes(d);}refresh()};
   window.rmItem=i=>{collect();d.items.splice(i,1);if(!d.items.length)d.items.push({desc:'',qty:1,price:0,discount:0});if(!isInv&&d.notesAuto){d.notes=buildInitialQuoteNotes(d);}refresh()};
   window.toggleVat=v=>{collect();d.vat=v==='1';refresh()};
-  function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.status=g('d_status').value;d.notes=g('d_notes').value;d.vat=g('d_vat').value==='1';if(g('d_cvat'))d.clientVat=g('d_cvat').value;if(g('d_sp'))d.salesperson=g('d_sp').value;if(g('d_expiry'))d.expiry=g('d_expiry').value;if(g('d_disctype'))d.discType=g('d_disctype').value;if(g('d_discval'))d.discVal=Number(g('d_discval').value||0);if(g('d_deppct'))d.depositPct=Number(g('d_deppct').value||0);if(g('d_brand'))d.brandId=g('d_brand').value;}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
+  function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.status=g('d_status').value;d.notes=g('d_notes').value;d.vat=g('d_vat').value==='1';if(g('d_cvat'))d.clientVat=g('d_cvat').value;if(g('d_sp'))d.salesperson=g('d_sp').value;if(g('d_expiry'))d.expiry=g('d_expiry').value;if(g('d_disctype'))d.discType=g('d_disctype').value;if(g('d_discval'))d.discVal=Number(g('d_discval').value||0);if(g('d_deppct'))d.depositPct=Number(g('d_deppct').value||0);if(g('d_brand'))d.brandId=g('d_brand').value;if(g('d_payurl'))d.payUrl=g('d_payurl').value;}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
   function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body();setTimeout(paintQNotesPreview,0);}
   setTimeout(()=>{paintQNotesPreview();const mb=document.querySelector('#modalRoot .modal-body');if(!mb)return;mb.addEventListener('input',e=>{const t=e.target;if(!t.dataset||t.dataset.f===undefined||!t.closest('#itemsBody'))return;const i=+t.dataset.i,f=t.dataset.f;if(d.items[i])d.items[i][f]=t.value;if(f==='qty'||f==='price'||f==='discount'){const cell=mb.querySelector('#itemsBody [data-total="'+i+'"]');if(cell)cell.textContent=money(lineTotal(d.items[i]));updateTotals();}});},0);
 }
@@ -4566,7 +4608,7 @@ function printDocHTML(type,id,previewBrand){
         <div style="font-weight:800;color:${ink};font-size:13.5px;margin-bottom:4px">${esc(org.brand)}</div>
         ${org.owner?`${esc(org.owner)}`:''}${org.email?(org.owner?' · ':'')+esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
         ${org.address?`<br>${esc(org.address)}`:''}
-        ${org.iban?`<br>آيبان: <span dir="ltr">${esc(org.iban)}</span>`:''}
+        <br>آيبان: <span dir="ltr">${esc(bankInfo(org).iban)}</span> · ${esc(bankInfo(org).name)}
         ${org.cr||org.vat?`<br>${org.cr?'س.ت '+esc(org.cr):''}${org.cr&&org.vat?' · ':''}${org.vat?'الرقم الضريبي '+esc(org.vat):''}`:''}
       </div>`;
   const titleTag=(color,shadow)=>`<div class="headline" style="font-size:${titleSize}px;font-weight:900;line-height:1;margin:0;letter-spacing:-1px;color:${color}${shadow?';text-shadow:0 4px 14px rgba(0,0,0,.25)':''}">${esc(titleText)}</div>`;
@@ -4713,7 +4755,7 @@ function printDocHTML(type,id,previewBrand){
         ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
       </div>
     </div>
-    ${(org.iban||s.bankName)?`<div style="margin-top:14px;padding:10px 14px;background:#f8fafc;border-right:3px solid ${acc};border-radius:8px;color:#334155;font-size:13px"><b>بيانات التحويل:</b> ${esc(s.bankName||'')} <span dir="ltr">${esc(org.iban||'')}</span></div>`:''}
+    ${payBlockHTML(d,org,acc,ink)}
     <div style="margin-top:auto;padding-top:40px;padding-bottom:24px;text-align:center;color:#94a3b8;font-size:11.5px;line-height:1.7">
       <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,${acc}55,transparent);margin-bottom:14px"></div>
       <div style="font-weight:800;color:${ink};font-size:12.5px">${esc(org.brand)}</div>
@@ -5882,8 +5924,12 @@ function renderSettings(){
       </div>
 
       <div class="card"><h3 style="margin-top:0"><i data-lucide="receipt-text"></i> إعدادات الفواتير</h3>
-        <div class="row2"><div class="field"><label>بادئة رقم الفاتورة</label><input id="s_prefix" value="${esc(s.invPrefix)}" placeholder="INV-"></div><div class="field"><label>الآيبان (IBAN)</label><input id="s_iban" value="${esc(s.iban)}"></div></div>
-        <div class="field"><label>اسم البنك</label><input id="s_bank" value="${esc(s.bankName)}"></div>
+        <div class="row2"><div class="field"><label>بادئة رقم الفاتورة</label><input id="s_prefix" value="${esc(s.invPrefix)}" placeholder="INV-"></div><div class="field"><label>الآيبان (IBAN) — الحساب الأساسي</label><input id="s_iban" value="${esc(s.iban||DEFAULT_BANK.iban)}" dir="ltr"></div></div>
+        <div class="row2"><div class="field"><label>اسم البنك</label><input id="s_bank" value="${esc(s.bankName||DEFAULT_BANK.name)}"></div><div class="field"><label>اسم صاحب الحساب</label><input id="s_accname" value="${esc(s.accName||DEFAULT_BANK.accName)}"></div></div>
+        <div class="field"><label>شعار البنك (يظهر بجانب بيانات الدفع في المستند)</label>
+          <input type="file" accept="image/*" id="s_banklogo_file" onchange="uploadBankLogo(event)">
+          <div id="s_banklogo_prev" style="margin-top:8px">${s.bankLogo?`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${esc(s.bankLogo)}" style="height:34px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 8px"><button type="button" class="link-btn del" onclick="clearBankLogo()">حذف</button></span>`:'<span style="font-size:12px;color:var(--muted)">لا يوجد شعار — سيظهر اسم البنك نصّاً. ارفع شعار البنك الأهلي هنا مرّة واحدة.</span>'}</div>
+        </div>
         <div class="field"><label>الشروط/الملاحظات الافتراضية</label><textarea id="s_terms" rows="3">${esc(s.terms)}</textarea></div>
       </div>
 
@@ -5898,7 +5944,9 @@ function renderSettings(){
   refreshIcons();
 }
 function uploadLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>1500000){alert('حجم الصورة كبير (أقل من 1.5MB)');return}const r=new FileReader();r.onload=()=>{S.settings.logo=r.result;save();applyBranding();const p=document.getElementById('logoPrev');if(p){p.src=r.result;p.style.display='block'}alert('تم تحديث الشعار')};r.readAsDataURL(f)}
-function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),terms:g('s_terms')});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();applyBranding();alert('تم الحفظ')}
+function uploadBankLogo(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.settings.bankLogo=r.result;save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${S.settings.bankLogo}" style="height:34px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 8px"><button type="button" class="link-btn del" onclick="clearBankLogo()">حذف</button></span>`;};r.readAsDataURL(f);}
+function clearBankLogo(){S.settings.bankLogo='';save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML='<span style="font-size:12px;color:var(--muted)">لا يوجد شعار — سيظهر اسم البنك نصّاً.</span>';const f=document.getElementById('s_banklogo_file');if(f)f.value='';}
+function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),accName:g('s_accname'),terms:g('s_terms')});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();applyBranding();alert('تم الحفظ')}
 function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-'+today()+'.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem(KEY,r.result);S=load();save();alert('تم الاستيراد');go('settings')}catch(x){alert('ملف غير صالح')}};r.readAsText(f)}
 function resetData(){if(confirm('مسح جميع البيانات نهائياً؟')){localStorage.removeItem(KEY);S=load();save();go('home')}}
