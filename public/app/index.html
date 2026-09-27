@@ -5546,7 +5546,7 @@ async function loadVisits(){const box=document.getElementById('visitsBox');if(!b
 }catch(e){box.innerHTML='<p style="color:var(--muted);font-size:13px">لتفعيل العدّاد: شغّل ملف <b>supabase/analytics.sql</b> في Supabase (جدول ziyarat/pageviews). يبدأ العدّ بعدها تلقائياً.</p>'}}
 
 /* ===== المدونة (داخل النظام) — كتابة + تنسيق بالذكاء + نشر ===== */
-let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'تقنية أعمال وبودكاست',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
+let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'مخرج ومنتج ومدير إبداعي',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
 const BLOG_AV_FALLBACK='https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg';
 function blogAvatar(){return BLOG.settings.author_avatar_url||S.settings.authorPhoto||BLOG_AV_FALLBACK}
 function blogDates(){const now=new Date();let greg='',hijri='';try{greg=now.toLocaleDateString('ar',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}catch(_){greg=now.toISOString().slice(0,10)}try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'})}catch(_){try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric'})}catch(__){hijri=''}}hijri=hijri.replace(/\s*هـ\s*$/,'').trim();return {greg,hijri}}
