@@ -13,6 +13,7 @@ import AdReels from "./AdReels";
 import OfficialWorks from "./OfficialWorks";
 import Brands from "./Brands";
 import Tools from "./Tools";
+import About from "./About";
 import Process from "./Process";
 import Faq from "./Faq";
 import PackagesSection from "./PackagesSection";
@@ -24,6 +25,7 @@ const SECTIONS: Record<string, React.ComponentType> = {
   official: OfficialWorks,
   brands: Brands,
   tools: Tools,
+  about: About,
   process: Process,
   faq: Faq,
   packages: PackagesSection,
@@ -40,6 +42,7 @@ const ORDER = [
   { id: "official", on: true },
   { id: "works", on: true },
   { id: "tools", on: true },
+  { id: "about", on: true },
   { id: "process", on: false },
   { id: "faq", on: false },
   { id: "packages", on: false },

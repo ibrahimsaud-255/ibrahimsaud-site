@@ -8,14 +8,15 @@ import { useContent, goldParts } from "@/lib/cms";
 import Reveal from "./Reveal";
 
 const aboutFallback = {
-  label: "عني",
+  label: "من أنا",
   title: "إبراهيم سعود",
   paragraphs: [
-    "تقنية أعمال وبودكاست — أوظّف التقنية في تطوير الأعمال والأنظمة، وأنتج البودكاست والمحتوى المرئي الذي يبني الحضور.",
-    "مقدّم ومنتج بودكاست *سَعي*، وأبني أنظمة وأدوات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). اشتغلت مع جامعة الملك سعود في هاكاثون *هيلثون*، ومع علامات تجارية في السعودية والخليج بأكثر من ٣٠ عملاً مرئياً.",
-    "فلسفتي بسيطة: التقنية والمحتوى الناجح وراهما قصة وتجهيز ونظام — وهذا ما أصنعه لك.",
+    "أنا *إبراهيم سعود*، مخرج ومنتج ومدير إبداعي سعودي. أقود العمل المرئي من *الفكرة حتى التسليم* — كتابةً للقصة، وإخراجاً وتصويراً في الموقع، ثم مونتاجاً وتصحيحاً لونياً وصوتاً — حتى يخرج العمل بصوت واحد متماسك.",
+    "على مدى السنوات الأخيرة أنجزت *أكثر من ٣٠ عملاً مرئياً* لعلامات تجارية وجهات حكومية وشركات مؤسسية في *السعودية والخليج*: أفلام قصيرة، وحملات إعلانية، وتغطيات، وبودكاست. أشتغل بأدوات المحترفين — من Final Cut وDaVinci Resolve إلى أحدث أدوات الذكاء الاصطناعي في الإنتاج.",
+    "أقدّم وأنتج بودكاست *سَعي* الذي يحوّل خبرة الضيف إلى حكاية تُروى، وأبني منتجات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). خلفيّتي بين الإبداع والتقنية تعطي كل مشروع رؤيةً وتجهيزاً ونظاماً.",
+    "قناعتي بسيطة: خلف كل عمل ناجح *قصة تستحق أن تُروى كما ينبغي*. هذا ما أصنعه — من الرياض، إلى علامتك أينما كانت.",
   ],
-  photo: "/profile.jpg",
+  photo: "/ibrahim-portrait.jpg",
   ventures: site.ventures.map((v) => ({ ...v })) as {
     title: string;
     desc: string;
@@ -29,7 +30,7 @@ function Golden({ text }: { text: string }) {
     <>
       {goldParts(text).map((p, i) =>
         p.gold ? (
-          <span key={i} className="text-gold">
+          <span key={i} className="font-extrabold text-cream">
             {p.text}
           </span>
         ) : (
@@ -49,7 +50,7 @@ export default function About() {
       <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.2fr_1fr]">
         <Reveal>
           <div>
-            <p className="text-sm font-bold tracking-widest text-gold">
+            <p className="text-sm font-bold tracking-widest text-cream/60">
               {c.label}
             </p>
             <h2 className="mt-3 text-4xl font-black leading-tight sm:text-5xl">
@@ -76,9 +77,9 @@ export default function About() {
                   href={v.href}
                   target={v.href.startsWith("http") ? "_blank" : undefined}
                   rel="noopener noreferrer"
-                  className="group rounded-xl border border-line bg-ink-card p-5 transition hover:border-gold/50"
+                  className="group rounded-xl border border-line bg-ink-card p-5 transition hover:border-cream/40"
                 >
-                  <span className="text-xs font-bold text-gold">{v.tag}</span>
+                  <span className="text-xs font-bold text-cream/60">{v.tag}</span>
                   <h4 className="mt-1 font-extrabold text-cream">
                     {v.title}
                     <span className="mr-1 inline-block transition group-hover:translate-x-[-3px]">

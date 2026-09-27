@@ -3,8 +3,8 @@
 
 export const site = {
   name: "إبراهيم سعود",
-  tagline: "فيديوهات إعلانية تبيع",
-  bio: "إبراهيم سعود — فيديوهات إعلانية تبيع",
+  tagline: "مخرج ومنتج ومدير إبداعي",
+  bio: "مدير إبداعي · مخرج ومنتج",
   whatsapp: "966504895213", // بدون + وبدون أصفار، صيغة دولية
   email: "ibrahimsaud25@gmail.com",
   domain: "ibrahimsaud.com",

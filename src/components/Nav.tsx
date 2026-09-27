@@ -8,6 +8,7 @@ import { site, waLink } from "@/lib/site";
 const links = [
   { href: "/#official", label: "الأعمال" },
   { href: "/#tools", label: "الأدوات" },
+  { href: "/#about", label: "من أنا" },
   { href: "/#contact", label: "تواصل" },
   { href: "/blog/", label: "المدونة" },
 ];
