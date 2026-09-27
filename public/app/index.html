@@ -4318,7 +4318,7 @@ function brandById(id){return brandProfiles().find(b=>b.id===id)||brandProfiles(
 function defaultBrandId(){return S.settings.defaultBrandId||brandProfiles()[0].id}
 function officialInfo(){const o=S.settings.official||{};const s=S.settings;return {brand:o.brand||s.brand||'',owner:o.owner||s.owner||'',email:o.email||s.email||'',phone:o.phone||s.phone||'',vat:o.vat||s.vat.number||'',cr:o.cr||s.vat.cr||'',iban:o.iban||s.iban||'',address:o.address||''}}
 /* الحساب البنكي الأساسي للمؤسسة — يُعتمد افتراضياً في كل مستند بلا إدخال يدويّ */
-const DEFAULT_BANK={name:'البنك الأهلي السعودي',iban:'SA8810000001400036240910',accName:'مؤسسة حروف و دروس',logo:''};
+const DEFAULT_BANK={name:'البنك الأهلي السعودي',iban:'SA8810000001400036240910',accName:'مؤسسة حروف و دروس',logo:'/app/snb-logo.png'};
 function bankInfo(org){const s=S.settings;const ibn=(org&&org.iban)||s.iban||DEFAULT_BANK.iban;return {name:s.bankName||DEFAULT_BANK.name,iban:ibn,accName:s.accName||DEFAULT_BANK.accName,logo:s.bankLogo||DEFAULT_BANK.logo};}
 /* كتلة الدفع في المستند: بيانات البنك + آيبان قابل للنسخ + باركود رابط الدفع السريع (قابل للنقر) */
 function payBlockHTML(d,org,acc,ink){
@@ -4330,13 +4330,13 @@ function payBlockHTML(d,org,acc,ink){
   const qrCell=qr?`<a href="${esc(payUrl||'#')}" target="_blank" style="flex:none;text-align:center;text-decoration:none">
         <div style="background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:6px">${qr}</div>
         <div style="font-size:10px;color:${acc};font-weight:800;margin-top:4px">ادفع الآن — امسح أو اضغط</div></a>`:'';
-  const logo=bk.logo?`<img src="${esc(bk.logo)}" style="height:22px;object-fit:contain;vertical-align:middle;margin-left:6px">`:'';
+  const logo=bk.logo?`<img src="${esc(bk.logo)}" style="height:30px;object-fit:contain;flex:none">`:'';
   const ibanClean=bk.iban.replace(/\s+/g,'');
   return `<div style="margin-top:14px;padding:14px 16px;background:#f8fafc;border-right:3px solid ${acc};border-radius:10px;display:flex;justify-content:space-between;align-items:center;gap:16px">
       <div style="flex:1;min-width:0;color:#334155;font-size:13px;line-height:1.9">
-        <div style="font-weight:800;color:${ink};margin-bottom:2px"><i style="font-style:normal">🏦</i> بيانات الدفع${logo?' — '+logo:''}</div>
-        <div>${esc(bk.name)}${bk.accName?` · <span style="color:#64748b">${esc(bk.accName)}</span>`:''}</div>
-        <div style="margin-top:4px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div style="font-size:11px;color:#64748b;font-weight:800;letter-spacing:1.5px;margin-bottom:6px">بيانات الدفع</div>
+        <div style="display:flex;align-items:center;gap:10px">${logo}<div><div style="font-weight:800;color:${ink}">${esc(bk.name)}</div>${bk.accName?`<div style="color:#64748b;font-size:12px">${esc(bk.accName)}</div>`:''}</div></div>
+        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
           <span style="color:#64748b">آيبان:</span>
           <b dir="ltr" style="letter-spacing:.5px">${esc(bk.iban)}</b>
           <button type="button" onclick="(function(b){navigator.clipboard&&navigator.clipboard.writeText('${esc(ibanClean)}');b.textContent='✔ نُسخ';setTimeout(()=>b.textContent='نسخ',1500)})(this)" style="cursor:pointer;border:1px solid ${acc};background:#fff;color:${acc};border-radius:6px;padding:2px 10px;font-size:11px;font-weight:800;font-family:inherit">نسخ</button>
@@ -5926,9 +5926,10 @@ function renderSettings(){
       <div class="card"><h3 style="margin-top:0"><i data-lucide="receipt-text"></i> إعدادات الفواتير</h3>
         <div class="row2"><div class="field"><label>بادئة رقم الفاتورة</label><input id="s_prefix" value="${esc(s.invPrefix)}" placeholder="INV-"></div><div class="field"><label>الآيبان (IBAN) — الحساب الأساسي</label><input id="s_iban" value="${esc(s.iban||DEFAULT_BANK.iban)}" dir="ltr"></div></div>
         <div class="row2"><div class="field"><label>اسم البنك</label><input id="s_bank" value="${esc(s.bankName||DEFAULT_BANK.name)}"></div><div class="field"><label>اسم صاحب الحساب</label><input id="s_accname" value="${esc(s.accName||DEFAULT_BANK.accName)}"></div></div>
-        <div class="field"><label>شعار البنك (يظهر بجانب بيانات الدفع في المستند)</label>
+        <div class="field"><label>شعار البنك (يظهر تلقائياً بجانب بيانات الدفع في كل مستند)</label>
+          <div id="s_banklogo_prev" style="margin:6px 0 8px"><span style="display:inline-flex;align-items:center;gap:10px"><img src="${esc(s.bankLogo||DEFAULT_BANK.logo)}" style="height:36px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px">${s.bankLogo?'<button type="button" class="link-btn del" onclick="clearBankLogo()">استعادة الافتراضي</button>':'<span style="font-size:12px;color:var(--muted)">الافتراضي: شعار البنك الأهلي — قابل للاستبدال</span>'}</span></div>
           <input type="file" accept="image/*" id="s_banklogo_file" onchange="uploadBankLogo(event)">
-          <div id="s_banklogo_prev" style="margin-top:8px">${s.bankLogo?`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${esc(s.bankLogo)}" style="height:34px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 8px"><button type="button" class="link-btn del" onclick="clearBankLogo()">حذف</button></span>`:'<span style="font-size:12px;color:var(--muted)">لا يوجد شعار — سيظهر اسم البنك نصّاً. ارفع شعار البنك الأهلي هنا مرّة واحدة.</span>'}</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:4px">ارفع صورة لاستبدال الشعار الافتراضي (اختياري).</div>
         </div>
         <div class="field"><label>الشروط/الملاحظات الافتراضية</label><textarea id="s_terms" rows="3">${esc(s.terms)}</textarea></div>
       </div>
@@ -5945,7 +5946,7 @@ function renderSettings(){
 }
 function uploadLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>1500000){alert('حجم الصورة كبير (أقل من 1.5MB)');return}const r=new FileReader();r.onload=()=>{S.settings.logo=r.result;save();applyBranding();const p=document.getElementById('logoPrev');if(p){p.src=r.result;p.style.display='block'}alert('تم تحديث الشعار')};r.readAsDataURL(f)}
 function uploadBankLogo(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.settings.bankLogo=r.result;save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${S.settings.bankLogo}" style="height:34px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 8px"><button type="button" class="link-btn del" onclick="clearBankLogo()">حذف</button></span>`;};r.readAsDataURL(f);}
-function clearBankLogo(){S.settings.bankLogo='';save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML='<span style="font-size:12px;color:var(--muted)">لا يوجد شعار — سيظهر اسم البنك نصّاً.</span>';const f=document.getElementById('s_banklogo_file');if(f)f.value='';}
+function clearBankLogo(){S.settings.bankLogo='';save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:10px"><img src="${DEFAULT_BANK.logo}" style="height:36px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px"><span style="font-size:12px;color:var(--muted)">الافتراضي: شعار البنك الأهلي — قابل للاستبدال</span></span>`;const f=document.getElementById('s_banklogo_file');if(f)f.value='';}
 function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),accName:g('s_accname'),terms:g('s_terms')});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();applyBranding();alert('تم الحفظ')}
 function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-'+today()+'.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem(KEY,r.result);S=load();save();alert('تم الاستيراد');go('settings')}catch(x){alert('ملف غير صالح')}};r.readAsText(f)}
