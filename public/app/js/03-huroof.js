@@ -21,23 +21,20 @@ let HR_TAB='overview';
    إدارة منصّة حروف ودروس — كل الأقسام داخل نظام إبراهيم (جسر x-system-token).
    بديلٌ كاملٌ عن huroofduroos.com/admin: نظامٌ واحدٌ لشركة الشخص الواحد.
    ═══════════════════════════════════════════════════════════════════════════ */
+/* أُخفيت بطلب إبراهيم (٢٩ سبتمبر ٢٠٢٦) لأنّها تزيد التعقيد ولا تفيد الإدارة:
+   المعلمون (المستخدمون يكفي)، قائمة الانتظار، مستخرج الأسئلة، نافس، الأغلفة،
+   المدوّنة (تتمّ عبر كلود). دوالّ عرضها باقية فإعادة أيّ قسمٍ سطرٌ هنا. */
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
   {id:'usage',name:'الاستخدام والحملة',icon:'activity'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
-  {id:'teachers',name:'المعلمون',icon:'graduation-cap'},
   {id:'tquestions',name:'أسئلة المعلمين',icon:'inbox'},
   {id:'tickets',name:'التذاكر',icon:'life-buoy'},
-  {id:'waitlist',name:'قائمة الانتظار',icon:'clock'},
   {id:'content',name:'المحتوى',icon:'book-open'},
   {id:'questions',name:'الأسئلة',icon:'help-circle',soon:true},
   {id:'pdflib',name:'مكتبة PDF',icon:'folder',soon:true},
-  {id:'extractor',name:'مستخرج الأسئلة',icon:'file-search',soon:true},
-  {id:'nafs',name:'نافس',icon:'clipboard-list',soon:true},
-  {id:'covers',name:'الأغلفة',icon:'image',soon:true},
-  {id:'blog',name:'المدوّنة',icon:'newspaper',soon:true},
   {id:'banners',name:'بانرات الموقع',icon:'panels-top-left'},
   {id:'settings',name:'الإعدادات',icon:'settings'},
 ];
