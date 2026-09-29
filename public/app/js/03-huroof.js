@@ -23,6 +23,7 @@ let HR_TAB='overview';
    ═══════════════════════════════════════════════════════════════════════════ */
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
+  {id:'usage',name:'الاستخدام والحملة',icon:'activity'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
@@ -857,3 +858,64 @@ async function hrGrant(){const email=(document.getElementById('hrEmail').value||
 async function hrGen(){const count=Math.max(1,Math.min(100,parseInt(document.getElementById('hrCount').value)||0));const m=(document.getElementById('hrCMonths').value||'').trim();const note=(document.getElementById('hrNote').value||'').trim();const fresh=document.getElementById('hrFresh');if(!count)return;fresh.innerHTML='جارٍ التوليد…';try{const r=await hrApi('admin/activation-codes',{method:'POST',body:Object.assign({count},m?{months:+m}:{},note?{note}:{})});hrFreshCodes=r.codes||[];fresh.innerHTML=`<div class="card" style="border-color:#22c55e55;background:#22c55e11"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b style="color:#22c55e">✓ تولّد ${HR_ar(hrFreshCodes.length)} كوداً — انسخها الآن</b><button class="btn btn-sm btn-gold" onclick="hrCopy(this)">نسخ الكل</button></div><div style="font-family:monospace;direction:ltr;text-align:left;font-size:13px;line-height:1.9;max-height:150px;overflow:auto">${hrFreshCodes.map(esc).join('<br>')}</div></div>`;hrLoadCodes();}catch(e){fresh.innerHTML=`<div style="color:#ef4444;font-weight:700">${esc(e.message)}</div>`;}}
 function hrCopy(btn){navigator.clipboard.writeText(hrFreshCodes.join('\n'));btn.textContent='نُسخ ✓';}
 async function hrLoadCodes(){const list=document.getElementById('hrList');const cnt=document.getElementById('hrCodesCount');if(!list)return;try{const r=await hrApi('admin/activation-codes');const codes=r.codes||[];const unused=codes.filter(c=>c.status==='unused').length;if(cnt)cnt.textContent=HR_ar(unused)+' متاح · '+HR_ar(codes.length)+' إجمالاً';list.innerHTML=codes.slice(0,100).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);gap:10px"><span style="font-family:monospace;direction:ltr;${c.status==='redeemed'?'text-decoration:line-through;opacity:.5':''}">${esc(c.code)}</span><span style="display:flex;gap:8px;align-items:center;font-size:11px"><span style="opacity:.6">${c.months?HR_ar(c.months)+' شهر':'دائم'}${c.note?' · '+esc(c.note):''}</span><span style="font-weight:900;color:${c.status==='unused'?'#22c55e':'#94a3b8'}">${c.status==='unused'?'متاح':'مستخدَم'}</span></span></div>`).join('')||'<div style="opacity:.6">لا أكواد بعد.</div>';}catch(e){list.innerHTML=`<div style="color:#ef4444">${esc(e.message)}</div>`;}}
+
+
+/* ═══════════ الاستخدام والحملة — /api/admin/usage ═══════════
+   ما يفتحه المعلّمون من أدوات وألعاب (usage_events) + طلبات Telr حسب كود
+   الخصم (حملة hrf39). تعريفات فقط؛ التسجيل في HR_VIEWS داخل 99-boot.js. */
+let HRU_DAYS=30;
+const HRU_NAMES={
+  huroof:'لعبة الحروف','quick-game':'اللعبة العامة',millionaire:'من سيربح المليون','numbered-heads':'الرؤوس المرقّمة',
+  'hot-seat':'الكرسي الساخن',brainstorming:'العصف الذهني','role-play':'لعب الأدوار',challenge:'التحدّي الذاتي',
+  'two-groups':'تحدّي المجموعتين','live-session':'الجلسة التفاعليّة',event:'وضع الفعاليّة','code-lab':'مختبر البرمجة',
+  wheel:'العجلة الدوّارة',picker:'اختيار الطالب',teams:'توزيع الفرق',dice:'النرد والأرقام',timer:'المؤقّت العملاق',
+  scoreboard:'لوحة النقاط','question-bank':'أسئلتي',worksheet:'أوراق العمل','back-to-school':'استقبال الطلاب',
+  certificates:'شهادات شكر','worksheet-history':'سجلّ الأوراق',letterhead:'كليشة الأوراق','periodic-table':'الجدول الدوري',
+  'typing-practice':'تدريب الكتابة',generate:'مولّد الأسئلة',remediation:'الخطّة العلاجيّة'
+};
+function hrViewUsage(){hrSet(hrLoading());hruLoad();}
+function hruSetDays(d){HRU_DAYS=d;hrViewUsage();}
+async function hruLoad(){try{const u=await hrApi('admin/usage?days='+HRU_DAYS);if(hrActive('usage'))hruRender(u);}catch(e){if(hrActive('usage'))hrSet(hrErr(e.message,'hrViewUsage()'));}}
+function hruRank(rows,color){
+  if(!rows.length)return `<div style="color:var(--muted);padding:10px">لا بيانات بعد في هذه المدّة.</div>`;
+  const max=Math.max(...rows.map(r=>r.opens))||1;
+  return rows.map((r,i)=>`<div style="display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)">
+    <div style="font-weight:900;color:var(--muted)">${HR_ar(i+1)}</div>
+    <div><div style="font-weight:800">${esc(HRU_NAMES[r.target]||r.target)}</div>
+      <div style="height:7px;border-radius:4px;background:${color}22;margin-top:5px"><div style="height:7px;border-radius:4px;background:${color};width:${Math.max(3,Math.round(r.opens/max*100))}%"></div></div></div>
+    <div style="text-align:left;font-size:12px;white-space:nowrap"><b style="font-size:15px">${HR_ar(r.opens)}</b> فتح<br><span style="color:var(--muted)">${HR_ar(r.devices)} جهاز · ${HR_ar(r.users)} مستخدم</span></div>
+  </div>`).join('');
+}
+function hruDaily(rows){
+  if(!rows.length)return '';
+  const max=Math.max(...rows.map(r=>r.tools+r.games))||1;
+  return `<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:8px">${rows.map(r=>{const t=r.tools+r.games;return `<div title="${esc(r.day)}: ${t} (أدوات ${r.tools} · ألعاب ${r.games})" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
+    <div style="background:#f5a623;height:${Math.round(r.games/max*100)}%;border-radius:3px 3px 0 0"></div><div style="background:#0ea5e9;height:${Math.round(r.tools/max*100)}%"></div></div>`}).join('')}</div>
+    <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:6px"><span><b style="color:#0ea5e9">■</b> أدوات</span><span><b style="color:#f5a623">■</b> ألعاب</span></div>`;
+}
+function hruCampaign(rows){
+  if(!rows.length)return `<div style="color:var(--muted);padding:10px">لا طلبات دفع في هذه المدّة.</div>`;
+  const st={paid:'مدفوع',pending:'معلّق',failed:'فشل',cancelled:'أُلغي'},pl={monthly:'شهري',yearly:'سنوي',quarterly:'فصلي'};
+  const paidCode=rows.filter(r=>r.status==='paid'&&r.code!=='—').reduce((a,r)=>a+r.orders,0);
+  const paidAll=rows.filter(r=>r.status==='paid').reduce((a,r)=>a+r.orders,0);
+  return `<div style="margin-bottom:10px;font-weight:700">مشتركون بالكود: <b style="color:#22c55e">${HR_ar(paidCode)}</b> من ${HR_ar(paidAll)} اشتراك مدفوع</div>
+  <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:right"><th style="padding:6px">الكود</th><th>الباقة</th><th>الحالة</th><th>الطلبات</th><th>المحصَّل</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr style="border-top:1px solid var(--line)"><td style="padding:7px;font-weight:800">${esc(r.code==='—'?'بلا كود':r.code)}</td><td>${esc(pl[r.plan]||r.plan)}</td><td>${esc(st[r.status]||r.status)}</td><td>${HR_ar(r.orders)}</td><td>${r.revenue?HR_ar(Math.round(r.revenue))+' ر.س':'—'}</td></tr>`).join('')}
+  </tbody></table>`;
+}
+function hruRender(u){
+  const tools=(u.byTarget||[]).filter(r=>r.kind==='tool'),games=(u.byTarget||[]).filter(r=>r.kind==='game');
+  const T=u.totals||{};
+  const dayBtn=d=>`<button class="btn btn-sm ${HRU_DAYS===d?'btn-gold':'btn-ghost'}" onclick="hruSetDays(${d})">${HR_ar(d)} يوم</button>`;
+  hrSet(`${hrHead('الاستخدام والحملة','activity',dayBtn(7)+dayBtn(30)+dayBtn(90))}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">
+      ${hrTile(HR_ar(T.opens||0),'فتح أداة/لعبة','#f5a623')}${hrTile(HR_ar(T.devices||0),'جهاز مختلف','#0ea5e9')}${hrTile(HR_ar(T.users||0),'مستخدم مسجّل','#22c55e')}
+    </div>
+    <div class="card" style="margin-bottom:16px"><h4 style="margin:0 0 6px">يومياً</h4>${hruDaily(u.daily||[])}</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:16px">
+      <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="gamepad-2"></i> الألعاب الأكثر اختياراً</h4>${hruRank(games,'#f5a623')}</div>
+      <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="wrench"></i> أدوات المعلّم الأكثر استخداماً</h4>${hruRank(tools,'#0ea5e9')}</div>
+    </div>
+    <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="tag"></i> حملة كود الخصم (hrf39)</h4>${hruCampaign(u.campaign||[])}
+      <div style="margin-top:10px;font-size:12px;color:var(--muted)">رابط الحملة الجاهز: huroofduroos.com/app/license?code=hrf39 — يملأ الكود تلقائيّاً.</div></div>`);
+}

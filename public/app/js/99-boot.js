@@ -33,7 +33,7 @@ const HR_VIEWS={
 ;
 
 /* ⤶ 03-huroof.js · سطر الأصل 1907 */
-Object.assign(HR_VIEWS,{questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog});
+Object.assign(HR_VIEWS,{usage:hrViewUsage,questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog});
 ;
 
 /* ⤶ 04-home.js · سطر الأصل 2094 */
