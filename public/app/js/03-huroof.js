@@ -897,7 +897,7 @@ function hruCampaign(rows){
   const paidAll=rows.filter(r=>r.status==='paid').reduce((a,r)=>a+r.orders,0);
   return `<div style="margin-bottom:10px;font-weight:700">مشتركون بالكود: <b style="color:#22c55e">${HR_ar(paidCode)}</b> من ${HR_ar(paidAll)} اشتراك مدفوع</div>
   <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:right"><th style="padding:6px">الكود</th><th>الباقة</th><th>الحالة</th><th>الطلبات</th><th>المحصَّل</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr style="border-top:1px solid var(--line)"><td style="padding:7px;font-weight:800">${esc(r.code==='—'?'بلا كود':r.code)}</td><td>${esc(pl[r.plan]||r.plan)}</td><td>${esc(st[r.status]||r.status)}</td><td>${HR_ar(r.orders)}</td><td>${r.revenue?HR_ar(Math.round(r.revenue))+' ر.س':'—'}</td></tr>`).join('')}
+  ${rows.map(r=>`<tr style="border-top:1px solid var(--line)"><td style="padding:7px;font-weight:800">${esc(r.code==='—'?'بلا كود':String(r.code).toUpperCase())}</td><td>${esc(pl[r.plan]||r.plan)}</td><td>${esc(st[r.status]||r.status)}</td><td>${HR_ar(r.orders)}</td><td>${r.revenue?HR_ar(Math.round(r.revenue))+' ر.س':'—'}</td></tr>`).join('')}
   </tbody></table>`;
 }
 function hruRender(u){
@@ -913,6 +913,6 @@ function hruRender(u){
       <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="gamepad-2"></i> الألعاب الأكثر اختياراً</h4>${hruRank(games,'#f5a623')}</div>
       <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="wrench"></i> أدوات المعلّم الأكثر استخداماً</h4>${hruRank(tools,'#0ea5e9')}</div>
     </div>
-    <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="tag"></i> حملة كود الخصم (hrf39)</h4>${hruCampaign(u.campaign||[])}
-      <div style="margin-top:10px;font-size:12px;color:var(--muted)">رابط الحملة الجاهز: huroofduroos.com/app/license?code=hrf39 — يملأ الكود تلقائيّاً.</div></div>`);
+    <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="tag"></i> حملة كود الخصم (HRF39)</h4>${hruCampaign(u.campaign||[])}
+      <div style="margin-top:10px;font-size:12px;color:var(--muted)">رابط الحملة الجاهز: huroofduroos.com/app/license?code=HRF39 — يملأ الكود تلقائيّاً.</div></div>`);
 }
