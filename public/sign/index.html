@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>توقيع الاتفاقية — حروف ودروس</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!--
+  صفحة التوقيع العامّة لاتفاقيات الشركاء (وحدة «الشركاء والعمولات» في /app — js/20-partners.js).
+  لا دخول ولا وصول للجداول: كلّ شيء عبر دالّتين بالرمز السرّيّ (sign_link_get / sign_link_submit)
+  المعرّفتين في supabase/partner-sign-links.sql. النسخة المطبوعة تبني نفس تخطيط اللوحة (ورق رسميّ + ختم).
+-->
+<style>
+  :root{--navy:#173264;--orange:#FF9000;--sky:#00C6FF;--ink:#1d2433;--muted:#6b7280;--line:#e3e7ef;--bg:#f4f6fb;--good:#16a34a;--bad:#dc2626}
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{font-family:'Rubik',Tahoma,sans-serif;background:var(--bg);color:var(--ink);line-height:1.8;-webkit-text-size-adjust:100%}
+  .wrap{max-width:820px;margin:0 auto;padding:16px 16px 60px}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 0 10px}
+  .brand{font-weight:800;color:var(--navy);font-size:20px}
+  .chip{font-size:12.5px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:5px 11px;color:var(--navy);white-space:nowrap}
+  .chip.warn{background:#fff7ed;border-color:#fed7aa;color:#9a3412}
+  .card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:0 1px 2px rgba(23,50,100,.04)}
+  .steps{display:flex;gap:8px;margin:4px 0 14px;flex-wrap:wrap}
+  .steps span{flex:1;min-width:120px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px 10px;font-size:13px;color:var(--muted)}
+  .steps b{color:var(--navy);margin-left:4px}
+  h1{font-size:22px;color:var(--navy);text-align:center;margin:0}
+  .sub{text-align:center;color:var(--muted);margin:2px 0 12px;font-size:14px}
+  .meta{display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;font-size:13.5px;margin:6px 0 10px}
+  .meta b{color:var(--navy)}
+  table.kv{width:100%;border-collapse:collapse;margin:6px 0;font-size:14px}
+  table.kv th{background:var(--navy);color:#fff;text-align:right;padding:7px 10px}
+  table.kv td{border:1px solid var(--line);padding:6px 10px;vertical-align:top}
+  table.kv td.k{background:#f3f5f9;color:var(--navy);font-weight:700;width:34%}
+  .doc h2{font-size:16px;color:var(--navy);margin:16px 0 6px;padding-bottom:4px;border-bottom:2px solid var(--orange)}
+  .doc p{margin:0 0 6px;text-align:justify}
+  .doc p.ex{color:var(--muted);font-size:14px}
+  .doc ol{margin:0 0 6px;padding-inline-start:22px}
+  .doc li{margin-bottom:4px;text-align:justify}
+  .doc li::marker{color:var(--navy);font-weight:700}
+  .note{color:var(--muted);font-size:13px;margin:2px 0 8px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:560px){.grid{grid-template-columns:1fr}}
+  label.f{display:block;font-size:13px;color:var(--muted);font-weight:600;margin-bottom:5px}
+  input[type=text],input[type=tel],input[type=email]{width:100%;font:inherit;font-size:16px;padding:11px 12px;border:1px solid #cfd6e3;border-radius:10px;background:#fff;color:var(--ink)}
+  input:focus{outline:2px solid var(--sky);border-color:transparent}
+  .req{color:var(--bad)}
+  .agree{display:flex;gap:10px;align-items:flex-start;font-weight:600;margin:6px 0}
+  .agree input{width:22px;height:22px;margin-top:4px;flex:0 0 auto;accent-color:var(--navy)}
+  .pad{background:#fff;border:2px dashed #b8c3d9;border-radius:14px;touch-action:none;position:relative}
+  .pad canvas{display:block;width:100%;height:200px;border-radius:12px;cursor:crosshair}
+  .pad .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#a3acc0;pointer-events:none;font-size:15px}
+  .row{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:700;border:0;border-radius:12px;padding:13px 20px;cursor:pointer;font-size:16px}
+  .btn-primary{background:var(--navy);color:#fff;width:100%}
+  .btn-primary:disabled{opacity:.55;cursor:not-allowed}
+  .btn-ghost{background:#eef1f7;color:var(--navy);padding:8px 14px;font-size:14px}
+  .btn-dl{background:var(--orange);color:#fff;width:100%}
+  .err{color:var(--bad);font-weight:600;margin-top:8px;min-height:1em}
+  .center{text-align:center}
+  .big-ic{font-size:46px;line-height:1}
+  .ok{color:var(--good)}
+  .muted{color:var(--muted)}
+  .sigprev{max-height:80px;max-width:240px;display:block;margin:6px auto}
+  .hint{font-size:13px;color:var(--muted);margin-top:8px}
+  #printDoc{display:none}
+
+  /* ===== نسخة الطباعة: الورق الرسميّ ===== */
+  @media print{
+    @page{size:A4;margin:0}
+    html,body{background:#fff !important}
+    body{background:transparent !important}
+    .wrap{display:none !important}
+    #printDoc{display:block}
+    #printDoc *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    #printDoc{font-family:'Rubik',Tahoma,sans-serif;color:#1d2433;font-size:10.4pt;line-height:1.75}
+    #printDoc .lh{position:fixed;top:0;left:0;width:210mm;height:297mm;z-index:-2}
+    #printDoc .stamp{position:fixed;left:10.2mm;top:262mm;width:27.1mm;height:26.2mm;z-index:-1;object-fit:contain}
+    #printDoc table.pg{width:210mm;border-collapse:collapse}
+    #printDoc table.pg>thead td{height:44mm;padding:0}
+    #printDoc table.pg>tfoot td{height:40mm;padding:0;vertical-align:bottom}
+    #printDoc table.pg>tbody>tr>td{padding:0 17mm}
+    #printDoc .foot{position:fixed;left:0;bottom:9mm;width:210mm;text-align:center;font-size:7.5pt;color:#8a90a0}
+    #printDoc h1{font-size:19pt}
+    #printDoc .sub{font-size:10.4pt;margin:2px 0 10px}
+    #printDoc .meta{font-size:10pt;flex-wrap:nowrap}
+    #printDoc table.kv{font-size:9.8pt;page-break-inside:avoid;margin:4px 0 2px}
+    #printDoc table.kv th{padding:5px 9px}
+    #printDoc table.kv td{border-color:#d5dae5;padding:4px 9px}
+    #printDoc table.kv td.k{width:26%}
+    #printDoc .note{font-size:9pt}
+    #printDoc .doc h2{font-size:11.5pt;margin:12px 0 4px;padding-bottom:3px;border-bottom-width:1.5px;page-break-after:avoid}
+    #printDoc .doc p{margin:0 0 5px}
+    #printDoc .doc p.ex{font-size:9.5pt}
+    #printDoc .doc ol{padding-inline-start:20px}
+    #printDoc .doc li{margin-bottom:3px}
+    #printDoc .end{text-align:center;color:#173264;font-weight:700;margin:12px 0 10px}
+    #printDoc table.sig{width:100%;border-collapse:collapse;page-break-inside:avoid;font-size:10pt}
+    #printDoc table.sig th{background:#173264;color:#fff;padding:6px;width:50%}
+    #printDoc table.sig td{border:1px solid #d5dae5;padding:6px 10px;vertical-align:top;height:9mm}
+    #printDoc table.sig td.s{height:24mm}
+    #printDoc table.sig img{max-height:21mm;max-width:60mm;display:block;margin-top:2px}
+    #printDoc table.sig .k{color:#173264;font-weight:700}
+    #printDoc .esign{margin-top:8px;font-size:8.6pt;color:#4b5563;border:1px dashed #b8c0d0;border-radius:6px;padding:6px 9px;page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="card center muted" style="margin-top:40px">…جارٍ تحميل الاتفاقية</div></div>
+<div id="printDoc"></div>
+
+<script>
+const SUPA_URL='https://rrerwhhxrjyzmnnjsfev.supabase.co';
+const SUPA_KEY='sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13';
+const LETTERHEAD='/app/assets/huroof-letterhead.png';
+const FIELDS=[
+  {k:'name',l:'الاسم الرباعي',req:true,type:'text',ac:'name'},
+  {k:'nationality',l:'الجنسية',type:'text'},
+  {k:'idNo',l:'رقم الهوية / الإقامة',req:true,type:'tel',ac:'off'},
+  {k:'city',l:'المدينة / العنوان',type:'text',ac:'address-level2'},
+  {k:'phone',l:'رقم الجوال',req:true,type:'tel',ac:'tel'},
+  {k:'email',l:'البريد الإلكتروني',type:'email',ac:'email'},
+  {k:'bank',l:'اسم البنك (لتحويل العمولات)',type:'text'},
+  {k:'iban',l:'رقم الآيبان',type:'text',ac:'off',ltr:true},
+];
+let sb=null,TOKEN='',DATA=null,SIG_DIRTY=false,LH_DATA='';
+const $=id=>document.getElementById(id);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function bodyHTML(text){
+  const inl=s=>esc(s).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');let out='',inList=false;
+  String(text||'').split('\n').forEach(raw=>{const ln=raw.trim();
+    if(/^-\s+/.test(ln)){if(!inList){out+='<ol>';inList=true}out+=`<li>${inl(ln.replace(/^-\s+/,''))}</li>`}
+    else{if(inList){out+='</ol>';inList=false}if(ln)out+=/^مثال/.test(ln)?`<p class="ex">${inl(ln)}</p>`:`<p>${inl(ln)}</p>`}});
+  if(inList)out+='</ol>';return out;
+}
+function fmtDT(iso){try{return new Date(iso).toLocaleString('ar-SA-u-nu-latn',{weekday:'long',day:'numeric',month:'long',year:'numeric',hour:'numeric',minute:'2-digit',timeZone:'Asia/Riyadh'})}catch(e){return iso}}
+function fmtD(iso){const d=new Date(iso);const p=n=>String(n).padStart(2,'0');try{const s=new Intl.DateTimeFormat('en-GB',{day:'2-digit',month:'2-digit',year:'numeric',timeZone:'Asia/Riyadh'}).format(d);return s}catch(e){return p(d.getDate())+'/'+p(d.getMonth()+1)+'/'+d.getFullYear()}}
+function fmtT(iso){try{return new Date(iso).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Riyadh'})}catch(e){return ''}}
+function left(iso){const ms=new Date(iso)-new Date();if(ms<=0)return 'انتهى';const h=Math.floor(ms/36e5);if(h>=48)return 'باقي '+Math.floor(h/24)+' أيام';if(h>=1)return 'باقي '+h+' ساعة';return 'باقي '+Math.max(1,Math.floor(ms/6e4))+' دقيقة'}
+
+/* ── المستند (يُستعمل للعرض وللطباعة) ── */
+function docHTML(pl,party,sigs,signedAt,hash){
+  const v=k=>party[k]?esc(party[k]):'<span style="color:#b0b7c6">—</span>';
+  const o=pl.org||{};const row=(k,x)=>`<tr><td class="k">${k}</td><td>${x}</td></tr>`;
+  return `<h1>${esc(pl.title)}</h1><div class="sub">${esc(pl.subtitle||'')}</div>
+  <div class="meta"><span><b>رقم الاتفاقية:</b> ${esc(pl.no)}</span><span><b>تاريخ الإبرام:</b> ${esc(pl.hijri)} الموافق ${esc(pl.dateFmt)}م</span></div>
+  <div class="doc"><p>إنه في يوم ${esc(pl.day)} الموافق للتاريخ المذكور أعلاه، تم الاتفاق بين كلٍّ من:</p></div>
+  <table class="kv"><tr><th colspan="2">الطرف الأول</th></tr>${row('الاسم','<b>'+esc(o.name)+'</b>')}${row('الرقم الوطني الموحد',esc(o.unified))}${row('المقر',esc(o.city))}${row('يمثلها',esc(o.rep)+' — بصفته '+esc(o.repTitle))}${row('البريد الإلكتروني',esc(o.email))}</table>
+  <div class="note">ويُشار إليها فيما بعد بـ «الطرف الأول» أو «المؤسسة».</div>
+  <table class="kv"><tr><th colspan="2">الطرف الثاني</th></tr>${row('الاسم','<b>'+v('name')+'</b>')}${row('الجنسية',v('nationality'))}${row('رقم الهوية / الإقامة',v('idNo'))}${row('المدينة / العنوان',v('city'))}${row('رقم الجوال','<span dir="ltr">'+v('phone')+'</span>')}${row('البريد الإلكتروني',v('email'))}${row('البنك / رقم الآيبان',v('bank')+' — <span dir="ltr">'+v('iban')+'</span>')}</table>
+  <div class="note">ويُشار إليه فيما بعد بـ «الطرف الثاني» أو «المسوّق».</div>
+  <div class="doc"><p>وقد اتفق الطرفان، وهما بكامل أهليتهما المعتبرة شرعًا ونظامًا، على إبرام هذه الاتفاقية وفقًا للبنود الآتية:</p>
+  ${(pl.articles||[]).map(a=>`<h2>${esc(a.t)}</h2>${bodyHTML(a.b)}`).join('')}</div>
+  ${sigs?`<div class="end">والله ولي التوفيق،،،</div>
+  <table class="sig"><tr><th>الطرف الأول</th><th>الطرف الثاني</th></tr>
+    <tr><td><span class="k">الجهة:</span> ${esc(o.name)}</td><td><span class="k">الاسم:</span> ${v('name')}</td></tr>
+    <tr><td><span class="k">يمثلها:</span> ${esc(o.rep)}</td><td><span class="k">رقم الهوية:</span> ${v('idNo')}</td></tr>
+    <tr><td><span class="k">الصفة:</span> ${esc(o.repTitle)}</td><td><span class="k">الجوال:</span> <span dir="ltr">${v('phone')}</span></td></tr>
+    <tr><td class="s"><span class="k">التوقيع:</span>${pl.ownerSig?`<img src="${pl.ownerSig}">`:''}</td><td class="s"><span class="k">التوقيع:</span>${sigs.partner?`<img src="${sigs.partner}">`:''}</td></tr>
+    <tr><td><span class="k">التاريخ:</span> ${esc(pl.dateFmt)}م</td><td><span class="k">التاريخ:</span> ${signedAt?fmtD(signedAt)+'م':''}</td></tr></table>
+  ${signedAt?`<div class="esign"><b>توثيق التوقيع الإلكتروني:</b> وقّع الطرف الثاني هذه الاتفاقية إلكترونياً عبر رابط توقيع آمن ومؤقّت بتاريخ ${fmtD(signedAt)} الساعة ${fmtT(signedAt)} (توقيت الرياض). رمز التحقق: <span dir="ltr">${esc((hash||'').slice(0,32))}</span></div>`:''}`:''}`;
+}
+
+async function toDataUrl(url){try{const r=await fetch(url);if(!r.ok)return '';const b=await r.blob();return await new Promise(res=>{const fr=new FileReader();fr.onload=()=>res(fr.result);fr.onerror=()=>res('');fr.readAsDataURL(b)})}catch(e){return ''}}
+
+/* ── الحالات ── */
+function msg(icon,title,text){$('app').innerHTML=`<div class="top"><div class="brand">مؤسسة حروف ودروس</div></div><div class="card center" style="margin-top:20px"><div class="big-ic">${icon}</div><h2 style="color:var(--navy);margin:8px 0">${title}</h2><div class="muted">${text}</div></div>`}
+
+function renderPending(){
+  const pl=DATA.payload;const party=Object.assign({},pl.partner||{});
+  $('app').innerHTML=`
+    <div class="top"><div class="brand">${esc((pl.org||{}).name||'')}</div><span class="chip ${new Date(DATA.expires_at)-new Date()<6*36e5?'warn':''}" id="cd">⏳ ${left(DATA.expires_at)}</span></div>
+    <div class="steps"><span><b>١</b> اقرأ الاتفاقية</span><span><b>٢</b> أكمل بياناتك</span><span><b>٣</b> وقّع وحمّل نسختك</span></div>
+    <div class="card" style="font-size:13.5px">الرابط صالح للتوقيع حتى <b>${esc(fmtDT(DATA.expires_at))}</b>. بعد التوقيع تقدر تحمّل نسختك الموقّعة PDF مباشرة.</div>
+    <div class="card" id="docView">${docHTML(pl,party,null)}</div>
+    <div class="card"><h3 style="margin:0 0 10px;color:var(--navy)">بياناتك (الطرف الثاني)</h3>
+      <div class="grid">${FIELDS.map(f=>`<div><label class="f" for="f_${f.k}">${f.l} ${f.req?'<span class="req">*</span>':''}</label><input id="f_${f.k}" type="${f.type}" ${f.ltr?'dir="ltr"':''} autocomplete="${f.ac||'on'}" value="${esc(party[f.k]||'')}"></div>`).join('')}</div>
+      <div class="hint">تظهر بياناتك في الاتفاقية أعلاه أثناء الكتابة.</div></div>
+    <div class="card"><h3 style="margin:0 0 6px;color:var(--navy)">التوقيع</h3>
+      <label class="agree"><input type="checkbox" id="agree"> <span>قرأت الاتفاقية كاملة، وأقرّ بصحة بياناتي، وأوافق على جميع بنودها، وأقبل التوقيع الإلكتروني كتوقيعٍ ملزم.</span></label>
+      <div class="pad" style="margin-top:10px"><canvas id="sig"></canvas><div class="ph" id="ph">وقّع هنا بإصبعك</div></div>
+      <div class="row"><button class="btn btn-ghost" type="button" onclick="clearSig()">مسح التوقيع</button><span class="muted" style="font-size:12px">ارسم توقيعك داخل المربع</span></div>
+      <div style="margin-top:14px"><button class="btn btn-primary" id="submit" onclick="submitSign()">توقيع الاتفاقية</button></div>
+      <div class="err" id="err"></div></div>`;
+  FIELDS.forEach(f=>$('f_'+f.k).addEventListener('input',()=>{const p={};FIELDS.forEach(x=>p[x.k]=$('f_'+x.k).value.trim());$('docView').innerHTML=docHTML(pl,p,null)}));
+  initPad();
+  setInterval(()=>{const c=$('cd');if(c){c.textContent='⏳ '+left(DATA.expires_at);if(new Date(DATA.expires_at)<new Date())load()}},30000);
+}
+function renderSigned(justNow){
+  const pl=DATA.payload;const party=DATA.signer_data||{};
+  $('app').innerHTML=`
+    <div class="top"><div class="brand">${esc((pl.org||{}).name||'')}</div><span class="chip">✓ موقّعة</span></div>
+    <div class="card center"><div class="big-ic ok">✓</div><h2 style="color:var(--navy);margin:6px 0">${justNow?'تم توقيع الاتفاقية بنجاح':'هذه الاتفاقية موقّعة'}</h2>
+      <div class="muted">وُقّعت في ${esc(fmtDT(DATA.signed_at))}</div>
+      <div class="muted" style="font-size:12px;margin-top:4px">رمز التحقق: <span dir="ltr">${esc((DATA.doc_hash||'').slice(0,32))}</span></div>
+      <div style="margin-top:14px"><button class="btn btn-dl" onclick="downloadPdf()">⬇️ تحميل نسختي الموقّعة (PDF)</button></div>
+      <div class="hint">في نافذة الطباعة اختر «حفظ كـ PDF» (على الآيفون: مشاركة ← حفظ في الملفات). احتفظ بنسختك — الرابط يُغلق بعد مدة قصيرة.</div></div>
+    <div class="card">${docHTML(pl,party,{partner:DATA.signature},DATA.signed_at,DATA.doc_hash)}</div>`;
+}
+
+/* ── لوحة التوقيع ── */
+function initPad(){
+  const c=$('sig');const r=c.getBoundingClientRect();const dpr=window.devicePixelRatio||1;c.width=r.width*dpr;c.height=r.height*dpr;
+  const x=c.getContext('2d');x.scale(dpr,dpr);x.lineWidth=2.6;x.lineCap='round';x.lineJoin='round';x.strokeStyle='#0b1b4a';x.fillStyle='#0b1b4a';
+  let down=false,last=null;const pos=e=>{const b=c.getBoundingClientRect();return {x:e.clientX-b.left,y:e.clientY-b.top}};
+  c.onpointerdown=e=>{e.preventDefault();down=true;last=pos(e);try{c.setPointerCapture(e.pointerId)}catch(_){}x.beginPath();x.arc(last.x,last.y,1.2,0,7);x.fill();SIG_DIRTY=true;$('ph').style.display='none'};
+  c.onpointermove=e=>{if(!down)return;e.preventDefault();const p=pos(e);x.beginPath();x.moveTo(last.x,last.y);x.lineTo(p.x,p.y);x.stroke();last=p};
+  c.onpointerup=c.onpointercancel=()=>{down=false};
+}
+function clearSig(){const c=$('sig');c.getContext('2d').clearRect(0,0,c.width,c.height);SIG_DIRTY=false;$('ph').style.display='flex'}
+function trimSig(c){const x=c.getContext('2d');const w=c.width,h=c.height;const d=x.getImageData(0,0,w,h).data;let t=h,l=w,r=0,b=0;
+  for(let y=0;y<h;y++)for(let i=0;i<w;i++){if(d[(y*w+i)*4+3]>10){if(y<t)t=y;if(y>b)b=y;if(i<l)l=i;if(i>r)r=i}}
+  if(r<=l||b<=t)return c.toDataURL('image/png');const pad=8;l=Math.max(0,l-pad);t=Math.max(0,t-pad);r=Math.min(w,r+pad);b=Math.min(h,b+pad);
+  const o=document.createElement('canvas');const sc=Math.min(1,360/(r-l));o.width=Math.round((r-l)*sc);o.height=Math.round((b-t)*sc);o.getContext('2d').drawImage(c,l,t,r-l,b-t,0,0,o.width,o.height);return o.toDataURL('image/png')}
+
+async function submitSign(){
+  const err=$('err');err.textContent='';
+  const data={};FIELDS.forEach(f=>data[f.k]=$('f_'+f.k).value.trim());
+  const miss=FIELDS.filter(f=>f.req&&!data[f.k]).map(f=>f.l);
+  if(miss.length){err.textContent='أكمل: '+miss.join('، ');return}
+  if(data.name.split(/\s+/).length<3){err.textContent='اكتب الاسم الثلاثي أو الرباعي.';return}
+  if(data.idNo.replace(/\D/g,'').length<10){err.textContent='رقم الهوية يجب أن يكون 10 أرقام.';return}
+  if(!$('agree').checked){err.textContent='يجب الإقرار بقراءة الاتفاقية والموافقة عليها.';return}
+  if(!SIG_DIRTY){err.textContent='ارسم توقيعك في المربع.';return}
+  data.agreed=true;
+  const btn=$('submit');btn.disabled=true;btn.textContent='جارٍ التوقيع…';
+  try{
+    const {data:res,error}=await sb.rpc('sign_link_submit',{p_token:TOKEN,p_data:data,p_signature:trimSig($('sig'))});
+    if(error)throw error;if(!res||!res.ok)throw new Error((res&&res.error)||'تعذّر التوقيع');
+    await load(true);
+  }catch(e){btn.disabled=false;btn.textContent='توقيع الاتفاقية';err.textContent=e.message||String(e)}
+}
+
+/* ── التحميل: نفس الورق الرسمي ── */
+async function downloadPdf(){
+  if(!LH_DATA)LH_DATA=await toDataUrl(LETTERHEAD);
+  const pl=DATA.payload;const party=DATA.signer_data||{};
+  $('printDoc').innerHTML=`${LH_DATA?`<img class="lh" src="${LH_DATA}">`:''}${pl.stamp?`<img class="stamp" src="${pl.stamp}">`:''}
+    <table class="pg"><thead><tr><td></td></tr></thead><tfoot><tr><td><div class="foot">${esc(pl.no)} · ${esc(pl.title)} · ${esc((pl.org||{}).name||'')} · موقّعة إلكترونياً</div></td></tr></tfoot>
+    <tbody><tr><td>${docHTML(pl,party,{partner:DATA.signature},DATA.signed_at,DATA.doc_hash)}</td></tr></tbody></table>`;
+  const imgs=[...$('printDoc').querySelectorAll('img')];
+  await Promise.all(imgs.map(im=>im.complete?0:new Promise(r=>{im.onload=im.onerror=r;setTimeout(r,3000)})));
+  try{if(document.fonts&&document.fonts.ready)await Promise.race([document.fonts.ready,new Promise(r=>setTimeout(r,2000))])}catch(e){}
+  const prev=document.title;document.title=('اتفاقية_'+(party.name||'').replace(/\s+/g,'_')+'_'+pl.no).slice(0,90);
+  window.print();setTimeout(()=>{document.title=prev},1500);
+}
+
+async function load(justSigned){
+  try{
+    const {data,error}=await sb.rpc('sign_link_get',{p_token:TOKEN});if(error)throw error;
+    DATA=data||{};
+    if(DATA.state==='pending')return renderPending();
+    if(DATA.state==='signed')return renderSigned(!!justSigned);
+    if(DATA.state==='expired')return msg('⌛','انتهت صلاحية الرابط','انتهت مدة هذا الرابط في '+esc(fmtDT(DATA.expires_at))+'. تواصل مع المؤسسة لإرسال رابط جديد.');
+    if(DATA.state==='closed')return msg('🔒','أُغلق الرابط','تم توقيع هذه الاتفاقية وأُغلق الرابط. إن احتجت نسخة تواصل مع المؤسسة.');
+    return msg('⚠️','الرابط غير صالح','تأكد من نسخ الرابط كاملاً، أو تواصل مع المؤسسة لإرسال رابط جديد.');
+  }catch(e){msg('⚠️','تعذّر التحميل','تحقق من اتصالك بالإنترنت ثم أعد فتح الرابط.')}
+}
+(function boot(){
+  TOKEN=new URLSearchParams(location.search).get('t')||'';
+  if(!window.supabase){return msg('⚠️','تعذّر التحميل','تحقق من اتصالك بالإنترنت ثم أعد فتح الرابط.')}
+  sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:false,autoRefreshToken:false}});
+  if(TOKEN.length<32)return msg('⚠️','الرابط غير صالح','تأكد من نسخ الرابط كاملاً.');
+  load();
+})();
+</script>
+</body>
+</html>
