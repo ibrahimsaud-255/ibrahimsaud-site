@@ -130,7 +130,7 @@ const PK_TABS=[
 function renderPartners(){
   pkInit();
   const main=document.getElementById('main');
-  if(PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();return}
+  if(PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();pkSyncLinks(false);return}
   PK_PID=null;
   const bodies={overview:pkViewOverview,partners:pkViewPartners,leads:pkViewLeads,comms:pkViewComms,template:pkViewTemplate};
   main.innerHTML=`
@@ -149,6 +149,7 @@ function pkBack(){PK_PID=null;renderPartners()}
 
 /* ── نظرة عامة ── */
 function pkViewOverview(){
+  setTimeout(()=>pkSyncLinks(false),0);
   const act=S.partners.filter(p=>p.status==='active');
   const open=S.partnerLeads.filter(l=>!['won','lost'].includes(l.stage));
   const won=S.partnerLeads.filter(l=>l.stage==='won');
@@ -169,7 +170,7 @@ function pkViewOverview(){
       <div class="stat"><div class="ic"><i data-lucide="wallet"></i></div><div class="v">${pkSar(due)}</div><div class="l">عمولات مستحقّة (لم تُصرف)</div></div>
       <div class="stat"><div class="ic"><i data-lucide="check-check"></i></div><div class="v">${pkSar(paid)}</div><div class="l">عمولات مصروفة</div></div>
     </div>
-    ${pending.length?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="file-clock"></i><div><b>اتفاقيات لم تُعتمد بعد:</b> ${pending.map(p=>`<a class="link-btn" onclick="pkOpen('${p.id}')">${esc(p.name)}</a>`).join(' · ')}</div></div>`:''}
+    ${pending.length?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="file-clock"></i><div><b>اتفاقيات لم تُعتمد بعد:</b> ${pending.map(p=>`<a class="link-btn" onclick="pkOpen('${p.id}')">${esc(p.name)}${p.esign?' (وقّع ✓ — اعتمده)':''}</a>`).join(' · ')}</div></div>`:''}
     <div class="card" style="margin-bottom:16px"><h3><i data-lucide="alarm-clock"></i> متابعاتك</h3>
       ${!fu.length&&!noNext.length?emptyBox('calendar-check','لا متابعات — سجّل مدرسة وحدّد «الخطوة الجاية».'):''}
       ${overdue.length?`<div style="margin:6px 0;color:var(--bad);font-weight:700">متأخرة (${overdue.length})</div>${tbl(overdue,l=>`<span class="pill lost">${pkFmt(l.nextDate)}</span>`)}`:''}
@@ -199,9 +200,9 @@ function pkViewPartners(){
 }
 function pkPartnerForm(id){
   const k=pkInit();const p=id?pkP(id):null;const d=k.defaults;const v=(f,dv)=>esc(p&&p[f]!=null&&p[f]!==''?p[f]:(dv==null?'':dv));
-  const locked=p&&p.status==='active';
+  const locked=p&&(p.status==='active'||(p.agreement&&p.agreement.signed));
   openModal(p?'بيانات الشريك':'شريك جديد',`
-    ${locked?`<div class="badge-note" style="margin-bottom:12px"><i data-lucide="lock"></i><div>الاتفاقية <b>معتمدة</b> — تعديل البيانات هنا لا يغيّر البنود المجمّدة، لكنه يغيّر ما يُطبع في الصفحة الأولى. لتغيير جوهريّ: أصدر ملحقاً.</div></div>`:''}
+    ${locked?`<div class="badge-note" style="margin-bottom:12px"><i data-lucide="lock"></i><div>الاتفاقية <b>موقّعة/معتمدة</b> — تعديل البيانات هنا لا يغيّر البنود المجمّدة، لكنه يغيّر ما يُطبع في الصفحة الأولى. لتغيير جوهريّ: أصدر ملحقاً.</div></div>`:''}
     <div style="font-weight:800;margin-bottom:8px">البيانات الشخصية</div>
     <div class="row2"><div class="field"><label>الاسم الرباعي *</label><input id="pk_name" value="${v('name')}"></div>
       <div class="field"><label>الجنسية</label><input id="pk_nat" value="${v('nationality','سعودي')}"></div></div>
@@ -270,11 +271,12 @@ function pkPartnerPage(p){
       </div>
       <div class="card"><h3><i data-lucide="file-signature"></i> الاتفاقية والاعتماد</h3>
         ${step(!!p.printedAt,'طُبعت الاتفاقية من النظام'+(p.printedAt?` <span style="color:var(--muted);font-size:12px">(${pkFmt(p.printedAt.slice(0,10))})</span>`:''))}
-        ${step(!!p.sig,'توقيع الطرف الثاني الإلكتروني'+(p.sig?' ✓':' (اختياري)'))}
+        ${step(!!p.sig,'وقّع الطرف الثاني إلكترونياً'+(p.esign?' <span style="color:var(--muted);font-size:12px">(عبر الرابط '+pkFmt(p.esign.at.slice(0,10))+')</span>':''))}
         ${step(!!signedDoc,'رُفعت النسخة الموقّعة'+(signedDoc?` <span style="color:var(--muted);font-size:12px">(${pkFmt(signedDoc.at.slice(0,10))})</span>`:''))}
         ${step(p.status==='active','اعتُمد الشريك'+(p.approvedAt?` <span style="color:var(--muted);font-size:12px">(${pkFmt(p.approvedAt.slice(0,10))})</span>`:''))}
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
-          <button class="btn btn-ghost btn-sm" onclick="pkSignPartner('${p.id}')"><i data-lucide="pen-tool"></i> ${p.sig?'إعادة التوقيع':'توقيع إلكتروني'}</button>
+          <button class="btn btn-gold btn-sm" onclick="pkLinkForm('${p.id}')"><i data-lucide="send"></i> إرسال رابط توقيع</button>
+          <button class="btn btn-ghost btn-sm" onclick="pkSignPartner('${p.id}')"><i data-lucide="pen-tool"></i> ${p.sig?'إعادة التوقيع هنا':'توقيع على هذا الجهاز'}</button>
           <button class="btn btn-ghost btn-sm" onclick="pkUploadDoc('${p.id}','signed')"><i data-lucide="upload"></i> رفع النسخة الموقّعة</button>
           <button class="btn btn-ghost btn-sm" onclick="pkUploadDoc('${p.id}','other')"><i data-lucide="paperclip"></i> مرفق آخر</button>
           ${p.status!=='active'?`<button class="btn btn-gold btn-sm" onclick="pkApprove('${p.id}')"><i data-lucide="badge-check"></i> اعتماد الشريك</button>`:
@@ -284,6 +286,7 @@ function pkPartnerPage(p){
         ${docs.length?`<div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px">${docs.map((x,i)=>`<div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:5px 0"><span><i class="inl" data-lucide="${x.kind==='signed'?'file-check':'file'}"></i> ${esc(x.name)}${x.kind==='signed'?' <span class="pill won">موقّعة</span>':''}</span><span style="white-space:nowrap"><button class="link-btn" onclick="pkOpenDoc('${p.id}',${i})">فتح</button> <button class="link-btn del" onclick="pkDelDoc('${p.id}',${i})">حذف</button></span></div>`).join('')}</div>`:''}
       </div>
     </div>
+    ${pkLinksCard(p)}
     <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0"><i data-lucide="school"></i> المدارس المسجّلة باسمه</h3>
       <button class="btn btn-gold btn-sm" onclick="pkLeadForm(null,'${p.id}')"><i data-lucide="plus"></i> تسجيل مدرسة</button></div>
       <div style="margin-top:12px">${leads.length?pkLeadsTable(leads,true):emptyBox('school','لا مدارس مسجّلة بعد.')}</div></div>
@@ -298,8 +301,8 @@ function pkApprove(id){
   const p=pkP(id);if(!p)return;
   const hasSigned=(p.docs||[]).some(x=>x.kind==='signed');
   if(!hasSigned&&!p.sig){if(!confirm('لم تُرفع نسخة موقّعة ولا يوجد توقيع إلكتروني للشريك.\nالاعتماد بدون إثبات توقيع يضعف حفظ الحقوق للطرفين.\n\nاعتماد على أي حال؟'))return}
-  else if(!confirm('اعتماد '+p.name+'؟\nستُجمَّد بنود الاتفاقية الحالية على ملفه.'))return;
-  p.agreement={articles:JSON.parse(JSON.stringify(pkArticles())),title:pkInit().title,subtitle:pkInit().subtitle,org:JSON.parse(JSON.stringify(pkInit().org)),frozenAt:pkNow()};
+  else if(!confirm('اعتماد '+p.name+'؟\n'+(p.agreement&&p.agreement.signed?'البنود المعتمدة هي نفس النسخة التي وقّعها عبر الرابط.':'ستُجمَّد بنود الاتفاقية الحالية على ملفه.')))return;
+  if(!(p.agreement&&p.agreement.signed))p.agreement={articles:JSON.parse(JSON.stringify(pkArticles())),title:pkInit().title,subtitle:pkInit().subtitle,org:JSON.parse(JSON.stringify(pkInit().org)),frozenAt:pkNow()};
   p.status='active';p.approvedAt=pkNow();pkLog(p,'اعتُمد الشريك وجُمّدت بنود الاتفاقية');save();renderPartners();
 }
 function pkSetStatus(id){
@@ -563,7 +566,7 @@ function pkDocShell(title,inner,assets,footer){
     table.pg>thead td{height:44mm;padding:0}
     table.pg>tfoot td{height:40mm;padding:0;vertical-align:bottom}
     table.pg>tbody>tr>td{padding:0 17mm}
-    .foot{text-align:center;font-size:7.5pt;color:#8a90a0;padding-bottom:9mm}
+    .foot{position:fixed;left:0;bottom:9mm;width:210mm;text-align:center;font-size:7.5pt;color:#8a90a0}
     h1{font-size:19pt;color:#173264;text-align:center;margin:0}
     .sub{text-align:center;color:#5b6274;margin:2px 0 10px}
     .meta{display:flex;justify-content:space-between;font-size:10pt;margin:8px 0 10px}
@@ -591,13 +594,14 @@ function pkDocShell(title,inner,assets,footer){
     table.list td{border:1px solid #d5dae5;padding:5px 7px}
     table.list tr.tot td{background:#f3f5f9;font-weight:700;color:#173264}
     .hl{background:#fff3b0}
+    .esign{margin-top:8px;font-size:8.6pt;color:#4b5563;border:1px dashed #b8c0d0;border-radius:6px;padding:6px 9px;page-break-inside:avoid}
   </style></head><body>
   ${assets.lh?`<img class="lh" src="${assets.lh}">`:''}${assets.stamp?`<img class="stamp" src="${assets.stamp}">`:''}
   <table class="pg"><thead><tr><td></td></tr></thead><tfoot><tr><td><div class="foot">${esc(footer||'')}</div></td></tr></tfoot>
   <tbody><tr><td>${inner}</td></tr></tbody></table></body></html>`;
 }
 function pkAgreementHTML(p){
-  const k=pkInit();const frozen=p&&p.status==='active'&&p.agreement;
+  const k=pkInit();const frozen=p&&p.agreement&&(p.status==='active'||p.agreement.signed);
   const arts=frozen?p.agreement.articles:pkArticles();const org=frozen?p.agreement.org:k.org;
   const title=frozen?p.agreement.title:k.title;const sub=frozen?p.agreement.subtitle:k.subtitle;
   const vars=pkVars(p);const blank='<span class="hl">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>';
@@ -622,7 +626,8 @@ function pkAgreementHTML(p){
       <tr><td><span class="k">يمثلها:</span> ${esc(org.rep)}</td><td><span class="k">رقم الهوية:</span> ${f(p&&p.idNo)}</td></tr>
       <tr><td><span class="k">الصفة:</span> ${esc(org.repTitle)}</td><td><span class="k">الجوال:</span> <span dir="ltr">${f(p&&p.phone)}</span></td></tr>
       <tr><td class="s"><span class="k">التوقيع:</span>${k.ownerSig?`<img src="${k.ownerSig}">`:''}</td><td class="s"><span class="k">التوقيع:</span>${p&&p.sig?`<img src="${p.sig}">`:''}</td></tr>
-      <tr><td><span class="k">التاريخ:</span> ${dt?pkFmt(dt)+'م':blank}</td><td><span class="k">التاريخ:</span> ${p&&p.sigAt?pkFmt(p.sigAt.slice(0,10))+'م':(dt?pkFmt(dt)+'م':blank)}</td></tr></table>`;
+      <tr><td><span class="k">التاريخ:</span> ${dt?pkFmt(dt)+'م':blank}</td><td><span class="k">التاريخ:</span> ${p&&p.sigAt?pkFmt(p.sigAt.slice(0,10))+'م':(dt?pkFmt(dt)+'م':blank)}</td></tr></table>
+    ${p&&p.esign?`<div class="esign"><b>توثيق التوقيع الإلكتروني:</b> وقّع الطرف الثاني هذه الاتفاقية إلكترونياً عبر رابط توقيع آمن ومؤقّت بتاريخ ${pkFmt(p.esign.at.slice(0,10))} الساعة ${new Date(p.esign.at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Riyadh'})} (توقيت الرياض)${p.esign.ip?' من عنوان '+esc(p.esign.ip):''}. رمز التحقق: <span dir="ltr">${esc((p.esign.hash||'').slice(0,32))}</span></div>`:''}`;
 }
 async function pkPrintHTML(html,fname){
   const f=document.createElement('iframe');f.style.cssText='position:fixed;right:-10000px;bottom:0;width:820px;height:1160px;border:0';
@@ -664,4 +669,107 @@ async function pkPrintStatement(id,from,to){
     <table class="sig" style="width:50%;margin-top:10px"><tr><th>${esc(k.org.name)}</th></tr><tr><td class="s"><span class="k">التوقيع:</span>${k.ownerSig?`<img src="${k.ownerSig}">`:''}</td></tr></table>`;
   pkLog(p,'طُبع كشف حساب '+pkFmt(from)+' → '+pkFmt(to));save();
   pkPrintHTML(pkDocShell('كشف_عمولات_'+p.name.replace(/\s+/g,'_'),inner,assets,'كشف حساب عمولات · '+p.no+' · '+k.org.name),'كشف_عمولات_'+p.name.replace(/\s+/g,'_')+'_'+to);
+}
+
+/* ===== روابط التوقيع عن بُعد (جدول partner_sign_links + الصفحة العامّة /sign/) =====
+ * الرابط يحمل نسخةً كاملة من نصّ الاتفاقية لحظة الإرسال (البنود مُعبّأة + الختم + توقيعك)،
+ * فما يوقّعه الشريك هو بالضبط ما يُجمَّد على ملفّه — حتى لو عدّلت القالب لاحقاً.
+ * الشريك لا يصل الجدول؛ يصل عبر sign_link_get / sign_link_submit بالرمز فقط.            */
+let PK_LSYNC=0;
+function pkToken(){const a=new Uint8Array(24);crypto.getRandomValues(a);return [...a].map(b=>b.toString(16).padStart(2,'0')).join('')}
+function pkSignUrl(token){return location.origin+'/sign/?t='+token}
+function pkLinkState(l){if(l.status==='signed')return {t:'وُقّعت',pill:'won'};if(l.status==='revoked')return {t:'ملغى',pill:'lost'};
+  if(new Date(l.expiresAt)<new Date())return {t:'انتهى',pill:'lost'};return {t:l.openCount?`فُتح ${l.openCount} مرة`:'لم يُفتح بعد',pill:l.openCount?'progress':'lead'}}
+function pkLinksCard(p){
+  const links=(p.links||[]);if(!links.length)return '';
+  return `<div class="card" style="margin-bottom:16px"><h3><i data-lucide="link"></i> روابط التوقيع</h3>
+    <div style="overflow:auto"><table><thead><tr><th>أُرسل</th><th>صالح حتى</th><th>الحالة</th><th></th></tr></thead><tbody>
+    ${links.map(l=>{const st=pkLinkState(l);const live=l.status==='pending'&&new Date(l.expiresAt)>new Date();return `<tr>
+      <td style="white-space:nowrap">${pkFmt(l.createdAt.slice(0,10))}</td>
+      <td style="white-space:nowrap" dir="ltr">${new Date(l.expiresAt).toLocaleString('en-GB',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td>
+      <td><span class="pill ${st.pill}">${st.t}</span>${l.status==='signed'&&l.signedAt?`<div style="font-size:11px;color:var(--muted)">${pkFmt(l.signedAt.slice(0,10))}</div>`:''}</td>
+      <td style="white-space:nowrap">${live?`<button class="link-btn" onclick="pkCopyLink('${l.token}')">نسخ</button> <a class="link-btn" href="${pkLinkWa(p,l)}" target="_blank" rel="noopener">واتساب</a> <button class="link-btn del" onclick="pkRevokeLink('${p.id}','${l.id}')">إلغاء</button>`:''}</td></tr>`}).join('')}
+    </tbody></table></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:8px;gap:8px;flex-wrap:wrap"><span style="color:var(--muted);font-size:12px">يتحدّث تلقائياً — عند التوقيع تُسحب بيانات الشريك وتوقيعه إلى ملفه.</span>
+      <button class="btn btn-ghost btn-sm" onclick="pkSyncLinks(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div></div>`;
+}
+function pkLinkWa(p,l){const exp=new Date(l.expiresAt).toLocaleString('ar-SA',{weekday:'long',day:'numeric',month:'long',hour:'numeric',minute:'2-digit'});
+  const msg=`السلام عليكم ${p.name.split(' ')[0]}،\nهذا رابط اتفاقية التسويق والمبيعات بالعمولة مع ${pkInit().org.name} (رقم ${p.no}).\nاقرأ البنود، وأكمل بياناتك، ثم وقّع إلكترونياً وحمّل نسختك:\n${pkSignUrl(l.token)}\n\nالرابط صالح حتى ${exp}.`;
+  const w=pkWa(p.phone);return (w||'https://wa.me/')+'?text='+encodeURIComponent(msg)}
+function pkCopyLink(token){const u=pkSignUrl(token);navigator.clipboard.writeText(u).then(()=>alert('تم نسخ الرابط ✓\n'+u)).catch(()=>prompt('انسخ الرابط:',u))}
+async function pkBuildPayload(p){
+  const k=pkInit();const vars=pkVars(p);const a=await pkAssets();
+  return {v:1,no:p.no,title:k.title,subtitle:k.subtitle,org:JSON.parse(JSON.stringify(k.org)),
+    date:p.agreementDate||today(),hijri:pkHijri(p.agreementDate||today()),day:pkDay(p.agreementDate||today()),dateFmt:pkFmt(p.agreementDate||today()),
+    articles:pkArticles().map(x=>({t:x.t,b:pkFill(x.b,vars)})),
+    partner:{name:p.name||'',nationality:p.nationality||'',idNo:p.idNo||'',city:p.city||'',phone:p.phone||'',email:p.email||'',bank:p.bank||'',iban:p.iban||''},
+    ownerSig:k.ownerSig||'',stamp:a.stamp||'',createdAt:pkNow()};
+}
+function pkLinkForm(id){
+  const p=pkP(id);if(!p)return;
+  if(p.status==='active'){alert('الشريك معتمد مسبقاً — لا حاجة لرابط توقيع جديد.');return}
+  const k=pkInit();
+  openModal('رابط توقيع — '+esc(p.name),`
+    <div class="badge-note" style="margin-bottom:12px"><i data-lucide="info"></i><div>يفتح الشريك الرابط من جواله، يقرأ الاتفاقية كاملة، يكمل بياناته، يوقّع، ثم يحمّل نسخته الموقّعة PDF على الورق الرسمي. يصلك التوقيع هنا تلقائياً لتعتمده.</div></div>
+    ${!k.stampPath?`<div class="badge-note" style="margin-bottom:12px"><i data-lucide="stamp"></i><div>لم تُرفع الختم بعد — نسخة الشريك ستطلع بدون ختم. ارفعه من «قالب الاتفاقية».</div></div>`:''}
+    ${!k.ownerSig?`<div class="badge-note" style="margin-bottom:12px"><i data-lucide="pen-tool"></i><div>توقيعك غير محفوظ — خانة توقيعك ستكون فارغة في نسخة الشريك.</div></div>`:''}
+    <div class="field"><label>مدة صلاحية الرابط</label><select id="pk_lexp"><option value="24">24 ساعة</option><option value="48" selected>48 ساعة</option><option value="72">3 أيام</option><option value="168">7 أيام</option></select></div>
+    <div style="color:var(--muted);font-size:13px">البيانات التي كتبتها للشريك تظهر له معبّأة مسبقاً ويستطيع تصحيحها. بعد انتهاء المدة لا يمكن التوقيع، وتقدر ترسل رابطاً جديداً.</div>`,
+  async()=>{
+    if(!USER){alert('إنشاء الروابط يتطلب تسجيل الدخول (لا يعمل في وضع التجربة).');return}
+    const btn=document.getElementById('mSave');btn.disabled=true;btn.textContent='جارٍ الإنشاء…';
+    try{
+      const hours=Number(pkVal('pk_lexp')||48);const token=pkToken();const exp=new Date(Date.now()+hours*3600e3).toISOString();
+      const payload=await pkBuildPayload(p);
+      const {data,error}=await sb.from('partner_sign_links').insert({token,partner_ref:p.id,payload,expires_at:exp}).select('id').single();
+      if(error)throw error;
+      if(!Array.isArray(p.links))p.links=[];
+      p.links.unshift({id:data.id,token,expiresAt:exp,createdAt:pkNow(),status:'pending',openCount:0});
+      if(p.status==='draft')p.status='pending';pkLog(p,'أُرسل رابط توقيع صالح '+hours+' ساعة');save();closeModal();renderPartners();
+      pkLinkReady(p,p.links[0]);
+    }catch(e){btn.disabled=false;btn.textContent='حفظ';alert('تعذّر إنشاء الرابط: '+(e.message||e))}
+  });
+  setTimeout(()=>{const b=document.getElementById('mSave');if(b)b.textContent='إنشاء الرابط'},0);
+}
+function pkLinkReady(p,l){
+  const u=pkSignUrl(l.token);
+  openModal('الرابط جاهز ✓',`<div class="field"><label>رابط التوقيع</label><input id="pk_lurl" dir="ltr" readonly value="${esc(u)}" onclick="this.select()"></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap"><a class="btn btn-gold" href="${pkLinkWa(p,l)}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> إرسال واتساب</a>
+    <button class="btn btn-ghost" onclick="pkCopyLink('${l.token}')"><i data-lucide="copy"></i> نسخ</button>
+    <a class="btn btn-ghost" href="${esc(u)}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> معاينة</a></div>
+    <div style="color:var(--muted);font-size:12px;margin-top:10px">ملاحظة: فتحك للمعاينة يُحتسب ضمن مرات الفتح. لا توقّع من المعاينة.</div>`,()=>closeModal());
+  setTimeout(()=>{const b=document.getElementById('mSave');if(b)b.textContent='تم'},0);
+}
+async function pkRevokeLink(pid,lid){
+  const p=pkP(pid);const l=p&&(p.links||[]).find(x=>x.id===lid);if(!l||!confirm('إلغاء هذا الرابط؟ لن يستطيع الشريك فتحه بعد الآن.'))return;
+  try{const {error}=await sb.from('partner_sign_links').update({status:'revoked'}).eq('id',lid).eq('status','pending');if(error)throw error;l.status='revoked';pkLog(p,'أُلغي رابط توقيع');save();renderPartners()}
+  catch(e){alert('تعذّر الإلغاء: '+(e.message||e))}
+}
+async function pkSyncLinks(force){
+  if(!USER)return;const now=Date.now();if(!force&&now-PK_LSYNC<20000)return;PK_LSYNC=now;
+  const ids=[];S.partners.forEach(p=>(p.links||[]).forEach(l=>{if(l.status==='pending'||(l.status==='signed'&&!l.imported))ids.push(l.id)}));
+  if(!ids.length){if(force)renderPartners();return}
+  try{
+    const {data,error}=await sb.from('partner_sign_links').select('id,partner_ref,status,expires_at,open_count,signed_at,signer_data,signature,signer_ip,signer_ua,doc_hash,imported_at').in('id',ids);
+    if(error)throw error;let changed=false;
+    for(const r of data||[]){
+      const p=pkP(r.partner_ref);const l=p&&(p.links||[]).find(x=>x.id===r.id);if(!l)continue;
+      if(l.openCount!==r.open_count||l.status!==r.status){l.openCount=r.open_count;l.status=r.status;changed=true}
+      if(r.status==='signed'&&!l.imported){await pkImportSigned(p,l,r);changed=true}
+    }
+    if(changed){save();if(CUR==='partners')renderPartners()}else if(force)renderPartners();
+  }catch(e){console.warn('pkSyncLinks',e);if(force)alert('تعذّر التحديث: '+(e.message||e))}
+}
+async function pkImportSigned(p,l,r){
+  const {data:full,error}=await sb.from('partner_sign_links').select('payload').eq('id',r.id).single();if(error)throw error;
+  const pl=full.payload||{};const d=r.signer_data||{};
+  ['name','nationality','idNo','city','phone','email','bank','iban'].forEach(k=>{if(d[k]!=null&&d[k]!=='')p[k]=k==='iban'?String(d[k]).replace(/\s+/g,'').toUpperCase():d[k]});
+  p.sig=r.signature;p.sigAt=r.signed_at;
+  p.esign={at:r.signed_at,ip:r.signer_ip||'',ua:r.signer_ua||'',hash:r.doc_hash||'',linkId:r.id};
+  p.agreement={articles:pl.articles||[],title:pl.title,subtitle:pl.subtitle,org:pl.org,frozenAt:r.signed_at,signed:true,filled:true};
+  if(pl.date)p.agreementDate=pl.date;
+  if(p.status==='draft')p.status='pending';
+  l.status='signed';l.signedAt=r.signed_at;l.imported=true;
+  pkLog(p,'وقّع الشريك عبر الرابط ('+pkFmt(r.signed_at.slice(0,10))+(r.signer_ip?' — IP '+r.signer_ip:'')+') — بانتظار اعتمادك');
+  try{await sb.from('partner_sign_links').update({imported_at:new Date().toISOString()}).eq('id',r.id)}catch(e){}
 }
