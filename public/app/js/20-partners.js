@@ -453,6 +453,7 @@ function pkViewTemplate(){
         <div><div style="font-weight:700;margin-bottom:6px">توقيعك (الطرف الأول)</div>
           ${k.ownerSig?`<img src="${k.ownerSig}" style="height:54px;background:#fff;border-radius:8px;padding:4px;display:block;margin-bottom:8px">`:'<div style="color:var(--muted);font-size:13px;margin-bottom:8px">اختياري — إن رسمته يُطبع في خانة توقيعك. وإلا توقّع بالقلم.</div>'}
           <button class="btn btn-ghost btn-sm" onclick="pkSignOwner()"><i data-lucide="pen-tool"></i> ${k.ownerSig?'إعادة الرسم':'ارسم توقيعك'}</button>
+          <button class="btn btn-ghost btn-sm" onclick="pkSigUpload()"><i data-lucide="image-up"></i> رفع صورة التوقيع</button>
           ${k.ownerSig?`<button class="link-btn del" onclick="S.partnerKit.ownerSig='';save();renderPartners()">حذف</button>`:''}</div>
       </div></div>
     <div class="card" style="margin-bottom:16px"><h3><i data-lucide="building-2"></i> بيانات الطرف الأول والقيم الافتراضية</h3>
@@ -511,6 +512,12 @@ function pkSigTrim(c){const x=c.getContext('2d');const {width:w,height:h}=c;cons
   if(r<=l||b<=t)return c.toDataURL('image/png');const pad=8;l=Math.max(0,l-pad);t=Math.max(0,t-pad);r=Math.min(w,r+pad);b=Math.min(h,b+pad);
   const o=document.createElement('canvas');const sc=Math.min(1,320/(r-l));o.width=Math.round((r-l)*sc);o.height=Math.round((b-t)*sc);o.getContext('2d').drawImage(c,l,t,r-l,b-t,0,0,o.width,o.height);return o.toDataURL('image/png')}
 function pkSignPartner(id){const p=pkP(id);if(!p)return;pkSigPad('توقيع '+esc(p.name),'يوقّع الشريك بنفسه على هذا الجهاز بعد قراءة الاتفاقية. يُطبع التوقيع في خانته ويُحفظ مع وقت التوقيع.',sig=>{p.sig=sig;p.sigAt=pkNow();if(p.status==='draft')p.status='pending';pkLog(p,'وقّع الشريك إلكترونياً');save();renderPartners()})}
+/* صورة توقيع (ورقة بيضاء/صورة جوال) → إزالة الخلفية الفاتحة + قصّ + تصغير → يُحفظ في حالة اللوحة (خاصّة) */
+function pkSigUpload(){pkPickFile('image/*',f=>{const fr=new FileReader();fr.onload=()=>{const img=new Image();img.onload=()=>{
+  const sc=Math.min(1,1400/img.width);const c=document.createElement('canvas');c.width=Math.round(img.width*sc);c.height=Math.round(img.height*sc);
+  const x=c.getContext('2d');x.drawImage(img,0,0,c.width,c.height);const id=x.getImageData(0,0,c.width,c.height);const d=id.data;
+  for(let i=0;i<d.length;i+=4){const lum=0.299*d[i]+0.587*d[i+1]+0.114*d[i+2];if(lum>200)d[i+3]=0;else if(lum>150)d[i+3]=Math.min(d[i+3],Math.round((200-lum)/50*255));}
+  x.putImageData(id,0,0);const out=pkSigTrim(c);pkInit().ownerSig=out;save();renderPartners();alert('تم حفظ توقيعك ✓ — سيُطبع تلقائياً في كل اتفاقية.')};img.src=fr.result};fr.readAsDataURL(f)})}
 function pkSignOwner(){pkSigPad('توقيعك','يُطبع في خانة توقيع الطرف الأول في كل اتفاقية.',sig=>{pkInit().ownerSig=sig;save();renderPartners()})}
 
 /* ===== الملفّات (حاوية partner-docs الخاصّة) ===== */
