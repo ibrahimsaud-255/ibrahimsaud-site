@@ -370,15 +370,18 @@ function sendEmail(type,id){const d=_docFind(type,id);const ct=S.contacts.find(c
 function copyDocText(type,id){const t=docText(type,id);if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>alert('تم نسخ نص المستند — الصقه أينما تريد'),()=>alert(t))}else alert(t);}
 
 /* ===== CREDIT NOTES (إشعارات دائنة / مرتجعات) ===== */
-function creditFromInvoice(invId){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;const reason=prompt('سبب إشعار الدائن / المرتجع:','مرتجع كامل للفاتورة');if(reason===null)return;
+function creditFromInvoice(invId){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;
+  /* فاتورة مُصدرة إلكترونيّاً ⇒ إشعارها إلكترونيّ أيضاً (يُرسل للهيئة ويُحرس رصيده). */
+  if(zIssued(inv)){zCreditModal(invId);return}const reason=prompt('سبب إشعار الدائن / المرتجع:','مرتجع كامل للفاتورة');if(reason===null)return;
   const cn={id:uid(),number:++S.counters.credit,invoiceId:invId,invNumber:inv.number,client:inv.client,contactId:inv.contactId||'',clientVat:inv.clientVat||'',date:today(),items:JSON.parse(JSON.stringify(inv.items)),notes:reason,vat:inv.vat,vatRate:inv.vatRate};
   if(!S.credits)S.credits=[];S.credits.push(cn);save();openCredit(cn.id);}
 function openCredit(id){const cn=(S.credits||[]).find(x=>x.id===id);if(!cn){go('invoicing');return}const s=S.settings;const ct=S.contacts.find(c=>c.id===cn.contactId)||{};const total=invTotal(cn);
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><button class="link-btn" onclick="go('invoicing')">← الفوترة</button> إشعار دائن CN-${String(cn.number).padStart(5,'0')}</h1></div>
+    <div class="page-head"><h1><button class="link-btn" onclick="go('invoicing')">← الفوترة</button> إشعار دائن ${zIssued(cn)?`<span dir="ltr">${esc(cn.zatca.number)}</span>`:'CN-'+String(cn.number).padStart(5,'0')}</h1></div>
     <div class="doc-acts">
       <button class="btn btn-ghost" onclick="printDoc('credit','${id}')"><i data-lucide="printer"></i> طباعة / PDF</button>
-      <button class="btn btn-ghost" style="color:var(--bad)" onclick="delItem('credits','${id}',()=>go('invoicing'))">حذف</button></div>
+      ${zIssued(cn)?'':`<button class="btn btn-ghost" style="color:var(--bad)" onclick="delItem('credits','${id}',()=>go('invoicing'))">حذف</button>`}</div>
+    ${zDocPanel('credit',cn)}
     <div class="card">
       <div style="margin-bottom:10px;color:var(--muted)">مرتجع للفاتورة رقم <b>${esc(s.invPrefix||'INV-')}${String(cn.invNumber).padStart(5,'0')}</b> · العميل: <b>${esc(resolveClientName(cn))}</b>${ct.vat?` · الرقم الضريبي: ${esc(ct.vat)}`:''}</div>
       <table><thead><tr><th>الوصف</th><th>كمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>
@@ -409,19 +412,24 @@ function openDoc(type,id){
       if(d.status==='draft'||d.status==='sent')acts.push(`<button class="btn btn-gold" onclick="setDocStatus('sale','${id}','sale')"><i data-lucide="check-check"></i> تأكيد أمر البيع</button>`);
       if(d.status==='sale')acts.push(`<button class="btn btn-gold" onclick="toInvoice('${id}')"><i data-lucide="receipt-text"></i> إنشاء فاتورة</button>`);
     }
-  }else{ if(due>0)acts.push(`<button class="btn btn-gold" onclick="paymentModal('${id}')"><i data-lucide="wallet"></i> تسجيل دفعة</button>`); }
+  }else{
+    if(!zIssued(d)&&zMode()!=='off')acts.push(`<button class="btn btn-gold" onclick="zIssueModal('${id}')"><i data-lucide="shield-check"></i> إصدار إلكترونيّ (زاتكا)</button>`);
+    if(due>0)acts.push(`<button class="btn btn-gold" onclick="paymentModal('${id}')"><i data-lucide="wallet"></i> تسجيل دفعة</button>`);
+    if(zIssued(d)&&d.zatca.status==='rejected')acts.push(`<button class="btn btn-ghost" onclick="zDuplicate('${id}')"><i data-lucide="copy-plus"></i> تكرار لإصدار مصحّح</button>`);
+  }
   acts.push(`<button class="btn btn-ghost" onclick="printDoc('${type}','${id}')"><i data-lucide="printer"></i> طباعة / PDF</button>`);
-  acts.push(`<button class="btn btn-ghost" onclick="docModal('${type}','${id}',null,()=>openDoc('${type}','${id}'))"><i data-lucide="pencil"></i> تعديل</button>`);
+  if(!(isInv&&zIssued(d)))acts.push(`<button class="btn btn-ghost" onclick="docModal('${type}','${id}',null,()=>openDoc('${type}','${id}'))"><i data-lucide="pencil"></i> تعديل</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="sendWhatsApp('${type}','${id}')"><i data-lucide="message-circle"></i> واتساب</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="sendEmail('${type}','${id}')"><i data-lucide="mail"></i> إيميل</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="copyDocText('${type}','${id}')"><i data-lucide="copy"></i> نسخ النص</button>`);
-  if(isInv)acts.push(`<button class="btn btn-ghost" onclick="creditFromInvoice('${id}')"><i data-lucide="rotate-ccw"></i> إشعار دائن</button>`);
+  if(isInv&&!(zIssued(d)&&d.zatca.status==='rejected'))acts.push(`<button class="btn btn-ghost" onclick="creditFromInvoice('${id}')"><i data-lucide="rotate-ccw"></i> إشعار دائن${zIssued(d)?' إلكترونيّ':''}</button>`);
   if(!isInv&&!cancelled)acts.push(`<button class="btn btn-ghost" style="color:var(--bad)" onclick="setDocStatus('${type}','${id}','cancel')">إلغاء</button>`);
   if(!isInv&&cancelled)acts.push(`<button class="btn btn-ghost" onclick="setDocStatus('${type}','${id}','draft')">↺ إرجاع لعرض سعر</button>`);
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><button class="link-btn" onclick="renderDocs('${type}')">← ${isInv?'الفواتير':'المبيعات'}</button> ${esc(prefix)}${String(d.number).padStart(5,'0')}</h1></div>
+    <div class="page-head"><h1><button class="link-btn" onclick="renderDocs('${type}')">← ${isInv?'الفواتير':'المبيعات'}</button> ${isInv&&zIssued(d)?`<span dir="ltr">${esc(d.zatca.number)}</span>`:esc(prefix)+String(d.number).padStart(5,'0')}</h1></div>
     ${bar}
     <div class="doc-acts">${acts.join('')}</div>
+    ${isInv?zDocPanel('invoice',d):''}
     <div class="card">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:14px">
         <div><div style="color:var(--muted);font-size:13px">${isInv?'فاتورة إلى':'عرض سعر إلى'}</div>

@@ -39,7 +39,7 @@ function qdDel(){const arr=brandProfiles();if(arr.length<=1){alert('لا يمك�
 function qdSetDefault(){S.settings.defaultBrandId=qdDesign().id;save();renderQuoteDesign();}
 function qdUploadLogo(input){const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=e=>{const b=qdDesign();b.logo=e.target.result;save();renderQuoteDesign();};r.readAsDataURL(f);}
 function qdClearLogo(){const b=qdDesign();b.logo='';save();renderQuoteDesign();}
-function qdPrintSample(){const doc=qdSampleDoc();S.sales.push(doc);printDoc('sale','__qd_sample');setTimeout(()=>{S.sales=S.sales.filter(x=>x.id!=='__qd_sample')},1600);}
+function qdPrintSample(){const doc=qdSampleDoc();S.sales.push(doc);printDocDirect('sale','__qd_sample');setTimeout(()=>{S.sales=S.sales.filter(x=>x.id!=='__qd_sample')},1600);}
 
 function renderQuoteDesign(){
   const b=qdDesign();const arr=brandProfiles();const org=designOrg(b);const isDef=defaultBrandId()===b.id;

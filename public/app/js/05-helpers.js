@@ -14,8 +14,9 @@ function docGross(d){return (d.items||[]).reduce((a,it)=>a+Number(it.qty||0)*Num
 function docLineSubtotal(d){return (d.items||[]).reduce((a,it)=>a+lineTotal(it),0)}
 function docOverallDisc(d){const sub=docLineSubtotal(d);const t=d.discType||'none';const v=Number(d.discVal||0);if(t==='percent')return Math.max(0,Math.min(sub,sub*v/100));if(t==='amount')return Math.max(0,Math.min(sub,v));return 0}
 function docTotal(d){return docLineSubtotal(d)-docOverallDisc(d)} // الصافي قبل الضريبة (بعد خصم البنود والخصم الإجمالي)
-function invVat(inv){return inv.vat?docTotal(inv)*(Number(inv.vatRate||0)/100):0}
-function invTotal(inv){return docTotal(inv)+invVat(inv)}
+/* المُصدر إلكترونيّاً: الضريبة والإجماليّ من المستند الموقَّع (بالهللة) لا من حساب اللوحة. */
+function invVat(inv){if(inv&&inv.zatca&&inv.zatca.uuid)return Number(inv.zatca.vat);return inv.vat?docTotal(inv)*(Number(inv.vatRate||0)/100):0}
+function invTotal(inv){if(inv&&inv.zatca&&inv.zatca.uuid)return Number(inv.zatca.total);return docTotal(inv)+invVat(inv)}
 function invPaid(inv){return (inv.payments||[]).reduce((a,p)=>a+Number(p.amount||0),0)}
 function invDue(inv){return Math.max(0,invTotal(inv)-invPaid(inv))}
 function syncInvStatus(inv){const paid=invPaid(inv),tot=invTotal(inv);if(paid<=0)inv.status='unpaid';else if(paid+0.009>=tot)inv.status='paid';else inv.status='partial';if(inv.status==='paid'&&!inv.paidDate)inv.paidDate=today();return inv.status}

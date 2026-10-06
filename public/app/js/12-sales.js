@@ -28,11 +28,11 @@ function renderDocs(type){
     const chips=isInv
       ?`<span class="chip good">مدفوعة ${cPaid}</span><span class="chip warn">جزئية ${cPartial}</span><span class="chip">غير مدفوعة ${cUnpaid}</span>`
       :`<span class="chip">عرض ${cQuoted}</span><span class="chip info">مُرسل ${cSent}</span><span class="chip good">أمر بيع ${cSale}</span><span class="chip del">ملغى ${cCancel}</span>`;
-    const rowsHTML=rows.map(d=>{const total=isInv?invTotal(d):docTotal(d);return `<tr><td><button class="link-btn" style="padding:0" onclick="openDoc('${type}','${d.id}')">${esc(pfx)}${String(d.number).padStart(5,'0')}</button></td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(total)}</td>${isInv?`<td>${invDue(d)>0?`<span style="color:var(--warn)">${money(invDue(d))}</span>`:'—'}</td>`:''}<td>${pill(d.status)}</td>
+    const rowsHTML=rows.map(d=>{const total=isInv?invTotal(d):docTotal(d);return `<tr><td><button class="link-btn" style="padding:0" onclick="openDoc('${type}','${d.id}')">${isInv&&zIssued(d)?`<span dir="ltr">${esc(d.zatca.number)}</span>`:esc(pfx)+String(d.number).padStart(5,'0')}</button></td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(total)}</td>${isInv?`<td>${invDue(d)>0?`<span style="color:var(--warn)">${money(invDue(d))}</span>`:'—'}</td>`:''}<td>${pill(d.status)}${isInv&&zIssued(d)?' '+zChip(d.zatca.status):''}</td>
       <td style="white-space:nowrap">${!isInv&&d.status==='sale'?`<button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button>`:''}
         <button class="link-btn" onclick="printDoc('${type}','${d.id}')">طباعة</button>
         <button class="link-btn" onclick="openDoc('${type}','${d.id}')">عرض</button>
-        <button class="link-btn del" onclick="delDoc('${type}','${d.id}')">حذف</button></td></tr>`}).join('');
+        ${isInv&&zIssued(d)?'':`<button class="link-btn del" onclick="delDoc('${type}','${d.id}')">حذف</button>`}</td></tr>`}).join('');
     return `<div class="mo-block">
       <div class="mo-head">
         <div class="mo-title"><i data-lucide="calendar-days"></i> ${esc(monthLabel(ym))} <span class="mo-count">· ${rows.length}</span></div>
@@ -45,11 +45,12 @@ function renderDocs(type){
 
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>${title}</h1><button class="btn btn-gold" onclick="docModal('${type}')">+ ${isInv?'فاتورة':'عرض سعر'}</button></div>
-    ${isInv?`<div class="badge-note"><i data-lucide="receipt-text"></i> <div>الفواتير مهيأة للتوافق مع <b>زاتكا</b>: عند الطباعة يُولَّد رمز QR وفق مواصفة TLV. فعّل الضريبة وأدخل رقمك الضريبي من الإعدادات.</div></div>`:''}
+    ${isInv?'<div id="zCard"></div>':''}
     ${!list.length?emptyBox(isInv?'receipt-text':'trending-up',`لا توجد ${title} بعد.`):groupHTML}`;
   refreshIcons();
+  if(isInv)zRenderCard();
 }
-function delDoc(type,id){if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);save();renderDocs(type)}
+function delDoc(type,id){if(type==='invoice'&&zIssued(S.invoices.find(x=>x.id===id))){alert('فاتورة مُصدرة إلكترونيّاً — لا تُحذف نظاماً. صحّحها بإشعار دائن.');return}if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);save();renderDocs(type)}
 function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);const ct=S.contacts.find(c=>c.id===s.contactId);const inv={id:uid(),number:++S.counters.invoice,client:s.client,contactId:s.contactId||'',clientVat:(ct&&ct.vat)||'',date:today(),items:JSON.parse(JSON.stringify(s.items)),discType:s.discType||'none',discVal:Number(s.discVal||0),notes:s.notes,status:'unpaid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:''};S.invoices.push(inv);bumpStage(inv.contactId,'won','تحويل عرض السعر إلى فاتورة #'+inv.number);save();go('invoicing');alert('تم إنشاء فاتورة من عرض السعر')}
 /* ===== قوالب ملاحظات عرض السعر — عربون تلقائي وشروط بلاغة موحّدة ===== */
 function quoteDef(){const q=(S.settings&&S.settings.quoteDefaults)||{};return {depositPct:Number(q.depositPct||50),deliveryDays:Number(q.deliveryDays||3),revisions:Number(q.revisions||2),validityDays:Number(q.validityDays||14),defaultTemplateId:q.defaultTemplateId||'video_ad'}}
@@ -244,6 +245,7 @@ function quoteTemplateManager(currentId,onPick){
 }
 function docModal(type,id,presetName,cb){
   const isInv=type==='invoice';const k=isInv?'invoices':'sales';
+  if(isInv&&id&&zIssued(S.invoices.find(x=>x.id===id))){alert('فاتورة مُصدرة إلكترونيّاً — لا تُعدَّل بعد إرسالها للهيئة. للتصحيح: إشعار دائن، ولتغيير شكل الطباعة: «طباعة» ثم الإخفاء والتعديل اليدويّ.');return}
   const _defTplId=quoteDef().defaultTemplateId;const _defTpl=quoteTemplateById(_defTplId);
   let d=id?JSON.parse(JSON.stringify(S[k].find(x=>x.id===id))):
     {id:'',number:S.counters[type]+1,client:'',clientVat:'',date:today(),expiry:isInv?'':(function(){const dd=new Date();dd.setDate(dd.getDate()+Number(_defTpl.validityDays||14));return dd.toISOString().slice(0,10)})(),salesperson:S.settings.salesperson||'',items:[{desc:'',qty:1,price:0,discount:0}],discType:'none',discVal:0,notes:'',notesAuto:!isInv,templateId:isInv?null:_defTplId,depositPct:isInv?null:Number(_defTpl.depositPct||50),brandId:defaultBrandId(),status:isInv?'unpaid':'draft',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:'',payments:[],payUrl:'',payQr:''};
@@ -350,31 +352,43 @@ function printDocHTML(type,id,previewBrand){
   const s=S.settings;const b=previewBrand||brandById(d.brandId||defaultBrandId());const org=designOrg(b);
   const acc=b.accent||'#f5a623',acc2=b.accent2||b.accent||'#d97706',ink=b.ink||'#0a0a0b';
   const coverStyle=b.coverStyle||'classic';const showPat=b.showPattern!==false;const showQR=b.showQR!==false;
-  const gross=docGross(d);const lineSub=docLineSubtotal(d);const lineDisc=gross-lineSub;const ovr=docOverallDisc(d);const net=lineSub-ovr;const tax=d.vat?net*(Number(d.vatRate||0)/100):0;const total=net+tax;const disc=lineDisc;const paid=isInv?invPaid(d):0;const due=isInv?Math.max(0,total-paid):0;
-  const kind=isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):isCredit?'إشعار دائن':'عرض سعر';
+  /* مستندٌ مُصدر إلكترونيّاً: أرقامه من المستند الموقَّع لا من حساب اللوحة. */
+  const Z=(isInv||isCredit)&&d.zatca&&d.zatca.uuid?d.zatca:null;
+  const gross=docGross(d);let lineSub=docLineSubtotal(d);const lineDisc=gross-lineSub;let ovr=docOverallDisc(d);let net=lineSub-ovr;let tax=d.vat?net*(Number(d.vatRate||0)/100):0;let total=net+tax;const disc=lineDisc;
+  if(Z){ovr=Number(Z.allowance||0);net=Number(Z.taxable);lineSub=net+ovr;tax=Number(Z.vat);total=Number(Z.total)}
+  const paid=isInv?invPaid(d):0;const due=isInv?Math.max(0,total-paid):0;
+  const kind=Z?(Z.kind==='credit'?'إشعار دائن':Z.profile==='standard'?'فاتورة ضريبية':'فاتورة ضريبية مبسطة'):isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):isCredit?'إشعار دائن':'عرض سعر';
+  const zLock=Z?' data-locked="1"':'';const shownDate=Z?zDate(Z.issuedAt):d.date;
   const titleText=(b.titleText&&String(b.titleText).trim())?String(b.titleText).trim():kind;
   const titleSize=Number(b.titleSize||82);
   const prefix=isInv?(s.invPrefix||'INV-'):isCredit?'CN-':(s.salePrefix||'S');
-  const docNo=prefix+String(d.number).padStart(5,'0');
+  const docNo=Z?Z.number:prefix+String(d.number).padStart(5,'0');
   const ct=S.contacts.find(c=>c.id===d.contactId)||{};const cname=resolveClientName(d);const cvat=d.clientVat||ct.vat||'';const caddr=[ct.company,ct.address,ct.city].filter(Boolean).join('، ');
   let qrBlock='';
-  if(showQR&&(isInv||isCredit)){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(org.brand||s.vat.sellerName||s.brand,org.vat||s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
+  /* رمز QR الضريبيّ: للمُصدر إلكترونيّاً رمزُه من الخادم (مقفل، لا يُخفى). قبل
+     التفعيل يبقى رمز المرحلة الأولى القديم — ولا يُولَّد أبداً بلا رقمٍ ضريبيّ
+     حقيقيّ (كان يُطبع برقمٍ وهميّ). وبعد التفعيل لا رمز لمسودّةٍ غير مُصدرة. */
+  if(Z&&Z.displayQr){qrBlock=`<div style="text-align:center"${zLock} data-part="zqr">${qrImg(Z.displayQr).replace('<img ','<img style="width:132px;height:132px;image-rendering:pixelated" ')}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
+  else if(showQR&&(isInv||isCredit)&&zMode()==='off'&&(org.vat||s.vat.number)){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(org.brand||s.vat.sellerName||s.brand,org.vat||s.vat.number,iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center" data-part="qr">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
+  const zSeller=Z&&Z.seller?Z.seller:null;
+  const zSellerBlock=zSeller?`<div${zLock} data-part="zseller" style="margin-bottom:14px;font-size:12.5px;color:#334155;line-height:1.8;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px"><b>البائع:</b> ${esc(zSeller.name)} · <b>الرقم الضريبي:</b> <span dir="ltr">${esc(zSeller.vatNumber)}</span>${zSeller.idValue?` · ${zSeller.idScheme==='CRN'?'س.ت':'المعرّف'} ${esc(zSeller.idValue)}`:''}${zSeller.address?`<br>${esc([zSeller.address.street,zSeller.address.building,zSeller.address.district,zSeller.address.city,zSeller.address.postalCode].filter(Boolean).join('، '))}`:''}</div>`:'';
+  const zDraft=!Z&&isInv&&zMode()!=='off'?`<div data-part="zdraft" style="margin-bottom:12px;padding:8px 12px;border-radius:8px;background:#fff4e5;color:#9a5b00;font-weight:700;font-size:12.5px">مسودّة — لم تُصدر إلكترونيّاً بعد، وليست فاتورة ضريبيّة نظاميّة</div>`:'';
   // ===== كتل مشتركة =====
   const logoTag=(h,onDark)=>b.logo?`<img src="${esc(b.logo)}" style="height:${h}px;max-width:230px;object-fit:contain${onDark?';filter:drop-shadow(0 3px 10px rgba(0,0,0,.22))':''}">`:`<div style="color:${onDark?'#fff':ink};font-weight:900;font-size:26px;letter-spacing:.5px${onDark?';text-shadow:0 2px 8px rgba(0,0,0,.28)':''}">${esc(b.name)}</div>`;
   const clientBlock=(dark)=>`<div style="font-size:11px;color:${dark?'rgba(255,255,255,.7)':'#94a3b8'};font-weight:800;letter-spacing:3px;margin-bottom:6px">مُقدَّم إلى</div>
       <div style="font-size:24px;font-weight:900;color:${dark?'#fff':ink};line-height:1.25">${esc(cname)}</div>
-      ${caddr?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:6px;line-height:1.7">${esc(caddr)}</div>`:''}
-      ${ct.email?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
-      ${ct.phone?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}`;
+      ${caddr?`<div data-part="caddr" style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:6px;line-height:1.7">${esc(caddr)}</div>`:''}
+      ${ct.email?`<div data-part="ccontact" style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
+      ${ct.phone?`<div data-part="ccontact" style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}`;
   const metaBlock=`<div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:14px">
-        <div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.date)}</div></div>
+        <div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr"${zLock}>${esc(shownDate)}</div></div>
         ${d.expiry?`<div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">صالح حتى</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.expiry)}</div></div>`:''}
       </div>
       <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,${acc}18,${acc}08);border:1px solid ${acc}44;border-radius:12px">
         <div style="font-size:10.5px;color:${acc2};font-weight:800;letter-spacing:2px">الإجمالي</div>
         <div style="font-size:26px;font-weight:900;color:${acc2};margin-top:2px;white-space:nowrap">${money(total)}</div>
       </div>`;
-  const officialFooter=`<div style="height:1px;background:linear-gradient(90deg,transparent,${acc}66,transparent);margin-bottom:18px"></div>
+  const officialFooter=`<div data-part="footer" style="height:1px;background:linear-gradient(90deg,transparent,${acc}66,transparent);margin-bottom:18px"></div>
       <div style="color:#64748b;font-size:12px;line-height:1.9">
         <div style="font-weight:800;color:${ink};font-size:13.5px;margin-bottom:4px">${esc(org.brand)}</div>
         ${org.owner?`${esc(org.owner)}`:''}${org.email?(org.owner?' · ':'')+esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
@@ -386,12 +400,12 @@ function printDocHTML(type,id,previewBrand){
   const docNoChip=(dark)=>`<div style="display:inline-block;margin-top:16px;padding:7px 22px;border:2px solid ${dark?'rgba(255,255,255,.6)':acc};border-radius:30px;font-size:15px;font-weight:700;letter-spacing:3px;color:${dark?'#fff':acc2}" dir="ltr">${esc(docNo)}</div>`;
   // ===== أنماط الغلاف (٦ أنماط رسمية) =====
   const infoRow=(pad)=>`<div style="padding:${pad};display:grid;grid-template-columns:1.4fr 1fr;gap:36px;color:${ink}"><div>${clientBlock(false)}</div><div style="border-right:2px solid ${acc}33;padding-right:24px">${metaBlock}</div></div>`;
-  const brandName=(dark)=>`<div style="text-align:left;color:${dark?'#fff':ink}"><div style="font-weight:900;font-size:15px;letter-spacing:.3px">${esc(b.name)}</div>${b.tagline?`<div style="font-size:11.5px;${dark?'opacity:.9':'color:#64748b'};margin-top:3px;max-width:230px">${esc(b.tagline)}</div>`:''}</div>`;
+  const brandName=(dark)=>`<div style="text-align:left;color:${dark?'#fff':ink}"><div style="font-weight:900;font-size:15px;letter-spacing:.3px">${esc(b.name)}</div>${b.tagline?`<div data-part="tagline" style="font-size:11.5px;${dark?'opacity:.9':'color:#64748b'};margin-top:3px;max-width:230px">${esc(b.tagline)}</div>`:''}</div>`;
   const footerBlock=(pad)=>`<div style="padding:${pad};margin-top:auto">${officialFooter}</div>`;
   const grad=`linear-gradient(120deg,${acc},${acc2})`;
   let cover;
   if(coverStyle==='minimal'){
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column">
       <div style="height:6px;background:${grad}"></div>
       <div style="padding:48px 52px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:20px">
         <div>${logoTag(60,false)}</div>${brandName(false)}
@@ -402,7 +416,7 @@ function printDocHTML(type,id,previewBrand){
       ${footerBar(acc,acc2)}
     </div>`;
   } else if(coverStyle==='band'){
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column">
       <div style="padding:46px 52px 26px;display:flex;justify-content:space-between;align-items:center;gap:20px">
         <div>${logoTag(58,false)}</div>${brandName(false)}
       </div>
@@ -415,7 +429,7 @@ function printDocHTML(type,id,previewBrand){
       ${footerBar(acc,acc2)}
     </div>`;
   } else if(coverStyle==='sidebar'){
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column">
       <div style="display:flex;flex:1 1 auto;min-height:0">
         <div style="width:26px;flex:none;background:linear-gradient(180deg,${acc},${acc2})"></div>
         <div style="flex:1;display:flex;flex-direction:column">
@@ -433,7 +447,7 @@ function printDocHTML(type,id,previewBrand){
       ${footerBar(acc,acc2)}
     </div>`;
   } else if(coverStyle==='frame'){
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column;position:relative">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column;position:relative">
       <div style="position:absolute;inset:14px;border:2px solid ${acc};border-radius:6px;pointer-events:none"></div>
       <div style="padding:52px 56px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:20px">
         <div>${logoTag(56,false)}</div>${brandName(false)}
@@ -447,7 +461,7 @@ function printDocHTML(type,id,previewBrand){
       ${footerBlock('22px 56px 44px')}
     </div>`;
   } else if(coverStyle==='split'){
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden">
       <div style="position:absolute;top:0;left:0;right:0;height:380px">
         <div style="position:absolute;inset:0;background:${grad};clip-path:polygon(0 0,100% 0,100% 58%,0 100%)"></div>
         ${showPat?`<div style="position:absolute;inset:0;clip-path:polygon(0 0,100% 0,100% 58%,0 100%);overflow:hidden">${brandMotif(b)}</div>`:''}
@@ -461,7 +475,7 @@ function printDocHTML(type,id,previewBrand){
       ${footerBar(acc,acc2)}
     </div>`;
   } else { // classic
-    cover=`<div class="page cover" style="background:#fff;display:flex;flex-direction:column">
+    cover=`<div class="page cover" data-part="cover" style="background:#fff;display:flex;flex-direction:column">
       <div style="position:relative;height:400px;flex:0 0 400px;overflow:hidden;background:${grad}">
         ${showPat?brandMotif(b):''}
         <div style="position:absolute;inset:0;padding:40px 48px;display:flex;flex-direction:column;justify-content:space-between">
@@ -482,21 +496,22 @@ function printDocHTML(type,id,previewBrand){
    <div class="page details" style="padding:48px 48px 0;position:relative;display:flex;flex-direction:column">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid ${acc};padding-bottom:14px;margin-bottom:20px">
       <div>${b.logo?`<img src="${esc(b.logo)}" style="height:44px;margin-bottom:6px">`:`<div style="font-size:20px;font-weight:900;color:${ink}">${esc(b.name)}</div>`}
-        <div style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
+        <div data-part="tagline" style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
       </div>
       <div style="text-align:left">${qrBlock}
-        <div style="margin-top:6px"><div style="font-size:20px;font-weight:800">${esc(kind)}</div><div style="color:#475569;font-size:13px">رقم: ${esc(docNo)} · التاريخ: ${d.date}</div></div>
+        <div style="margin-top:6px"${zLock}><div style="font-size:20px;font-weight:800">${esc(kind)}</div><div style="color:#475569;font-size:13px">رقم: <span dir="ltr">${esc(docNo)}</span> · التاريخ: ${esc(shownDate)}</div></div>
       </div>
     </div>
+    ${zDraft}${zSellerBlock}
     <div style="margin-bottom:14px;background:#fafafa;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
-      <div><div style="font-size:11px;color:#64748b;font-weight:700;letter-spacing:1.5px">${isInv?'فاتورة إلى':'عرض إلى'}</div>
-        <div style="font-weight:800;font-size:16px;margin-top:2px">${esc(cname)}</div>
-        ${caddr?`<div style="color:#475569;font-size:13px">${esc(caddr)}</div>`:''}
-        ${ct.email?`<div style="color:#475569;font-size:13px">${esc(ct.email)}${ct.phone?' | '+esc(ct.phone):''}</div>`:(ct.phone?`<div style="color:#475569;font-size:13px">${esc(ct.phone)}</div>`:'')}
-        ${cvat?`<div style="color:#475569;font-size:13px"><b>الرقم الضريبي:</b> ${esc(cvat)}</div>`:''}</div>
-      ${ct.logo?`<img src="${esc(ct.logo)}" style="height:46px;max-width:130px;object-fit:contain">`:''}
+      <div><div style="font-size:11px;color:#64748b;font-weight:700;letter-spacing:1.5px">${isInv||isCredit?'فاتورة إلى':'عرض إلى'}</div>
+        <div style="font-weight:800;font-size:16px;margin-top:2px"${Z&&Z.profile==='standard'?zLock:''}>${esc(Z&&Z.buyer&&Z.buyer.name?Z.buyer.name:cname)}</div>
+        ${Z&&Z.profile==='standard'&&Z.buyer&&Z.buyer.address?`<div${zLock} style="color:#475569;font-size:13px">${esc([Z.buyer.address.street,Z.buyer.address.building,Z.buyer.address.district,Z.buyer.address.city,Z.buyer.address.postalCode].filter(Boolean).join('، '))}</div>`:(caddr?`<div data-part="caddr" style="color:#475569;font-size:13px">${esc(caddr)}</div>`:'')}
+        ${ct.email?`<div data-part="ccontact" style="color:#475569;font-size:13px">${esc(ct.email)}${ct.phone?' | '+esc(ct.phone):''}</div>`:(ct.phone?`<div data-part="ccontact" style="color:#475569;font-size:13px">${esc(ct.phone)}</div>`:'')}
+        ${(Z&&Z.buyer&&Z.buyer.vatNumber)||cvat?`<div data-part="cvat"${Z&&Z.profile==='standard'?zLock:''} style="color:#475569;font-size:13px"><b>الرقم الضريبي:</b> <span dir="ltr">${esc((Z&&Z.buyer&&Z.buyer.vatNumber)||cvat)}</span></div>`:(Z&&Z.buyer&&Z.buyer.idValue?`<div${zLock} style="color:#475569;font-size:13px"><b>المعرّف:</b> <span dir="ltr">${esc(Z.buyer.idValue)}</span></div>`:'')}</div>
+      ${ct.logo?`<img data-part="clogo" src="${esc(ct.logo)}" style="height:46px;max-width:130px;object-fit:contain">`:''}
     </div>
-    <div style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb">
+    <div style="border-radius:10px;overflow:hidden;border:1px solid #e5e7eb"${zLock}>
     <table style="width:100%;border-collapse:collapse;table-layout:fixed">
       <thead><tr style="background:${acc};color:#fff">
         <th style="padding:11px 14px;text-align:right;font-size:13px">الوصف</th>
@@ -506,7 +521,7 @@ function printDocHTML(type,id,previewBrand){
         <th style="padding:11px 8px;width:130px;font-size:13px">المجموع</th>
       </tr></thead>
       <tbody>${d.items.map((it,i)=>`<tr style="background:${i%2?'#fafafa':'#fff'}">
-        <td style="padding:11px 14px;word-wrap:break-word"><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:#64748b;margin-top:3px;line-height:1.7">${esc(it.details)}</div>`:''}</td>
+        <td style="padding:11px 14px;word-wrap:break-word"><b>${esc(it.desc)}</b>${it.details?`<div data-part="idetails" style="font-size:12px;color:#64748b;margin-top:3px;line-height:1.7">${esc(it.details)}</div>`:''}</td>
         <td style="padding:11px 8px;text-align:center;white-space:nowrap">${it.qty}</td>
         <td style="padding:11px 8px;text-align:center;white-space:nowrap" dir="ltr">${Number(it.price).toFixed(2)}</td>
         ${disc>0.001?`<td style="padding:11px 8px;text-align:center;white-space:nowrap">${it.discount?it.discount+'%':'—'}</td>`:''}
@@ -515,19 +530,19 @@ function printDocHTML(type,id,previewBrand){
     </table>
     </div>
     <div style="display:flex;justify-content:space-between;gap:20px;margin-top:16px;flex-wrap:wrap">
-      <div style="flex:1;min-width:200px">${d.notes?`<div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;color:#334155;white-space:pre-wrap;font-size:12.5px;line-height:1.9">${esc(isInv?d.notes:resolveQuoteNotes(d,d.notes))}</div>`:''}</div>
-      <div style="width:330px;flex:0 0 330px">
+      <div style="flex:1;min-width:200px" data-part="notes">${d.notes?`<div style="background:#fafafa;border:1px solid #e5e7eb;border-radius:10px;padding:14px 16px;color:#334155;white-space:pre-wrap;font-size:12.5px;line-height:1.9">${esc(isInv?d.notes:resolveQuoteNotes(d,d.notes))}</div>`:''}</div>
+      <div style="width:330px;flex:0 0 330px"${zLock}>
         <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>المجموع الفرعي</span><span style="white-space:nowrap" dir="ltr">${lineSub.toFixed(2)} ${esc(s.currency)}</span></div>
-        ${disc>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم البنود</span><span style="white-space:nowrap" dir="ltr">- ${disc.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
-        ${ovr>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span style="white-space:nowrap" dir="ltr">- ${ovr.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
-        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>
+        ${disc>0.001?`<div data-part="disc" style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم البنود</span><span style="white-space:nowrap" dir="ltr">- ${disc.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        ${ovr>0.001?`<div${Z?'':' data-part="disc"'} style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span style="white-space:nowrap" dir="ltr">- ${ovr.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)${Z&&Z.lines&&Z.lines[0]&&Z.lines[0].vatCategory&&Z.lines[0].vatCategory!=='S'?` — ${esc(Z.lines[0].exemptionReason||'')}`:''}</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>
         <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${acc};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>الإجمالي</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
-        ${isInv&&paid>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>المدفوع</span><span style="white-space:nowrap" dir="ltr">${paid.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
-        ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        ${isInv&&paid>0.001?`<div data-part="paid" style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>المدفوع</span><span style="white-space:nowrap" dir="ltr">${paid.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        ${isInv&&due>0.001?`<div data-part="paid" style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
       </div>
     </div>
-    ${payBlockHTML(d,org,acc,ink)}
-    <div style="margin-top:auto;padding-top:40px;padding-bottom:24px;text-align:center;color:#94a3b8;font-size:11.5px;line-height:1.7">
+    <div data-part="pay">${payBlockHTML(d,org,acc,ink)}</div>
+    <div data-part="footer" style="margin-top:auto;padding-top:40px;padding-bottom:24px;text-align:center;color:#94a3b8;font-size:11.5px;line-height:1.7">
       <div style="width:100%;height:1px;background:linear-gradient(90deg,transparent,${acc}55,transparent);margin-bottom:14px"></div>
       <div style="font-weight:800;color:${ink};font-size:12.5px">${esc(org.brand)}</div>
       ${org.owner?esc(org.owner)+' · ':''}${org.email?esc(org.email):''}${org.phone?' · <span dir="ltr">'+esc(org.phone)+'</span>':''}
@@ -569,7 +584,9 @@ function docFileName(type,id){
   const client=(resolveClientName(d)||'').replace(/[\\\/:*?"<>|]/g,'').trim().replace(/\s+/g,'_').slice(0,45);
   return [label,client,no].filter(Boolean).join('_');
 }
-function printDoc(type,id){
+/* الطباعة تمرّ باستوديو ما قبل الطباعة (21-zatca.js): معاينة + إخفاء + تعديل يدويّ. */
+function printDoc(type,id){printStudio(type,id)}
+function printDocDirect(type,id){
   const html=printDocHTML(type,id);
   const fname=docFileName(type,id);
   const f=document.createElement('iframe');f.style.position='fixed';f.style.right='-10000px';f.style.bottom='0';f.style.width='820px';f.style.height='1160px';f.style.border='0';
