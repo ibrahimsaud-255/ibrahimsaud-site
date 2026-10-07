@@ -170,7 +170,7 @@ function posCheckout(){if(!POS_CART.length)return;const paySel=document.getEleme
   const inv={id:uid(),number:++S.counters.invoice,client:'عميل نقدي',contactId:'',clientVat:'',date:today(),items,discType:'none',discVal:0,notes:'بيع كاشير',status:'paid',vat:taxOn(),vatRate:15,paidDate:today(),payments:[],pos:true};
   if(taxOn()){S.counters.taxInvoice=(S.counters.taxInvoice||0)+1;inv.issued={no:S.counters.taxInvoice,at:new Date().toISOString()}}
   const total=invTotal(inv);inv.payments.push({id:uid(),date:today(),amount:total,method});
-  if(!S.invoices)S.invoices=[];S.invoices.push(inv);
+  if(!S.invoices)S.invoices=[];S.invoices.push(inv);accSyncPayments();
   POS_CART.forEach(c=>{const p=(S.products||[]).find(x=>x.id===c.pid);if(p&&p.stock!=null)p.stock=Math.max(0,Number(p.stock||0)-c.qty)});
   save();POS_CART=[];posRenderGrid();posRenderCart();posReceipt(inv.id);
 }

@@ -49,7 +49,7 @@ function renderDocs(type){
     ${!list.length?emptyBox(isInv?'receipt-text':'trending-up',`لا توجد ${title} بعد.`):groupHTML}`;
   refreshIcons();
 }
-function delDoc(type,id){if(type==='invoice'){const v=S.invoices.find(x=>x.id===id);if(v&&v.issued){alert('فاتورة صادرة — لا تُحذف. لتصحيحها أصدر إشعاراً دائناً.');return}if(v&&invPaid(v)>0&&!confirm('على هذه الفاتورة دفعات مسجّلة. حذفها يحذف الدفعات معها — متأكّد؟'))return}if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);save();renderDocs(type)}
+function delDoc(type,id){if(type==='invoice'){const v=S.invoices.find(x=>x.id===id);if(v&&v.issued){alert('فاتورة صادرة — لا تُحذف. لتصحيحها أصدر إشعاراً دائناً.');return}if(v&&invPaid(v)>0&&!confirm('على هذه الفاتورة دفعات مسجّلة. حذفها يحذف الدفعات معها — متأكّد؟'))return}if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);if(type==='invoice')accSyncPayments();save();renderDocs(type)}
 /* عرض السعر ← فاتورة: مرّةً واحدة (يُربط العرض بفاتورته)، وتنتقل الاختيارات
    كلّها (الضريبة، التصميم، رابط الدفع)، ثم تُفتح الفاتورة الجديدة مباشرة. */
 function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);if(!s)return;

@@ -68,6 +68,7 @@ function accCompute(from,to){
     byUnitIncome,byUnitExpense,byExpCat,byIncUnitP,byExpCatP,balanceOk:Math.abs(totalAssets-(liabilities+equity))<0.01};
 }
 function renderAccounting(){
+  if(accSyncPayments())save();
   const A=acc();const tab=A.tab||'overview';
   const tabs=[['overview','نظرة عامة','layout-dashboard'],['journal','دفتر اليومية','book-open'],['assets','الأصول الثابتة','package'],['statements','القوائم المالية','file-bar-chart'],['setup','الوحدات والإعداد','settings']];
   document.getElementById('main').innerHTML=`
@@ -80,7 +81,6 @@ function renderAccounting(){
     <div class="page-head"><h1><i data-lucide="calculator"></i> المحاسبة</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" onclick="accPasteModal()"><i data-lucide="clipboard-paste"></i> استيراد بلصق</button>
-        <button class="btn btn-ghost btn-sm" onclick="accImportInvoices()"><i data-lucide="download"></i> مدفوعات الفواتير</button>
         <button class="btn btn-gold btn-sm" onclick="accTxModal()"><i data-lucide="plus"></i> قيد جديد</button>
       </div></div>
     <div class="acc-tabs">${tabs.map(t=>`<button class="acc-tab${tab===t[0]?' on':''}" onclick="accGo('${t[0]}')"><i data-lucide="${t[2]}"></i>${t[1]}</button>`).join('')}</div>
@@ -126,16 +126,16 @@ function accOverviewHTML(){
 }
 function accJournalHTML(){
   const A=acc();const tx=A.tx.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-  if(!tx.length)return emptyBox('book-open','لا قيود بعد. أضف أول قيد بزر «قيد جديد» بالأعلى، أو استورد مدفوعات الفواتير.');
+  if(!tx.length)return emptyBox('book-open','لا قيود بعد. دفعات الفواتير تُسجَّل هنا تلقائياً، وغيرها بزر «قيد جديد».');
   return `<table><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th>الوحدة</th><th>الحساب</th><th>المبلغ</th><th></th></tr></thead><tbody>
     ${tx.map(t=>{const k=ACC_KINDS[t.kind]||{};return `<tr>
       <td dir="ltr" style="white-space:nowrap">${esc(t.date)}</td>
       <td><span class="acc-chip" style="background:${k.color}22;color:${k.color}"><i data-lucide="${k.icon}" style="width:12px;height:12px"></i>${k.label}</span></td>
-      <td>${esc(t.desc||'')}${t.category?`<div style="font-size:11px;color:var(--muted)">${esc(t.category)}</div>`:''}</td>
+      <td>${esc(t.desc||'')}${t.payId?` <span class="acc-chip" style="background:rgba(148,163,184,.15);color:var(--muted)" title="يتبع دفعة الفاتورة">تلقائي</span>`:''}${t.category?`<div style="font-size:11px;color:var(--muted)">${esc(t.category)}</div>`:''}</td>
       <td style="font-size:12px"><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:${accUnit(t.unit).color}"></span>${esc(accUnit(t.unit).name)}</span></td>
       <td style="font-size:12px">${esc(ACC_ACCOUNTS[t.account]||t.account||'—')}</td>
       <td style="white-space:nowrap;font-weight:800;color:${k.sign>0?'#22c55e':k.sign<0?'#ef4444':'var(--ink)'}">${k.sign<0?'−':k.sign>0?'+':''}${accMoney(t.amount)}${t.origCur==='USD'?`<div style="font-size:10.5px;color:var(--muted);font-weight:600" dir="ltr">$${t.origAmount} × ${t.rate||''}</div>`:''}</td>
-      <td style="white-space:nowrap"><button class="link-btn" onclick="accTxModal('${t.id}')">تعديل</button><button class="link-btn del" onclick="accTxDel('${t.id}')">حذف</button></td>
+      <td style="white-space:nowrap"><button class="link-btn" onclick="accTxModal('${t.id}')">تعديل</button>${t.payId&&S.invoices.some(i=>i.id===t.invoiceId)?`<button class="link-btn" onclick="openDoc('invoice','${t.invoiceId}')">الفاتورة</button>`:`<button class="link-btn del" onclick="accTxDel('${t.id}')">حذف</button>`}</td>
     </tr>`}).join('')}
   </tbody></table>`;
 }
@@ -230,8 +230,8 @@ function accTxModal(id){
   const A=acc();let t=id?{...A.tx.find(x=>x.id===id)}:{id:'',date:today(),kind:'expense',category:'اشتراكات',amount:0,unit:'general',account:'bank',toAccount:'cash',desc:''};
   const kinds=Object.entries(ACC_KINDS).filter(([k])=>k!=='asset'); // الأصول تُضاف من تبويبها
   const rate=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
-  const inUsd=t.origCur==='USD';const shownAmt=inUsd?(t.origAmount||''):(t.amount||'');
-  openModal(id?'تعديل قيد':'قيد جديد',`
+  const inUsd=t.origCur==='USD';const shownAmt=inUsd?(t.origAmount||''):(t.amount||'');const auto=!!t.payId;
+  openModal(id?'تعديل قيد':'قيد جديد',`${auto?`<div class="badge-note" style="margin-bottom:14px"><i data-lucide="link"></i><div>قيد تلقائيّ من دفعة فاتورة — المبلغ والتاريخ والحساب تتبع الدفعة (عدّلها من الفاتورة). هنا تغيّر الوحدة والبيان فقط.</div></div>`:''}
     <div class="row2"><div class="field"><label>النوع</label><select id="ax_kind" onchange="accTxKindToggle()">${kinds.map(([k,v])=>`<option value="${k}" ${t.kind===k?'selected':''}>${v.label}</option>`).join('')}</select></div>
       <div class="field"><label>المبلغ</label>
         <div style="display:flex;gap:6px"><input id="ax_amt" type="number" inputmode="decimal" min="0" value="${shownAmt}" onfocus="this.select()" oninput="accAmtConv()" style="flex:1">
@@ -246,12 +246,13 @@ function accTxModal(id){
     <div class="field"><label>البيان / الوصف</label><input id="ax_desc" value="${esc(t.desc||'')}" placeholder="مثال: اشتراك Adobe الشهري"></div>`,
     ()=>{const g=i=>document.getElementById(i);const kind=g('ax_kind').value;const raw=Number(g('ax_amt').value||0);if(raw<=0){alert('أدخل مبلغاً صحيحاً');return}
       const cur=g('ax_cur').value;const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);const amt=cur==='USD'?Number((raw*r).toFixed(2)):raw;
+      if(auto){t.unit=g('ax_unit').value;t.desc=g('ax_desc').value;const i=A.tx.findIndex(x=>x.id===id);A.tx[i]=t;save();closeModal();renderAccounting();return}
       t.kind=kind;t.amount=amt;t.date=g('ax_date').value;t.unit=g('ax_unit').value;t.account=g('ax_acct').value;t.desc=g('ax_desc').value;
       if(cur==='USD'){t.origCur='USD';t.origAmount=raw;t.rate=r;}else{delete t.origCur;delete t.origAmount;delete t.rate;}
       t.category=(kind==='expense')?g('ax_cat').value:'';if(kind==='transfer')t.toAccount=g('ax_to').value;
       if(id){const i=A.tx.findIndex(x=>x.id===id);A.tx[i]=t}else{t.id='tx_'+uid();A.tx.push(t)}save();closeModal();renderAccounting();},
-    id?()=>{accTxDel(id);}:null);
-  setTimeout(()=>{accTxKindToggle();accAmtConv();},0);
+    id&&!auto?()=>{accTxDel(id);}:null);
+  setTimeout(()=>{accTxKindToggle();accAmtConv();if(auto)['ax_kind','ax_amt','ax_cur','ax_date','ax_acct'].forEach(i=>{const el=document.getElementById(i);if(el)el.disabled=true});},0);
 }
 function accAmtConv(){const a=document.getElementById('ax_amt'),c=document.getElementById('ax_cur'),o=document.getElementById('ax_conv');if(!a||!c||!o)return;const v=Number(a.value||0);const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
   if(c.value==='USD')o.innerHTML=v>0?`= <b style="color:var(--gold2)">${money(v*r)}</b> <span style="opacity:.7">(بسعر ${r})</span>`:`سيُحفظ بالريال بسعر صرف ${r}`;
@@ -283,16 +284,29 @@ function accAssetModal(id){
     id?()=>{accAssetDel(id);}:null);
 }
 function accAssetDel(id){if(!confirm('حذف الأصل؟ سيُحذف قيده المرتبط أيضاً.'))return;const A=acc();const x=A.assets.find(a=>a.id===id);if(x&&x.txId)A.tx=A.tx.filter(t=>t.id!==x.txId);A.assets=A.assets.filter(a=>a.id!==id);const mr=document.getElementById('modalRoot');if(mr)mr.innerHTML='';save();renderAccounting();}
-function accImportInvoices(){
-  const A=acc();const existing=new Set(A.tx.filter(t=>t.invoiceId).map(t=>t.invoiceId+'|'+(t.payDate||'')));
-  let added=0;
-  (S.invoices||[]).forEach(inv=>{
-    const pays=(inv.payments&&inv.payments.length)?inv.payments:(inv.status==='paid'?[{date:inv.paidDate||inv.date,amount:invTotal(inv)}]:[]);
-    pays.forEach(p=>{const key=inv.id+'|'+(p.date||'');if(existing.has(key))return;
-      A.tx.push({id:'tx_'+uid(),date:p.date||inv.date,kind:'income',amount:Number(p.amount||0),unit:'general',account:'bank',desc:'تحصيل فاتورة '+ (S.settings.invPrefix||'INV-')+String(inv.number).padStart(5,'0')+' — '+resolveClientName(inv),invoiceId:inv.id,payDate:p.date||''});added++;});
-  });
-  save();renderAccounting();
-  alert(added?('استُوردت '+added+' دفعة كإيرادات ✓ — راجعها في دفتر اليومية وصنّفها حسب الوحدة.'):'لا مدفوعات جديدة لاستيرادها.');
+/* ═══════════════ قيود تلقائيّة من دفعات الفواتير ═══════════════
+   كلّ دفعة على فاتورة = قيد إيراد واحد مربوط بها (payId): تسجيل الدفعة ينشئ قيدها،
+   وحذفها أو حذف فاتورتها يحذفه، وتعديلها يحدّثه. لا زرّ استيراد ولا عدٌّ مزدوج.
+   الحساب من طريقة الدفع (نقداً ← الصندوق، وغيرها ← البنك)، والوحدة من تصميم الفاتورة،
+   ويبقى للمستخدم تغيير الوحدة والبيان من دفتر اليومية.
+   القيود القديمة التي استوردها الزرّ السابق تُتبنّى (تُربط بدفعتها) فلا تتكرّر. */
+const ACC_BRAND_UNIT={ibrahim:'prod',minwal:'minwal',huroof:'huroof'};
+function accPayAccount(method){return /نقد|كاش|cash/i.test(method||'')?'cash':'bank'}
+function accSyncPayments(){
+  const A=acc();let changed=false;const live=new Set();
+  const legacy=A.tx.filter(t=>t.invoiceId&&!t.payId);
+  (S.invoices||[]).forEach(inv=>{(inv.payments||[]).forEach(p=>{
+    if(!p.id){p.id=uid();changed=true}
+    live.add(p.id);
+    let t=A.tx.find(x=>x.payId===p.id);
+    if(!t){const i=legacy.findIndex(x=>x.invoiceId===inv.id);if(i>=0){t=legacy.splice(i,1)[0];t.payId=p.id;changed=true}}
+    const want={kind:'income',date:p.date||inv.date,amount:r2(p.amount),account:accPayAccount(p.method)};
+    if(!t){A.tx.push({id:'tx_'+uid(),unit:acc().units.some(u=>u.id===ACC_BRAND_UNIT[inv.brandId])?ACC_BRAND_UNIT[inv.brandId]:'general',
+      desc:'تحصيل '+docNo('invoice',inv)+' — '+resolveClientName(inv),invoiceId:inv.id,payId:p.id,...want});changed=true;return}
+    for(const k in want)if(t[k]!==want[k]){t[k]=want[k];changed=true}
+  })});
+  const n=A.tx.length;A.tx=A.tx.filter(t=>!t.payId||live.has(t.payId));if(A.tx.length!==n)changed=true;
+  return changed;
 }
 /* ===== استيراد قيود بلصق كشف حساب (كلود، Adobe، استضافة…) ===== */
 function accParseDate(s){s=String(s).trim();const d=new Date(s);if(!isNaN(d)&&/[0-9]{4}|,/.test(s)&&/[A-Za-z؀-ۿ]/.test(s.replace(/[0-9,\s\/.-]/g,'')+s))return d;
@@ -483,6 +497,6 @@ function paymentModal(invId){
       </div></div>
     <div class="field"><label>التاريخ</label><input id="pa_date" type="date" value="${today()}"></div></div>
     <div class="field"><label>طريقة الدفع</label><select id="pa_method"><option>تحويل بنكي</option><option>نقداً</option><option>مدى / بطاقة</option><option>STC Pay</option><option>أخرى</option></select></div>`,
-  ()=>{const amt=r2(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(amt>due+0.004){alert('المبلغ أكبر من المتبقي ('+money(due)+')');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);bumpStage(inv.contactId,'delivery','استلمنا دفعة على الفاتورة '+docNo('invoice',inv));save();closeModal();openDoc('invoice',invId)});
+  ()=>{const amt=r2(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(amt>due+0.004){alert('المبلغ أكبر من المتبقي ('+money(due)+')');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);accSyncPayments();bumpStage(inv.contactId,'delivery','استلمنا دفعة على الفاتورة '+docNo('invoice',inv));save();closeModal();openDoc('invoice',invId)});
 }
-function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;if(!confirm('حذف هذه الدفعة؟'))return;inv.payments.splice(idx,1);syncInvStatus(inv);save();openDoc('invoice',invId)}
+function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;if(!confirm('حذف هذه الدفعة؟'))return;inv.payments.splice(idx,1);syncInvStatus(inv);accSyncPayments();save();openDoc('invoice',invId)}
