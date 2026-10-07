@@ -53,7 +53,7 @@ const def={
       {id:'blank',name:'مخصّص (بدون قالب)',depositPct:50,deliveryDays:0,revisions:0,validityDays:14,
         template:''},
     ],
-    vat:{enabled:false,rate:15,number:'',sellerName:'مؤسسة حروف ودروس',address:'الرياض، السعودية',cr:''},
+    vat:{enabled:false,rate:15,number:'',cr:'',street:'',building:'',district:'',city:'الرياض',postal:'',address:''},
     wallpaper:{type:'url',key:'tahoe-dark',url:'./wallpapers/tahoe-dark.jpg'},wallpapers:[]},
   products:[
     {id:'p_pod',name:'إنتاج حلقة بودكاست',price:2000,unit:'حلقة',desc:'تصوير + مونتاج + ١٠ مقاطع قصيرة + تصاميم'},
@@ -91,7 +91,7 @@ const def={
     {key:'delivered',label:'تم التسليم',rot:0,final:true,pill:'done'},
     {key:'lost',label:'لم يكتمل',rot:0,final:true,lost:true,pill:'lost'}
   ],
-  counters:{sale:1000,invoice:1000,credit:1000},
+  counters:{sale:1000,invoice:1000,credit:1000,taxInvoice:0},
   focus:{goalMin:180,breakEveryMin:50,breakLenMin:10,soundOn:true,log:{}},
   prayer:{city:'الرياض',country:'Saudi Arabia',method:4},
   habits:{
@@ -133,7 +133,16 @@ function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.p
   if(!s.habits.log)s.habits.log={};if(!s.habits.prayer)s.habits.prayer={};if(!s.habits.reminded)s.habits.reminded={};
   // بذر العادات المدمجة الجديدة للمستخدمين الحاليين (مرة واحدة — يحترم الحذف اليدوي لاحقاً)
   if(!s.habits.seededIdea){if(!s.habits.list.some(h=>h.id==='h_idea'))s.habits.list.push({id:'h_idea',name:'كتابة فكرة',desc:'سجّل فكرة واحدة في بنك الأفكار — تُحتسب تلقائياً',icon:'lightbulb',color:'#f59e0b',reminder:'',builtin:true,linkedApp:'ideas'});s.habits.seededIdea=true}
+  migrateCompanyData(s);
   return s;}
+/* بيانات المنشأة كانت في ٣ أماكن (الإعدادات، «البيانات الرسميّة»، الضريبة) والطباعة
+   تفضّل «الرسميّة» التي لم يعد لها محرّر. تُنقل مرّةً إلى الإعدادات — المصدر الوحيد
+   الآن — بالقيم التي كانت تُطبع فعلاً، فلا يتغيّر شكل أيّ مستند. */
+function migrateCompanyData(s){const st=s.settings;if(!st||st.companyV2)return;const off=st.official||{};const v=st.vat=st.vat||{};
+  if(off.vat)v.number=off.vat;if(off.cr)v.cr=off.cr;if(off.iban)st.iban=off.iban;if(off.address&&!v.address)v.address=off.address;
+  ['brand','owner','email','phone'].forEach(k=>{if(off[k]&&!(st[k]||'').trim())st[k]=off[k]});
+  if(v.sellerName&&!(st.brand||'').trim())st.brand=v.sellerName;
+  if(v.rate==null)v.rate=15;st.companyV2=true;}
 function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])){a[k]=deepMerge(a[k]||{},b[k])}else a[k]=b[k]}return a}
 function save(){localStorage.setItem(KEY,JSON.stringify(S));scheduleCloudSave();scheduleHomeRefresh()}
 /* تحديث فوري للرئيسية عقب أي حركة بيانات (بدون كسر النوافذ المنبثقة) */
@@ -172,7 +181,7 @@ const ADMIN_EMAIL='ibrahimsaud25@gmail.com';
 async function enterApp(user){if(USER&&user&&USER.id===user.id)return;if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط ('+ADMIN_EMAIL+'). الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers();migrateData();save()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();initSidebarShell();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
 async function logout(){await sb.auth.signOut();USER=null;STATE_ID=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
 async function oauth(provider){lerr('');lmsg('جارٍ التحويل إلى '+(provider==='google'?'Google':'Apple')+'…');const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});if(error){lmsg('');lerr('تعذّر: '+error.message+' — تأكد من تفعيل المزوّد في Supabase.')}}
-async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));if(!S.clientStages||!S.clientStages.length)S.clientStages=JSON.parse(JSON.stringify(def.clientStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
+async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);migrateCompanyData(S);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));if(!S.clientStages||!S.clientStages.length)S.clientStages=JSON.parse(JSON.stringify(def.clientStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
 async function loadFreelancers(){const {data}=await sb.from('freelancers').select('*').order('created_at');S.freelancers=data||[]}
 function flName(id){const f=(S.freelancers||[]).find(x=>x.id===id);return f?f.name:''}
 function flLink(token){return location.origin+location.pathname+'?ft='+token}

@@ -339,6 +339,7 @@ function setTheme(t){if(!S.settings)S.settings={};S.settings.theme=t;
 function enterDemo(){
   WS_DEMO=true;const DK='ws_demo_v1';
   try{const r=localStorage.getItem(DK);S=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(_){S=JSON.parse(JSON.stringify(def))}
+  migrateCompanyData(S);
   ws();
   if(!S.workspace.events.length){const t=today();S.workspace.events.push({id:uid(),title:'حملة الصيف',start:t,end:t,channel:'instagram',notes:'',image:''})}
   save=function(){try{localStorage.setItem(DK,JSON.stringify(S))}catch(_){}};

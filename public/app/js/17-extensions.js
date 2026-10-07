@@ -167,14 +167,15 @@ function posRenderCart(){const el=document.getElementById('posCart');if(!el)retu
 }
 function posCheckout(){if(!POS_CART.length)return;const paySel=document.getElementById('posPay');const method=paySel?paySel.value:POS_PAY;POS_PAY=method;
   const items=POS_CART.map(c=>({desc:c.name,qty:c.qty,price:c.price,discount:0}));
-  const inv={id:uid(),number:++S.counters.invoice,client:'عميل نقدي',contactId:'',clientVat:'',date:today(),items,discType:'none',discVal:0,notes:'بيع كاشير',status:'paid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:today(),payments:[]};
+  const inv={id:uid(),number:++S.counters.invoice,client:'عميل نقدي',contactId:'',clientVat:'',date:today(),items,discType:'none',discVal:0,notes:'بيع كاشير',status:'paid',vat:taxOn(),vatRate:15,paidDate:today(),payments:[],pos:true};
+  if(taxOn()){S.counters.taxInvoice=(S.counters.taxInvoice||0)+1;inv.issued={no:S.counters.taxInvoice,at:new Date().toISOString()}}
   const total=invTotal(inv);inv.payments.push({id:uid(),date:today(),amount:total,method});
   if(!S.invoices)S.invoices=[];S.invoices.push(inv);
   POS_CART.forEach(c=>{const p=(S.products||[]).find(x=>x.id===c.pid);if(p&&p.stock!=null)p.stock=Math.max(0,Number(p.stock||0)-c.qty)});
   save();POS_CART=[];posRenderGrid();posRenderCart();posReceipt(inv.id);
 }
 function posReceipt(invId){const d=S.invoices.find(x=>x.id===invId);if(!d)return;const s=S.settings;const sub=docLineSubtotal(d);const tax=invVat(d);const total=invTotal(d);
-  let qr='';if(d.vat){const iso=new Date(d.date+'T12:00:00').toISOString();qr=`<div style="text-align:center;margin:8px 0">${qrImg(zatcaBase64(s.vat.sellerName||s.brand,s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2)))}</div>`}
+  const si=sellerInfo();let qr='';if(d.vat&&/^3\d{13}3$/.test(si.vat)){const st=riyadhStamp(d.issued?d.issued.at:new Date().toISOString());qr=`<div style="text-align:center;margin:8px 0">${qrImg(zatcaBase64(si.name,si.vat,st.date+'T'+st.time,total.toFixed(2),tax.toFixed(2)))}</div>`}
   const html=`<html dir="rtl"><head><meta charset="utf-8"><style>*{font-family:Tahoma,Arial,sans-serif}body{width:76mm;margin:0 auto;color:#000;font-size:12px}h2{text-align:center;margin:4px 0}table{width:100%;border-collapse:collapse}td{padding:2px 0}.r{text-align:left}hr{border:none;border-top:1px dashed #000;margin:6px 0}</style></head><body>
     ${s.logo?`<div style="text-align:center"><img src="${s.logo}" style="height:40px"></div>`:''}
     <h2>${esc(s.brand||'')}</h2>
@@ -229,14 +230,22 @@ function renderSettings(){
         <div class="field"><label>العملة</label><input id="s_curr" value="${esc(s.currency)}"></div>
       </div>
 
-      <div class="card"><h3 style="margin-top:0"><i data-lucide="badge-percent"></i> الضريبة وزاتكا</h3>
-        <div class="badge-note"><i data-lucide="info"></i> <div>تظهر بيانات الضريبة ورمز QR في الفواتير. المرحلة الثانية لزاتكا تتطلب التسجيل وإصدار شهادة.</div></div>
-        <div class="row2"><div class="field"><label>تفعيل الضريبة افتراضياً</label><select id="v_en"><option value="0" ${!v.enabled?'selected':''}>مغلقة</option><option value="1" ${v.enabled?'selected':''}>مفعّلة</option></select></div><div class="field"><label>نسبة الضريبة %</label><input type="number" id="v_rate" value="${v.rate}"></div></div>
-        <div class="row2"><div class="field"><label>اسم البائع</label><input id="v_seller" value="${esc(v.sellerName)}"></div><div class="field"><label>الرقم الضريبي</label><input id="v_num" value="${esc(v.number)}"></div></div>
-        <div class="row2"><div class="field"><label>السجل التجاري</label><input id="v_cr" value="${esc(v.cr)}"></div><div class="field"><label>العنوان</label><input id="v_addr" value="${esc(v.address)}"></div></div>
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="badge-percent"></i> نوع الفاتورة</h3>
+        <div style="display:flex;gap:10px" id="taxModeBtns" data-on="${v.enabled?1:0}">
+          <button type="button" class="btn ${!v.enabled?'btn-gold':'btn-ghost'}" onclick="setTaxMode(false)" style="flex:1">فاتورة عاديّة</button>
+          <button type="button" class="btn ${v.enabled?'btn-gold':'btn-ghost'}" onclick="setTaxMode(true)" style="flex:1">فاتورة ضريبيّة</button>
+        </div>
+        <p style="color:var(--muted);font-size:13px;margin:10px 0 0;line-height:1.8">فعّل «الضريبيّة» يوم يصدر رقمك الضريبي: كلّ فاتورة بعدها بضريبة ١٥٪ ورمز QR وبيانات منشأتك، وتُقفل بعد إصدارها.</p>
+        <div id="taxFields" style="margin-top:14px;${v.enabled?'':'display:none'}">
+          <div class="row2"><div class="field"><label>الرقم الضريبي</label><input id="v_num" value="${esc(v.number||'')}" dir="ltr" inputmode="numeric" maxlength="15" placeholder="3xxxxxxxxxxxxx3"></div><div class="field"><label>السجل التجاري</label><input id="v_cr" value="${esc(v.cr||'')}" dir="ltr"></div></div>
+          <div style="font-size:12px;font-weight:700;color:var(--muted);margin:2px 0 8px">العنوان الوطني</div>
+          <div class="row2"><div class="field"><label>الشارع</label><input id="v_street" value="${esc(v.street||'')}"></div><div class="field"><label>رقم المبنى</label><input id="v_building" value="${esc(v.building||'')}" dir="ltr" inputmode="numeric" maxlength="4"></div></div>
+          <div class="row2"><div class="field"><label>الحيّ</label><input id="v_district" value="${esc(v.district||'')}"></div><div class="field"><label>المدينة</label><input id="v_city" value="${esc(v.city||'')}"></div></div>
+          <div class="row2"><div class="field"><label>الرمز البريدي</label><input id="v_postal" value="${esc(v.postal||'')}" dir="ltr" inputmode="numeric" maxlength="5"></div><div></div></div>
+        </div>
       </div>
 
-      <div class="card"><h3 style="margin-top:0"><i data-lucide="receipt-text"></i> إعدادات الفواتير</h3>
+      <div class="card"><h3 style="margin-top:0"><i data-lucide="landmark"></i> بيانات الدفع</h3>
         <div class="row2"><div class="field"><label>بادئة رقم الفاتورة</label><input id="s_prefix" value="${esc(s.invPrefix)}" placeholder="INV-"></div><div class="field"><label>الآيبان (IBAN) — الحساب الأساسي</label><input id="s_iban" value="${esc(s.iban||DEFAULT_BANK.iban)}" dir="ltr"></div></div>
         <div class="row2"><div class="field"><label>اسم البنك</label><input id="s_bank" value="${esc(s.bankName||DEFAULT_BANK.name)}"></div><div class="field"><label>اسم صاحب الحساب</label><input id="s_accname" value="${esc(s.accName||DEFAULT_BANK.accName)}"></div></div>
         <div class="field"><label>شعار البنك (يظهر تلقائياً بجانب بيانات الدفع في كل مستند)</label>
@@ -244,7 +253,7 @@ function renderSettings(){
           <input type="file" accept="image/*" id="s_banklogo_file" onchange="uploadBankLogo(event)">
           <div style="font-size:11px;color:var(--muted);margin-top:4px">ارفع صورة لاستبدال الشعار الافتراضي (اختياري).</div>
         </div>
-        <div class="field"><label>الشروط/الملاحظات الافتراضية</label><textarea id="s_terms" rows="3">${esc(s.terms)}</textarea></div>
+        <div class="field"><label>ملاحظة تُكتب تلقائياً في كلّ فاتورة جديدة</label><textarea id="s_terms" rows="2">${esc(s.terms)}</textarea></div>
       </div>
 
       <div class="card"><h3 style="margin-top:0"><i data-lucide="shield-check"></i> الحساب والنسخ الاحتياطي</h3>
@@ -260,7 +269,12 @@ function renderSettings(){
 function uploadLogo(e){const f=e.target.files[0];if(!f)return;if(f.size>1500000){alert('حجم الصورة كبير (أقل من 1.5MB)');return}const r=new FileReader();r.onload=()=>{S.settings.logo=r.result;save();applyBranding();const p=document.getElementById('logoPrev');if(p){p.src=r.result;p.style.display='block'}alert('تم تحديث الشعار')};r.readAsDataURL(f)}
 function uploadBankLogo(e){const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.settings.bankLogo=r.result;save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${S.settings.bankLogo}" style="height:34px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px 8px"><button type="button" class="link-btn del" onclick="clearBankLogo()">حذف</button></span>`;};r.readAsDataURL(f);}
 function clearBankLogo(){S.settings.bankLogo='';save();const pv=document.getElementById('s_banklogo_prev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:10px"><img src="${DEFAULT_BANK.logo}" style="height:36px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 10px"><span style="font-size:12px;color:var(--muted)">الافتراضي: شعار البنك الأهلي — قابل للاستبدال</span></span>`;const f=document.getElementById('s_banklogo_file');if(f)f.value='';}
-function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),accName:g('s_accname'),terms:g('s_terms')});S.settings.vat={enabled:g('v_en')==='1',rate:Number(g('v_rate')),sellerName:g('v_seller'),number:g('v_num'),cr:g('v_cr'),address:g('v_addr')};save();applyBranding();alert('تم الحفظ')}
+function saveSettings(){const g=i=>document.getElementById(i).value;Object.assign(S.settings,{brand:g('s_brand'),owner:g('s_owner'),email:g('s_email'),phone:g('s_phone'),currency:g('s_curr'),invPrefix:g('s_prefix'),iban:g('s_iban'),bankName:g('s_bank'),accName:g('s_accname'),terms:g('s_terms')});const on=document.getElementById('taxModeBtns').dataset.on==='1';
+  S.settings.vat=Object.assign(S.settings.vat||{},{rate:15,number:g('v_num').trim(),cr:g('v_cr').trim(),street:g('v_street').trim(),building:g('v_building').trim(),district:g('v_district').trim(),city:g('v_city').trim(),postal:g('v_postal').trim()});
+  /* لا تُفعَّل الضريبيّة ببياناتٍ ناقصة — فاتورةٌ ضريبيّة بلا رقمٍ صحيح أسوأ من لا شيء. */
+  if(on){const miss=taxSettingsIssues();if(miss.length){save();alert('حُفظت البيانات، لكنّ الفاتورة الضريبيّة لم تُفعَّل — ينقص:\n• '+miss.join('\n• '));return}}
+  S.settings.vat.enabled=on;save();applyBranding();alert('تم الحفظ')}
+function setTaxMode(on){const w=document.getElementById('taxModeBtns');if(!w)return;w.dataset.on=on?'1':'0';const [a,b]=w.querySelectorAll('button');a.className='btn '+(on?'btn-ghost':'btn-gold');b.className='btn '+(on?'btn-gold':'btn-ghost');const f=document.getElementById('taxFields');if(f)f.style.display=on?'':'none'}
 function exportData(){const b=new Blob([JSON.stringify(S,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='backup-'+today()+'.json';a.click()}
 function importData(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{try{localStorage.setItem(KEY,r.result);S=load();save();alert('تم الاستيراد');go('settings')}catch(x){alert('ملف غير صالح')}};r.readAsText(f)}
 function resetData(){if(confirm('مسح جميع البيانات نهائياً؟')){localStorage.removeItem(KEY);S=load();save();go('home')}}
