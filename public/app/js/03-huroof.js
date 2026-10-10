@@ -522,11 +522,12 @@ function cbRender(){
 /* ═══════════ الإعدادات ═══════════ */
 let SET=null,SET_ERR=null;
 function hrViewSettings(){SET=null;SET_ERR=null;hrSet(hrLoading());setLoad();}
-async function setLoad(){try{const r=await hrApi('admin/settings');SET=r.settings||r||{};SET_ERR=null;}catch(e){SET_ERR=e.message||'خطأ';}if(hrActive('settings'))setRender();}
+async function setLoad(){BOOK_LIVE=null;try{const r=await hrApi('admin/settings');SET=r.settings||r||{};SET_ERR=null;}catch(e){SET_ERR=e.message||'خطأ';}if(hrActive('settings')){setRender();if(!SET_ERR)bookLive();}}
 function setRender(){
   if(SET_ERR){hrSet(hrErr(SET_ERR,'setLoad()'));return}
   const s=SET||{};
   hrSet(`${hrHead('إعدادات الموقع','settings','')}
+    ${bookCardHTML()}
     <div class="card" style="max-width:520px">
       <div style="font-size:13px;color:var(--muted);margin-bottom:14px">بيانات التواصل الظاهرة في تذييل الموقع وصفحة الدعم على huroofduroos.com.</div>
       ${hrLbl('البريد الإلكترونيّ')}<input class="field" id="setEmail" dir="ltr" value="${esc(s.contact_email||'')}" style="margin-bottom:12px">
@@ -534,6 +535,65 @@ function setRender(){
       ${hrLbl('الهاتف')}<input class="field" id="setPhone" dir="ltr" value="${esc(s.contact_phone||'')}" style="margin-bottom:14px">
       <div style="display:flex;gap:10px;align-items:center"><button class="btn btn-gold" onclick="setSave()"><i data-lucide="save"></i> حفظ</button><span id="setMsg" style="font-size:13px;font-weight:700"></span></div>
     </div>`);
+}
+/* ── مفتاح «صفحة الكتاب» في دروس 3D ─────────────────────────────────────────
+   site_settings.lab3d_book_pages = "1" | "0" (مسموحٌ في SETTINGS_KEYS بخادم حروف).
+   مقفلٌ افتراضيّاً حتى الشراكة الرسميّة مع وزارة التعليم (حقوق النشر).
+   القراءة/الكتابة: GET/PUT admin/settings عبر hrApi (ترويسة x-system-token = جلسة المكتب).
+   الحالة الحيّة: GET /api/app-config العامّة → lab3dBookPages (التطبيقات تخزّنها ≤ ٥ دقائق). */
+let BOOK_LIVE=null;   // null لم يُفحص بعد · true/false · 'err'
+function bookOn(){return String((SET||{}).lab3d_book_pages||'')==='1'}
+function bookCardHTML(){
+  const on=bookOn();
+  const live=BOOK_LIVE===null?'<span style="color:var(--muted)">…جارٍ الفحص</span>'
+    :BOOK_LIVE==='err'?'<span style="color:var(--bad)">تعذّر الفحص</span>'
+    :BOOK_LIVE?hrChip('ظاهر للمستخدمين','#22c55e'):hrChip('مخفيّ عن المستخدمين','#a1a1aa');
+  const lag=BOOK_LIVE!==null&&BOOK_LIVE!=='err'&&BOOK_LIVE!==on;
+  return `<div class="card" id="bookCard" style="max-width:520px;margin-bottom:16px;border-color:${on?'rgba(34,197,94,.45)':'var(--line)'}">
+    <div style="display:flex;justify-content:space-between;gap:16px;align-items:flex-start">
+      <div style="min-width:0">
+        <div style="font-weight:800;font-size:15px;display:flex;gap:8px;align-items:center"><i data-lucide="book-open" style="width:18px;height:18px;color:var(--gold)"></i> صفحات كتب وزارة التعليم داخل دروس 3D</div>
+        <div style="font-size:13px;color:var(--muted);margin-top:6px;line-height:1.85">مقفلة حتى إتمام الشراكة الرسمية مع وزارة التعليم (حقوق النشر). عند التفعيل يظهر زرّ «صفحة الكتاب» في كلّ درس ثلاثيّ الأبعاد.</div>
+      </div>
+      <button type="button" role="switch" aria-checked="${on}" aria-label="تشغيل صفحات كتب الوزارة" onclick="bookToggle()" id="bookSw"
+        style="flex:none;position:relative;width:54px;height:30px;border-radius:99px;border:1px solid ${on?'#22c55e':'rgba(255,255,255,.2)'};background:${on?'#22c55e':'rgba(255,255,255,.1)'};transition:background .2s;padding:0;margin-top:2px">
+        <span style="position:absolute;top:3px;${on?'left:3px':'right:3px'};width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.35)"></span></button>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:13px">
+      <span>الإعداد المحفوظ: <b style="color:${on?'#22c55e':'var(--ink)'}">${on?'مفعّل':'مطفأ'}</b></span>
+      <span>الحالة الحيّة: ${live}</span>
+      <button class="link-btn" onclick="bookLive()" title="إعادة فحص /api/app-config"><i data-lucide="refresh-cw" style="width:14px;height:14px;vertical-align:-2px"></i> فحص</button>
+    </div>
+    ${lag?`<div style="font-size:12px;color:var(--warn);margin-top:8px">الخادم لم يعكس الإعداد بعد — أعد الفحص بعد لحظات.</div>`:''}
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">التطبيقات المفتوحة تلتقط التغيير خلال ٥ دقائق كحدٍّ أقصى.</div>
+    <div id="bookMsg" style="font-size:13px;font-weight:700;margin-top:6px"></div>
+  </div>`;
+}
+function bookPaint(){const el=document.getElementById('bookCard');if(!el)return;el.outerHTML=bookCardHTML();refreshIcons();}
+async function bookLive(){
+  if(BOOK_LIVE!==null){BOOK_LIVE=null;bookPaint();}
+  try{const r=await fetch(HR_API+'/app-config',{cache:'no-store'});if(!r.ok)throw 0;const c=await r.json();BOOK_LIVE=c&&c.lab3dBookPages===true;}catch(e){BOOK_LIVE='err';}
+  if(hrActive('settings'))bookPaint();
+}
+function bookToggle(){
+  if(bookOn()){bookWrite('0');return}
+  openModal('تفعيل صفحات كتب وزارة التعليم؟',`
+    <div class="badge-note" style="margin-bottom:12px"><i data-lucide="alert-triangle"></i><div>
+      <b>فعّل فقط بعد إتمام الشراكة الرسمية مع وزارة التعليم.</b><br>
+      سيظهر زرّ «صفحة الكتاب» لكلّ المستخدمين في كلّ درس ثلاثيّ الأبعاد، ويعرض صفحات من كتب الوزارة (محتوى محميّ بحقوق النشر).</div></div>
+    <div style="font-size:13px;color:var(--muted)">يمكنك الإطفاء في أيّ وقت من هنا، ويختفي الزرّ من التطبيقات خلال ٥ دقائق.</div>`,
+  ()=>{closeModal();bookWrite('1');});
+  const b=document.getElementById('mSave');if(b)b.textContent='نعم، فعّل الآن';
+}
+async function bookWrite(v){
+  const msg=document.getElementById('bookMsg');const sw=document.getElementById('bookSw');
+  if(sw)sw.disabled=true;if(msg){msg.style.color='var(--muted)';msg.textContent='جارٍ الحفظ…';}
+  try{
+    await hrApi('admin/settings',{method:'PUT',body:{lab3d_book_pages:v}});
+    SET=Object.assign({},SET||{},{lab3d_book_pages:v});bookPaint();
+    const m=document.getElementById('bookMsg');if(m){m.style.color='#22c55e';m.textContent=v==='1'?'فُعِّلت ✓':'أُطفئت ✓';}
+    bookLive();
+  }catch(e){bookPaint();const m=document.getElementById('bookMsg');if(m){m.style.color='#ef4444';m.textContent='تعذّر الحفظ: '+e.message;}}
 }
 async function setSave(){const body={contact_email:(document.getElementById('setEmail').value||'').trim(),contact_whatsapp:(document.getElementById('setWa').value||'').trim(),contact_phone:(document.getElementById('setPhone').value||'').trim()};const msg=document.getElementById('setMsg');msg.style.color='var(--muted)';msg.textContent='جارٍ…';try{await hrApi('admin/settings',{method:'PUT',body});msg.style.color='#22c55e';msg.textContent='حُفظ ✓';}catch(e){msg.style.color='#ef4444';msg.textContent=e.message;}}
 /* ═══════════════════════════════════════════════════════════════════════════

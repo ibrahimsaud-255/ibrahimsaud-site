@@ -13,7 +13,7 @@ const APPS=[
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
-  {id:'partners',name:'الشركاء والعمولات',icon:'handshake'},
+  {id:'partners',name:'الشركات',icon:'building-2'},  // كان «الشركاء والعمولات» — صار قسماً داخل «الشركات» (المعرّف partners باقٍ للبيانات)
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette'},
   {id:'products',name:'المنتجات',icon:'package'},
@@ -41,7 +41,7 @@ const LAUNCH=[
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#f5a623,#d97706'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
-  {id:'partners',name:'الشركاء والعمولات',icon:'handshake',c:'#0ea5e9,#1e3a8a'},
+  {id:'partners',name:'الشركات',icon:'building-2',c:'#0ea5e9,#1e3a8a'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
   {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488'},

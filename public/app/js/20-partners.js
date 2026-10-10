@@ -1,6 +1,9 @@
 /*
- * 20-partners.js — الشركاء والعمولات: المسوّقون بالعمولة، اتفاقياتهم الرسمية،
- *                  المدارس المحالة عن طريقهم، وعمولاتهم.
+ * 20-partners.js — تطبيق «الشركات» (المعرّف partners). قسمان:
+ *   ١) الشركاء والعمولات: المسوّقون بالعمولة، اتفاقياتهم الرسمية، المدارس
+ *      المحالة عن طريقهم، وعمولاتهم (هذا الملفّ).
+ *   ٢) شراكة وزارة التعليم: مقترح رسميّ قابل للتحرير والطباعة (22-moe.js).
+ *   تبديل القسم: PK_SEC. اسم التطبيق في 02-shell.js (APPS/LAUNCH).
  * ─────────────────────────────────────────────────────────────────────────
  * الحلقة كاملة داخل النظام:
  *   قالب الاتفاقية (يُحرَّر هنا) → بيانات الشريك → طباعة على الورق الرسمي
@@ -61,7 +64,7 @@ const PK_DEFAULT_KIT={
 const PK_RATE_WORDS={5:'خمسة',6:'ستة',7:'سبعة',8:'ثمانية',9:'تسعة',10:'عشرة',11:'أحد عشر',12:'اثنا عشر',13:'ثلاثة عشر',14:'أربعة عشر',15:'خمسة عشر',16:'ستة عشر',17:'سبعة عشر',18:'ثمانية عشر',19:'تسعة عشر',20:'عشرون',25:'خمسة وعشرون',30:'ثلاثون'};
 
 /* ===== حالة الوحدة ===== */
-let PK_TAB='overview', PK_PID=null, PK_LF={partner:'',stage:'open',q:''}, PK_CF={partner:'',status:''}, PK_ORGS=null;
+let PK_SEC='partners', PK_TAB='overview', PK_PID=null, PK_LF={partner:'',stage:'open',q:''}, PK_CF={partner:'',status:''}, PK_ORGS=null;
 
 function pkInit(){
   if(!Array.isArray(S.partners))S.partners=[];
@@ -127,24 +130,48 @@ const PK_TABS=[
   {id:'comms',name:'العمولات',icon:'wallet'},
   {id:'template',name:'قالب الاتفاقية',icon:'file-signature'},
 ];
+/* أقسام تطبيق «الشركات» — الشركاء والعمولات أحدها */
+const PK_SECS=[
+  {id:'partners',name:'الشركاء والعمولات',icon:'handshake',desc:'المسوّقون بالعمولة، اتفاقياتهم، المدارس المحالة والعمولات'},
+  {id:'moe',name:'شراكة وزارة التعليم',icon:'landmark',desc:'مقترح الشراكة الرسميّ — قابل للتحرير والطباعة PDF'},
+];
+function pkSecNav(){
+  return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:18px">
+    ${PK_SECS.map(x=>{const on=PK_SEC===x.id;return `<button type="button" onclick="pkSetSec('${x.id}')" style="display:flex;gap:12px;align-items:center;text-align:right;padding:14px 16px;border-radius:14px;cursor:pointer;color:var(--ink);background:${on?'var(--goldsoft)':'rgba(255,255,255,.04)'};border:1px solid ${on?'var(--gold)':'var(--line)'}">
+      <span style="display:grid;place-items:center;width:40px;height:40px;border-radius:12px;flex:none;background:${on?'var(--gold)':'rgba(255,255,255,.08)'};color:${on?'#111':'var(--ink)'}"><i data-lucide="${x.icon}"></i></span>
+      <span style="min-width:0"><span style="display:block;font-weight:800;font-size:15px">${x.name}</span><span style="display:block;font-size:12px;color:var(--muted);margin-top:2px">${x.desc}</span></span></button>`}).join('')}
+  </div>`;
+}
+function pkSetSec(id){if(PK_SEC==='moe'&&typeof moeSave==='function')moeSave(true);PK_SEC=id;PK_PID=null;renderPartners();window.scrollTo(0,0)}
 function renderPartners(){
   pkInit();
   const main=document.getElementById('main');
-  if(PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();pkSyncLinks(false);return}
+  if(PK_SEC==='partners'&&PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();pkSyncLinks(false);return}
   PK_PID=null;
+  if(PK_SEC==='moe'){
+    main.innerHTML=`
+    <div class="page-head"><h1><i data-lucide="building-2" style="width:26px;height:26px;vertical-align:-4px"></i> الشركات</h1>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn btn-ghost" onclick="moePreview()"><i data-lucide="eye"></i> معاينة</button>
+        <button class="btn btn-gold" onclick="moePrint()"><i data-lucide="printer"></i> طباعة / حفظ PDF</button></div></div>
+    ${pkSecNav()}
+    <div id="pkBody">${moeView()}</div>`;
+    refreshIcons();return;
+  }
   const bodies={overview:pkViewOverview,partners:pkViewPartners,leads:pkViewLeads,comms:pkViewComms,template:pkViewTemplate};
   main.innerHTML=`
-    <div class="page-head"><h1><i data-lucide="handshake" style="width:26px;height:26px;vertical-align:-4px"></i> الشركاء والعمولات</h1>
+    <div class="page-head"><h1><i data-lucide="building-2" style="width:26px;height:26px;vertical-align:-4px"></i> الشركات</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ghost" onclick="pkLeadForm()"><i data-lucide="school"></i> تسجيل مدرسة</button>
         <button class="btn btn-gold" onclick="pkPartnerForm()"><i data-lucide="user-plus"></i> شريك جديد</button></div></div>
+    ${pkSecNav()}
     <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap">
       ${PK_TABS.map(t=>`<button class="btn btn-sm ${PK_TAB===t.id?'btn-gold':'btn-ghost'}" onclick="PK_TAB='${t.id}';renderPartners()"><i data-lucide="${t.icon}"></i> ${t.name}</button>`).join('')}
     </div>
     <div id="pkBody">${(bodies[PK_TAB]||pkViewOverview)()}</div>`;
   refreshIcons();
 }
-function pkOpen(id){PK_PID=id;renderPartners();window.scrollTo(0,0)}
+function pkOpen(id){PK_SEC='partners';PK_PID=id;renderPartners();window.scrollTo(0,0)}
 function pkBack(){PK_PID=null;renderPartners()}
 
 /* ── نظرة عامة ── */
