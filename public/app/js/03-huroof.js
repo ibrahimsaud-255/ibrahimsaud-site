@@ -26,7 +26,7 @@ let HR_TAB='overview';
    المدوّنة (تتمّ عبر كلود). دوالّ عرضها باقية فإعادة أيّ قسمٍ سطرٌ هنا. */
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
-  {id:'usage',name:'الاستخدام والحملة',icon:'activity'},
+  {id:'usage',name:'الاستخدام',icon:'activity'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
@@ -917,10 +917,14 @@ function hrCopy(btn){navigator.clipboard.writeText(hrFreshCodes.join('\n'));btn.
 async function hrLoadCodes(){const list=document.getElementById('hrList');const cnt=document.getElementById('hrCodesCount');if(!list)return;try{const r=await hrApi('admin/activation-codes');const codes=r.codes||[];const unused=codes.filter(c=>c.status==='unused').length;if(cnt)cnt.textContent=HR_ar(unused)+' متاح · '+HR_ar(codes.length)+' إجمالاً';list.innerHTML=codes.slice(0,100).map(c=>`<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);gap:10px"><span style="font-family:monospace;direction:ltr;${c.status==='redeemed'?'text-decoration:line-through;opacity:.5':''}">${esc(c.code)}</span><span style="display:flex;gap:8px;align-items:center;font-size:11px"><span style="opacity:.6">${c.months?HR_ar(c.months)+' شهر':'دائم'}${c.note?' · '+esc(c.note):''}</span><span style="font-weight:900;color:${c.status==='unused'?'#22c55e':'#94a3b8'}">${c.status==='unused'?'متاح':'مستخدَم'}</span></span></div>`).join('')||'<div style="opacity:.6">لا أكواد بعد.</div>';}catch(e){list.innerHTML=`<div style="color:#ef4444">${esc(e.message)}</div>`;}}
 
 
-/* ═══════════ الاستخدام والحملة — /api/admin/usage ═══════════
-   ما يفتحه المعلّمون من أدوات وألعاب (usage_events) + طلبات Telr حسب كود
-   الخصم (حملة hrf39). تعريفات فقط؛ التسجيل في HR_VIEWS داخل 99-boot.js. */
-let HRU_DAYS=30;
+/* ═══════════ الاستخدام — /api/admin/usage ═══════════
+   ما يفتحه المعلّمون من ألعاب وأدوات ودروس 3D (usage_events): مؤشّرات كبيرة
+   بمقارنة بالمدّة السابقة، جُملٌ تشرح الأرقام، منصّة الأوائل وقوائم مرتّبة
+   بأيقونات المنصّة ثلاثيّة الأبعاد (img/hr3d/<target>.png)، الرسم اليوميّ،
+   خريطة يوم×ساعة بتوقيت الرياض، المنصّات، والعودة.
+   أُزيل جدول حملة الكود من العرض بطلب إبراهيم (٢٠ أكتوبر ٢٠٢٦) — الحقل
+   `campaign` باقٍ في الـAPI للتوافق. تعريفات فقط؛ التسجيل في HR_VIEWS داخل 99-boot.js. */
+let HRU_DAYS=30,HRU_DATA=null,HRU_OPEN={};
 const HRU_NAMES={
   huroof:'لعبة الحروف','quick-game':'اللعبة العامة',millionaire:'من سيربح المليون','numbered-heads':'الرؤوس المرقّمة',
   'hot-seat':'الكرسي الساخن',brainstorming:'العصف الذهني','role-play':'لعب الأدوار',challenge:'التحدّي الذاتي',
@@ -928,51 +932,354 @@ const HRU_NAMES={
   wheel:'العجلة الدوّارة',picker:'اختيار الطالب',teams:'توزيع الفرق',dice:'النرد والأرقام',timer:'المؤقّت العملاق',
   scoreboard:'لوحة النقاط','question-bank':'أسئلتي',worksheet:'أوراق العمل','back-to-school':'استقبال الطلاب',
   certificates:'شهادات شكر','worksheet-history':'سجلّ الأوراق',letterhead:'كليشة الأوراق','periodic-table':'الجدول الدوري',
-  'typing-practice':'تدريب الكتابة',generate:'مولّد الأسئلة',remediation:'الخطّة العلاجيّة'
+  'typing-practice':'تدريب الكتابة',generate:'مولّد الأسئلة',remediation:'الخطّة العلاجيّة',
+  lab3d:'مختبر حروف 3D',classes:'فصولي وطلابي','qr-code':'باركود الروابط'
 };
+/* الأيقونات المنسوخة من المنصّة (tools3d + games3d/menus) — غيرها يأخذ النجمة */
+const HRU_ICONS=new Set(['back-to-school','certificates','challenge','classes','code-lab','dice','event','hot-seat','huroof','lab3d','letterhead','live-session','millionaire','picker','qr-code','question-bank','scoreboard','teams','timer','two-groups','typing-practice','wheel','worksheet-history','worksheet']);
+const HRU_ICON_ALIAS={'quick-game':'huroof',generate:'question-bank',remediation:'challenge','numbered-heads':'teams','periodic-table':'lab3d'};
+/* ما يُتوقَّع أن يُفتح — لجملة «لم يُفتح في هذه المدّة» (classes لا يُقاس بمساره فلا يُذكر) */
+const HRU_EXPECTED=['huroof','millionaire','hot-seat','picker','wheel','teams','timer','scoreboard','dice','question-bank','worksheet','certificates','back-to-school','qr-code','lab3d'];
+const HRU_KIND={game:{name:'الألعاب',one:'لعبة',color:'#f5a623',icon:'gamepad-2'},tool:{name:'أدوات المعلّم',one:'أداة',color:'#38bdf8',icon:'wrench'},lesson:{name:'دروس 3D',one:'درس',color:'#a78bfa',icon:'box'}};
+const HRU_PLAT={web:{name:'الويب',color:'#38bdf8',icon:'globe'},ios:{name:'آيفون وآيباد',color:'#94a3b8',icon:'smartphone'},android:{name:'أندرويد',color:'#22c55e',icon:'smartphone'},unknown:{name:'غير معروف',color:'#52525b',icon:'help-circle'}};
+const HRU_DOW=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+const HRU_LOC='ar-SA-u-ca-gregory';
+const HRU_CSS=`
+.hru{--hu-card:linear-gradient(160deg,rgba(255,255,255,.075),rgba(255,255,255,.02));--hu-bd:rgba(255,255,255,.10);--hu-soft:rgba(255,255,255,.055);--hu-up:#22c55e;--hu-dn:#f87171}
+:root[data-theme="light"] .hru{--hu-card:linear-gradient(160deg,#fff,#fafafa);--hu-bd:#e4e4e7;--hu-soft:rgba(0,0,0,.05)}
+.hru *{box-sizing:border-box}
+.hru .hu-card{background:var(--hu-card);border:1px solid var(--hu-bd);border-radius:22px;padding:22px;backdrop-filter:blur(16px) saturate(150%);-webkit-backdrop-filter:blur(16px) saturate(150%);box-shadow:0 12px 34px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.08);min-width:0}
+.hru .hu-h{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:0 0 16px}
+.hru .hu-h h4{margin:0;font-size:18px;font-weight:900;display:flex;align-items:center;gap:9px}
+.hru .hu-h h4 img{width:34px;height:34px;object-fit:contain}
+.hru .hu-h h4 svg{width:20px;height:20px}
+.hru .hu-sub{font-size:12.5px;color:var(--muted);font-weight:600}
+.hru .hu-top{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:20px}
+.hru .hu-top h3{margin:0;font-size:26px;font-weight:900;display:flex;align-items:center;gap:10px}
+.hru .hu-top h3 img{width:46px;height:46px}
+.hru .hu-top p{margin:4px 0 0;color:var(--muted);font-size:13.5px}
+.hru .hu-seg{display:inline-flex;background:var(--hu-soft);border:1px solid var(--hu-bd);border-radius:14px;padding:4px;gap:2px}
+.hru .hu-seg button{border:0;background:transparent;color:var(--muted);font:inherit;font-weight:800;font-size:13.5px;padding:8px 16px;border-radius:10px;cursor:pointer}
+.hru .hu-seg button.on{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205;box-shadow:0 4px 14px rgba(232,199,102,.25)}
+.hru .hu-kpis{display:grid;grid-template-columns:1.35fr 1fr 1fr;grid-template-rows:auto auto;gap:16px;margin-bottom:16px}
+.hru .hu-hero{grid-row:span 2;position:relative;overflow:hidden;display:flex;flex-direction:column;background:radial-gradient(120% 90% at 100% 0%,rgba(245,166,35,.24),transparent 60%),var(--hu-card)}
+.hru .hu-hero .hu-lbl{font-size:15px}
+.hru .hu-hero .hu-big{font-size:76px;line-height:1;margin:12px 0 10px;letter-spacing:-1px}
+.hru .hu-spark{margin-top:auto;height:86px;position:relative}
+.hru .hu-spark svg{position:absolute;inset:0;width:100%;height:100%}
+.hru .hu-lbl{font-size:13.5px;font-weight:800;color:var(--muted);display:flex;align-items:center;gap:7px}
+.hru .hu-lbl svg{width:16px;height:16px}
+.hru .hu-big{font-size:44px;font-weight:900;line-height:1.05;margin:8px 0 6px;font-variant-numeric:tabular-nums}
+.hru .hu-big small{font-size:.5em;font-weight:800;color:var(--muted);margin-inline-start:4px}
+.hru .hu-note{font-size:12.5px;color:var(--muted);font-weight:600;line-height:1.6}
+.hru .hu-note b{color:var(--ink)}
+.hru .hu-d{display:inline-flex;align-items:center;gap:3px;font-size:12px;font-weight:900;padding:3px 9px;border-radius:999px;white-space:nowrap;vertical-align:middle}
+.hru .hu-up{background:rgba(34,197,94,.15);color:var(--hu-up)}
+.hru .hu-dn{background:rgba(248,113,113,.15);color:var(--hu-dn)}
+.hru .hu-eq{background:var(--hu-soft);color:var(--muted)}
+.hru .hu-new{background:rgba(167,139,250,.16);color:#c4b5fd}
+.hru .hu-row2{display:grid;grid-template-columns:1.25fr 1fr;gap:16px;margin-bottom:16px}
+.hru .hu-ins{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.hru .hu-in{display:flex;gap:12px;align-items:center;padding:12px 14px;border-radius:16px;background:var(--hu-soft);border:1px solid var(--hu-bd);font-size:14px;line-height:1.65;font-weight:600}
+.hru .hu-in b{font-weight:900;color:var(--ink)}
+.hru .hu-in .hu-ii{flex:0 0 44px;height:44px;border-radius:13px;display:grid;place-items:center}
+.hru .hu-in .hu-ii img{width:44px;height:44px;object-fit:contain}
+.hru .hu-in .hu-ii svg{width:21px;height:21px}
+.hru .hu-podc{display:flex;flex-direction:column}
+.hru .hu-pod{flex:1;display:flex;align-items:flex-end;justify-content:center;gap:12px;min-height:300px;padding-top:6px}
+.hru .hu-next{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.hru .hu-next div{display:flex;flex-direction:column;align-items:center;text-align:center;gap:2px;padding:10px 6px;border-radius:14px;background:var(--hu-soft);border:1px solid var(--hu-bd);min-width:0}
+.hru .hu-next img{width:42px;height:42px;object-fit:contain}
+.hru .hu-next img.th{border-radius:10px;object-fit:cover}
+.hru .hu-next .nm{font-size:12px;font-weight:800;line-height:1.35;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hru .hu-next .v{font-size:11px;color:var(--muted);font-weight:700}
+.hru .hu-pi{flex:1;max-width:190px;display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.hru .hu-pi .hu-pimg{position:relative;width:112px;height:112px;margin-bottom:8px}
+.hru .hu-pi.p1 .hu-pimg{width:150px;height:150px}
+.hru .hu-pi .hu-pimg img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 14px 18px rgba(0,0,0,.45));animation:huFloat 4s ease-in-out infinite}
+.hru .hu-pi.p2 .hu-pimg img{animation-delay:-1.3s}.hru .hu-pi.p3 .hu-pimg img{animation-delay:-2.6s}
+.hru .hu-pi .hu-pimg img.th{border-radius:16px;object-fit:cover;aspect-ratio:1}
+.hru .hu-pi .hu-pimg:after{content:"";position:absolute;inset:auto 14% -4px;height:14px;border-radius:50%;background:radial-gradient(rgba(0,0,0,.45),transparent 70%)}
+.hru .hu-pn{font-weight:900;font-size:15px;line-height:1.35;min-height:2.7em;display:flex;align-items:center;justify-content:center}
+.hru .hu-pv{font-size:13px;color:var(--muted);font-weight:700;margin:2px 0 8px}
+.hru .hu-pv b{font-size:20px;color:var(--ink)}
+.hru .hu-base{width:100%;border-radius:16px 16px 6px 6px;display:flex;align-items:flex-start;justify-content:center;padding-top:12px;border:1px solid var(--hu-bd);border-bottom:0}
+.hru .hu-hex{width:40px;height:44px;clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);display:grid;place-items:center;font-weight:900;font-size:18px;color:#1a1205}
+.hru .hu-lists{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.hru .hu-r{display:grid;grid-template-columns:22px 52px minmax(0,1fr) auto;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--hu-bd)}
+.hru .hu-r:last-child{border-bottom:0}
+.hru .hu-r .hu-n{font-weight:900;color:var(--muted);font-size:13px;text-align:center}
+.hru .hu-r .hu-ic{width:52px;height:52px;object-fit:contain;filter:drop-shadow(0 6px 8px rgba(0,0,0,.35))}
+.hru .hu-r .hu-ic.th{width:52px;height:52px;border-radius:12px;object-fit:cover}
+.hru .hu-r .hu-nm{font-weight:900;font-size:14.5px;line-height:1.4;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.hru .hu-r .hu-nm span.t{min-width:0;overflow:hidden;text-overflow:ellipsis}
+.hru .hu-bar{height:8px;border-radius:6px;background:var(--hu-soft);margin:7px 0 5px;overflow:hidden}
+.hru .hu-bar i{display:block;height:100%;border-radius:6px}
+.hru .hu-meta{font-size:11.5px;color:var(--muted);font-weight:600;line-height:1.5}
+.hru .hu-val{text-align:left;white-space:nowrap}
+.hru .hu-val b{display:block;font-size:20px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+.hru .hu-val span{display:block;font-size:11.5px;color:var(--muted);font-weight:700}
+.hru .hu-val .hu-d{display:inline-flex;margin:3px 0 2px;font-size:11px;padding:2px 7px}
+.hru .hu-more{margin-top:10px;width:100%;border:1px dashed var(--hu-bd);background:transparent;color:var(--muted);font:inherit;font-weight:800;font-size:13px;padding:9px;border-radius:12px;cursor:pointer}
+.hru .hu-more:hover{color:var(--ink);border-color:var(--gold)}
+.hru .hu-empty{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:18px 8px;color:var(--muted);font-weight:600;font-size:13.5px;line-height:1.7}
+.hru .hu-empty img{width:96px;height:96px;object-fit:contain;opacity:.95}
+.hru .hu-empty b{color:var(--ink);font-size:15px}
+.hru .hu-leg{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;font-weight:700;color:var(--muted)}
+.hru .hu-leg i{display:inline-block;width:11px;height:11px;border-radius:4px;margin-inline-end:6px;vertical-align:-1px}
+.hru .hu-leg b{color:var(--ink)}
+.hru .hu-chart{position:relative;height:260px;display:grid;grid-template-columns:38px 1fr;grid-template-rows:1fr 26px;gap:0 8px}
+.hru .hu-yax{display:flex;flex-direction:column;justify-content:space-between;font-size:11px;color:var(--muted);font-weight:700;text-align:left;padding-bottom:0}
+.hru .hu-plot{position:relative;border-bottom:1px solid var(--hu-bd);background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--hu-bd) calc(25% - 1px),var(--hu-bd) 25%)}
+.hru .hu-cols{position:absolute;inset:0;display:flex;align-items:stretch;gap:3px}
+.hru .hu-col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;border-radius:6px 6px 0 0;min-width:0;position:relative}
+.hru .hu-col.we{background:repeating-linear-gradient(135deg,rgba(255,255,255,.05) 0 6px,rgba(255,255,255,.015) 6px 12px)}
+:root[data-theme="light"] .hru .hu-col.we{background:rgba(0,0,0,.03)}
+.hru .hu-col i{display:block;width:100%}
+.hru .hu-col i:first-child{border-radius:5px 5px 0 0}
+.hru .hu-col:hover{background:rgba(232,199,102,.10)}
+.hru .hu-line{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.hru .hu-xax{grid-column:2;position:relative;font-size:11px;color:var(--muted);font-weight:700}
+.hru .hu-xax span{position:absolute;top:6px;transform:translateX(50%);white-space:nowrap}
+.hru .hu-row3{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;margin-bottom:16px}
+.hru .hu-hm{display:grid;gap:4px;align-items:center}
+.hru .hu-hm .c{aspect-ratio:1/1;border-radius:5px;background:var(--hu-soft);min-width:0}
+.hru .hu-hm .dl{font-size:12px;font-weight:800;color:var(--muted);white-space:nowrap;padding-inline-end:4px}
+.hru .hu-hm .hl{font-size:10.5px;font-weight:700;color:var(--muted);text-align:center;white-space:nowrap}
+.hru .hu-hm .tot{font-size:12px;font-weight:900;text-align:left;padding-inline-start:6px;white-space:nowrap}
+.hru .hu-hm .hb{height:84px;display:flex;align-items:flex-end;min-width:0;margin-top:8px;border-bottom:1px solid var(--hu-bd)}
+.hru .hu-hm .hb i{display:block;width:100%;border-radius:5px 5px 1px 1px}
+.hru .hu-stack{display:flex;height:16px;border-radius:9px;overflow:hidden;background:var(--hu-soft);gap:2px}
+.hru .hu-stack i{display:block;height:100%}
+.hru .hu-pl{display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:center;padding:9px 0;border-bottom:1px solid var(--hu-bd)}
+.hru .hu-pl:last-child{border-bottom:0}
+.hru .hu-pl .pi{width:34px;height:34px;border-radius:10px;display:grid;place-items:center}
+.hru .hu-pl .pi svg{width:17px;height:17px}
+.hru .hu-pl b{font-size:16px}
+.hru .hu-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+.hru .hu-mini div{background:var(--hu-soft);border:1px solid var(--hu-bd);border-radius:14px;padding:11px 10px;text-align:center}
+.hru .hu-mini b{display:block;font-size:22px;font-weight:900;line-height:1.2}
+.hru .hu-mini span{font-size:11.5px;color:var(--muted);font-weight:700}
+.hru .hu-phone{display:none}
+.hru .hu-side{display:flex;flex-direction:column;gap:16px;min-width:0}
+@keyframes huFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@media (prefers-reduced-motion:reduce){.hru .hu-pi .hu-pimg img{animation:none}}
+@media (max-width:1280px){.hru .hu-lists{grid-template-columns:1fr 1fr}.hru .hu-lists>.hu-card:last-child{grid-column:1/-1}}
+@media (max-width:1100px){.hru .hu-row2,.hru .hu-row3{grid-template-columns:1fr}.hru .hu-ins{grid-template-columns:1fr 1fr}}
+@media (max-width:860px){.hru .hu-kpis{grid-template-columns:1fr 1fr}.hru .hu-hero{grid-row:auto;grid-column:1/-1}.hru .hu-lists{grid-template-columns:1fr}.hru .hu-ins{grid-template-columns:1fr}}
+@media (max-width:560px){.hru .hu-card{padding:16px;border-radius:18px}.hru .hu-kpis{gap:10px}.hru .hu-big{font-size:32px}.hru .hu-hero .hu-big{font-size:58px}.hru .hu-top h3{font-size:22px}.hru .hu-top h3 img{width:38px;height:38px}
+  .hru .hu-pod{gap:6px;min-height:250px}.hru .hu-pi .hu-pimg{width:74px;height:74px}.hru .hu-pi.p1 .hu-pimg{width:98px;height:98px}.hru .hu-pn{font-size:13px}.hru .hu-pv b{font-size:17px}
+  .hru .hu-r{grid-template-columns:18px 44px minmax(0,1fr) auto;gap:9px}.hru .hu-r .hu-ic,.hru .hu-r .hu-ic.th{width:44px;height:44px}
+  .hru .hu-chart{height:210px;grid-template-columns:30px 1fr}.hru .hu-cols{gap:1px}.hru .hu-hm{gap:2px}.hru .hu-hm .c{border-radius:3px}.hru .hu-hm .dl{font-size:11px}.hru .hu-hm .hl{font-size:9px}
+  .hru .hu-ins:not(.open) .hu-x{display:none}.hru .hu-phone{display:block}.hru .hu-xax span.alt{display:none}
+  .hru .hu-seg button{padding:7px 12px}.hru .hu-in{font-size:13.5px}}
+`;
 function hrViewUsage(){hrSet(hrLoading());hruLoad();}
-function hruSetDays(d){HRU_DAYS=d;hrViewUsage();}
-async function hruLoad(){try{const u=await hrApi('admin/usage?days='+HRU_DAYS);if(hrActive('usage'))hruRender(u);}catch(e){if(hrActive('usage'))hrSet(hrErr(e.message,'hrViewUsage()'));}}
-function hruRank(rows,color){
-  if(!rows.length)return `<div style="color:var(--muted);padding:10px">لا بيانات بعد في هذه المدّة.</div>`;
-  const max=Math.max(...rows.map(r=>r.opens))||1;
-  return rows.map((r,i)=>`<div style="display:grid;grid-template-columns:22px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-bottom:1px solid var(--line)">
-    <div style="font-weight:900;color:var(--muted)">${HR_ar(i+1)}</div>
-    <div><div style="font-weight:800">${esc(HRU_NAMES[r.target]||r.target)}</div>
-      <div style="height:7px;border-radius:4px;background:${color}22;margin-top:5px"><div style="height:7px;border-radius:4px;background:${color};width:${Math.max(3,Math.round(r.opens/max*100))}%"></div></div></div>
-    <div style="text-align:left;font-size:12px;white-space:nowrap"><b style="font-size:15px">${HR_ar(r.opens)}</b> فتح<br><span style="color:var(--muted)">${HR_ar(r.devices)} جهاز · ${HR_ar(r.users)} مستخدم</span></div>
-  </div>`).join('');
+function hruSetDays(d){HRU_DAYS=d;HRU_OPEN={};hrViewUsage();}
+async function hruLoad(){try{const u=await hrApi('admin/usage?days='+HRU_DAYS);HRU_DATA=u;if(hrActive('usage'))hruRender(u);}catch(e){if(hrActive('usage'))hrSet(hrErr(e.message,'hrViewUsage()'));}}
+function hruToggle(k){HRU_OPEN[k]=!HRU_OPEN[k];if(HRU_DATA)hruRender(HRU_DATA);}
+/* ── معينات ── */
+const hruN=(n,d)=>Number(n||0).toLocaleString('ar-SA',{maximumFractionDigits:d||0});
+const hruP=(a,b)=>b?Math.round(a/b*100):0;
+function hruName(r,meta){if(r.kind==='lesson'){const m=meta&&meta[r.target];return m?m.title:r.target;}return HRU_NAMES[r.target]||r.target;}
+function hruImgErr(el){const l=(el.getAttribute('data-fb')||'').split('|').filter(Boolean);if(!l.length){el.onerror=null;return}el.src=l.shift();el.setAttribute('data-fb',l.join('|'));if(!l.length)el.classList.remove('th');}
+function hruIconSrc(t){const k=HRU_ICON_ALIAS[t]||t;return './img/hr3d/'+(HRU_ICONS.has(k)?k:'_fallback')+'.png';}
+/* أيقونة العنصر: درس 3D = صورة الدرس (نسخة البطاقة ثم الأصل ثم أيقونة المختبر)، وغيره أيقونة المنصّة */
+function hruIcon(r,meta,cls){
+  if(r.kind==='lesson'){const m=meta&&meta[r.target];const jpg='https://huroofduroos.com/app/3d/'+((m&&m.thumb)||(r.target+'/thumb.jpg'));
+    return `<img class="${cls} th" loading="lazy" alt="" src="${esc(jpg.replace(/\.jpg$/,'.card.webp'))}" data-fb="${esc(jpg)}|./img/hr3d/lab3d.png" onerror="hruImgErr(this)">`;}
+  return `<img class="${cls}" loading="lazy" alt="" src="${hruIconSrc(r.target)}" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'">`;
 }
-function hruDaily(rows){
-  if(!rows.length)return '';
-  const max=Math.max(...rows.map(r=>r.tools+r.games))||1;
-  return `<div style="display:flex;align-items:flex-end;gap:3px;height:120px;padding-top:8px">${rows.map(r=>{const t=r.tools+r.games;return `<div title="${esc(r.day)}: ${t} (أدوات ${r.tools} · ألعاب ${r.games})" style="flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%">
-    <div style="background:#f5a623;height:${Math.round(r.games/max*100)}%;border-radius:3px 3px 0 0"></div><div style="background:#0ea5e9;height:${Math.round(r.tools/max*100)}%"></div></div>`}).join('')}</div>
-    <div style="display:flex;gap:14px;font-size:12px;color:var(--muted);margin-top:6px"><span><b style="color:#0ea5e9">■</b> أدوات</span><span><b style="color:#f5a623">■</b> ألعاب</span></div>`;
+function hruDelta(cur,prev,cmp){if(!cmp)return '';if(!prev&&!cur)return '';if(!prev)return `<span class="hu-d hu-new">جديد</span>`;const p=Math.round((cur-prev)/prev*100);if(p===0)return `<span class="hu-d hu-eq">= ثابت</span>`;return `<span class="hu-d ${p>0?'hu-up':'hu-dn'}">${p>0?'▲':'▼'} ${hruN(Math.abs(p))}٪</span>`;}
+/* خطوة محور «لطيفة»: ١، ٢، ٥ × ١٠ⁿ */
+function hruNice(x){if(x<=1)return 1;const m=Math.pow(10,Math.floor(Math.log10(x)));for(const f of [1,1.5,2,2.5,3,4,5,6,8,10]){if(f*m>=x)return f*m}return 10*m;}
+function hruHour(h){h=((h%24)+24)%24;const x=h%12||12;return hruN(x)+(h<12?'ص':'م');}
+function hruDay(s){return new Date(s+'T12:00:00Z');}
+function hruFmt(s,o){try{return hruDay(s).toLocaleDateString(HRU_LOC,Object.assign({timeZone:'UTC'},o||{day:'numeric',month:'short'}));}catch(e){return s;}}
+/* كلّ أيّام المدّة بتوقيت الرياض (UTC+3 بلا توقيتٍ صيفيّ) — الأيّام الخالية أصفار لا فجوات */
+function hruFill(rows,days){const m={};(rows||[]).forEach(r=>{m[r.day]=r});const out=[];const now=Date.now();
+  for(let i=days;i>=0;i--){const d=new Date(now-i*864e5+3*36e5).toISOString().slice(0,10);if(out.length&&out[out.length-1].day===d)continue;const r=m[d]||{};out.push({day:d,tools:+r.tools||0,games:+r.games||0,lessons:+r.lessons||0,devices:+r.devices||0});}
+  if(out.length>days)out.shift();return out;}
+function hruSpark(vals,color,id){
+  if(!vals.length)return '';const max=Math.max(...vals,1),n=vals.length;
+  const pts=vals.map((v,i)=>`${n===1?50:(100-i/(n-1)*100).toFixed(2)},${(38-v/max*34).toFixed(2)}`);
+  return `<svg viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${color}" stop-opacity=".45"/><stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="${pts.join(' ')} 0,40 100,40" fill="url(#${id})"/><polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>`;
 }
-function hruCampaign(rows){
-  if(!rows.length)return `<div style="color:var(--muted);padding:10px">لا طلبات دفع في هذه المدّة.</div>`;
-  const st={paid:'مدفوع',pending:'معلّق',failed:'فشل',cancelled:'أُلغي'},pl={monthly:'شهري',yearly:'سنوي',quarterly:'فصلي'};
-  const paidCode=rows.filter(r=>r.status==='paid'&&r.code!=='—').reduce((a,r)=>a+r.orders,0);
-  const paidAll=rows.filter(r=>r.status==='paid').reduce((a,r)=>a+r.orders,0);
-  return `<div style="margin-bottom:10px;font-weight:700">مشتركون بالكود: <b style="color:#22c55e">${HR_ar(paidCode)}</b> من ${HR_ar(paidAll)} اشتراك مدفوع</div>
-  <table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr style="color:var(--muted);text-align:right"><th style="padding:6px">الكود</th><th>الباقة</th><th>الحالة</th><th>الطلبات</th><th>المحصَّل</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr style="border-top:1px solid var(--line)"><td style="padding:7px;font-weight:800">${esc(r.code==='—'?'بلا كود':String(r.code).toUpperCase())}</td><td>${esc(pl[r.plan]||r.plan)}</td><td>${esc(st[r.status]||r.status)}</td><td>${HR_ar(r.orders)}</td><td>${r.revenue?HR_ar(Math.round(r.revenue))+' ر.س':'—'}</td></tr>`).join('')}
-  </tbody></table>`;
+/* ── السياق المحسوب مرّةً لكلّ عرض ── */
+function hruCtx(u){
+  const T=u.totals||{},P=u.prevTotals||{},E=u.engagement||{},meta=u.lessonsMeta||{};
+  const rows=(u.byTarget||[]).map(r=>Object.assign({},r,{opens:+r.opens||0,devices:+r.devices||0,users:+r.users||0,prevOpens:+r.prevOpens||0,repeatDevices:+r.repeatDevices||0}));
+  const total=+T.opens||0;
+  /* المقارنة ممكنة إن وُجدت فتحاتٌ في المدّة السابقة؛ وجزئيّة إن بدأ القياس داخلها */
+  const prevStart=Date.now()-2*HRU_DAYS*864e5;const first=u.firstEventAt?new Date(u.firstEventAt).getTime():null;
+  const cmp=(+P.opens||0)>0;const partial=cmp&&first&&first>prevStart;
+  const byKind={game:0,tool:0,lesson:0};rows.forEach(r=>{if(byKind[r.kind]!=null)byKind[r.kind]+=r.opens});
+  const hm={};let hmMax=0;(u.heatmap||[]).forEach(c=>{const k=c.dow+'-'+c.hour;hm[k]=(hm[k]||0)+(+c.opens||0);hmMax=Math.max(hmMax,hm[k])});
+  return {T,P,E,meta,rows,total,cmp,partial,first,byKind,hm,hmMax,daily:hruFill(u.daily,HRU_DAYS)};
+}
+/* ── جُملٌ تقرأ الأرقام بدلاً منك ── */
+function hruInsights(u,c){
+  const out=[],add=(icon,html,color)=>out.push({icon,html,color}),img=src=>({img:src});
+  const {rows,total,E,meta,byKind}=c;if(!total)return out;
+  const top=rows[0];if(top)add(img(top.kind==='lesson'?'./img/hr3d/lab3d.png':hruIconSrc(top.target)),`<b>${esc(hruName(top,meta))}</b> وحدها = <b>${hruN(hruP(top.opens,total))}٪</b> من كلّ الفتحات (${hruN(top.opens)} فتح من ${hruN(total)})`);
+  /* الذروة: أعلى خانة يوم×ساعة + أنشط يوم */
+  if(c.hmMax){let best=null;for(const k in c.hm){if(!best||c.hm[k]>c.hm[best])best=k}const [d,h]=best.split('-').map(Number);
+    const dayTot=[0,0,0,0,0,0,0];let school=0;const hs=Object.values(c.hm).reduce((a,v)=>a+v,0)||1;for(const k in c.hm){const [dd,hh]=k.split('-').map(Number);dayTot[dd]+=c.hm[k];if(dd<=4&&hh>=7&&hh<14)school+=c.hm[k]}
+    const bd=dayTot.indexOf(Math.max(...dayTot));
+    add({lucide:'clock',bg:'rgba(232,199,102,.16)',fg:'var(--gold)'},`ذروة الاستخدام: <b style="white-space:nowrap">${HRU_DOW[d]} ${hruHour(h)}–${hruHour(h+1)}</b>، وأنشط الأيّام <b>${HRU_DOW[bd]}</b> (${hruN(hruP(dayTot[bd],hs))}٪ من الأسبوع)`);
+    const sp=hruP(school,hs);
+    add({lucide:'school',bg:'rgba(56,189,248,.16)',fg:'#38bdf8'},sp>=50?`<b>${hruN(sp)}٪</b> من الفتحات داخل وقت الدوام (الأحد–الخميس ٧ص–٢م) — المنصّة تُستعمل <b>داخل الحصّة</b> فعلاً`:`<b>${hruN(100-sp)}٪</b> من الفتحات خارج وقت الدوام — تحضيرٌ في البيت أكثر منه داخل الحصّة`);
+  }
+  if(+E.devices>0){const rp=hruP(+E.returning,+E.devices);add({lucide:'repeat',bg:'rgba(34,197,94,.15)',fg:'#22c55e'},`<b>${hruN(rp)}٪</b> من الأجهزة رجعت في أكثر من يوم${+E.loyal?`، و<b>${hruN(E.loyal)}</b> جهاز استعملها ٥ أيّام أو أكثر`:''}`);}
+  const parts=['game','tool','lesson'].filter(k=>byKind[k]).map(k=>`${HRU_KIND[k].name} <b>${hruN(hruP(byKind[k],total))}٪</b>`);
+  if(parts.length>1)add({lucide:'pie-chart',bg:'rgba(167,139,250,.16)',fg:'#a78bfa'},'توزيع الاستخدام: '+parts.join(' · '));
+  if(c.cmp){const g=rows.filter(r=>r.opens>=5&&r.prevOpens>=3).map(r=>Object.assign({g:(r.opens-r.prevOpens)/r.prevOpens},r));
+    const up=g.filter(r=>r.g>0).sort((a,b)=>b.g-a.g)[0],dn=g.filter(r=>r.g<0).sort((a,b)=>a.g-b.g)[0];
+    const fresh=rows.filter(r=>r.opens>=5&&!r.prevOpens).sort((a,b)=>b.opens-a.opens)[0];
+    if(up)add(img(up.kind==='lesson'?'./img/hr3d/lab3d.png':hruIconSrc(up.target)),`الأسرع نموّاً: <b>${esc(hruName(up,meta))}</b> <span class="hu-d hu-up">▲ ${hruN(Math.round(up.g*100))}٪</span> عن الفترة السابقة`);
+    else if(fresh)add(img(fresh.kind==='lesson'?'./img/hr3d/lab3d.png':hruIconSrc(fresh.target)),`جديدٌ لافت: <b>${esc(hruName(fresh,meta))}</b> — ${hruN(fresh.opens)} فتح ولم يُفتح في الفترة السابقة`);
+    if(dn)add(img(dn.kind==='lesson'?'./img/hr3d/lab3d.png':hruIconSrc(dn.target)),`تراجع: <b>${esc(hruName(dn,meta))}</b> <span class="hu-d hu-dn">▼ ${hruN(Math.round(-dn.g*100))}٪</span> — يستحقّ تذكيراً في المحتوى`);}
+  const sticky=rows.filter(r=>r.devices>=4&&r.repeatDevices>0).map(r=>Object.assign({s:r.repeatDevices/r.devices},r)).sort((a,b)=>b.s-a.s)[0];
+  if(sticky)add(img(sticky.kind==='lesson'?'./img/hr3d/lab3d.png':hruIconSrc(sticky.target)),`الأكثر عودةً: <b>${esc(hruName(sticky,meta))}</b> — <b>${hruN(Math.round(sticky.s*100))}٪</b> من أجهزته رجعت له في يومٍ آخر (عادةٌ لا تجربة)`);
+  if(+E.devices>0)add({lucide:'mouse-pointer-click',bg:'rgba(245,166,35,.15)',fg:'#f5a623'},`كلّ جهاز يفتح <b>${hruN(E.avgOpens,1)}</b> مرّة في المتوسّط ويجرّب <b>${hruN(E.avgTargets,1)}</b> عنصراً مختلفاً`);
+  const pl=(u.platforms||[]).map(p=>({k:p.platform,o:+p.opens||0})).sort((a,b)=>b.o-a.o)[0];
+  if(pl&&pl.o)add({lucide:(HRU_PLAT[pl.k]||HRU_PLAT.unknown).icon,bg:'rgba(56,189,248,.14)',fg:'#38bdf8'},`<b>${hruN(hruP(pl.o,total))}٪</b> من الفتحات من <b>${(HRU_PLAT[pl.k]||HRU_PLAT.unknown).name}</b>`);
+  const seen=new Set(rows.map(r=>r.target));const miss=HRU_EXPECTED.filter(t=>!seen.has(t));
+  if(miss.length&&miss.length<HRU_EXPECTED.length)add({lucide:'eye-off',bg:'rgba(248,113,113,.14)',fg:'#f87171'},`لم يُفتح في هذه المدّة: ${miss.slice(0,5).map(t=>`<b>${esc(HRU_NAMES[t]||t)}</b>`).join('، ')}${miss.length>5?` و${hruN(miss.length-5)} غيرها`:''}`);
+  const tl=rows.find(r=>r.kind==='lesson');
+  if(tl){const m=meta[tl.target];add(img('./img/hr3d/lab3d.png'),`أكثر درس 3D فتحاً: <b>${esc(hruName(tl,meta))}</b>${m&&m.subject?` (${esc(m.subject)}${m.grade?' · '+esc(m.grade):''})`:''} — ${hruN(tl.opens)} فتح`);}
+  else add(img('./img/hr3d/lab3d.png'),`دروس 3D: بدأ القياس من <b>٢٠ أكتوبر</b> — تظهر هنا بعد أوّل فتح`);
+  return out;
+}
+function hruInsightsHTML(list){
+  if(!list.length)return `<div class="hu-empty"><img src="./img/hr3d/_fallback.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"><b>لا فتحات بعد في هذه المدّة</b>جرّب مدّةً أطول.</div>`;
+  const L=list.slice(0,12);
+  return `<div class="hu-ins${HRU_OPEN.ins?' open':''}">${L.map((i,ix)=>`<div class="hu-in${ix>=6?' hu-x':''}"><div class="hu-ii" style="${i.icon.bg?`background:${i.icon.bg};color:${i.icon.fg}`:''}">${i.icon.img?`<img src="${i.icon.img}" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'">`:`<i data-lucide="${i.icon.lucide}"></i>`}</div><div>${i.html}</div></div>`).join('')}</div>${L.length>6?`<button class="hu-more hu-phone" onclick="hruToggle('ins')">${HRU_OPEN.ins?'إخفاء':'المزيد ('+hruN(L.length-6)+')'}</button>`:''}`;
+}
+/* ── منصّة الأوائل: الثلاثة الأكثر فتحاً من كلّ الأنواع ── */
+function hruPodium(c){
+  const top=c.rows.slice(0,3);
+  if(!top.length)return `<div class="hu-empty"><img src="./img/hr3d/scoreboard.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"><b>لا ترتيب بعد</b>تظهر هنا الأكثر فتحاً.</div>`;
+  const h=[150,104,74],medal=['linear-gradient(135deg,#FFD66B,#F5A623)','linear-gradient(135deg,#F1F5F9,#94A3B8)','linear-gradient(135deg,#F7B58A,#C2703D)'];
+  const order=top.length===3?[1,0,2]:top.length===2?[1,0]:[0];
+  return `<div class="hu-pod">${order.map(i=>{const r=top[i],k=HRU_KIND[r.kind]||HRU_KIND.tool;return `<div class="hu-pi p${i+1}">
+    <div class="hu-pimg">${hruIcon(r,c.meta,'')}</div>
+    <div class="hu-pn">${esc(hruName(r,c.meta))}</div>
+    <div class="hu-pv"><b>${hruN(r.opens)}</b> فتح · ${hruN(hruP(r.opens,c.total))}٪</div>
+    <div class="hu-base" style="height:${h[i]}px;background:linear-gradient(180deg,${k.color}40,${k.color}08)"><div class="hu-hex" style="background:${medal[i]}">${hruN(i+1)}</div></div>
+  </div>`}).join('')}</div>${hruNext(c)}`;
+}
+/* الأربعة التالون بعد المنصّة */
+function hruNext(c){const r=c.rows.slice(3,7);if(!r.length)return '';
+  return `<div class="hu-next">${r.map((x,i)=>`<div title="${esc(hruName(x,c.meta))}">${hruIcon(x,c.meta,'')}<span class="nm">${hruN(i+4)}. ${esc(hruName(x,c.meta))}</span><span class="v">${hruN(x.opens)} فتح</span></div>`).join('')}</div>`;}
+/* ── قائمة نوعٍ واحد مرتّبة ── */
+function hruList(kind,c){
+  const K=HRU_KIND[kind],rows=c.rows.filter(r=>r.kind===kind),sum=rows.reduce((a,r)=>a+r.opens,0);
+  const head=`<div class="hu-h"><h4><img src="${kind==='game'?'./img/hr3d/huroof.png':kind==='tool'?'./img/hr3d/timer.png':'./img/hr3d/lab3d.png'}" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'">${K.name}</h4><span class="hu-sub">${hruN(sum)} فتح · ${hruN(hruP(sum,c.total))}٪</span></div>`;
+  if(!rows.length){
+    if(kind==='lesson')return `<div class="hu-card">${head}<div class="hu-empty"><img src="./img/hr3d/lab3d.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"><b>بدأ القياس من ٢٠ أكتوبر ٢٠٢٦</b>كلّ درسٍ يُفتح من مختبر حروف 3D يُعدّ باسمه — تظهر هنا الدروس الأكثر فتحاً بعد أوّل استخدام (بعد نشر تحديث الويب).</div></div>`;
+    return `<div class="hu-card">${head}<div class="hu-empty"><b>لا بيانات بعد في هذه المدّة</b></div></div>`;
+  }
+  const max=rows[0].opens||1,lim=HRU_OPEN[kind]?rows.length:6;
+  const body=rows.slice(0,lim).map((r,i)=>{const m=kind==='lesson'?c.meta[r.target]:null;
+    const sub=[m&&m.subject?esc(m.subject)+(m.grade?' · '+esc(m.grade):''):'',`${hruN(r.devices)} جهاز`,r.users?`${hruN(r.users)} مسجّل`:'',r.repeatDevices?`يعود له ${hruN(r.repeatDevices)}`:''].filter(Boolean).join(' · ');
+    return `<div class="hu-r" title="${esc(hruName(r,c.meta))}${c.cmp?` — الفترة السابقة: ${hruN(r.prevOpens)} فتح`:''}">
+      <div class="hu-n">${hruN(i+1)}</div>${hruIcon(r,c.meta,'hu-ic')}
+      <div style="min-width:0"><div class="hu-nm"><span class="t">${esc(hruName(r,c.meta))}</span></div>
+        <div class="hu-bar"><i style="width:${Math.max(3,Math.round(r.opens/max*100))}%;background:linear-gradient(90deg,${K.color}aa,${K.color})"></i></div>
+        <div class="hu-meta">${sub}</div></div>
+      <div class="hu-val"><b>${hruN(r.opens)}</b>${(kind==='lesson'&&!r.prevOpens)?'':hruDelta(r.opens,r.prevOpens,c.cmp)}<span>${hruN(hruP(r.opens,c.total))}٪ من الكلّ</span></div></div>`}).join('');
+  const more=rows.length>6?`<button class="hu-more" onclick="hruToggle('${kind}')">${HRU_OPEN[kind]?'إخفاء':'عرض الكلّ ('+hruN(rows.length)+')'}</button>`:'';
+  return `<div class="hu-card">${head}${body}${more}</div>`;
+}
+/* ── الرسم اليوميّ: أعمدة مكدّسة (أدوات/ألعاب/دروس) + خطّ الأجهزة النشطة ── */
+function hruDailyHTML(c){
+  const d=c.daily,n=d.length;if(!n)return '';
+  const tot=r=>r.tools+r.games+r.lessons,max=Math.max(...d.map(tot),1);
+  const step=hruNice(max/4),top=step*4;
+  const cols=d.map(r=>{const t=tot(r),dow=hruDay(r.day).getUTCDay(),we=dow===5||dow===6;
+    return `<div class="hu-col${we?' we':''}" title="${HRU_DOW[dow]} ${hruFmt(r.day)} — ${hruN(t)} فتح: ألعاب ${hruN(r.games)} · أدوات ${hruN(r.tools)} · دروس ${hruN(r.lessons)} · ${hruN(r.devices)} جهاز">
+      ${r.lessons?`<i style="height:${r.lessons/top*100}%;background:${HRU_KIND.lesson.color}"></i>`:''}${r.games?`<i style="height:${r.games/top*100}%;background:${HRU_KIND.game.color}"></i>`:''}${r.tools?`<i style="height:${r.tools/top*100}%;background:${HRU_KIND.tool.color}"></i>`:''}</div>`}).join('');
+  /* خطّ الأجهزة على المقياس نفسه (الأجهزة ≤ الفتحات دائماً) — RTL: اليوم الأوّل يميناً */
+  const pts=d.map((r,i)=>`${(100-(i+.5)/n*100).toFixed(2)},${(100-r.devices/top*100).toFixed(2)}`).join(' ');
+  const every=n<=8?1:n<=31?Math.ceil(n/6):Math.ceil(n/7);
+  let li=0;const xl=d.map((r,i)=>(i%every===0||i===n-1)&&!(i!==n-1&&n-1-i<every*.6)?`<span class="${n>8&&(li++)%2?'alt':''}" style="right:${((i+.5)/n*100).toFixed(2)}%">${n<=8?HRU_DOW[hruDay(r.day).getUTCDay()]:hruFmt(r.day)}</span>`:'').join('');
+  const yl=[4,3,2,1,0].map(i=>`<span>${hruN(step*i)}</span>`).join('');
+  const sumK=k=>d.reduce((a,r)=>a+r[k],0);
+  const leg=`<div class="hu-leg"><span><i style="background:${HRU_KIND.game.color}"></i>ألعاب <b>${hruN(sumK('games'))}</b></span><span><i style="background:${HRU_KIND.tool.color}"></i>أدوات <b>${hruN(sumK('tools'))}</b></span><span><i style="background:${HRU_KIND.lesson.color}"></i>دروس 3D <b>${hruN(sumK('lessons'))}</b></span><span><i style="background:transparent;border:2px solid var(--ink);border-radius:50%;width:10px;height:10px"></i>أجهزة نشطة يوميّاً</span><span><i style="background:rgba(255,255,255,.08);border:1px solid var(--hu-bd)"></i>الجمعة والسبت</span></div>`;
+  return `<div class="hu-card" style="margin-bottom:16px"><div class="hu-h"><h4><i data-lucide="bar-chart-3"></i> يوماً بيوم</h4>${leg}</div>
+    <div class="hu-chart"><div class="hu-yax">${yl}</div><div class="hu-plot"><div class="hu-cols">${cols}</div>
+      <svg class="hu-line" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true"><polyline points="${pts}" fill="none" stroke="var(--ink)" stroke-opacity=".85" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg></div>
+      <div class="hu-xax">${xl}</div></div></div>`;
+}
+/* ── خريطة يوم×ساعة بتوقيت الرياض ── */
+function hruHeatHTML(c){
+  let lo=7,hi=21;for(const k in c.hm){const h=+k.split('-')[1];if(c.hm[k]){lo=Math.min(lo,h);hi=Math.max(hi,h)}}
+  const hours=[];for(let h=lo;h<=hi;h++)hours.push(h);
+  const tot=[0,0,0,0,0,0,0];for(const k in c.hm){tot[+k.split('-')[0]]+=c.hm[k]}
+  const color=v=>{if(!v)return '';const a=.10+.90*Math.pow(v/c.hmMax,1.15);return `background:rgba(245,166,35,${a.toFixed(3)});box-shadow:${v===c.hmMax?'0 0 0 2px #fff6, 0 0 14px rgba(245,166,35,.6)':'none'}`;};
+  const lblEvery=hours.length>14?3:2;
+  let g=`<div></div>${hours.map(h=>`<div class="hl">${(h-lo)%lblEvery===0?hruHour(h):''}</div>`).join('')}<div class="hl">المجموع</div>`;
+  for(let d=0;d<7;d++){g+=`<div class="dl">${HRU_DOW[d]}</div>${hours.map(h=>{const v=c.hm[d+'-'+h]||0;return `<div class="c" style="${color(v)}" title="${HRU_DOW[d]} ${hruHour(h)}–${hruHour(h+1)}: ${hruN(v)} فتح"></div>`}).join('')}<div class="tot" style="color:${tot[d]?'var(--ink)':'var(--muted)'}">${hruN(tot[d])}</div>`;}
+  const hsum=Object.values(c.hm).reduce((a,v)=>a+v,0)||1,hr=hruHours(c,hours,hsum);
+  const school=Object.keys(c.hm).reduce((a,k)=>{const [d,h]=k.split('-').map(Number);return a+(d<=4&&h>=7&&h<14?c.hm[k]:0)},0);
+  return `<div class="hu-card"><div class="hu-h"><h4><i data-lucide="calendar-clock"></i> متى يستخدمون المنصّة؟</h4><span class="hu-sub">بتوقيت الرياض · كلّما اشتدّ اللون زادت الفتحات</span></div>
+    ${c.hmMax?`<div class="hu-hm" style="grid-template-columns:auto repeat(${hours.length},minmax(0,1fr)) auto">${g}${hr.cells}</div>
+    <div class="hu-note" style="margin-top:14px;display:flex;gap:18px;flex-wrap:wrap"><span><b>${hruN(hruP(school,hsum))}٪</b> من الفتحات داخل وقت الدوام المدرسيّ (الأحد–الخميس، ٧ص–٢م)</span><span>${hr.peak}</span></div>`:`<div class="hu-empty"><b>لا بيانات بعد</b></div>`}</div>`;
+}
+/* صفّ «كلّ الأيّام» داخل شبكة الخريطة نفسها فتتطابق أعمدة الساعات — أيّ حصّةٍ تُستعمل فيها المنصّة */
+function hruHours(c,hours,hsum){const by=hours.map(h=>{let v=0;for(let d=0;d<7;d++)v+=c.hm[d+'-'+h]||0;return v});const mx=Math.max(...by,1),bi=by.indexOf(mx);
+  return {cells:`<div class="dl" style="align-self:end">كلّ الأيّام</div>${by.map((v,i)=>`<div class="hb" title="${hruHour(hours[i])}: ${hruN(v)} فتح"><i style="height:${Math.max(v?4:0,v/mx*100)}%;background:${i===bi?'linear-gradient(180deg,#FFD66B,#F5A623)':'rgba(245,166,35,.42)'}"></i></div>`).join('')}<div></div>`,
+    peak:`أكثر ساعةٍ استخداماً: <b>${hruHour(hours[bi])}–${hruHour(hours[bi]+1)}</b> (${hruN(hruP(mx,hsum))}٪ من الفتحات)`};}
+/* ── المنصّات + العودة ── */
+function hruPlatHTML(u,c){
+  const ps=(u.platforms||[]).map(p=>({k:HRU_PLAT[p.platform]?p.platform:'unknown',o:+p.opens||0,d:+p.devices||0})).sort((a,b)=>b.o-a.o);
+  const sum=ps.reduce((a,p)=>a+p.o,0)||1;
+  return `<div class="hu-card"><div class="hu-h"><h4><i data-lucide="monitor-smartphone"></i> من أين يدخلون؟</h4></div>
+    ${ps.length?`<div class="hu-stack">${ps.map(p=>`<i style="width:${p.o/sum*100}%;background:${HRU_PLAT[p.k].color}" title="${HRU_PLAT[p.k].name}"></i>`).join('')}</div>
+    <div style="margin-top:8px">${ps.map(p=>{const P=HRU_PLAT[p.k];return `<div class="hu-pl"><div class="pi" style="background:${P.color}22;color:${P.color}"><i data-lucide="${P.icon}"></i></div><div><div style="font-weight:900">${P.name}</div><div class="hu-meta">${hruN(p.d)} جهاز</div></div><div class="hu-val"><b>${hruN(hruP(p.o,sum))}٪</b><span>${hruN(p.o)} فتح</span></div></div>`}).join('')}</div>`:`<div class="hu-empty"><b>لا بيانات بعد</b></div>`}</div>`;
+}
+function hruEngHTML(c){
+  const E=c.E,dv=+E.devices||0,once=+E.once||0,loyal=+E.loyal||0,mid=Math.max(0,(+E.returning||0)-loyal);
+  const seg=[{n:'مرّة واحدة',v:once,c:'#71717a'},{n:'٢–٤ أيّام',v:mid,c:'#38bdf8'},{n:'٥ أيّام فأكثر',v:loyal,c:'#22c55e'}];
+  return `<div class="hu-card"><div class="hu-h"><h4><i data-lucide="repeat"></i> هل يرجعون؟</h4><span class="hu-sub">أيّام نشاط كلّ جهاز في المدّة</span></div>
+    ${dv?`<div class="hu-stack" style="height:22px">${seg.filter(s=>s.v).map(s=>`<i style="width:${s.v/dv*100}%;background:${s.c}" title="${s.n}: ${hruN(s.v)}"></i>`).join('')}</div>
+    <div class="hu-leg" style="margin-top:10px">${seg.map(s=>`<span><i style="background:${s.c}"></i>${s.n} <b>${hruN(s.v)}</b> (${hruN(hruP(s.v,dv))}٪)</span>`).join('')}</div>
+    <div class="hu-mini"><div><b>${hruN(E.avgDays,1)}</b><span>يوم نشاط / جهاز</span></div><div><b>${hruN(E.avgTargets,1)}</b><span>عنصر مختلف / جهاز</span></div><div><b>${hruN(E.newDevices)}</b><span>جهاز جديد</span></div></div>`:`<div class="hu-empty"><b>لا بيانات بعد</b></div>`}</div>`;
+}
+/* ── المؤشّرات الكبيرة ── */
+function hruKpis(c){
+  const {T,P,E,cmp}=c,dv=+E.devices||0,per='عن الفترة السابقة';
+  const avgDay=c.daily.length?c.total/c.daily.length:0;
+  const sp=hruSpark(c.daily.map(r=>r.tools+r.games+r.lessons),'#f5a623','huSpk');
+  const k=(icon,lbl,big,note,delta)=>`<div class="hu-card"><div class="hu-lbl"><i data-lucide="${icon}"></i>${lbl}</div><div class="hu-big">${big}</div>${delta?`<div style="margin-bottom:6px">${delta}</div>`:''}<div class="hu-note">${note}</div></div>`;
+  const dl=(a,b)=>cmp?`${hruDelta(+a||0,+b||0,true)} <span class="hu-note">${per}</span>`:'';
+  return `<div class="hu-kpis">
+    <div class="hu-card hu-hero"><div class="hu-lbl"><i data-lucide="mouse-pointer-click"></i>فتحات الألعاب والأدوات والدروس</div>
+      <div class="hu-big">${hruN(c.total)}</div>
+      <div>${cmp?`${hruDelta(c.total,+P.opens||0,true)} <span class="hu-note">${per} (${hruN(P.opens)})</span>`:`<span class="hu-note">لا بيانات في الفترة السابقة للمقارنة</span>`}</div>
+      <div class="hu-note" style="margin-top:8px">≈ <b>${hruN(avgDay,1)}</b> فتح يوميّاً في المتوسّط</div>
+      <div class="hu-spark">${sp}</div></div>
+    ${k('smartphone','أجهزة مختلفة',hruN(T.devices),`منها <b>${hruN(E.newDevices)}</b> جهاز يظهر لأوّل مرّة`,dl(T.devices,P.devices))}
+    ${k('repeat','رجعوا أكثر من يوم',`${hruN(hruP(+E.returning,dv))}<small>٪</small>`,`<b>${hruN(E.returning)}</b> من ${hruN(dv)} جهاز · <b>${hruN(E.loyal)}</b> استعملها ٥ أيّام+`)}
+    ${k('layers','فتحات لكلّ جهاز',hruN(E.avgOpens,1),`ويجرّب <b>${hruN(E.avgTargets,1)}</b> عنصراً مختلفاً في <b>${hruN(E.avgDays,1)}</b> يوم`)}
+    ${k('user-check','مستخدمون مسجّلون',hruN(T.users),`<b>${hruN(hruP(+T.users,+T.devices))}٪</b> قياساً بعدد الأجهزة — الباقي زوّار بلا حساب`,dl(T.users,P.users))}
+  </div>`;
 }
 function hruRender(u){
-  const tools=(u.byTarget||[]).filter(r=>r.kind==='tool'),games=(u.byTarget||[]).filter(r=>r.kind==='game');
-  const T=u.totals||{};
-  const dayBtn=d=>`<button class="btn btn-sm ${HRU_DAYS===d?'btn-gold':'btn-ghost'}" onclick="hruSetDays(${d})">${HR_ar(d)} يوم</button>`;
-  hrSet(`${hrHead('الاستخدام والحملة','activity',dayBtn(7)+dayBtn(30)+dayBtn(90))}
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:16px">
-      ${hrTile(HR_ar(T.opens||0),'فتح أداة/لعبة','#f5a623')}${hrTile(HR_ar(T.devices||0),'جهاز مختلف','#0ea5e9')}${hrTile(HR_ar(T.users||0),'مستخدم مسجّل','#22c55e')}
+  const c=hruCtx(u);
+  const seg=`<div class="hu-seg">${[7,30,90].map(d=>`<button class="${HRU_DAYS===d?'on':''}" onclick="hruSetDays(${d})">${hruN(d)} يوم</button>`).join('')}</div>`;
+  const note=c.partial?`<div class="hu-note" style="margin:-8px 0 16px"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> المقارنة بالفترة السابقة جزئيّة: القياس بدأ في ${esc(new Date(c.first).toLocaleDateString(HRU_LOC,{day:'numeric',month:'long',year:'numeric'}))}.</div>`:'';
+  hrSet(`<style>${HRU_CSS}</style><div class="hru">
+    <div class="hu-top"><div><h3><img src="./img/hr3d/scoreboard.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"> الاستخدام</h3><p>ما يفتحه المعلّمون فعلاً — آخر ${hruN(HRU_DAYS)} يوماً، بتوقيت الرياض.</p></div>${seg}</div>
+    ${note}${hruKpis(c)}
+    <div class="hu-row2">
+      <div class="hu-card"><div class="hu-h"><h4><img src="./img/hr3d/_fallback.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"> ماذا تقول الأرقام؟</h4><span class="hu-sub">تُكتب تلقائيّاً من بيانات المدّة</span></div>${hruInsightsHTML(hruInsights(u,c))}</div>
+      <div class="hu-card hu-podc"><div class="hu-h"><h4><img src="./img/hr3d/scoreboard.png" alt="" onerror="this.onerror=null;this.src='./img/hr3d/_fallback.png'"> الأكثر تفاعلاً</h4><span class="hu-sub">من كلّ الألعاب والأدوات والدروس</span></div>${hruPodium(c)}</div>
     </div>
-    <div class="card" style="margin-bottom:16px"><h4 style="margin:0 0 6px">يومياً</h4>${hruDaily(u.daily||[])}</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;margin-bottom:16px">
-      <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="gamepad-2"></i> الألعاب الأكثر اختياراً</h4>${hruRank(games,'#f5a623')}</div>
-      <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="wrench"></i> أدوات المعلّم الأكثر استخداماً</h4>${hruRank(tools,'#0ea5e9')}</div>
-    </div>
-    <div class="card"><h4 style="margin:0 0 8px"><i data-lucide="tag"></i> حملة كود الخصم (HRF39)</h4>${hruCampaign(u.campaign||[])}
-      <div style="margin-top:10px;font-size:12px;color:var(--muted)">رابط الحملة الجاهز: huroofduroos.com/app/license?code=HRF39 — يملأ الكود تلقائيّاً.</div></div>`);
+    <div class="hu-lists">${hruList('game',c)}${hruList('tool',c)}${hruList('lesson',c)}</div>
+    ${hruDailyHTML(c)}
+    <div class="hu-row3">${hruHeatHTML(c)}<div class="hu-side">${hruPlatHTML(u,c)}${hruEngHTML(c)}</div></div>
+  </div>`);
 }
