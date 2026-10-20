@@ -134,6 +134,7 @@ const PK_TABS=[
 const PK_SECS=[
   {id:'partners',name:'الشركاء والعمولات',icon:'handshake',desc:'المسوّقون بالعمولة، اتفاقياتهم، المدارس المحالة والعمولات'},
   {id:'moe',name:'شراكة وزارة التعليم',icon:'landmark',desc:'مقترح الشراكة الرسميّ — قابل للتحرير والطباعة PDF'},
+  {id:'contracts',name:'العقود مع الشركات',icon:'file-lock-2',desc:'عدم الإفصاح، ومذكّرات الشروط، وحدودك وأسعار الترخيص'},
 ];
 function pkSecNav(){
   return `<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:18px">
@@ -142,7 +143,7 @@ function pkSecNav(){
       <span style="min-width:0"><span style="display:block;font-weight:800;font-size:15px">${x.name}</span><span style="display:block;font-size:12px;color:var(--muted);margin-top:2px">${x.desc}</span></span></button>`}).join('')}
   </div>`;
 }
-function pkSetSec(id){if(PK_SEC==='moe'&&typeof moeSave==='function')moeSave(true);PK_SEC=id;PK_PID=null;renderPartners();window.scrollTo(0,0)}
+function pkSetSec(id){if(PK_SEC==='moe'&&typeof moeSave==='function')moeSave(true);if(PK_SEC==='contracts'&&typeof ctSaveOpenTab==='function'){ctSaveOpenTab();CT_ID=null}PK_SEC=id;PK_PID=null;renderPartners();window.scrollTo(0,0)}
 function renderPartners(){
   pkInit();
   const main=document.getElementById('main');
@@ -156,6 +157,11 @@ function renderPartners(){
         <button class="btn btn-gold" onclick="moePrint()"><i data-lucide="printer"></i> طباعة / حفظ PDF</button></div></div>
     ${pkSecNav()}
     <div id="pkBody">${moeView()}</div>`;
+    refreshIcons();return;
+  }
+  if(PK_SEC==='contracts'){
+    const body=ctView();
+    main.innerHTML=CT_ID?`<div id="pkBody">${body}</div>`:`${ctHead()}${pkSecNav()}<div id="pkBody">${body}</div>`;
     refreshIcons();return;
   }
   const bodies={overview:pkViewOverview,partners:pkViewPartners,leads:pkViewLeads,comms:pkViewComms,template:pkViewTemplate};
