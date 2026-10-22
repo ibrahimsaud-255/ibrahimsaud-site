@@ -15,6 +15,23 @@
  * الملفّات الموقّعة والختم في حاوية Supabase الخاصّة «partner-docs»
  * (غير عامّة، سياسة مالكٍ فقط) — تُفتح بروابط موقّتة.
  *
+ * برنامج الشركاء الذاتيّ (huroofduroos.com/partners — supabase/partner-program.sql):
+ *   طلب الانضمام → pp_apply (رقم اتفاقية + رابط توقيع من القالب المنشور) → التوقيع
+ *   → المشغّل يجعله «active» → بوابة الشريك (#portal_token) يسجّل منها المدارس
+ *   مع فحص التكرار آليّاً. اللوحة تكمل الحلقة بلا أيّ خطوة يدويّة:
+ *   • نشر (pkPpPublish): pp_settings ← sign_template (القالب معبّأً بالقيم الافتراضيّة
+ *     + توقيعك + الختم) · program (مفاتيح تبويب «برنامج الشركاء») · customers (أسماء
+ *     العملاء القائمين مطبّعةً بـpkPpNorm = pp_norm في SQL حرفيّاً). عند فتح التطبيق
+ *     وبعد حفظ القالب، ولا يُكتب شيء إلا إن تغيّرت البصمة (partnerKit.publishedHash).
+ *   • سحب (pkPpCycle داخل pkSyncLinks): كلّ pp_partners مسار المدارس بلا panel_ref
+ *     ← شريك في S.partners (source:'online', ppId) مع رابط توقيعه؛ وعند سحب التوقيع
+ *     يُعتمد آليّاً (pkImportSigned). وكلّ pp_leads مؤكَّدة ← S.partnerLeads (ppLeadId).
+ *     ثمّ يُعلَّم الصفّ panel_ref/imported_at فلا يتكرّر.
+ *   • لقطة البوابة (pkPpSnapPush): مراحل مدارس الشريك وعمولاته ← pp_partners.snapshot.
+ *   • الحالة: الإيقاف/الإنهاء/الاعتماد في اللوحة يُعكس على pp_partners.status.
+ *   • أرقام الاتفاقيات اليدويّة من pp_next_agreement_no() (عدّاد واحد مع البرنامج).
+ *   إن لم تُطبَّق جداول البرنامج بعد، تتخطّاها كلّ هذه الدوالّ بصمت (PP_ON=false).
+ *
  * ⚠️ نطاقٌ عامّ واحد + تعريفات فقط (انظر رأس 01-core.js). البادئة pk لكلّ شيء.
  */
 
@@ -60,6 +77,10 @@ const PK_DEFAULT_KIT={
   articles:null,     // null = البنود الافتراضيّة أعلاه
   ownerSig:'',       // توقيع المالك (dataURL) — اختياريّ
   stampPath:'',      // مسار الختم في حاوية partner-docs
+  program:{schoolsOpen:true,ambassadorsOpen:true,autoApprove:true}, // مفاتيح برنامج الشركاء الذاتيّ
+  publishedHash:{},  // بصمة آخر نشر لكلّ مفتاح في pp_settings
+  snapHash:{},       // بصمة آخر لقطة بوابة لكلّ شريك أونلاين (ppId → بصمة)
+  ppSeenAt:'',       // آخر زيارة لتبويب «برنامج الشركاء» (لعدّاد الجديد)
 };
 const PK_RATE_WORDS={5:'خمسة',6:'ستة',7:'سبعة',8:'ثمانية',9:'تسعة',10:'عشرة',11:'أحد عشر',12:'اثنا عشر',13:'ثلاثة عشر',14:'أربعة عشر',15:'خمسة عشر',16:'ستة عشر',17:'سبعة عشر',18:'ثمانية عشر',19:'تسعة عشر',20:'عشرون',25:'خمسة وعشرون',30:'ثلاثون'};
 
@@ -75,6 +96,7 @@ function pkInit(){
   for(const key in PK_DEFAULT_KIT){if(k[key]===undefined)k[key]=JSON.parse(JSON.stringify(PK_DEFAULT_KIT[key]))}
   k.org=Object.assign({},PK_DEFAULT_KIT.org,k.org||{});
   k.defaults=Object.assign({},PK_DEFAULT_KIT.defaults,k.defaults||{});
+  k.program=Object.assign({},PK_DEFAULT_KIT.program,k.program||{});
   return k;
 }
 function pkArticles(){const k=pkInit();return (Array.isArray(k.articles)&&k.articles.length)?k.articles:PK_DEFAULT_ARTICLES}
@@ -129,6 +151,7 @@ const PK_TABS=[
   {id:'leads',name:'المدارس المحالة',icon:'school'},
   {id:'comms',name:'العمولات',icon:'wallet'},
   {id:'template',name:'قالب الاتفاقية',icon:'file-signature'},
+  {id:'program',name:'برنامج الشركاء',icon:'rocket'},
 ];
 /* أقسام تطبيق «الشركات» — الشركاء والعمولات أحدها */
 const PK_SECS=[
@@ -147,7 +170,7 @@ function pkSetSec(id){if(PK_SEC==='moe'&&typeof moeSave==='function')moeSave(tru
 function renderPartners(){
   pkInit();
   const main=document.getElementById('main');
-  if(PK_SEC==='partners'&&PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();pkSyncLinks(false);return}
+  if(PK_SEC==='partners'&&PK_PID&&pkP(PK_PID)){main.innerHTML=pkPartnerPage(pkP(PK_PID));refreshIcons();pkSyncLinks(false);pkPpSnapSoon();return}
   PK_PID=null;
   if(PK_SEC==='moe'){
     main.innerHTML=`
@@ -164,7 +187,11 @@ function renderPartners(){
     main.innerHTML=CT_ID?`<div id="pkBody">${body}</div>`:`${ctHead()}${pkSecNav()}<div id="pkBody">${body}</div>`;
     refreshIcons();return;
   }
-  const bodies={overview:pkViewOverview,partners:pkViewPartners,leads:pkViewLeads,comms:pkViewComms,template:pkViewTemplate};
+  const bodies={overview:pkViewOverview,partners:pkViewPartners,leads:pkViewLeads,comms:pkViewComms,template:pkViewTemplate,program:pkViewProgram};
+  const ppN=pkPpNewCount().n;
+  /* برنامج الشركاء: سحب الجديد (مقيَّد بـ٢٠ث) + نشر القالب واللقطات (مؤجَّل، بالبصمة) — يتخطّى بصمت في وضع التجربة */
+  if(PK_TAB!=='template')setTimeout(()=>pkSyncLinks(false),0);
+  pkPpPublishSoon();pkPpSnapSoon();
   main.innerHTML=`
     <div class="page-head"><h1><i data-lucide="building-2" style="width:26px;height:26px;vertical-align:-4px"></i> الشركات</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
@@ -172,7 +199,7 @@ function renderPartners(){
         <button class="btn btn-gold" onclick="pkPartnerForm()"><i data-lucide="user-plus"></i> شريك جديد</button></div></div>
     ${pkSecNav()}
     <div style="display:flex;gap:6px;margin-bottom:18px;flex-wrap:wrap">
-      ${PK_TABS.map(t=>`<button class="btn btn-sm ${PK_TAB===t.id?'btn-gold':'btn-ghost'}" onclick="PK_TAB='${t.id}';renderPartners()"><i data-lucide="${t.icon}"></i> ${t.name}</button>`).join('')}
+      ${PK_TABS.map(t=>`<button class="btn btn-sm ${PK_TAB===t.id?'btn-gold':'btn-ghost'}" onclick="PK_TAB='${t.id}';renderPartners()"><i data-lucide="${t.icon}"></i> ${t.name}${t.id==='program'&&ppN&&PK_TAB!=='program'?` <span style="background:var(--bad);color:#fff;border-radius:10px;padding:0 7px;font-size:11px;font-weight:800">${ppN}</span>`:''}</button>`).join('')}
     </div>
     <div id="pkBody">${(bodies[PK_TAB]||pkViewOverview)()}</div>`;
   refreshIcons();
@@ -190,9 +217,11 @@ function pkViewOverview(){
   const paid=S.partnerComms.filter(c=>c.status==='paid').reduce((a,c)=>a+Number(c.amount||0),0);
   const fu=open.filter(l=>l.nextDate).sort((a,b)=>a.nextDate.localeCompare(b.nextDate));
   const overdue=fu.filter(l=>pkDaysTo(l.nextDate)<0), todayL=fu.filter(l=>pkDaysTo(l.nextDate)===0), soon=fu.filter(l=>{const d=pkDaysTo(l.nextDate);return d>0&&d<=7});
-  const noNext=open.filter(l=>!l.nextDate);
+  const noNext=open.filter(l=>!l.nextDate&&l.source!=='portal'); // مدارس البوابة يتابعها الشريك نفسه
   const expiring=open.filter(l=>{const d=pkDaysTo(pkLeadExpiry(l));return d!=null&&d<=10});
-  const pending=S.partners.filter(p=>p.status==='draft'||p.status==='pending');
+  // الشريك الأونلاين الذي معه رابط توقيع مسارُه آليّ — لا يُعرض هنا إلا ما يحتاجك
+  const pending=S.partners.filter(p=>(p.status==='draft'||p.status==='pending')&&!(p.ppId&&(p.links||[]).length));
+  const ppNew=pkPpNewCount();
   const row=(l,tag)=>{const p=pkP(l.partnerId);return `<tr style="cursor:pointer" onclick="pkLeadForm('${l.id}')"><td><b>${esc(l.school)}</b><div style="font-size:12px;color:var(--muted)">${esc(l.city||'')}</div></td><td>${esc(p?p.name:'—')}</td><td>${esc(l.nextAction||'—')}</td><td style="white-space:nowrap">${tag}</td></tr>`};
   const tbl=(list,tagFn)=>list.length?`<div style="overflow:auto"><table><thead><tr><th>المدرسة</th><th>الشريك</th><th>الخطوة الجاية</th><th>الموعد</th></tr></thead><tbody>${list.map(l=>row(l,tagFn(l))).join('')}</tbody></table></div>`:'';
   return `
@@ -204,6 +233,7 @@ function pkViewOverview(){
       <div class="stat"><div class="ic"><i data-lucide="check-check"></i></div><div class="v">${pkSar(paid)}</div><div class="l">عمولات مصروفة</div></div>
     </div>
     ${pending.length?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="file-clock"></i><div><b>اتفاقيات لم تُعتمد بعد:</b> ${pending.map(p=>`<a class="link-btn" onclick="pkOpen('${p.id}')">${esc(p.name)}${p.esign?' (وقّع ✓ — اعتمده)':''}</a>`).join(' · ')}</div></div>`:''}
+    ${ppNew.n?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="rocket"></i><div><b>جديد في برنامج الشركاء منذ آخر زيارة:</b> ${[ppNew.p?ppNew.p+' طلب انضمام':'',ppNew.l?ppNew.l+' تسجيل مدرسة':''].filter(Boolean).join(' · ')} — <a class="link-btn" onclick="PK_TAB='program';renderPartners()">عرض</a></div></div>`:''}
     <div class="card" style="margin-bottom:16px"><h3><i data-lucide="alarm-clock"></i> متابعاتك</h3>
       ${!fu.length&&!noNext.length?emptyBox('calendar-check','لا متابعات — سجّل مدرسة وحدّد «الخطوة الجاية».'):''}
       ${overdue.length?`<div style="margin:6px 0;color:var(--bad);font-weight:700">متأخرة (${overdue.length})</div>${tbl(overdue,l=>`<span class="pill lost">${pkFmt(l.nextDate)}</span>`)}`:''}
@@ -253,19 +283,28 @@ function pkPartnerForm(id){
       <div class="field"><label>مدة الاتفاقية</label><input id="pk_term" value="${v('term',d.term)}"></div>
       <div class="field"><label>تاريخ الإبرام</label><input id="pk_date" type="date" value="${v('agreementDate',today())}"></div></div>
     <div class="field"><label>ملاحظات داخلية (لا تُطبع)</label><textarea id="pk_notes" rows="2">${v('notes')}</textarea></div>`,
-  ()=>{
+  async()=>{
     const name=pkVal('pk_name'),phone=pkVal('pk_phone');
     if(!name){alert('اكتب اسم الشريك.');return}
     if(!phone){alert('اكتب رقم الجوال.');return}
-    const isNew=!p;const o=p||{id:uid(),status:'draft',createdAt:pkNow(),log:[],docs:[]};
-    Object.assign(o,{name,nationality:pkVal('pk_nat'),idNo:pkVal('pk_idno'),city:pkVal('pk_city'),phone,email:pkVal('pk_email'),
+    const vals={name,nationality:pkVal('pk_nat'),idNo:pkVal('pk_idno'),city:pkVal('pk_city'),phone,email:pkVal('pk_email'),
       bank:pkVal('pk_bank'),iban:pkVal('pk_iban').replace(/\s+/g,'').toUpperCase(),rate:Number(pkVal('pk_rate')||d.rate),
       protectDays:Number(pkVal('pk_protect')||d.protectDays),renewMonths:Number(pkVal('pk_renew')||d.renewMonths),
-      payDays:Number(pkVal('pk_pay')||d.payDays),term:pkVal('pk_term')||d.term,agreementDate:pkVal('pk_date')||today(),notes:pkVal('pk_notes')});
-    if(isNew){k.counter=Number(k.counter||0)+1;o.no=(k.prefix||'HD-S-')+String(k.counter).padStart(4,'0');pkLog(o,'أُنشئ الشريك ورقم الاتفاقية '+o.no);S.partners.push(o);PK_PID=o.id}
+      payDays:Number(pkVal('pk_pay')||d.payDays),term:pkVal('pk_term')||d.term,agreementDate:pkVal('pk_date')||today(),notes:pkVal('pk_notes')};
+    const isNew=!p;const o=p||{id:uid(),status:'draft',createdAt:pkNow(),log:[],docs:[]};
+    if(isNew){const btn=document.getElementById('mSave');if(btn){if(btn.disabled)return;btn.disabled=true}o.no=await pkNextNo()}
+    Object.assign(o,vals);
+    if(isNew){pkLog(o,'أُنشئ الشريك ورقم الاتفاقية '+o.no);S.partners.push(o);PK_PID=o.id}
     else pkLog(o,'عُدّلت البيانات');
     save();closeModal();renderPartners();
-  },p&&!S.partnerLeads.some(l=>l.partnerId===p.id)&&!S.partnerComms.some(c=>c.partnerId===p.id)?()=>{if(!confirm('حذف الشريك نهائياً؟'))return;S.partners=S.partners.filter(x=>x.id!==p.id);PK_PID=null;save();closeModal();renderPartners()}:null);
+  },p&&!S.partnerLeads.some(l=>l.partnerId===p.id)&&!S.partnerComms.some(c=>c.partnerId===p.id)?()=>{if(!confirm('حذف الشريك نهائياً؟'))return;if(p.ppId)pkPpPush(p,{status:'rejected'});S.partners=S.partners.filter(x=>x.id!==p.id);PK_PID=null;save();closeModal();renderPartners()}:null);
+}
+/* رقم الاتفاقية التالي: من عدّاد قاعدة البيانات المشترك مع برنامج الشركاء، وإلا العدّاد المحلّيّ */
+async function pkNextNo(){
+  const k=pkInit();
+  if(USER&&PP_ON!==false){try{const {data,error}=await sb.rpc('pp_next_agreement_no');
+    if(!error&&data){const m=String(data).match(/(\d+)$/);if(m&&Number(m[1])>Number(k.counter||0))k.counter=Number(m[1]);return String(data)}}catch(e){}}
+  k.counter=Number(k.counter||0)+1;return (k.prefix||'HD-S-')+String(k.counter).padStart(4,'0');
 }
 
 /* ── صفحة الشريك ── */
@@ -281,6 +320,7 @@ function pkPartnerPage(p){
     <div class="page-head"><h1 style="display:flex;align-items:center;gap:10px"><button class="btn btn-ghost btn-sm" onclick="pkBack()"><i data-lucide="arrow-right"></i></button> ${esc(p.name)} <span class="pill ${s.pill}" style="font-size:13px">${s.label}</span></h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         ${wa?`<a class="btn btn-ghost" href="${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i> واتساب</a>`:''}
+        ${p.portalToken?`<a class="btn btn-ghost" href="${esc(pkPpPortalWa(p.name,p.phone,p.no,p.portalToken))}" target="_blank" rel="noopener" title="إرسال رابط بوابة الشريك"><i data-lucide="key-round"></i> رابط البوابة</a>`:''}
         <button class="btn btn-ghost" onclick="pkPartnerForm('${p.id}')"><i data-lucide="pencil"></i> البيانات</button>
         <button class="btn btn-gold" onclick="pkPrintAgreement('${p.id}')"><i data-lucide="printer"></i> طباعة الاتفاقية</button></div></div>
     <div class="stats">
@@ -335,14 +375,21 @@ function pkApprove(id){
   const hasSigned=(p.docs||[]).some(x=>x.kind==='signed');
   if(!hasSigned&&!p.sig){if(!confirm('لم تُرفع نسخة موقّعة ولا يوجد توقيع إلكتروني للشريك.\nالاعتماد بدون إثبات توقيع يضعف حفظ الحقوق للطرفين.\n\nاعتماد على أي حال؟'))return}
   else if(!confirm('اعتماد '+p.name+'؟\n'+(p.agreement&&p.agreement.signed?'البنود المعتمدة هي نفس النسخة التي وقّعها عبر الرابط.':'ستُجمَّد بنود الاتفاقية الحالية على ملفه.')))return;
+  pkFreezeApprove(p,'اعتُمد الشريك وجُمّدت بنود الاتفاقية');
+  if(p.ppId)pkPpPush(p,{status:'active',activated_at:new Date().toISOString()});
+  save();renderPartners();
+}
+/* أثر الاعتماد نفسه (بلا حوارات) — يستعمله pkApprove والاعتماد الآليّ بعد توقيع شريك أونلاين */
+function pkFreezeApprove(p,text){
   if(!(p.agreement&&p.agreement.signed))p.agreement={articles:JSON.parse(JSON.stringify(pkArticles())),title:pkInit().title,subtitle:pkInit().subtitle,org:JSON.parse(JSON.stringify(pkInit().org)),frozenAt:pkNow()};
-  p.status='active';p.approvedAt=pkNow();pkLog(p,'اعتُمد الشريك وجُمّدت بنود الاتفاقية');save();renderPartners();
+  p.status='active';p.approvedAt=pkNow();pkLog(p,text);
 }
 function pkSetStatus(id){
   const p=pkP(id);if(!p)return;
   openModal('حالة الشريك',`<div class="field"><label>الحالة</label><select id="pk_st">${Object.entries(PK_STATUS).map(([k,s])=>`<option value="${k}" ${p.status===k?'selected':''}>${s.label}</option>`).join('')}</select></div>
     <div class="field"><label>سبب / ملاحظة (تُحفظ في السجل)</label><input id="pk_st_note"></div>`,()=>{
-    const ns=pkVal('pk_st');if(ns!==p.status){pkLog(p,'تغيّرت الحالة إلى «'+PK_STATUS[ns].label+'»'+(pkVal('pk_st_note')?' — '+pkVal('pk_st_note'):''));p.status=ns;if(ns!=='active'&&ns!=='suspended'&&ns!=='ended'){p.agreement=null;p.approvedAt=null}}
+    const ns=pkVal('pk_st');if(ns!==p.status){pkLog(p,'تغيّرت الحالة إلى «'+PK_STATUS[ns].label+'»'+(pkVal('pk_st_note')?' — '+pkVal('pk_st_note'):''));p.status=ns;if(ns!=='active'&&ns!=='suspended'&&ns!=='ended'){p.agreement=null;p.approvedAt=null}
+      const mirror={active:'active',suspended:'suspended',ended:'ended'}[ns];if(mirror&&p.ppId)pkPpPush(p,{status:mirror});}
     save();closeModal();renderPartners();});
 }
 
@@ -409,7 +456,8 @@ function pkSetStage(id,stage){
   l.stage=stage;if(['won','lost'].includes(stage)){l.nextDate='';}
   pkLog(pkP(l.partnerId),'«'+l.school+'» ← '+pkStage(stage).label);save();renderPartners();
 }
-async function pkLoadOrgs(){if(PK_ORGS)return PK_ORGS;try{const b=await hrApi('admin/organizations');PK_ORGS=b.organizations||[]}catch(e){PK_ORGS=[]}return PK_ORGS}
+/* strict=true: يعيد null عند الفشل (حتى لا تُنشر قائمة عملاء ناقصة)؛ والفشل لا يُخزَّن فيُعاد المحاولة لاحقاً */
+async function pkLoadOrgs(strict){if(PK_ORGS)return PK_ORGS;try{const b=await hrApi('admin/organizations');PK_ORGS=b.organizations||[]}catch(e){return strict?null:[]}return PK_ORGS}
 function pkWinForm(id){
   const l=pkL(id);if(!l)return;const p=pkP(l.partnerId);const rate=Number((p&&p.rate)||pkInit().defaults.rate);
   const exp=pkLeadExpiry(l);const expired=pkDaysTo(exp)<0;
@@ -523,7 +571,7 @@ function pkTplSave(silent){
   k.articles=pkCollectArts();k.title=pkVal('pt_title')||k.title;k.subtitle=pkVal('pt_sub');
   Object.assign(k.org,{name:pkVal('pt_on'),unified:pkVal('pt_ou'),city:pkVal('pt_oc'),rep:pkVal('pt_or'),repTitle:pkVal('pt_ot'),email:pkVal('pt_oe')});
   Object.assign(k.defaults,{rate:Number(pkVal('pt_dr')||10),protectDays:Number(pkVal('pt_dp')||90),confirmDays:Number(pkVal('pt_dc')||3),renewMonths:Number(pkVal('pt_dm')||12),payDays:Number(pkVal('pt_dy')||10),term:pkVal('pt_dt')||'سنة واحدة'});
-  k.prefix=pkVal('pt_px')||'HD-S-';save();if(!silent){renderPartners();alert('تم حفظ القالب ✓')}
+  k.prefix=pkVal('pt_px')||'HD-S-';save();pkPpPublishSoon();if(!silent){renderPartners();alert('تم حفظ القالب ✓')}
 }
 function pkArtMove(i,dir){const a=pkCollectArts();const j=i+dir;if(j<0||j>=a.length)return;[a[i],a[j]]=[a[j],a[i]];pkInit().articles=a;pkTplSave(true);renderPartners()}
 function pkArtDel(i){if(!confirm('حذف هذه المادة؟'))return;const a=pkCollectArts();a.splice(i,1);pkInit().articles=a;pkTplSave(true);renderPartners()}
@@ -754,8 +802,11 @@ function pkLinkForm(id){
     try{
       const hours=Number(pkVal('pk_lexp')||48);const token=pkToken();const exp=new Date(Date.now()+hours*3600e3).toISOString();
       const payload=await pkBuildPayload(p);
-      const {data,error}=await sb.from('partner_sign_links').insert({token,partner_ref:p.id,payload,expires_at:exp}).select('id').single();
+      // شريك أونلاين: المرجع pp:<id> فيعمل حارس التوقيع ومشغّل الاعتماد في قاعدة البيانات، وتظهر له البوابة
+      if(p.ppId){payload.program=true;payload.portal=p.portalToken||''}
+      const {data,error}=await sb.from('partner_sign_links').insert({token,partner_ref:p.ppId?'pp:'+p.ppId:p.id,payload,expires_at:exp}).select('id').single();
       if(error)throw error;
+      if(p.ppId){pkPpPush(p,{sign_link_id:data.id}).then(()=>{if(PP_ON)return sb.from('pp_partners').update({status:'signing',updated_at:new Date().toISOString()}).eq('id',p.ppId).eq('status','applied')}).catch(()=>{})}
       if(!Array.isArray(p.links))p.links=[];
       p.links.unshift({id:data.id,token,expiresAt:exp,createdAt:pkNow(),status:'pending',openCount:0});
       if(p.status==='draft')p.status='pending';pkLog(p,'أُرسل رابط توقيع صالح '+hours+' ساعة');save();closeModal();renderPartners();
@@ -780,19 +831,25 @@ async function pkRevokeLink(pid,lid){
 }
 async function pkSyncLinks(force){
   if(!USER)return;const now=Date.now();if(!force&&now-PK_LSYNC<20000)return;PK_LSYNC=now;
-  const ids=[];S.partners.forEach(p=>(p.links||[]).forEach(l=>{if(l.status==='pending'||(l.status==='signed'&&!l.imported))ids.push(l.id)}));
-  if(!ids.length){if(force)renderPartners();return}
-  try{
-    const {data,error}=await sb.from('partner_sign_links').select('id,partner_ref,status,expires_at,open_count,signed_at,signer_data,signature,signer_ip,signer_ua,doc_hash,imported_at').in('id',ids);
-    if(error)throw error;let changed=false;
-    for(const r of data||[]){
-      const p=pkP(r.partner_ref);const l=p&&(p.links||[]).find(x=>x.id===r.id);if(!l)continue;
-      if(l.openCount!==r.open_count||l.status!==r.status){l.openCount=r.open_count;l.status=r.status;changed=true}
-      if(r.status==='signed'&&!l.imported){await pkImportSigned(p,l,r);changed=true}
-    }
-    if(changed){save();if(CUR==='partners')renderPartners()}else if(force)renderPartners();
-  }catch(e){console.warn('pkSyncLinks',e);if(force)alert('تعذّر التحديث: '+(e.message||e))}
+  const pp=await pkPpCycle();   // برنامج الشركاء: سحب الطلبات والمدارس الجديدة أوّلاً (فتدخل روابطهم في الفحص)
+  let changed=pp.changed;
+  // روابط الشركاء الأونلاين مرجعها pp:<id> لا معرّف اللوحة — تُطابَق بمعرّف الرابط
+  const byLink={};const ids=[];S.partners.forEach(p=>(p.links||[]).forEach(l=>{byLink[l.id]=p;if(l.status==='pending'||(l.status==='signed'&&!l.imported))ids.push(l.id)}));
+  if(ids.length){
+    try{
+      const {data,error}=await sb.from('partner_sign_links').select('id,partner_ref,status,expires_at,open_count,signed_at,signer_data,signature,signer_ip,signer_ua,doc_hash,imported_at').in('id',ids);
+      if(error)throw error;
+      for(const r of data||[]){
+        const p=pkP(r.partner_ref)||byLink[r.id];const l=p&&(p.links||[]).find(x=>x.id===r.id);if(!l)continue;
+        if(l.openCount!==r.open_count||l.status!==r.status){l.openCount=r.open_count;l.status=r.status;changed=true}
+        if(r.status==='signed'&&!l.imported){await pkImportSigned(p,l,r);changed=true}
+      }
+    }catch(e){console.warn('pkSyncLinks',e);if(force)alert('تعذّر التحديث: '+(e.message||e))}
+  }
+  if(changed){save();pkSafeRender()}else if(force||pp.data)pkSafeRender();
 }
+/* إعادة رسم بعد مزامنة خلفيّة — لا تمسّ تبويب القالب (تعديلات غير محفوظة) ولا الأقسام الأخرى */
+function pkSafeRender(){if(CUR==='partners'&&PK_SEC==='partners'&&(PK_PID||PK_TAB!=='template'))renderPartners()}
 async function pkImportSigned(p,l,r){
   const {data:full,error}=await sb.from('partner_sign_links').select('payload').eq('id',r.id).single();if(error)throw error;
   const pl=full.payload||{};const d=r.signer_data||{};
@@ -803,6 +860,253 @@ async function pkImportSigned(p,l,r){
   if(pl.date)p.agreementDate=pl.date;
   if(p.status==='draft')p.status='pending';
   l.status='signed';l.signedAt=r.signed_at;l.imported=true;
-  pkLog(p,'وقّع الشريك عبر الرابط ('+pkFmt(r.signed_at.slice(0,10))+(r.signer_ip?' — IP '+r.signer_ip:'')+') — بانتظار اعتمادك');
+  pkLog(p,'وقّع الشريك عبر الرابط ('+pkFmt(r.signed_at.slice(0,10))+(r.signer_ip?' — IP '+r.signer_ip:'')+')'+(p.ppId?'':' — بانتظار اعتمادك'));
+  // شريك برنامج الشركاء: يُعتمد آليّاً (البنود هي نفسها التي وقّعها). المشغّل pp_on_signed يفعّله في القاعدة
+  // إن كان الرابط pp:… — وإلا نعكس الحالة بأنفسنا.
+  if(p.ppId){pkFreezeApprove(p,'اعتُمد آليّاً بعد التوقيع');if(!String(r.partner_ref||'').startsWith('pp:'))pkPpPush(p,{status:'active',signed_at:r.signed_at,activated_at:new Date().toISOString()})}
   try{await sb.from('partner_sign_links').update({imported_at:new Date().toISOString()}).eq('id',r.id)}catch(e){}
+}
+
+/* ===== برنامج الشركاء الذاتيّ (huroofduroos.com/partners) — انظر رأس الملفّ =====
+ * كلّ دالّة هنا تتخطّى بصمت إن لم يكن هناك USER (وضع التجربة) أو لم تُطبَّق جداول
+ * البرنامج بعد (PP_ON=false) — فتبقى اللوحة كما كانت تماماً.                      */
+const PP_PUBLIC='https://huroofduroos.com/partners';
+const PP_STATUS={
+  applied:{label:'بانتظار مراجعتك',pill:'lead'},
+  signing:{label:'بانتظار التوقيع',pill:'progress'},
+  active:{label:'معتمد',pill:'won'},
+  waitlist:{label:'قائمة الانتظار',pill:'lead'},
+  suspended:{label:'موقوف',pill:'lost'},
+  rejected:{label:'مرفوض',pill:'lost'},
+  ended:{label:'منتهٍ',pill:'lost'},
+};
+const PP_LEAD_STATUS={
+  confirmed:{label:'مؤكَّدة',pill:'won'},
+  duplicate:{label:'تكرار — رُفضت آليّاً',pill:'lost'},
+  existing_client:{label:'عميل قائم — رُفضت آليّاً',pill:'quoted'},
+  rejected:{label:'مرفوضة',pill:'lost'},
+};
+let PP_ON=null, PP_DATA={partners:[],leads:[],at:0,sig:''}, PP_LOCK=null, PP_PUBT=null, PP_SNAPT=null, PP_STAMP={path:'',data:''};
+
+/* تطبيع الاسم = public.pp_norm في SQL حرفيّاً (القائمة المنشورة تُقارَن بـ ? في jsonb):
+ * lower → حذف التشكيل U+064B–U+0652 والتطويل → أإآ→ا ة→ه ى→ي → حذف الكلمات المستقلّة
+ * مدرسه|مدارس|مجمع|مجمعات (بنفس الاستهلاك غير المتداخل) → كلّ ما ليس [0-9a-zء-ي] مسافة → قصّ. */
+function pkPpNorm(s){
+  const W='[ \\t\\n\\r\\f\\v]';
+  return String(s==null?'':s).toLowerCase()
+    .replace(/[ً-ْـ]/g,'')
+    .replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي')
+    .replace(new RegExp('(^|'+W+')(مدرسه|مدارس|مجمع|مجمعات)('+W+'|$)','g'),' ')
+    .replace(/[^0-9a-zء-ي]+/g,' ')
+    .replace(/^ +| +$/g,'');
+}
+function pkHash(s){s=String(s);let h=0x811c9dc5;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)>>>0}return h.toString(16)+':'+s.length}
+function pkYmd(iso){if(!iso)return '';const d=new Date(iso);if(isNaN(d))return '';return d.getFullYear()+'-'+_pad2(d.getMonth()+1)+'-'+_pad2(d.getDate())}
+function pkPpPhone(s){const d=String(s||'').replace(/\D/g,'');return /^9665\d{8}$/.test(d)?'0'+d.slice(3):String(s||'')}
+function pkPpTok(t){return String(t||'').replace(/[^0-9a-f]/gi,'')}
+function pkPpMissing(e){const c=String((e&&e.code)||''),m=String((e&&e.message)||'');return ['42P01','42883','PGRST202','PGRST205'].includes(c)||/does not exist|schema cache|could not find/i.test(m)}
+async function pkPpReady(){
+  if(!USER)return false;if(PP_ON!==null)return PP_ON;
+  try{const {error}=await sb.from('pp_settings').select('key').limit(1);if(!error){PP_ON=true;return true}if(pkPpMissing(error))PP_ON=false;return false}
+  catch(e){return false}
+}
+async function pkPpPush(p,fields){
+  if(!p||!p.ppId||!await pkPpReady())return;
+  try{const {error}=await sb.from('pp_partners').update(Object.assign({updated_at:new Date().toISOString()},fields)).eq('id',p.ppId);if(error&&pkPpMissing(error))PP_ON=false}catch(e){}
+}
+
+/* ── النشر: pp_settings (القالب · الإعدادات · العملاء القائمون) ── */
+function pkPpProgram(){const g=pkInit().program;return {schoolsOpen:g.schoolsOpen!==false,ambassadorsOpen:g.ambassadorsOpen!==false,autoApprove:g.autoApprove!==false,ambassadorRate:20,ambassadorDiscount:10}}
+async function pkPpStamp(){
+  const k=pkInit();if(!k.stampPath)return '';if(PP_STAMP.path===k.stampPath&&PP_STAMP.data)return PP_STAMP.data;
+  const a=await pkAssets();if(a.stamp)PP_STAMP={path:k.stampPath,data:a.stamp};return a.stamp||'';
+}
+async function pkPpTemplate(){
+  const k=pkInit(),d=k.defaults,vars=pkVars(null);const stamp=await pkPpStamp();
+  if(k.stampPath&&!stamp)return null; // تعذّر جلب الختم الآن — لا ننشر قالباً بلا ختم فوق قالبٍ سليم
+  return {title:k.title,subtitle:k.subtitle||'',org:JSON.parse(JSON.stringify(k.org)),
+    articles:pkArticles().map(a=>({t:a.t,b:pkFill(a.b,vars)})),
+    rate:Number(d.rate),protectDays:Number(d.protectDays),renewMonths:Number(d.renewMonths),payDays:Number(d.payDays),term:d.term,
+    prefix:k.prefix||'HD-S-',ownerSig:k.ownerSig||'',stamp};
+}
+async function pkPpCustomers(){
+  const orgs=await pkLoadOrgs(true);if(!orgs)return null;
+  const set=new Set();orgs.forEach(o=>{const n=pkPpNorm(o&&o.name);if(n)set.add(n)});
+  S.partnerLeads.forEach(l=>{if(l.stage==='won'){const n=pkPpNorm(l.school);if(n)set.add(n)}});
+  return [...set].sort();
+}
+function pkPpPublishSoon(ms){clearTimeout(PP_PUBT);PP_PUBT=setTimeout(pkPpPublish,ms==null?1500:ms)}
+async function pkPpPublish(){
+  if(!await pkPpReady())return;
+  const k=pkInit();if(!k.publishedHash||typeof k.publishedHash!=='object')k.publishedHash={};let dirty=false;
+  const put=async(key,value)=>{
+    if(value==null||!PP_ON)return;const h=pkHash(JSON.stringify(value));if(k.publishedHash[key]===h)return;
+    const {error}=await sb.from('pp_settings').upsert({key,value,updated_at:new Date().toISOString()},{onConflict:'key'});
+    if(error){if(pkPpMissing(error))PP_ON=false;return}k.publishedHash[key]=h;dirty=true;
+  };
+  try{await put('program',pkPpProgram());await put('sign_template',await pkPpTemplate());await put('customers',await pkPpCustomers())}catch(e){}
+  if(dirty)save();
+}
+
+/* ── السحب: pp_partners / pp_leads → ملفّات اللوحة ── */
+async function pkPpFetch(){
+  const [a,b]=await Promise.all([
+    sb.from('pp_partners').select('id,kind,status,agreement_no,name,phone,email,city,profile,portal_token,sign_link_id,rate,protect_days,signed_at,activated_at,panel_ref,imported_at,created_at').order('created_at',{ascending:false}).limit(2000),
+    sb.from('pp_leads').select('id,partner_id,school,city,contact_name,contact_role,contact_phone,seats_est,notes,status,decision,confirmed_at,expires_at,panel_ref,imported_at,created_at').order('created_at',{ascending:false}).limit(5000)]);
+  const e=a.error||b.error;if(e){if(pkPpMissing(e))PP_ON=false;return false}
+  const sig=pkHash(JSON.stringify([a.data,b.data]));const ch=sig!==PP_DATA.sig;
+  PP_DATA={partners:a.data||[],leads:b.data||[],at:Date.now(),sig};return ch?'changed':'same';
+}
+function pkPpLink(x){return {id:x.id,token:x.token,expiresAt:x.expires_at,createdAt:x.created_at,status:x.status,openCount:x.open_count||0}}
+async function pkPpImport(){
+  const d=pkInit().defaults;let changed=false;const at=new Date().toISOString();
+  // ١) شركاء مسار المدارس الجدد ← S.partners
+  const fresh=PP_DATA.partners.filter(r=>r.kind==='school'&&!r.panel_ref&&['signing','active','applied'].includes(r.status));
+  for(const r of fresh){
+    if(S.partners.some(x=>x.ppId===r.id))continue;
+    const p={id:uid(),source:'online',ppId:r.id,no:r.agreement_no||'',name:r.name||'',nationality:(r.profile&&r.profile.nationality)||'',idNo:'',
+      city:r.city||'',phone:pkPpPhone(r.phone),email:r.email||'',bank:'',iban:'',
+      rate:Number(r.rate||d.rate),protectDays:Number(r.protect_days||d.protectDays),renewMonths:d.renewMonths,payDays:d.payDays,term:d.term,
+      agreementDate:pkYmd(r.created_at)||today(),portalToken:r.portal_token||'',profile:r.profile||{},
+      status:r.status==='active'?'active':'pending',createdAt:pkNow(),log:[],docs:[],links:[]};
+    pkLog(p,'انضمّ عبر برنامج الشركاء (رقم '+p.no+')');S.partners.push(p);changed=true;
+  }
+  // ٢) رابط التوقيع (الأوّل، أو المجدَّد من البوابة بعد انتهاء القديم) + رمز البوابة
+  const need=[];
+  PP_DATA.partners.forEach(r=>{if(r.kind!=='school')return;const p=S.partners.find(x=>x.ppId===r.id);if(!p)return;
+    if(r.portal_token&&p.portalToken!==r.portal_token){p.portalToken=r.portal_token;changed=true}
+    if(r.sign_link_id&&!(p.links||[]).some(l=>l.id===r.sign_link_id))need.push(r.sign_link_id)});
+  if(need.length){
+    const {data,error}=await sb.from('partner_sign_links').select('id,token,expires_at,created_at,status,open_count').in('id',need);
+    if(!error)(data||[]).forEach(x=>{const r=PP_DATA.partners.find(y=>y.sign_link_id===x.id);const p=r&&S.partners.find(y=>y.ppId===r.id);
+      if(!p||(p.links||[]).some(l=>l.id===x.id))return;if(!Array.isArray(p.links))p.links=[];p.links.unshift(pkPpLink(x));changed=true});
+  }
+  for(const r of fresh){const p=S.partners.find(x=>x.ppId===r.id);if(!p)continue;
+    const {error}=await sb.from('pp_partners').update({panel_ref:p.id,imported_at:at}).eq('id',r.id);if(!error){r.panel_ref=p.id;r.imported_at=at}}
+  // ٣) مدارس البوابة: المؤكَّدة ← S.partnerLeads، والتكرارات تُعلَّم فقط (تظهر في تبويب البرنامج)
+  const skip=[];
+  for(const x of PP_DATA.leads){
+    if(x.panel_ref)continue;
+    if(x.status!=='confirmed'){skip.push(x.id);continue}
+    let l=S.partnerLeads.find(y=>y.ppLeadId===x.id);
+    if(!l){
+      const p=S.partners.find(y=>y.ppId===x.partner_id);if(!p)continue; // شريكه لم يُسحب بعد — الدورة القادمة
+      const ymd=pkYmd(x.confirmed_at||x.created_at)||today();
+      l={id:uid(),ppLeadId:x.id,source:'portal',partnerId:p.id,school:x.school||'',city:x.city||'',
+        contact:[x.contact_name,x.contact_role].filter(Boolean).join(' — '),phone:pkPpPhone(x.contact_phone),
+        seats:x.seats_est||null,size:x.seats_est?String(x.seats_est):'',notes:x.notes||'',
+        registeredAt:ymd,confirmedAt:ymd,stage:'registered',nextAction:'',nextDate:'',createdAt:pkNow(),log:[]};
+      S.partnerLeads.push(l);pkLog(p,'سجّل مدرسة عبر البوابة: '+l.school+' (حماية حتى '+pkFmt(pkLeadExpiry(l))+')');changed=true;
+    }
+    const {error}=await sb.from('pp_leads').update({panel_ref:l.id,imported_at:at}).eq('id',x.id);if(!error){x.panel_ref=l.id;x.imported_at=at}
+  }
+  if(skip.length){const {error}=await sb.from('pp_leads').update({panel_ref:'skip',imported_at:at}).in('id',skip);
+    if(!error)PP_DATA.leads.forEach(x=>{if(skip.includes(x.id)){x.panel_ref='skip';x.imported_at=at}})}
+  return changed;
+}
+/* دورة واحدة في كلّ مرّة (قفل) حتى لا يُسحب الصفّ نفسه مرّتين */
+async function pkPpCycle(){
+  if(!PP_LOCK)PP_LOCK=(async()=>{
+    try{if(!await pkPpReady())return {changed:false,data:false};
+      const f=await pkPpFetch();if(!f)return {changed:false,data:false};
+      const changed=await pkPpImport();return {changed,data:f==='changed'||changed}}
+    catch(e){console.warn('pkPpCycle',e);return {changed:false,data:false}}
+    finally{setTimeout(()=>{PP_LOCK=null},0)}})();
+  return PP_LOCK;
+}
+
+/* ── لقطة البوابة: مراحل مدارس الشريك وعمولاته ← pp_partners.snapshot ── */
+function pkPpSnapshot(p){
+  const leads=S.partnerLeads.filter(l=>l.partnerId===p.id),comms=S.partnerComms.filter(c=>c.partnerId===p.id);
+  const won=leads.filter(l=>l.stage==='won');const sum=(a,f)=>Math.round(a.reduce((s,x)=>s+Number(x[f]||0),0)*100)/100;
+  return {
+    leads:leads.map(l=>({ppLeadId:l.ppLeadId||null,school:l.school||'',city:l.city||'',stage:l.stage,stageLabel:pkStage(l.stage).label,registeredAt:l.registeredAt||'',expiresAt:pkLeadExpiry(l)})),
+    comms:comms.map(c=>{const l=c.leadId&&pkL(c.leadId);return {desc:c.desc||'',school:l?l.school:'',collectedAt:c.collectedAt||'',base:Number(c.base||0),rate:Number(c.rate||0),amount:Number(c.amount||0),status:c.status==='paid'?'paid':'due',paidAt:c.paidAt||null}}),
+    totals:{due:sum(comms.filter(c=>c.status!=='paid'),'amount'),paid:sum(comms.filter(c=>c.status==='paid'),'amount'),won:won.length,sales:sum(won,'value')},
+  };
+}
+function pkPpSnapSoon(){clearTimeout(PP_SNAPT);PP_SNAPT=setTimeout(pkPpSnapPush,3000)}
+async function pkPpSnapPush(){
+  const list=S.partners.filter(p=>p.ppId);if(!list.length||!await pkPpReady())return;
+  const k=pkInit();if(!k.snapHash||typeof k.snapHash!=='object')k.snapHash={};let dirty=false;
+  for(const p of list){
+    const snap=pkPpSnapshot(p);const h=pkHash(JSON.stringify(snap));if(k.snapHash[p.ppId]===h)continue;
+    const {error}=await sb.from('pp_partners').update({snapshot:snap,snapshot_at:new Date().toISOString()}).eq('id',p.ppId);
+    if(error){if(pkPpMissing(error))PP_ON=false;break}k.snapHash[p.ppId]=h;dirty=true;
+  }
+  if(dirty)save();
+}
+
+/* ── تبويب «برنامج الشركاء» ── */
+function pkPpNewCount(){
+  if(!PP_DATA.at)return {p:0,l:0,n:0};const s=new Date(pkInit().ppSeenAt||0).getTime()||0;const nw=r=>new Date(r.created_at).getTime()>s;
+  const p=PP_DATA.partners.filter(nw).length,l=PP_DATA.leads.filter(nw).length;return {p,l,n:p+l};
+}
+function pkPpToggle(key,on){pkInit().program[key]=!!on;save();pkPpPublishSoon(300)}
+function pkPpPortalUrl(tok){return PP_PUBLIC+'/portal#'+pkPpTok(tok)}
+function pkPpCopyPortal(tok){const u=pkPpPortalUrl(tok);navigator.clipboard.writeText(u).then(()=>alert('تم نسخ رابط البوابة ✓')).catch(()=>prompt('انسخ الرابط:',u))}
+function pkPpPortalWa(name,phone,no,tok){
+  const msg=`السلام عليكم ${String(name||'').split(' ')[0]}،\nهذا رابط بوابتك في برنامج شركاء حروف ودروس${no?' (اتفاقية رقم '+no+')':''}:\n${pkPpPortalUrl(tok)}\n\nمنها تسجّل المدارس باسمك وتتابع مراحلها وعمولاتك. الرابط خاصّ بك فلا تشاركه.`;
+  const w=pkWa(phone);return (w||'https://wa.me/')+'?text='+encodeURIComponent(msg);
+}
+function pkPpAmbCsv(){
+  const rows=PP_DATA.partners.filter(r=>r.kind==='ambassador');
+  const q=v=>{let s=String(v==null?'':v);if(/^[=+\-@]/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
+  const head=['الرقم','الاسم','الجوال','البريد','المدينة','القنوات','المتابعون','الحالة','تاريخ الطلب'];
+  const csv='﻿'+[head.map(q).join(',')].concat(rows.map(r=>{const pr=r.profile||{};return [r.agreement_no,r.name,pkPpPhone(r.phone),r.email,r.city,pr.channels,pr.followers,(PP_STATUS[r.status]||{}).label||r.status,pkYmd(r.created_at)].map(q).join(',')})).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download='huroof-ambassadors-'+today()+'.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+}
+function pkViewProgram(){
+  const k=pkInit(),g=pkPpProgram();
+  const tog=(key,label,hint)=>`<label style="display:flex;gap:10px;align-items:flex-start;cursor:pointer;padding:8px 0"><input type="checkbox" style="width:auto;margin-top:4px" ${g[key]?'checked':''} onchange="pkPpToggle('${key}',this.checked)"><span><b>${label}</b><div style="font-size:12px;color:var(--muted)">${hint}</div></span></label>`;
+  const settings=`<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0"><i data-lucide="sliders-horizontal"></i> إعدادات البرنامج</h3>
+      <a class="btn btn-ghost btn-sm" href="${PP_PUBLIC}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> صفحة البرنامج</a></div>
+    ${tog('schoolsOpen','استقبال شركاء المدارس','عند الإيقاف تُغلق صفحة الانضمام لمسار المدارس.')}
+    ${tog('ambassadorsOpen','استقبال السفراء','طلباتهم تدخل قائمة الانتظار بلا اتفاقية.')}
+    ${tog('autoApprove','الاعتماد الآليّ','رابط التوقيع يُرسل فور الطلب، ويُعتمد الشريك تلقائياً بعد توقيعه. عند الإيقاف تنتظر الطلبات مراجعتك.')}
+    <div style="font-size:12px;color:var(--muted);margin-top:4px">القالب وهذه الإعدادات وقائمة العملاء القائمين تُنشر للبرنامج تلقائياً عند فتح التطبيق وبعد حفظ القالب.</div></div>`;
+  if(!USER)return settings+`<div class="badge-note"><i data-lucide="info"></i><div>بيانات البرنامج (الطلبات والمدارس) تظهر بعد تسجيل الدخول — لا تعمل في وضع التجربة.</div></div>`;
+  if(PP_ON===false)return settings+`<div class="badge-note"><i data-lucide="database"></i><div>جداول البرنامج غير مطبّقة بعد في قاعدة البيانات (supabase/partner-program.sql). اللوحة تعمل كالمعتاد إلى أن تُطبَّق.</div></div>`;
+  if(!PP_DATA.at)return settings+emptyBox('loader','جارٍ تحميل بيانات البرنامج…');
+  // زيارة التبويب = اطّلعت على الجديد
+  if(pkPpNewCount().n){k.ppSeenAt=new Date().toISOString();save()}
+  const P=PP_DATA.partners,L=PP_DATA.leads,t0=today(),wk=Date.now()-7*864e5;
+  const schools=P.filter(r=>r.kind==='school'),amb=P.filter(r=>r.kind==='ambassador');
+  const byId={};P.forEach(r=>byId[r.id]=r);
+  const leadsOf=id=>L.filter(x=>x.partner_id===id&&x.status==='confirmed').length;
+  const stat=(ic,v,l)=>`<div class="stat"><div class="ic"><i data-lucide="${ic}"></i></div><div class="v">${v}</div><div class="l">${l}</div></div>`;
+  const applied=schools.filter(r=>r.status==='applied');
+  const pl=r=>{const s=PP_STATUS[r.status]||{label:r.status,pill:'draft'};return `<span class="pill ${s.pill}">${s.label}</span>`};
+  const who=r=>`<b>${esc(r.name)}</b><div style="font-size:12px;color:var(--muted)"><span dir="ltr">${esc(pkPpPhone(r.phone))}</span>${r.city?' · '+esc(r.city):''}</div>`;
+  const portalBtns=r=>r.portal_token&&!['rejected'].includes(r.status)?`<button class="link-btn" onclick="pkPpCopyPortal('${pkPpTok(r.portal_token)}')">نسخ</button> <a class="link-btn" href="${esc(pkPpPortalWa(r.name,r.phone,r.agreement_no,r.portal_token))}" target="_blank" rel="noopener">واتساب</a>`:'—';
+  const fileBtn=r=>{const p=r.panel_ref&&pkP(r.panel_ref);return p?`<a class="link-btn" onclick="pkOpen('${p.id}')">الملف</a>`:''};
+  return `${settings}
+    <div class="stats">
+      ${stat('inbox',P.filter(r=>pkYmd(r.created_at)===t0).length,'طلبات اليوم')}
+      ${stat('calendar-range',P.filter(r=>new Date(r.created_at).getTime()>=wk).length,'طلبات الأسبوع')}
+      ${stat('file-clock',schools.filter(r=>r.status==='signing').length,'بانتظار التوقيع')}
+      ${stat('user-check',schools.filter(r=>r.status==='active').length,'شركاء معتمدون')}
+      ${stat('megaphone',amb.filter(r=>r.status==='waitlist').length,'سفراء في القائمة')}
+      ${stat('school',L.filter(x=>x.status==='confirmed').length,'مدارس سُجّلت عبر البوابة')}
+      ${stat('copy-x',L.filter(x=>x.status==='duplicate'||x.status==='existing_client').length,'تكرارات رُفضت آليّاً')}
+    </div>
+    ${applied.length?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="user-search"></i><div><b>طلبات بانتظار مراجعتك (الاعتماد الآليّ موقوف):</b> ${applied.map(r=>{const p=r.panel_ref&&pkP(r.panel_ref);return p?`<a class="link-btn" onclick="pkOpen('${p.id}')">${esc(r.name)}</a>`:esc(r.name)}).join(' · ')} — من ملفّ الشريك أرسل رابط التوقيع، أو غيّر حالته إلى «منتهٍ».</div></div>`:''}
+    <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0"><i data-lucide="users"></i> المتقدّمون أونلاين — مسار المدارس</h3>
+      <button class="btn btn-ghost btn-sm" onclick="pkSyncLinks(true)"><i data-lucide="refresh-cw"></i> تحديث</button></div>
+      <div style="margin-top:12px">${schools.length?`<div style="overflow:auto"><table><thead><tr><th>الشريك</th><th>رقم الاتفاقية</th><th>الحالة</th><th>تقدّم</th><th>مدارسه</th><th>رابط البوابة</th><th></th></tr></thead><tbody>
+        ${schools.map(r=>`<tr><td>${who(r)}</td><td>${esc(r.agreement_no||'—')}</td><td>${pl(r)}</td><td style="white-space:nowrap">${pkFmt(pkYmd(r.created_at))}</td><td>${leadsOf(r.id)}</td><td style="white-space:nowrap">${portalBtns(r)}</td><td>${fileBtn(r)}</td></tr>`).join('')}
+      </tbody></table></div>`:emptyBox('users','لا طلبات بعد — شارك صفحة البرنامج.')}</div></div>
+    <div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><h3 style="margin:0"><i data-lucide="megaphone"></i> السفراء — قائمة الانتظار</h3>
+      ${amb.length?`<button class="btn btn-ghost btn-sm" onclick="pkPpAmbCsv()"><i data-lucide="download"></i> تصدير CSV</button>`:''}</div>
+      <div style="margin-top:12px">${amb.length?`<div style="overflow:auto"><table><thead><tr><th>السفير</th><th>القنوات</th><th>المتابعون</th><th>الحالة</th><th>تقدّم</th></tr></thead><tbody>
+        ${amb.map(r=>{const pr=r.profile||{};return `<tr><td>${who(r)}</td><td>${esc(pr.channels||'—')}</td><td>${esc(pr.followers||'—')}</td><td>${pl(r)}</td><td style="white-space:nowrap">${pkFmt(pkYmd(r.created_at))}</td></tr>`}).join('')}
+      </tbody></table></div>`:emptyBox('megaphone','لا سفراء في القائمة بعد.')}</div></div>
+    <div class="card"><h3><i data-lucide="school"></i> آخر تسجيلات البوابة</h3>
+      ${L.length?`<div style="overflow:auto"><table><thead><tr><th>المدرسة</th><th>الشريك</th><th>القرار الآليّ</th><th>التاريخ</th></tr></thead><tbody>
+        ${L.slice(0,50).map(x=>{const s=PP_LEAD_STATUS[x.status]||{label:x.status,pill:'draft'};const r=byId[x.partner_id];return `<tr>
+          <td><b>${esc(x.school)}</b><div style="font-size:12px;color:var(--muted)">${esc([x.city,x.contact_name].filter(Boolean).join(' · '))}</div></td>
+          <td>${r?esc(r.name):'—'}</td>
+          <td><span class="pill ${s.pill}">${s.label}</span>${x.decision?`<div style="font-size:12px;color:var(--muted);margin-top:4px">${esc(x.decision)}</div>`:''}</td>
+          <td style="white-space:nowrap">${pkFmt(pkYmd(x.created_at))}</td></tr>`}).join('')}
+      </tbody></table></div>`:emptyBox('school','لم تُسجَّل مدارس عبر البوابة بعد.')}</div>`;
 }
