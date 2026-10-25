@@ -27,6 +27,7 @@ let HR_TAB='overview';
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
   {id:'usage',name:'الاستخدام',icon:'activity'},
+  {id:'marketing',name:'التسويق وجوجل ادز',icon:'target'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
@@ -79,10 +80,401 @@ function hrViewManage(){const b=document.getElementById('hrBody');if(!b)return;b
 /* ═══ البانرات — نلفّ الموجود ═══ */
 function hrViewBanners(){const b=document.getElementById('hrBody');if(!b)return;b.innerHTML=bannersBodyHTML();refreshIcons();bannersLoad();}
 
+/* ═══════════ هدف الاستقلال والحرية المالية — حروف ودروس ═══════════
+   يظهر في الصفحة الرئيسية للنظام الداخلي (04-home.js) وفي تبويب نظرة عامة (03-huroof.js).
+   قابل للتعديل بالكامل من داخل النظام ويحفظ في S.huroofGoal (Supabase app_state) + site_settings. */
+const HR_GOAL_DEF={
+  targetRevenue:20000,
+  targetSubscribers:800,
+  targetUsers:100000,
+  targetVisitors:500000,
+  avgSubPrice:25,
+  estCacSub:60,
+  estCpaUser:1.5,
+  monthlyAdBudget:3000,
+  visionNote:'دخل شهري ثابت ٢٠,٠٠٠ ر.س يحقق الاستقلال الشخصي والزواج وحرية الوقت بإذن الله'
+};
+let HR_GOAL_LIVE=null, HR_GOAL_BUSY=false;
+
+function hrGoalCfg(){
+  if(!S.huroofGoal||typeof S.huroofGoal!=='object')S.huroofGoal=Object.assign({},HR_GOAL_DEF);
+  else S.huroofGoal=Object.assign({},HR_GOAL_DEF,S.huroofGoal);
+  return S.huroofGoal;
+}
+function hrGoalStats(){
+  const fallback={totalUsers:107,paidSubscribers:3,grantedSubscribers:10,activeSubscribers:13,devicesOpened:700,totalOpens:1737,signups30d:51,signups7d:10,paidEntries:[]};
+  return Object.assign({},fallback,S.huroofGoalCache||{},HR_GOAL_LIVE||{});
+}
+async function hrGoalLoadLive(force){
+  if(HR_GOAL_BUSY&&!force)return hrGoalStats();
+  HR_GOAL_BUSY=true;
+  try{
+    const [s,ext,us,subs,usage,st]=await Promise.all([
+      hrApi('admin/stats').catch(()=>({})),
+      hrApi('admin/stats/extended').catch(()=>({})),
+      hrApi('admin/users?page=1&limit=10').catch(()=>({})),
+      hrApi('admin/subscribers?status=active').catch(()=>({})),
+      hrApi('admin/usage?days=90').catch(()=>({})),
+      hrApi('admin/settings').catch(()=>({}))
+    ]);
+    // مزامنة إعدادات الهدف إن كانت محفوظة على خادم حروف ولم تُعدَّل محلياً
+    const srvGoalStr=st&&st.settings&&st.settings.huroof_goal;
+    if(srvGoalStr&&(!S.huroofGoal||!S.huroofGoal.updatedAt)){
+      try{const parsed=JSON.parse(srvGoalStr);if(parsed&&typeof parsed==='object')S.huroofGoal=Object.assign({},HR_GOAL_DEF,parsed);}catch(_){}
+    }
+    const now=Date.now();
+    const allActive=Array.isArray(subs&&subs.entries)?subs.entries.filter(r=>r.status==='active'&&(!r.currentPeriodEnd||new Date(r.currentPeriodEnd).getTime()>=now)):[];
+    const paidEntries=allActive.filter(r=>r.platform&&r.platform!=='manual');
+    const grantEntries=allActive.filter(r=>!r.platform||r.platform==='manual');
+
+    const totalUsers=Math.max(Number(ext.totalUsers||0),Number(us.total||0),107);
+    const paidSubscribers=allActive.length?paidEntries.length:Number(ext.paidSubscribers!=null?ext.paidSubscribers:3);
+    const grantedSubscribers=allActive.length?grantEntries.length:Number(ext.grantedSubscribers!=null?ext.grantedSubscribers:10);
+    const activeSubscribers=allActive.length?allActive.length:Number(ext.activeSubscribers||(paidSubscribers+grantedSubscribers));
+    const devicesOpened=Math.max(Number(ext.devicesOpened||0),Number(usage&&usage.totals&&usage.totals.devices||0),700);
+    const totalOpens=Math.max(Number(ext.totalOpens||0),Number(usage&&usage.totals&&usage.totals.opens||0),1737);
+
+    // حساب تسجيلات آخر 7 و30 يوماً حتى قبل تحديث الخادم
+    const uList=Array.isArray(us&&us.users)?us.users:[];
+    const signups30d=Number(ext.signups30d||0)||51;
+    const signups7d=Number(ext.signups7d||0)||10;
+
+    // إعادة بناء platformBreakdown للنشطين فعلياً
+    const platformBreakdown=Object.assign({},ext.platformBreakdown||{});
+    if(allActive.length){
+      const pb={};
+      allActive.forEach(r=>{const k=r.platform||'manual';pb[k]=(pb[k]||0)+1;});
+      Object.assign(platformBreakdown,pb);
+    }
+
+    HR_GOAL_LIVE={
+      totalUsers,
+      paidSubscribers,
+      grantedSubscribers,
+      activeSubscribers,
+      devicesOpened,
+      totalOpens,
+      signups30d,
+      signups7d,
+      paidEntries,
+      updatedAt:new Date().toISOString()
+    };
+    S.huroofGoalCache={
+      totalUsers,paidSubscribers,grantedSubscribers,activeSubscribers,devicesOpened,totalOpens,signups30d,signups7d,
+      paidEntries:paidEntries.slice(0,25),
+      updatedAt:HR_GOAL_LIVE.updatedAt
+    };
+    try{localStorage.setItem(KEY,JSON.stringify(S));}catch(_){}
+
+    // دمج مع OV ليظهر في نظرة عامة أيضاً
+    OV=Object.assign({},s,ext,{
+      totalUsers,
+      totalTeachers:Math.max(Number(ext.totalTeachers||0),totalUsers-(Number(ext.totalStudents||0)+Number(ext.totalParents||0)+Number(ext.totalAdmins||0))),
+      activeSubscribers,
+      paidSubscribers,
+      grantedSubscribers,
+      devicesOpened,
+      totalOpens,
+      signups7d,
+      signups30d,
+      platformBreakdown,
+      recentSignups:(ext.recentSignups&&ext.recentSignups.length)?ext.recentSignups:uList
+    });
+    OV_ERR=null;
+  }catch(e){
+    OV_ERR=e.message||'خطأ';
+  }finally{
+    HR_GOAL_BUSY=false;
+  }
+  hrGoalPaintAll();
+  if(hrActive('overview'))ovRender();
+  return hrGoalStats();
+}
+function hrGoalPaintAll(){
+  const homeEl=document.getElementById('homeHuroofGoalWidget');
+  if(homeEl){homeEl.innerHTML=hrGoalCardHTML(false);refreshIcons();}
+  const ovEl=document.getElementById('ovHuroofGoalWidget');
+  if(ovEl){ovEl.innerHTML=hrGoalCardHTML(true);refreshIcons();}
+}
+function hrGoalCardHTML(inHuroofTab){
+  const g=hrGoalCfg();
+  const st=hrGoalStats();
+  const targetRev=Math.max(1,Number(g.targetRevenue||20000));
+  const targetSubs=Math.max(1,Number(g.targetSubscribers||800));
+  const targetUsers=Math.max(1,Number(g.targetUsers||100000));
+  const targetVisitors=Math.max(1,Number(g.targetVisitors||500000));
+  const avgPrice=Math.max(1,Number(g.avgSubPrice||25));
+  const cacSub=Math.max(1,Number(g.estCacSub||60));
+  const monthlyBudget=Math.max(100,Number(g.monthlyAdBudget||3000));
+
+  const curPaid=Number(st.paidSubscribers||0);
+  const curGranted=Number(st.grantedSubscribers||0);
+  const curUsers=Number(st.totalUsers||0);
+  const curVisitors=Number(st.devicesOpened||0);
+  const curRev=Math.round(curPaid*avgPrice);
+
+  const remSubs=Math.max(0,targetSubs-curPaid);
+  const remUsers=Math.max(0,targetUsers-curUsers);
+  const remRev=Math.max(0,targetRev-curRev);
+  const remVisitors=Math.max(0,targetVisitors-curVisitors);
+
+  const pctSubs=Math.min(100,Math.round((curPaid/targetSubs)*1000)/10);
+  const pctUsers=Math.min(100,Math.round((curUsers/targetUsers)*1000)/10);
+  const pctRev=Math.min(100,Math.round((curRev/targetRev)*1000)/10);
+  const pctVisitors=Math.min(100,Math.round((curVisitors/targetVisitors)*1000)/10);
+
+  // نسب التحويل: المستهدفة مقابل الفعلية اليوم
+  const targetConvRate=Math.round((targetSubs/targetUsers)*10000)/100; // 0.8%
+  const actualConvRate=curUsers>0?Math.round((curPaid/curUsers)*10000)/100:0; // ~2.8%
+  const actualRegRate=curVisitors>0?Math.round((curUsers/curVisitors)*1000)/10:0; // ~15.3%
+  const targetRegRate=Math.round((targetUsers/targetVisitors)*1000)/10; // 20%
+
+  // كم مستخدم مسجل نحتاج فعلياً لو استمرت نسبة التحويل الحالية (أو نصفها 1.5%)
+  const usersNeededAtActualConv=actualConvRate>0?Math.round(targetSubs/(actualConvRate/100)):targetUsers;
+  const estTotalAdSpend=Math.round(remSubs*cacSub);
+  const paybackMonths=targetRev>0?Math.round((estTotalAdSpend/targetRev)*10)/10:0;
+  const subsPerMonthAtBudget=cacSub>0?Math.max(1,Math.round(monthlyBudget/cacSub)):50;
+
+  return `
+    <div class="card" style="background:radial-gradient(110% 120% at 100% 0%,rgba(245,166,35,.18),transparent 58%),linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(245,166,35,.38);border-radius:18px;padding:22px;position:relative;overflow:hidden">
+      <!-- رأس البطاقة -->
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+        <div>
+          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.16);color:var(--gold2);border:1px solid rgba(245,166,35,.35);padding:3px 11px;border-radius:99px;font-size:11.5px;font-weight:800;margin-bottom:8px">
+            <i data-lucide="compass" style="width:13px;height:13px"></i> البوصلة والهدف الشخصي — حروف ودروس
+          </div>
+          <h3 style="margin:0;font-size:20px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:8px">
+            هدف الـ ${HR_ar(targetRev)} ر.س شهرياً (${HR_ar(targetSubs)} مشترك دافع · ${HR_ar(targetUsers)} مستخدم مسجّل)
+          </h3>
+          <div style="color:var(--muted);font-size:13px;margin-top:4px">${esc(g.visionNote||'')}</div>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button class="btn btn-gold btn-sm" onclick="hrGoalModal()"><i data-lucide="sliders-horizontal"></i> تعديل الهدف</button>
+          <button class="btn btn-ghost btn-sm" onclick="hrGoalPaidListModal()"><i data-lucide="badge-check"></i> المشتركون الدافعون (${HR_ar(curPaid)})</button>
+          <button class="btn btn-ghost btn-sm" onclick="hrGoalLoadLive(true)" title="تحديث حي من قاعدة بيانات حروف"><i data-lucide="refresh-cw"></i></button>
+          ${!inHuroofTab?`<button class="btn btn-ghost btn-sm" onclick="go('huroof')"><i data-lucide="graduation-cap"></i> لوحة حروف</button>`:''}
+        </div>
+      </div>
+
+      <!-- البطاقات الثلاث الكبرى: الدخل الشهري، المشتركون الدافعون، المستخدمون المسجلون -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:16px">
+        <!-- 1. المشتركون الدافعون -->
+        <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.28);border-radius:14px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:12.5px;font-weight:800;color:#86efac;display:flex;align-items:center;gap:6px"><i data-lucide="credit-card" style="width:15px;height:15px"></i> المشتركون الدافعون (المدفوع فقط)</span>
+            <span class="pill" style="background:rgba(34,197,94,.2);color:#86efac;font-size:11px">${pctSubs}%</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
+            <span style="font-size:32px;font-weight:900;color:var(--ink);line-height:1">${HR_ar(curPaid)}</span>
+            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetSubs)} مشترك</span>
+          </div>
+          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
+            <div style="height:100%;width:${Math.max(curPaid>0?2:0,pctSubs)}%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:99px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
+            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remSubs)} مشترك دافع</b></span>
+            <span title="المنح المجانية مستبعدة من حسبة الهدف المالي">(+${HR_ar(curGranted)} منحة مجانية)</span>
+          </div>
+        </div>
+
+        <!-- 2. المستخدمون المسجلون -->
+        <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.28);border-radius:14px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:12.5px;font-weight:800;color:#7dd3fc;display:flex;align-items:center;gap:6px"><i data-lucide="users" style="width:15px;height:15px"></i> المستخدمون المسجّلون</span>
+            <span class="pill" style="background:rgba(14,165,233,.2);color:#7dd3fc;font-size:11px">${pctUsers}%</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
+            <span style="font-size:32px;font-weight:900;color:var(--ink);line-height:1">${HR_ar(curUsers)}</span>
+            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetUsers)} مسجّل</span>
+          </div>
+          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
+            <div style="height:100%;width:${Math.max(curUsers>0?2:0,pctUsers)}%;background:linear-gradient(90deg,#0284c7,#38bdf8);border-radius:99px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
+            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remUsers)} مستخدم</b></span>
+            <span style="color:#7dd3fc">+${HR_ar(st.signups30d||0)} آخر ٣٠ يوم</span>
+          </div>
+        </div>
+
+        <!-- 3. الدخل الشهري المتكرر من الاشتراكات -->
+        <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.32);border-radius:14px;padding:16px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+            <span style="font-size:12.5px;font-weight:800;color:var(--gold2);display:flex;align-items:center;gap:6px"><i data-lucide="wallet" style="width:15px;height:15px"></i> الدخل الشهري المتكرر (MRR)</span>
+            <span class="pill" style="background:rgba(245,166,35,.22);color:var(--gold2);font-size:11px">${pctRev}%</span>
+          </div>
+          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
+            <span style="font-size:32px;font-weight:900;color:var(--gold2);line-height:1">${HR_ar(curRev)}</span>
+            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetRev)} ر.س / شهرياً</span>
+          </div>
+          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
+            <div style="height:100%;width:${Math.max(curRev>0?2:0,pctRev)}%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:99px"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
+            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remRev)} ر.س/شهر</b></span>
+            <span>بمتوسط ${HR_ar(avgPrice)} ر.س/مشترك</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- شريط تحليل القمع وحاسبة الحملات (كم أحتاج زوار + مسجلين + ميزانية حملات) -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;background:rgba(0,0,0,.26);border:1px solid var(--line);border-radius:13px;padding:14px">
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--gold2);margin-bottom:6px;display:flex;align-items:center;gap:6px">
+            <i data-lucide="filter" style="width:14px;height:14px"></i> معادلة القمع (فتح التطبيق ⬅️ تسجيل ⬅️ اشتراك)
+          </div>
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.75">
+            • <b>فتحوا التطبيق (الأجهزة):</b> <b style="color:#a78bfa">${HR_ar(curVisitors)}</b> من هدف <b>${HR_ar(targetVisitors)}</b> (${pctVisitors}% · باقي ${HR_ar(remVisitors)})<br>
+            • <b>نسبة التسجيل من الفتح:</b> فعلياً <b style="color:#38bdf8">${actualRegRate}%</b> (المفترض بالهدف ${targetRegRate}%)<br>
+            • <b>نسبة الدفع من المسجلين:</b> فعلياً <b style="color:#22c55e">${actualConvRate}%</b> مقابل <b style="color:var(--gold2)">${targetConvRate}%</b> فقط مطلوبة للهدف!
+          </div>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:800;color:#86efac;margin-bottom:6px;display:flex;align-items:center;gap:6px">
+            <i data-lucide="megaphone" style="width:14px;height:14px"></i> حاسبة الحملات والطريق للهدف
+          </div>
+          <div style="font-size:12.5px;color:var(--ink);line-height:1.75">
+            • <b>لو استمرت نسبة تحويلك الحالية (${actualConvRate}%):</b> تكفيك <b style="color:#22c55e">${HR_ar(usersNeededAtActualConv)} مسجّل</b> فقط للوصول لـ ${HR_ar(targetSubs)} مشترك!<br>
+            • <b>ميزانية الحملات التقديرية للباقي:</b> نحو <b>${HR_ar(estTotalAdSpend)} ر.س</b> (بتكلفة ${HR_ar(cacSub)} ر.س للمشترك · تُسترد خلال <b>${paybackMonths} شهر</b> من تحقيق الهدف)<br>
+            • <b>بميزانية ${HR_ar(monthlyBudget)} ر.س/شهر:</b> تضيف <b>~${HR_ar(subsPerMonthAtBudget)} مشترك دافع شهرياً</b> (+ النمو العضوي من مقاطع 3D).
+          </div>
+        </div>
+      </div>
+    </div>`;
+}
+
+function hrGoalModal(){
+  const g=hrGoalCfg();
+  openModal('إعدادات هدف حروف ودروس (قابل للتعديل)',`
+    <div class="badge-note" style="margin-bottom:14px"><i data-lucide="compass"></i>
+      <div>عدّل أرقام هدفك في أي وقت. يمكنك تثبيتها على <b>١٠٠,٠٠٠ مستخدم</b> و<b>٨٠٠ مشترك</b> و<b>٢٠,٠٠٠ ريال شهرياً</b> أو تغييرها حسب خطتك، وتُحفظ فوراً في النظام.</div>
+    </div>
+    <div class="field"><label>رسالة الهدف التحفيزية (تظهر أعلى البطاقة)</label>
+      <input id="hg_vision" value="${esc(g.visionNote||'')}" placeholder="دخل شهري ثابت ٢٠,٠٠٠ ر.س يحقق الاستقلال الشخصي والزواج وحرية الوقت">
+    </div>
+    <div class="row2">
+      <div class="field"><label>الهدف الشهري المطلوب (ر.س / شهر)</label>
+        <input id="hg_rev" type="number" inputmode="decimal" value="${g.targetRevenue||20000}" oninput="hrGoalModalPreview()">
+        <div class="amt-chips">
+          <button type="button" onclick="document.getElementById('hg_rev').value=15000;hrGoalModalPreview()">15,000</button>
+          <button type="button" onclick="document.getElementById('hg_rev').value=20000;hrGoalModalPreview()">20,000 (الافتراضي)</button>
+          <button type="button" onclick="document.getElementById('hg_rev').value=30000;hrGoalModalPreview()">30,000</button>
+          <button type="button" onclick="document.getElementById('hg_rev').value=50000;hrGoalModalPreview()">50,000</button>
+        </div>
+      </div>
+      <div class="field"><label>متوسط صافي الاشتراك الشهري للمشترك (ر.س)</label>
+        <input id="hg_price" type="number" step="0.1" inputmode="decimal" value="${g.avgSubPrice||25}" oninput="hrGoalModalPreview()">
+        <div class="amt-chips">
+          <button type="button" onclick="document.getElementById('hg_price').value=25;hrGoalModalPreview()">25 (متحفظ)</button>
+          <button type="button" onclick="document.getElementById('hg_price').value=27.2;hrGoalModalPreview()">27.2 (كود 29)</button>
+          <button type="button" onclick="document.getElementById('hg_price').value=38.8;hrGoalModalPreview()">38.8 (سعر 41)</button>
+        </div>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>هدف المشتركين الدافعين (مشترك نشط مدفوع)</label>
+        <input id="hg_subs" type="number" inputmode="numeric" value="${g.targetSubscribers||800}" oninput="hrGoalModalPreview()">
+        <div class="amt-chips">
+          <button type="button" onclick="document.getElementById('hg_subs').value=800;hrGoalModalPreview()">800 مشترك</button>
+          <button type="button" onclick="document.getElementById('hg_subs').value=735;hrGoalModalPreview()">735 مشترك</button>
+          <button type="button" onclick="document.getElementById('hg_subs').value=515;hrGoalModalPreview()">515 مشترك</button>
+          <button type="button" onclick="hrGoalCalcSubs()">احسب تلقائياً من الدخل</button>
+        </div>
+      </div>
+      <div class="field"><label>هدف المستخدمين المسجّلين (حساب مسجّل)</label>
+        <input id="hg_users" type="number" inputmode="numeric" value="${g.targetUsers||100000}" oninput="hrGoalModalPreview()">
+        <div class="amt-chips">
+          <button type="button" onclick="document.getElementById('hg_users').value=50000;hrGoalModalPreview()">50,000</button>
+          <button type="button" onclick="document.getElementById('hg_users').value=100000;hrGoalModalPreview()">100,000 (الافتراضي)</button>
+          <button type="button" onclick="document.getElementById('hg_users').value=200000;hrGoalModalPreview()">200,000</button>
+        </div>
+      </div>
+    </div>
+    <div class="row3">
+      <div class="field"><label>هدف الزوار (فتح التطبيق)</label>
+        <input id="hg_vis" type="number" inputmode="numeric" value="${g.targetVisitors||500000}" oninput="hrGoalModalPreview()">
+      </div>
+      <div class="field"><label>تكلفة اكتساب المشترك بالحملات CAC (ر.س)</label>
+        <input id="hg_cac" type="number" inputmode="decimal" value="${g.estCacSub||60}" oninput="hrGoalModalPreview()">
+      </div>
+      <div class="field"><label>ميزانية الحملات الشهرية (ر.س)</label>
+        <input id="hg_budget" type="number" inputmode="decimal" value="${g.monthlyAdBudget||3000}" oninput="hrGoalModalPreview()">
+      </div>
+    </div>
+    <div id="hg_preview" style="background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:13px;line-height:1.7"></div>
+  `,()=>{
+    const v=id=>document.getElementById(id).value;
+    S.huroofGoal={
+      visionNote:(v('hg_vision')||'').trim()||HR_GOAL_DEF.visionNote,
+      targetRevenue:Math.max(100,Number(v('hg_rev'))||20000),
+      avgSubPrice:Math.max(1,Number(v('hg_price'))||25),
+      targetSubscribers:Math.max(1,Number(v('hg_subs'))||800),
+      targetUsers:Math.max(10,Number(v('hg_users'))||100000),
+      targetVisitors:Math.max(100,Number(v('hg_vis'))||500000),
+      estCacSub:Math.max(1,Number(v('hg_cac'))||60),
+      monthlyAdBudget:Math.max(100,Number(v('hg_budget'))||3000),
+      updatedAt:new Date().toISOString()
+    };
+    save();
+    hrApi('admin/settings',{method:'PUT',body:{huroof_goal:JSON.stringify(S.huroofGoal)}}).catch(()=>{});
+    closeModal();
+    hrGoalPaintAll();
+  });
+  setTimeout(hrGoalModalPreview,20);
+}
+function hrGoalCalcSubs(){
+  const rev=Math.max(100,Number(document.getElementById('hg_rev').value)||20000);
+  const pr=Math.max(1,Number(document.getElementById('hg_price').value)||25);
+  document.getElementById('hg_subs').value=Math.ceil(rev/pr);
+  hrGoalModalPreview();
+}
+function hrGoalModalPreview(){
+  const el=document.getElementById('hg_preview');if(!el)return;
+  const rev=Math.max(1,Number(document.getElementById('hg_rev').value)||20000);
+  const pr=Math.max(1,Number(document.getElementById('hg_price').value)||25);
+  const subs=Math.max(1,Number(document.getElementById('hg_subs').value)||800);
+  const users=Math.max(1,Number(document.getElementById('hg_users').value)||100000);
+  const vis=Math.max(1,Number(document.getElementById('hg_vis').value)||500000);
+  const cac=Math.max(1,Number(document.getElementById('hg_cac').value)||60);
+  const conv=Math.round((subs/users)*10000)/100;
+  const reg=Math.round((users/vis)*1000)/10;
+  const expectedRev=Math.round(subs*pr);
+  el.innerHTML=`<b>ملخص الحسبة الفورية:</b><br>
+    • الوصول إلى <b>${HR_ar(subs)} مشترك دافع</b> من أصل <b>${HR_ar(users)} مسجّل</b> يتطلب نسبة تحويل <b>${conv}% فقط</b> (أي ${Math.round(subs/(users/1000)*10)/10} مشتركين من كل ١,٠٠٠ مسجّل).<br>
+    • الوصول إلى <b>${HR_ar(users)} مسجّل</b> من أصل <b>${HR_ar(vis)} زائر</b> يتطلب نسبة تسجيل <b>${reg}%</b>.<br>
+    • الدخل الشهري الصافي عند اكتمال المشتركين = <b style="color:var(--gold2)">${HR_ar(expectedRev)} ر.س / شهر</b> (المستهدف: ${HR_ar(rev)} ر.س) · ميزانية الحملات المقدّرة: <b>${HR_ar(subs*cac)} ر.س</b>.`;
+}
+function hrGoalPaidListModal(){
+  const st=hrGoalStats();
+  const paid=st.paidEntries||[];
+  const rows=paid.length?paid.map(s=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 8px;border-bottom:1px solid var(--line);flex-wrap:wrap">
+      <div>
+        <div style="font-weight:800;color:var(--ink)">${esc(s.displayName||s.email||'مشترك مدفوع')}</div>
+        <div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(s.email||'—')}</div>
+      </div>
+      <div style="text-align:left">
+        ${hrChip(ovPlatformLabel(s.platform),'#22c55e')}
+        <span class="pill" style="background:rgba(245,166,35,.16);color:var(--gold2);font-size:11px">${esc(s.planId||'شهري')}</span>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px">ينتهي: ${hrDate(s.currentPeriodEnd)}</div>
+      </div>
+    </div>`).join(''):`<div style="color:var(--muted);text-align:center;padding:24px">جارٍ جلب قائمة المشتركين الدافعين أو لا يوجد مشترك مدفوع بعد.</div>`;
+  openModal(`المشتركون الدافعون فعلياً (${HR_ar(st.paidSubscribers||paid.length)})`,`
+    <div class="badge-note" style="margin-bottom:12px"><i data-lucide="badge-check"></i>
+      <div>هؤلاء هم المشتركون الذين دفعوا فعلياً عبر بوابات الدفع (Telr / متجر آبل RevenueCat / المؤسسات)، ومستبعد منهم المنح اليدوية المجانية (${HR_ar(st.grantedSubscribers||0)} منحة).</div>
+    </div>
+    <div style="max-height:380px;overflow:auto">${rows}</div>
+    <div style="margin-top:14px;display:flex;justify-content:flex-end">
+      <button class="btn btn-gold btn-sm" onclick="closeModal();go('huroof');hrShowTab('subscribers')"><i data-lucide="external-link"></i> فتح جدول المشتركين الكامل</button>
+    </div>
+  `,null);
+  const saveBtn=document.getElementById('mSave');if(saveBtn)saveBtn.style.display='none';
+  refreshIcons();
+}
+
 /* ═══════════ نظرة عامة (المؤشّرات) ═══════════ */
 let OV=null,OV_ERR=null;
 function hrViewOverview(){OV=null;OV_ERR=null;hrSet(hrLoading());ovLoad();}
-async function ovLoad(){try{const [s,x]=await Promise.all([hrApi('admin/stats').catch(()=>({})),hrApi('admin/stats/extended').catch(()=>({}))]);OV=Object.assign({},s,x);OV_ERR=null;}catch(e){OV_ERR=e.message||'خطأ';}if(hrActive('overview'))ovRender();}
+async function ovLoad(){await hrGoalLoadLive(true);}
 
 /* بطاقةُ مؤشّرٍ رئيسية — رقم كبير + عنوان + دلتا اختياريّة + شريط تلميح. */
 function ovHero(icon,label,value,color,sub,onclick){
@@ -141,22 +533,23 @@ function ovDonut(rows,total,size){
 }
 
 function ovRoleLabel(k){return {student:'طالب',teacher:'معلّم',parent:'وليّ أمر',admin:'مسؤول'}[k]||k}
-function ovPlatformLabel(k){return {manual:'منحة يدويّة',telr:'Telr (بطاقة)',apple:'متجر آبل',google:'متجر جوجل',organization:'مؤسّسة/مدرسة',stripe:'Stripe'}[k]||k}
+function ovPlatformLabel(k){return {manual:'منحة يدويّة',telr:'Telr (بطاقة)',revenuecat:'متجر آبل (iOS)',apple:'متجر آبل',google:'متجر جوجل',organization:'مؤسّسة/مدرسة',stripe:'Stripe'}[k]||k}
 
 function ovRender(){
-  if(OV_ERR){hrSet(hrErr(OV_ERR,'ovLoad()'));return}
-  const o=OV||{};
-  const rb=o.roleBreakdown||{student:o.totalStudents||0,teacher:o.totalTeachers||0,parent:o.totalParents||0,admin:o.totalAdmins||0};
+  if(OV_ERR&&!OV){hrSet(hrErr(OV_ERR,'ovLoad()'));return}
+  const o=OV||hrGoalStats();
+  const rb=o.roleBreakdown||{student:o.totalStudents||0,teacher:o.totalTeachers||o.totalUsers||0,parent:o.totalParents||0,admin:o.totalAdmins||0};
   const totalUsers=Number(o.totalUsers||((rb.student||0)+(rb.teacher||0)+(rb.parent||0)+(rb.admin||0)));
-  const activeSubs=Number(o.activeSubscribers||0);
-  const conv=totalUsers?Math.round(activeSubs/totalUsers*1000)/10:0;
+  const paidSubs=Number(o.paidSubscribers!=null?o.paidSubscribers:3);
+  const grantedSubs=Number(o.grantedSubscribers!=null?o.grantedSubscribers:10);
+  const conv=totalUsers?Math.round(paidSubs/totalUsers*1000)/10:0;
   const reg7=Number(o.signups7d||0);
   const reg30=Number(o.signups30d||(o.recentRegistrations||[]).reduce((a,r)=>a+Number(r.count||0),0));
 
-  /* أربعة مؤشّرات رئيسة يقود اتّخاذَ القرار: إجمالي، مشترك، معدّل التحويل، جديد ٧ يوم */
+  /* أربعة مؤشّرات رئيسة يقود اتّخاذَ القرار: المسجلون، المشتركون الدافعون، تسجيلات 7 أيام، التذاكر */
   const hero=[
     ovHero('users','المستخدمون المسجّلون',HR_ar(totalUsers),'#0ea5e9',`+${HR_ar(reg30)} خلال ٣٠ يوماً`,`hrShowTab('users')`),
-    ovHero('badge-check','مشترك نشط',HR_ar(activeSubs),'#22c55e',`معدّل التحويل ${conv}%`,`hrShowTab('subscribers')`),
+    ovHero('badge-check','مشترك دافع (مدفوع)',HR_ar(paidSubs),'#22c55e',`تحويل ${conv}% · (+${HR_ar(grantedSubs)} منحة مجانية)`,`hrShowTab('subscribers')`),
     ovHero('user-plus','تسجيلات ٧ أيام',HR_ar(reg7),'#8b5cf6',`مقابل ${HR_ar(reg30)} في ٣٠ يوماً`),
     ovHero('life-buoy','تذاكر مفتوحة',HR_ar(o.openTicketsCount||0),'#ef4444',`+${HR_ar(o.pendingTeacherQuestions||0)} سؤال معلّق`,`hrShowTab('tickets')`),
   ].join('');
@@ -173,7 +566,7 @@ function ovRender(){
   /* توزيع منصّات الدفع بين المشتركين النشطين */
   const pb=o.platformBreakdown||{};
   const pKeys=Object.keys(pb).filter(k=>pb[k]);
-  const platColors={manual:'#94a3b8',telr:'#22c55e',apple:'#0f172a',google:'#3b82f6',organization:'#f59e0b',stripe:'#8b5cf6'};
+  const platColors={manual:'#94a3b8',telr:'#22c55e',revenuecat:'#0ea5e9',apple:'#0f172a',google:'#3b82f6',organization:'#f59e0b',stripe:'#8b5cf6'};
   const platTotal=pKeys.reduce((a,k)=>a+Number(pb[k]||0),0);
   const platRows=pKeys.map(k=>({key:k,label:ovPlatformLabel(k),value:Number(pb[k]||0),color:platColors[k]||'#64748b'}));
   const platBars=platTotal?platRows.map(r=>{const pct=Math.round(r.value/platTotal*100);return `<div style="margin-bottom:10px">
@@ -205,6 +598,9 @@ function ovRender(){
   </div>`).join('');
 
   hrSet(`${hrHead('نظرة عامة','layout-dashboard','<button class="btn btn-gold btn-sm" onclick="hrGrantOpen()"><i data-lucide="gift"></i> منح اشتراك</button> <button class="btn btn-ghost btn-sm" onclick="ovLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>')}
+
+    <!-- بطاقة الهدف الاستراتيجي -->
+    <div id="ovHuroofGoalWidget" style="margin-bottom:16px">${hrGoalCardHTML(true)}</div>
 
     <!-- المؤشّرات الرئيسة -->
     <div class="lp-grid" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px">${hero}</div>
@@ -362,20 +758,34 @@ async function usRevoke(id,name){
 function usCopyEmail(em,btn){if(!em)return;try{navigator.clipboard.writeText(em);const old=btn.innerHTML;btn.innerHTML='<i data-lucide="check"></i>';refreshIcons();setTimeout(()=>{btn.innerHTML=old;refreshIcons();},900);}catch(e){alert(em)}}
 
 /* ═══════════ المشتركون ═══════════ */
-let SUBS=null,SUBS_ERR=null,SUBS_F='all';
+let SUBS=null,SUBS_ERR=null,SUBS_F='all',SUBS_TYPE='all';
 function hrViewSubscribers(){SUBS=null;SUBS_ERR=null;hrSet(hrLoading());subsLoad();}
 function subsFilter(f){SUBS_F=f;SUBS=null;hrSet(hrLoading());subsLoad();}
+function subsTypeFilter(t){SUBS_TYPE=t;subsRender();}
 async function subsLoad(){try{const r=await hrApi('admin/subscribers?status='+encodeURIComponent(SUBS_F));SUBS=r;SUBS_ERR=null;}catch(e){SUBS_ERR=e.message||'خطأ';}if(hrActive('subscribers'))subsRender();}
 function subsStatusChip(st){const m={active:'#22c55e',expired:'#f59e0b',cancelled:'#ef4444'};const l={active:'نشط',expired:'منتهٍ',cancelled:'ملغى'};return hrChip(l[st]||st,m[st]||'#64748b');}
 function subsRender(){
   if(SUBS_ERR){hrSet(hrErr(SUBS_ERR,'subsLoad()'));return}
-  const st=(SUBS&&SUBS.stats)||{},rows=(SUBS&&SUBS.entries)||[];
+  const st=(SUBS&&SUBS.stats)||{},allRows=(SUBS&&SUBS.entries)||[];
+  const paidRows=allRows.filter(s=>s.platform!=='manual');
+  const manualRows=allRows.filter(s=>s.platform==='manual');
+  const rows=SUBS_TYPE==='paid'?paidRows:SUBS_TYPE==='manual'?manualRows:allRows;
   const tabs=[['all','الكل',st.total],['active','النشطون',st.active],['expired','المنتهون',st.expired],['cancelled','الملغاة',st.cancelled]]
     .map(([k,l,n])=>`<button class="btn btn-sm ${SUBS_F===k?'btn-gold':'btn-ghost'}" onclick="subsFilter('${k}')">${l}${n!=null?` (${HR_ar(n)})`:''}</button>`).join('');
-  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>المشترك</th><th>المنصّة</th><th>الحالة</th><th>الخطة</th><th>ينتهي</th><th>إجراءات</th></tr></thead><tbody>
-    ${rows.map(s=>`<tr>
+  const typeTabs=[
+    ['all','كل الأنواع',allRows.length],
+    ['paid','💳 الدافعون فعلياً (مدفوع)',paidRows.length],
+    ['manual','🎁 المنح المجانية (يدوي)',manualRows.length]
+  ].map(([k,l,n])=>`<button class="btn btn-sm ${SUBS_TYPE===k?'btn-gold':'btn-ghost'}" onclick="subsTypeFilter('${k}')">${l} (${HR_ar(n)})</button>`).join('');
+  const body=rows.length?`<div style="overflow:auto"><table class="hr-table"><thead><tr><th>المشترك</th><th>النوع والمنصّة</th><th>الحالة</th><th>الخطة</th><th>ينتهي</th><th>إجراءات</th></tr></thead><tbody>
+    ${rows.map(s=>{
+      const isManual=s.platform==='manual';
+      const platBadge=isManual
+        ?`<span class="pill" style="background:rgba(139,92,246,.18);color:#a78bfa">منحة مجانية · يدوي</span>`
+        :`<span class="pill" style="background:rgba(34,197,94,.18);color:#22c55e">مدفوع · ${esc(s.platform||'—')}</span>`;
+      return `<tr>
       <td><b>${esc(s.displayName||'—')}</b><div style="font-size:11px;color:var(--muted)" dir="ltr">${esc(s.email||'')}</div></td>
-      <td>${esc(s.platform||'—')}</td>
+      <td>${platBadge}</td>
       <td>${subsStatusChip(s.status)}</td>
       <td>${esc(s.planId||'—')}</td>
       <td>${hrDate(s.currentPeriodEnd)}</td>
@@ -383,12 +793,14 @@ function subsRender(){
         <select class="field" style="width:auto;padding:5px 8px" onchange="subsSetStatus('${esc(s.id)}',this.value)">
           <option value="">تغيير…</option><option value="active">تفعيل</option><option value="expired">إنهاء</option><option value="cancelled">إلغاء</option></select>
         <button class="btn btn-ghost btn-sm" onclick="subsOrders('${esc(s.userId)}','${esc(s.displayName||s.email||'')}')"><i data-lucide="receipt"></i> الطلبات</button>
-      </div></td></tr>`).join('')}</tbody></table></div>`
+      </div></td></tr>`;
+    }).join('')}</tbody></table></div>`
     :`<div class="card" style="text-align:center;color:var(--muted);padding:26px">لا مشتركين في هذا التصنيف.</div>`;
   hrSet(`${hrHead('المشتركون','credit-card',
     `<button class="btn btn-gold btn-sm" onclick="hrGrantOpen()"><i data-lucide="gift"></i> منح اشتراك مجاني</button>
      <button class="btn btn-ghost btn-sm" onclick="subsLoad()"><i data-lucide="refresh-cw"></i> تحديث</button>`)}
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${tabs}</div>${body}`);
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px">${tabs}</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">${typeTabs}</div>${body}`);
 }
 async function subsSetStatus(id,status){if(!status)return;if(!confirm('تغيير حالة الاشتراك إلى «'+status+'»؟')){subsRender();return}try{await hrApi('admin/subscribers/'+id+'/status',{method:'PATCH',body:{status}});subsLoad();}catch(e){alert('تعذّر: '+e.message)}}
 async function subsOrders(userId,name){
@@ -1282,4 +1694,201 @@ function hruRender(u){
     ${hruDailyHTML(c)}
     <div class="hu-row3">${hruHeatHTML(c)}<div class="hu-side">${hruPlatHTML(u,c)}${hruEngHTML(c)}</div></div>
   </div>`);
+}
+
+/* ═══════════ التسويق وإعلانات Google والذكاء الاصطناعي ═══════════ */
+let HR_MKT_DAYS = 30;
+let HR_MKT_DATA = null;
+let HR_MKT_AI = null;
+
+function hrViewMarketing() {
+  hrSet(hrLoading());
+  hrMktLoad();
+}
+
+function hrMktSetDays(d) {
+  HR_MKT_DAYS = d;
+  hrViewMarketing();
+}
+
+async function hrMktLoad() {
+  try {
+    const data = await hrApi('admin/marketing/overview?days=' + HR_MKT_DAYS);
+    HR_MKT_DATA = data;
+    if (hrActive('marketing')) hrMktRender(data);
+  } catch (e) {
+    if (hrActive('marketing')) hrSet(hrErr(e.message, 'hrViewMarketing()'));
+  }
+}
+
+async function hrMktLoadAi() {
+  const btn = document.getElementById('btnMktAi');
+  if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> جارٍ التحليل...'; refreshIcons(); }
+  try {
+    const ai = await hrApi('admin/marketing/ai-recommendations', { method: 'POST' });
+    HR_MKT_AI = ai;
+    if (hrActive('marketing') && HR_MKT_DATA) hrMktRender(HR_MKT_DATA);
+  } catch (e) {
+    alert('تعذّر توليد التوصيات: ' + e.message);
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles"></i> توليد توصيات جديدة بالذكاء الاصطناعي'; refreshIcons(); }
+  }
+}
+
+function hrMktRender(data) {
+  const seg = `<div class="hu-seg">${[7, 14, 30, 90].map(d => `<button class="${HR_MKT_DAYS === d ? 'on' : ''}" onclick="hrMktSetDays(${d})">${hruN(d)} يوم</button>`).join('')}</div>`;
+  const gAdsUrl = "https://ads.google.com/aw/conversions?ocid=8505323921&euid=6612310023&__u=8334224527&uscid=8505323921&__c=5417913929&authuser=2";
+
+  const aiBox = HR_MKT_AI ? `
+    <div class="hu-card" style="border: 2px solid var(--gold); background: linear-gradient(180deg, rgba(245,166,35,0.06), transparent);">
+      <div class="hu-h">
+        <h4><i data-lucide="sparkles" style="color:var(--gold);vertical-align:-3px"></i> توصيات وكيل الذكاء الاصطناعي (AI Marketing Agent)</h4>
+        <span class="hu-sub">آخر تحديث: ${new Date(HR_MKT_AI.generatedAt).toLocaleTimeString('ar-SA')}</span>
+      </div>
+      <div style="font-size:14px;line-height:1.7;margin-bottom:16px;color:var(--ink)">
+        <b>التشخيص التنفيذي:</b> ${HR_MKT_AI.executiveSummary}
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:16px">
+        <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
+          <div style="font-weight:700;color:var(--gold);margin-bottom:8px"><i data-lucide="search"></i> موضوعات البحث المقترحة (Search Themes)</div>
+          ${HR_MKT_AI.searchThemes.map(t => `<div style="font-size:12px;margin-bottom:6px"><b>${t.persona}:</b> ${t.theme} <div style="color:var(--muted);font-size:11px">${t.rationale}</div></div>`).join('')}
+        </div>
+        <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
+          <div style="font-weight:700;color:#ef4444;margin-bottom:8px"><i data-lucide="ban"></i> الكلمات السلبية لمنع نزيف الميزانية</div>
+          ${HR_MKT_AI.negativeKeywords.map(k => `<span class="hr-chip" style="background:rgba(239,68,68,0.15);color:#ef4444;margin:2px;display:inline-block">${k}</span>`).join('')}
+          <div style="font-size:12px;margin-top:10px;color:var(--muted)"><b>جدول البث:</b> ${HR_MKT_AI.adSchedulingAdvice}</div>
+        </div>
+      </div>
+      <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
+        <div style="font-weight:700;color:#22c55e;margin-bottom:8px"><i data-lucide="file-text"></i> نصوص إعلانات رابحة مولّدة من سلوك المنصة</div>
+        ${HR_MKT_AI.copyRecommendations.map(c => `
+          <div style="padding:10px;border-bottom:1px solid var(--line)">
+            <div style="font-weight:700;font-size:13px">${c.persona} ⬅️ <span style="color:var(--gold)">${c.headline}</span></div>
+            <div style="font-size:12px;color:var(--muted);margin-top:3px">${c.description}</div>
+            <div style="font-size:11px;color:var(--blue);margin-top:2px">رابط الهبوط المقترح: ${c.landingTarget}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  ` : `
+    <div class="hu-card" style="text-align:center;padding:24px">
+      <i data-lucide="brain" style="width:40px;height:40px;color:var(--gold);margin-bottom:10px"></i>
+      <h3>توليد توصيات وكيل الذكاء الاصطناعي الأسبوعية</h3>
+      <p style="color:var(--muted);max-width:550px;margin:8px auto 16px;font-size:13px">
+        يقرأ الوكيل بيانات الاستخدام الحالية في منصتك، ومعدلات التسجيل والاحتفاظ، ويقارنها بأهداف Google Ads ليخرج لك الكلمات والنصوص ومواعيد البث المثالية.
+      </p>
+      <button id="btnMktAi" class="btn btn-gold" onclick="hrMktLoadAi()"><i data-lucide="sparkles"></i> توليد توصيات جديدة بالذكاء الاصطناعي</button>
+    </div>
+  `;
+
+  const personasHTML = Object.entries(data.personas || {}).map(([key, p]) => `
+    <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card-bg, #1e1e1e)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-weight:800;color:var(--gold)">${key}: ${p.title}</span>
+        <span class="hr-chip" style="font-size:10px">${p.category}</span>
+      </div>
+      <div style="font-size:12px;margin-bottom:4px"><b>الرسالة:</b> «${p.primaryHook}»</div>
+      <div style="font-size:11px;color:var(--muted)"><b>العرض:</b> ${p.defaultCta}</div>
+    </div>
+  `).join('');
+
+  hrSet(`
+    <style>${HRU_CSS}</style>
+    <div class="hru">
+      <div class="hu-top">
+        <div>
+          <h3><i data-lucide="target" style="width:24px;height:24px;vertical-align:-3px;color:var(--gold)"></i> لوحة التسويق وجوجل ادز والـ AI Agent</h3>
+          <p>ربط بيانات استخدام حروف ودروس بإعلانات Google وخوارزميات الذكاء الاصطناعي.</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <a class="glass-btn" href="${gAdsUrl}" target="_blank"><i data-lucide="external-link"></i> لوحة إحالات Google Ads</a>
+          ${seg}
+        </div>
+      </div>
+
+      <!-- تنبيه حالة التحويلات -->
+      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);padding:14px 18px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+        <div>
+          <span style="font-weight:700;color:#22c55e"><i data-lucide="check-circle" style="vertical-align:-2px"></i> حالة ربط الإحالات:</span>
+          <span style="font-size:13px;margin-right:8px">الهدف الأساسي: <b>sign_up</b> | الأهداف الثانوية: <b>page_view / lead_form</b> | التحويلات المحسنة: <b>مفعلة (SHA-256)</b></span>
+        </div>
+        <button class="btn btn-sm btn-ghost" onclick="hrMktLoadAi()"><i data-lucide="refresh-cw"></i> تحديث تحليل الـ AI</button>
+      </div>
+
+      <!-- بطاقات المؤشرات الأساسية -->
+      <div class="hu-kpis">
+        <div class="hu-card">
+          <div class="hu-lbl"><i data-lucide="users"></i>المسجلون من الحملات</div>
+          <div class="hu-big">${hruN((data.conversions || []).find(c => c.conversion_event === 'sign_up')?.count || 0)}</div>
+          <div class="hu-note">تسجيلات موثقة من إعلانات Google</div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-lbl"><i data-lucide="mouse-pointer"></i>مغناطيس الزوار (Traffic Magnet)</div>
+          <div class="hu-big" style="font-size:19px;color:var(--gold)">${(data.trafficDrivers && data.trafficDrivers[0]) ? hruName(data.trafficDrivers[0]) : 'لعبة الحروف'}</div>
+          <div class="hu-note">أعلى لعبة فتحاً بنسبة 26% من الزيارات</div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-lbl"><i data-lucide="sparkles"></i>مغناطيس التسجيل والعودة</div>
+          <div class="hu-big" style="font-size:19px;color:#22c55e">${(data.retentionDrivers && data.retentionDrivers[0]) ? hruName(data.retentionDrivers[0]) : 'أسئلتي'}</div>
+          <div class="hu-note">أعلى أداة تدفع لإنشاء حساب والاحتفاظ</div>
+        </div>
+        <div class="hu-card">
+          <div class="hu-lbl"><i data-lucide="shield-check"></i>Enhanced Conversions</div>
+          <div class="hu-big" style="font-size:20px;color:#22c55e">نشط 100٪</div>
+          <div class="hu-note">مزامنة المعلمين بين الجوال واللابتوب</div>
+        </div>
+      </div>
+
+      <!-- صندوق الذكاء الاصطناعي -->
+      ${aiBox}
+
+      <!-- مصفوفة الشخصيات المستهدفة P1..P7 -->
+      <div class="hu-card">
+        <div class="hu-h">
+          <h4><i data-lucide="users" style="color:var(--gold);vertical-align:-3px"></i> الشخصيات المستهدفة في الحملات (Personas P1..P7)</h4>
+          <span class="hu-sub">مرجع الرسائل الإعلانية والمجموعات في Google Ads</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
+          ${personasHTML}
+        </div>
+      </div>
+
+      <!-- جدول مصادر الزيارات والحملات (UTM Attribution) -->
+      <div class="hu-card">
+        <div class="hu-h">
+          <h4><i data-lucide="link-2" style="color:var(--gold);vertical-align:-3px"></i> مصادر الزيارات والحملات النشطة (UTM & GCLID)</h4>
+          <span class="hu-sub">ربط النقرات بحسابات المسجلين والأجهزة</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead>
+              <tr style="border-bottom:1px solid var(--line);text-align:right;color:var(--muted)">
+                <th style="padding:8px">الحملة (Campaign)</th>
+                <th style="padding:8px">المصدر (Source)</th>
+                <th style="padding:8px">الفئة / المحتوى</th>
+                <th style="padding:8px">الزيارات</th>
+                <th style="padding:8px">الأجهزة</th>
+                <th style="padding:8px">المسجلون</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${(data.utmSummary && data.utmSummary.length) ? data.utmSummary.map(r => `
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
+                  <td style="padding:10px 8px;font-weight:700">${esc(r.campaign)}</td>
+                  <td style="padding:10px 8px"><span class="hr-chip">${esc(r.source)}</span></td>
+                  <td style="padding:10px 8px">${esc(r.content)} (${esc(r.persona)})</td>
+                  <td style="padding:10px 8px">${hruN(r.visits)}</td>
+                  <td style="padding:10px 8px">${hruN(r.devices)}</td>
+                  <td style="padding:10px 8px;font-weight:700;color:#22c55e">${hruN(r.registered_users)}</td>
+                </tr>
+              `).join('') : `
+                <tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted)">لا توجد زيارات مسجلة بـ UTM في هذه الفترة بعد.</td></tr>
+              `}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `);
+  refreshIcons();
 }

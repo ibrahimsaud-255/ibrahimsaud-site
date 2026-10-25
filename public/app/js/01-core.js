@@ -119,6 +119,17 @@ const def={
     files:[],   // {id,name,url,cat,note}
     brand:{colors:['#f5a623','#0a0a0b','#ffffff'],fonts:['Thmanyah','Tajawal'],notes:''},
     growth:{journey:[],resources:[]}  // journey:[{id,title,done,note}] · resources:[{id,title,url,tag}]
+  },
+  huroofGoal:{
+    targetRevenue:20000,
+    targetSubscribers:800,
+    targetUsers:100000,
+    targetVisitors:500000,
+    avgSubPrice:25,
+    estCacSub:60,
+    estCpaUser:1.5,
+    monthlyAdBudget:3000,
+    visionNote:'دخل شهري ثابت ٢٠,٠٠٠ ر.س يحقق الاستقلال الشخصي والزواج وحرية الوقت بإذن الله'
   }
 };
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: let S=load(); */
@@ -133,6 +144,8 @@ function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.p
   if(!s.habits.log)s.habits.log={};if(!s.habits.prayer)s.habits.prayer={};if(!s.habits.reminded)s.habits.reminded={};
   // بذر العادات المدمجة الجديدة للمستخدمين الحاليين (مرة واحدة — يحترم الحذف اليدوي لاحقاً)
   if(!s.habits.seededIdea){if(!s.habits.list.some(h=>h.id==='h_idea'))s.habits.list.push({id:'h_idea',name:'كتابة فكرة',desc:'سجّل فكرة واحدة في بنك الأفكار — تُحتسب تلقائياً',icon:'lightbulb',color:'#f59e0b',reminder:'',builtin:true,linkedApp:'ideas'});s.habits.seededIdea=true}
+  if(!s.huroofGoal||typeof s.huroofGoal!=='object')s.huroofGoal=JSON.parse(JSON.stringify(def.huroofGoal));
+  else s.huroofGoal=Object.assign(JSON.parse(JSON.stringify(def.huroofGoal)),s.huroofGoal);
   migrateCompanyData(s);
   return s;}
 /* بيانات المنشأة كانت في ٣ أماكن (الإعدادات، «البيانات الرسميّة»، الضريبة) والطباعة

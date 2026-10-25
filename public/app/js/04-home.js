@@ -191,6 +191,7 @@ function rerender(){(RENDER[CUR]||renderHome)()}
 
 /* ===== HOME (branded) — كروت مركّبة قابلة للتخصيص ===== */
 const HOME_WIDGETS=[
+  {key:'huroof_goal',label:'هدف حروف ودروس (١٠٠ ألف مستخدم · ٨٠٠ مشترك)',size:'wide',default:true},
   {key:'focus',label:'تركيز اليوم الواعي',size:'wide',default:true},
   {key:'prayer',label:'مواقيت الصلاة',size:'wide',default:true},
   {key:'kpi_collected',label:'محصّل الشهر حتى الآن',size:'stat',default:true},
@@ -208,10 +209,10 @@ const HOME_WIDGETS=[
   {key:'upcoming_appts',label:'مواعيد قادمة',size:'card',default:true},
   {key:'pipeline_mini',label:'مسار العملاء — مختصر',size:'card',default:false},
 ];
-function homeCfg(){if(!S.home)S.home={};if(!Array.isArray(S.home.widgets))S.home.widgets=HOME_WIDGETS.filter(w=>w.default).map(w=>w.key);return S.home}
+function homeCfg(){if(!S.home)S.home={};if(!Array.isArray(S.home.widgets))S.home.widgets=HOME_WIDGETS.filter(w=>w.default).map(w=>w.key);if(!S.home.seededHuroofGoal){if(!S.home.widgets.includes('huroof_goal'))S.home.widgets.unshift('huroof_goal');S.home.seededHuroofGoal=true;}return S.home}
 function homeHasWidget(k){return homeCfg().widgets.includes(k)}
 function homeToggleWidget(k){const c=homeCfg();const i=c.widgets.indexOf(k);if(i>-1)c.widgets.splice(i,1);else c.widgets.push(k);save();renderHome();}
-function homeResetWidgets(){S.home={widgets:HOME_WIDGETS.filter(w=>w.default).map(w=>w.key)};save();renderHome();}
+function homeResetWidgets(){S.home={widgets:HOME_WIDGETS.filter(w=>w.default).map(w=>w.key),seededHuroofGoal:true};save();renderHome();}
 function homeCustomizeModal(){const rows=HOME_WIDGETS.map(w=>{const on=homeHasWidget(w.key);return `<button class="btn ${on?'btn-gold':'btn-ghost'} btn-sm" style="justify-content:flex-start;text-align:right" onclick="homeToggleWidget('${w.key}')"><i data-lucide="${on?'check-circle':'circle'}"></i> ${esc(w.label)} <span style="opacity:.55;font-size:11px;margin-inline-start:auto">${w.size==='stat'?'مؤشّر':w.size==='wide'?'عريض':'كارت'}</span></button>`}).join('');
   openModal('تخصيص الرئيسية',`
     <div style="opacity:.7;font-size:13px;margin-bottom:12px">اختر ما تريد ظهوره في صفحتك الرئيسية. التعديل يُحفظ فوراً.</div>
@@ -227,6 +228,7 @@ function homeRevenueMonths(count){const months=[];const now=new Date();for(let i
 function widgetHTML(k){
   const H=hb();
   switch(k){
+    case 'huroof_goal':return `<div id="homeHuroofGoalWidget" style="grid-column:1/-1;min-width:300px">${typeof hrGoalCardHTML==='function'?hrGoalCardHTML(false):''}</div>`;
     case 'focus':return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="brain"></i> تركيز اليوم الواعي</h3><div id="focusWidget"></div></div>`;
     case 'prayer':return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="moon-star"></i> مواقيت الصلاة</h3><div id="prayerWidget"></div></div>`;
     case 'revenue_6m':{const ms=homeRevenueMonths(6);const maxM=Math.max(1,...ms.map(m=>m.v));return `<div class="card" style="grid-column:span 2;min-width:300px"><h3><i data-lucide="trending-up"></i> الإيرادات المحصّلة — آخر ٦ أشهر <span style="color:var(--muted);font-weight:400;font-size:12px">· حيّ · حسب تواريخ المدفوعات المسجّلة على الفواتير فقط</span></h3>
@@ -284,7 +286,7 @@ function renderHome(){
     ${wide?`<div class="grid" style="margin-bottom:24px">${wide}</div>`:''}
     ${stats?`<div class="stats">${stats}</div>`:''}
     ${cards?`<div class="grid">${cards}</div>`:''}`;
-  applyWallpaper();if(active.includes('focus'))paintFocus();if(active.includes('prayer')){loadPrayer();startPrayerTicker();}if(active.includes('kpi_visits'))loadHomeVisits();refreshIcons();
+  applyWallpaper();if(active.includes('huroof_goal')&&typeof hrGoalLoadLive==='function')hrGoalLoadLive(false);if(active.includes('focus'))paintFocus();if(active.includes('prayer')){loadPrayer();startPrayerTicker();}if(active.includes('kpi_visits'))loadHomeVisits();refreshIcons();
 }
 async function loadHomeVisits(){const el=document.getElementById('homeVisits');if(!el)return;try{
   const since1=new Date(Date.now()-864e5).toISOString();
