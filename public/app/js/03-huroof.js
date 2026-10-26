@@ -27,7 +27,7 @@ let HR_TAB='overview';
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
   {id:'usage',name:'الاستخدام',icon:'activity'},
-  {id:'marketing',name:'التسويق وجوجل ادز',icon:'target'},
+  {id:'marketing',name:'التسويق والوكيل',icon:'target'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
@@ -1696,199 +1696,256 @@ function hruRender(u){
   </div>`);
 }
 
-/* ═══════════ التسويق وإعلانات Google والذكاء الاصطناعي ═══════════ */
-let HR_MKT_DAYS = 30;
-let HR_MKT_DATA = null;
-let HR_MKT_AI = null;
+/* ═══════════ التسويق والوكيل — من الإعلان إلى الاشتراك، وتقرير الوكيل الأسبوعيّ ═══════════
+   الخادم: artifacts/api-server/src/routes/admin/marketing.ts + lib/marketingAgent.ts (ريبو حروف).
+   الأرقام كلّها من القاعدة ومن لقطة سكربت Google Ads — لا أرقام ثابتة هنا.
+   مفتاح الذكاء الاصطناعيّ في بيئة الخادم وحدها (ANTHROPIC_API_KEY أو GEMINI_API_KEY)؛ اللوحة تختبره ولا تستقبله. */
+let HR_MKT_DAYS=30;
+let HR_MKT_DATA=null;     // ردّ /admin/marketing/overview
+let HR_MKT_REPORT=null;   // التقرير المعروض (الأحدث أو المختار من السجلّ)
+let HR_MKT_HISTORY=null;  // آخر ٢٠ تقريراً
+let HR_MKT_PING=null;     // نتيجة «اختبر الاتصال»
+let HR_MKT_POLL=null;
+const HR_MKT_PERSONA={P1:'أ. نورة المعلّمة',P2:'أ. عبدالله المعلّم',P3:'سلطان الطالب',P4:'أم فيصل',P5:'أبو خالد',P6:'قائد المدرسة',P7:'ريم طالبة الثانوي'};
+const HR_MKT_SEV={high:['#f87171','عالٍ'],medium:['#f5a623','متوسّط'],low:['#94a3b8','منخفض']};
+const HR_MKT_DOW={SUNDAY:'الأحد',MONDAY:'الاثنين',TUESDAY:'الثلاثاء',WEDNESDAY:'الأربعاء',THURSDAY:'الخميس',FRIDAY:'الجمعة',SATURDAY:'السبت'};
+const HR_MKT_CSS=`
+.hru .mk-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.hru .mk-2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.hru .mk-status{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.hru .mk-st{padding:12px 14px;border-radius:16px;background:var(--hu-soft);border:1px solid var(--hu-bd);font-size:13px;line-height:1.7;font-weight:600}
+.hru .mk-st b{display:block;font-size:14px;font-weight:900;margin-bottom:2px}
+.hru .mk-ok{color:#22c55e}.hru .mk-bad{color:#f87171}.hru .mk-warn{color:#f5a623}
+.hru table.mk-t{width:100%;border-collapse:collapse;font-size:13px}
+.hru .mk-t th{font-size:12px;color:var(--muted);font-weight:800;text-align:start;padding:8px 6px;border-bottom:1px solid var(--hu-bd)}
+.hru .mk-t td{padding:9px 6px;border-bottom:1px solid var(--hu-soft);font-weight:600;font-variant-numeric:tabular-nums}
+.hru .mk-t th:not(:first-child),.hru .mk-t td:not(:first-child){text-align:center}
+.hru .mk-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.hru .mk-list li{padding:12px 14px;border-radius:16px;background:var(--hu-soft);border:1px solid var(--hu-bd);font-size:14px;line-height:1.7}
+.hru .mk-list li .mk-m{font-size:12.5px;color:var(--muted);font-weight:600;margin-top:4px}
+.hru .mk-ads{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.hru .mk-ad{padding:14px;border-radius:16px;background:var(--hu-soft);border:1px solid var(--hu-bd);display:flex;flex-direction:column;gap:6px}
+.hru .mk-ad .h{font-weight:900;font-size:15px}.hru .mk-ad .d{font-size:13px;line-height:1.7}
+.hru .mk-ad .f{font-size:12px;color:var(--muted);font-weight:700}
+.hru .mk-words{font-size:14px;line-height:2;font-weight:600}
+.hru .mk-hist button{all:unset;cursor:pointer;display:block;width:100%;padding:10px 12px;border-radius:12px;font-size:13px;line-height:1.6}
+.hru .mk-hist button:hover,.hru .mk-hist button.on{background:var(--hu-soft)}
+.hru .mk-json{direction:ltr;text-align:left;max-height:420px;overflow:auto;font-size:12px;background:var(--hu-soft);border-radius:14px;padding:14px;white-space:pre-wrap}
+@media (max-width:900px){.hru .mk-grid,.hru .mk-status{grid-template-columns:1fr 1fr}.hru .mk-2{grid-template-columns:1fr}}
+@media (max-width:560px){.hru .mk-grid,.hru .mk-status{grid-template-columns:1fr}}
+`;
 
-function hrViewMarketing() {
-  hrSet(hrLoading());
-  hrMktLoad();
+function hrViewMarketing(){hrSet(hrLoading());hrMktLoad();}
+function hrMktSetDays(d){HR_MKT_DAYS=d;hrViewMarketing();}
+
+async function hrMktLoad(){
+  try{
+    const [data,hist]=await Promise.all([
+      hrApi('admin/marketing/overview?days='+HR_MKT_DAYS),
+      hrApi('admin/marketing/reports').catch(()=>({reports:[]})),
+    ]);
+    HR_MKT_DATA=data;HR_MKT_HISTORY=hist.reports||[];
+    if(!HR_MKT_REPORT||HR_MKT_REPORT.id===(data.latestReport&&data.latestReport.id))HR_MKT_REPORT=data.latestReport;
+    if(hrActive('marketing'))hrMktRender();
+    hrMktWatch();
+  }catch(e){if(hrActive('marketing'))hrSet(hrErr(e.message,'hrViewMarketing()'));}
 }
 
-function hrMktSetDays(d) {
-  HR_MKT_DAYS = d;
-  hrViewMarketing();
+/* تقرير قيد التشغيل: نسأل كلّ ٦ ثوانٍ حتى يكتمل (التشغيل دقيقة إلى دقائق) */
+function hrMktWatch(){
+  clearTimeout(HR_MKT_POLL);
+  const r=HR_MKT_REPORT;
+  if(!r||r.status!=='running')return;
+  HR_MKT_POLL=setTimeout(async()=>{
+    if(!hrActive('marketing'))return;
+    try{HR_MKT_REPORT=await hrApi('admin/marketing/reports/'+r.id);}catch(e){}
+    if(HR_MKT_REPORT&&HR_MKT_REPORT.status!=='running'){hrMktLoad();return;}
+    hrMktRender();hrMktWatch();
+  },6000);
 }
 
-async function hrMktLoad() {
-  try {
-    const data = await hrApi('admin/marketing/overview?days=' + HR_MKT_DAYS);
-    HR_MKT_DATA = data;
-    if (hrActive('marketing')) hrMktRender(data);
-  } catch (e) {
-    if (hrActive('marketing')) hrSet(hrErr(e.message, 'hrViewMarketing()'));
-  }
+async function hrMktRun(){
+  const btn=document.getElementById('mkRun');
+  if(btn){btn.disabled=true;btn.innerHTML='<i data-lucide="loader-2"></i> يبدأ…';refreshIcons();}
+  try{
+    const {id}=await hrApi('admin/marketing/run',{method:'POST',body:{days:HR_MKT_DAYS}});
+    HR_MKT_REPORT=await hrApi('admin/marketing/reports/'+id);
+    hrMktRender();hrMktWatch();
+  }catch(e){alert(e.message);if(btn){btn.disabled=false;btn.innerHTML='<i data-lucide="sparkles"></i> شغّل الوكيل الآن';refreshIcons();}}
 }
 
-async function hrMktLoadAi() {
-  const btn = document.getElementById('btnMktAi');
-  if (btn) { btn.disabled = true; btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin"></i> جارٍ التحليل...'; refreshIcons(); }
-  try {
-    const ai = await hrApi('admin/marketing/ai-recommendations', { method: 'POST' });
-    HR_MKT_AI = ai;
-    if (hrActive('marketing') && HR_MKT_DATA) hrMktRender(HR_MKT_DATA);
-  } catch (e) {
-    alert('تعذّر توليد التوصيات: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.innerHTML = '<i data-lucide="sparkles"></i> توليد توصيات جديدة بالذكاء الاصطناعي'; refreshIcons(); }
-  }
+async function hrMktPing(){
+  HR_MKT_PING={pending:true};hrMktRender();
+  try{HR_MKT_PING=await hrApi('admin/marketing/ping',{method:'POST'});}catch(e){HR_MKT_PING={ok:false,error:e.message};}
+  hrMktRender();
 }
 
-function hrMktRender(data) {
-  const seg = `<div class="hu-seg">${[7, 14, 30, 90].map(d => `<button class="${HR_MKT_DAYS === d ? 'on' : ''}" onclick="hrMktSetDays(${d})">${hruN(d)} يوم</button>`).join('')}</div>`;
-  const gAdsUrl = "https://ads.google.com/aw/conversions?ocid=8505323921&euid=6612310023&__u=8334224527&uscid=8505323921&__c=5417913929&authuser=2";
+async function hrMktOpen(id){
+  try{HR_MKT_REPORT=await hrApi('admin/marketing/reports/'+id);hrMktRender();hrMktWatch();
+    const el=document.getElementById('mkReport');if(el)el.scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){alert(e.message);}
+}
 
-  const aiBox = HR_MKT_AI ? `
-    <div class="hu-card" style="border: 2px solid var(--gold); background: linear-gradient(180deg, rgba(245,166,35,0.06), transparent);">
-      <div class="hu-h">
-        <h4><i data-lucide="sparkles" style="color:var(--gold);vertical-align:-3px"></i> توصيات وكيل الذكاء الاصطناعي (AI Marketing Agent)</h4>
-        <span class="hu-sub">آخر تحديث: ${new Date(HR_MKT_AI.generatedAt).toLocaleTimeString('ar-SA')}</span>
-      </div>
-      <div style="font-size:14px;line-height:1.7;margin-bottom:16px;color:var(--ink)">
-        <b>التشخيص التنفيذي:</b> ${HR_MKT_AI.executiveSummary}
-      </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-bottom:16px">
-        <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
-          <div style="font-weight:700;color:var(--gold);margin-bottom:8px"><i data-lucide="search"></i> موضوعات البحث المقترحة (Search Themes)</div>
-          ${HR_MKT_AI.searchThemes.map(t => `<div style="font-size:12px;margin-bottom:6px"><b>${t.persona}:</b> ${t.theme} <div style="color:var(--muted);font-size:11px">${t.rationale}</div></div>`).join('')}
-        </div>
-        <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
-          <div style="font-weight:700;color:#ef4444;margin-bottom:8px"><i data-lucide="ban"></i> الكلمات السلبية لمنع نزيف الميزانية</div>
-          ${HR_MKT_AI.negativeKeywords.map(k => `<span class="hr-chip" style="background:rgba(239,68,68,0.15);color:#ef4444;margin:2px;display:inline-block">${k}</span>`).join('')}
-          <div style="font-size:12px;margin-top:10px;color:var(--muted)"><b>جدول البث:</b> ${HR_MKT_AI.adSchedulingAdvice}</div>
-        </div>
-      </div>
-      <div style="background:var(--card-bg, #1a1a1a);padding:14px;border-radius:10px;border:1px solid var(--line)">
-        <div style="font-weight:700;color:#22c55e;margin-bottom:8px"><i data-lucide="file-text"></i> نصوص إعلانات رابحة مولّدة من سلوك المنصة</div>
-        ${HR_MKT_AI.copyRecommendations.map(c => `
-          <div style="padding:10px;border-bottom:1px solid var(--line)">
-            <div style="font-weight:700;font-size:13px">${c.persona} ⬅️ <span style="color:var(--gold)">${c.headline}</span></div>
-            <div style="font-size:12px;color:var(--muted);margin-top:3px">${c.description}</div>
-            <div style="font-size:11px;color:var(--blue);margin-top:2px">رابط الهبوط المقترح: ${c.landingTarget}</div>
-          </div>
-        `).join('')}
-      </div>
+function hrMktCopy(btn,text){
+  navigator.clipboard.writeText(text).then(()=>{const o=btn.innerHTML;btn.innerHTML='✓ نُسخ';setTimeout(()=>{btn.innerHTML=o;refreshIcons();},1600);});
+}
+/** نصٌّ آمن داخل onclick='…' (JSON ثمّ تهريب HTML، والفاصلة العليا تُكتب \u0027). */
+const hrMktArg=s=>esc(JSON.stringify(s).replace(/'/g,'\\u0027'));
+function hrMktCopyJson(btn){if(HR_MKT_DATA)hrMktCopy(btn,JSON.stringify(HR_MKT_DATA.input,null,2));}
+function hrMktToggleJson(){const el=document.getElementById('mkJson');if(el)el.hidden=!el.hidden;}
+
+const hrMktN=v=>v==null?'—':HR_ar(v);
+const hrMktSar=v=>v==null?'—':Number(v).toLocaleString('ar-SA',{maximumFractionDigits:2})+' ر.س';
+function hrMktAge(ts){
+  if(!ts)return null;
+  const h=Math.round((Date.now()-new Date(ts).getTime())/3600000);
+  return h<1?'قبل أقلّ من ساعة':h<48?`قبل ${HR_ar(h)} ساعة`:`قبل ${HR_ar(Math.round(h/24))} يوماً`;
+}
+function hrMktDelta(cur,prev){
+  if(prev==null||!prev)return '';
+  const d=Math.round(((cur-prev)/prev)*100);
+  return `<span class="hu-d ${d>0?'hu-up':d<0?'hu-dn':'hu-eq'}">${d>0?'▲':d<0?'▼':''} ${HR_ar(Math.abs(d))}٪</span>`;
+}
+
+function hrMktStatus(d){
+  const c=d.config||{},ads=d.adsSnapshot,p=HR_MKT_PING;
+  const visits=(d.input.attribution_funnel||[]).reduce((s,r)=>s+Number(r.visits||0),0);
+  const funnelMissing=d.input.attribution_funnel==null;
+  const ai=c.ready
+    ?`<span class="mk-ok">مربوط</span> — ${esc(c.provider==='claude'?'Claude':'Gemini')} · <span style="direction:ltr;display:inline-block">${esc(c.model)}</span>`
+    :`<span class="mk-bad">غير مربوط</span> — يوضع المفتاح في بيئة الخادم: <code>ANTHROPIC_API_KEY</code>`;
+  const ping=!p?`<button class="btn btn-ghost btn-sm" style="margin-top:6px" onclick="hrMktPing()"><i data-lucide="plug-zap"></i> اختبر الاتصال</button>`
+    :p.pending?'<div class="hu-note">…جارٍ الاختبار</div>'
+    :p.ok?`<div class="mk-ok" style="font-size:12.5px">استجاب خلال ${HR_ar(p.ms)} ملّي‌ثانية</div>`
+    :`<div class="mk-bad" style="font-size:12.5px">${esc(p.error||'فشل')}</div>`;
+  const adsTxt=ads?(()=>{const age=hrMktAge(ads.receivedAt),old=(Date.now()-new Date(ads.receivedAt))>72*3600000;
+      return `<span class="${old?'mk-warn':'mk-ok'}">وصلت ${esc(age)}</span>${old?' — هل توقّف السكربت المجدول؟':''}`;})()
+    :`<span class="mk-bad">لم تصل بعد</span> — ${c.adsIngestEnabled?'ألصق السكربت في حساب Google Ads وجدوله':'ينقص <code>MARKETING_ADS_INGEST_SECRET</code> في الخادم'}`;
+  return `<div class="hu-card" style="margin-bottom:16px">
+    <div class="hu-h"><h4><i data-lucide="cable"></i> حالة الربط</h4><span class="hu-sub">ما يحتاجه الوكيل كي يرى الصورة كاملة</span></div>
+    <div class="mk-status">
+      <div class="mk-st"><b>الذكاء الاصطناعيّ</b>${ai}${c.ready?ping:''}</div>
+      <div class="mk-st"><b>لقطة Google Ads</b>${adsTxt}</div>
+      <div class="mk-st"><b>تتبّع الإعلان ← التسجيل</b>${funnelMissing?'<span class="mk-bad">الجدول غير موجود</span> — طبّق الهجرة 0021':visits?`<span class="mk-ok">${HR_ar(visits)} زيارة بروابط حملات</span> في المدّة`:'<span class="mk-warn">لا زيارات بروابط حملات بعد</span>'}</div>
+      <div class="mk-st"><b>التقرير الأسبوعيّ</b>${c.weekly?'<span class="mk-ok">مفعّل</span> — كلّ أحد ٦ص بتوقيت الرياض':'<span class="mk-warn">يدويّ فقط</span> — فعّله بـ<code>MARKETING_AGENT_WEEKLY=1</code>'}</div>
+    </div></div>`;
+}
+
+function hrMktKpis(i){
+  const u=i.platform_usage||{},s=i.signups||{},rv=i.revenue||{},subs=i.subscriptions_by_platform||[];
+  const active=subs.filter(x=>x.platform==='telr'||x.platform==='revenuecat').reduce((a,x)=>a+Number(x.active_now||0),0);
+  const card=(icon,lbl,big,note)=>`<div class="hu-card"><div class="hu-lbl"><i data-lucide="${icon}"></i> ${lbl}</div><div class="hu-big">${big}</div><div class="hu-note">${note}</div></div>`;
+  return `<div class="mk-grid">
+    ${card('monitor-smartphone','الأجهزة',hrMktN(u.devices),`${hrMktDelta(u.devices,u.prev_period_devices)} رجع منها ${hrMktN(u.returning_devices)} في يومٍ آخر`)}
+    ${card('user-plus','التسجيلات الجديدة',hrMktN(s.total),`${hrMktDelta(s.total,s.prev_period_total)} ${i.activation?`استعمل أداةً ${hrMktN(i.activation.used_a_tool)}، ورجع ${hrMktN(i.activation.came_back_another_day)}`:''}`)}
+    ${card('banknote','دخل الويب (تلر)',rv.web_revenue_sar!=null?HR_ar(rv.web_revenue_sar)+'<small>ر.س</small>':'—',`${hrMktN(rv.web_paid_orders)} طلباً مدفوعاً · اشتراكات آبل خارج هذا الرقم`)}
+    ${card('crown','المشتركون الدافعون الآن',hrMktN(active),subs.map(x=>`${esc(x.platform)}: <b>${HR_ar(x.active_now)}</b>`).join(' · ')||'—')}
+  </div>`;
+}
+
+function hrMktFunnel(i){
+  const rows=i.attribution_funnel;
+  if(rows==null)return '';
+  const body=rows.length?rows.map(r=>`<tr><td>${esc(r.source)}</td><td>${esc(r.campaign)}</td><td>${esc(r.content||'—')}</td><td class="n">${HR_ar(r.visits)}</td><td class="n">${HR_ar(r.devices)}</td><td class="n">${HR_ar(r.signups)}</td><td class="n">${HR_ar(r.paying)}</td></tr>`).join('')
+    :`<tr><td colspan="7" class="hu-note" style="padding:14px 6px">لا زيارات بروابط حملات في المدّة. تأكّد أنّ «الوسم التلقائيّ» (auto-tagging) مفعّل في Google Ads، وأنّ روابط سناب/تيك توك تحمل utm_source.</td></tr>`;
+  const ad=i.ad_landed_devices_opened;
+  return `<div class="hu-card" style="margin-bottom:16px">
+    <div class="hu-h"><h4><i data-lucide="filter"></i> من الإعلان إلى الاشتراك</h4><span class="hu-sub">أوّل لمسة لكلّ جهاز · التسجيل يُربط بجهازه · «يدفع» = اشتراك تلر أو آبل</span></div>
+    <div style="overflow-x:auto"><table class="mk-t"><thead><tr><th>المصدر</th><th>الحملة</th><th>المحتوى</th><th>زيارات</th><th>أجهزة</th><th>سجّلوا</th><th>يدفعون</th></tr></thead><tbody>${body}</tbody></table></div>
+    ${ad&&ad.items.length?`<div class="hu-note" style="margin-top:12px">ما فتحه القادمون من الحملات (${HR_ar(ad.ad_devices_total)} جهازاً): ${ad.items.slice(0,6).map(x=>`<b>${esc(x.name)}</b> ${HR_ar(x.devices)}`).join('، ')}</div>`:''}
+  </div>`;
+}
+
+function hrMktAds(i){
+  const g=i.google_ads;
+  if(!g)return '';
+  const camps=(g.campaigns||[]).map(c=>`<tr><td>${esc(c.name)}<div class="hu-note">${esc(c.type||'')} · ${esc(c.status||'')}</div></td><td class="n">${hrMktSar(c.cost)}</td><td class="n">${hrMktN(c.clicks)}</td><td class="n">${c.ctrPct!=null?HR_ar(c.ctrPct)+'٪':'—'}</td><td class="n">${hrMktN(c.conversions)}</td></tr>`).join('');
+  const acts=(g.conversion_actions||[]).sort((a,b)=>(b.primary?1:0)-(a.primary?1:0)||b.conversions-a.conversions).map(a=>{
+    const real=/sign_?up|purchase/i.test(a.name||'');
+    const flag=a.primary?(real?'<span class="mk-ok">أساسيّ ✓</span>':'<span class="mk-bad">أساسيّ — يضلّل الخوارزمية</span>'):'<span class="hu-note">ثانويّ</span>';
+    return `<tr><td>${esc(a.name)}</td><td>${flag}</td><td class="n">${hrMktN(a.conversions)}</td></tr>`;}).join('');
+  const terms=(g.search_terms||[]).slice(0,12).map(t=>`<tr><td>${esc(t.term)}</td><td class="n">${hrMktN(t.clicks)}</td><td class="n">${hrMktSar(t.cost)}</td><td class="n">${hrMktN(t.conversions)}</td></tr>`).join('');
+  const cats=(g.pmax_search_categories||[]).slice(0,12).map(t=>`<tr><td>${esc(t.category)}</td><td class="n">${hrMktN(t.clicks)}</td><td class="n">—</td><td class="n">${hrMktN(t.conversions)}</td></tr>`).join('');
+  return `<div class="hu-card" style="margin-bottom:16px">
+    <div class="hu-h"><h4><i data-lucide="megaphone"></i> Google Ads — آخر ${HR_ar(g.range_days)} يوماً</h4><span class="hu-sub">لقطة ${esc(hrMktAge(Date.now()-g.snapshot_age_hours*3600000))} · الحساب ${esc(g.account_id||'')}</span></div>
+    <div class="mk-2" style="margin-bottom:0">
+      <div style="overflow-x:auto"><table class="mk-t"><thead><tr><th>الحملة</th><th>الصرف</th><th>نقرات</th><th>CTR</th><th>تحويلات</th></tr></thead><tbody>${camps||'<tr><td colspan="5">—</td></tr>'}</tbody></table></div>
+      <div style="overflow-x:auto"><table class="mk-t"><thead><tr><th>هدف التحويل</th><th>النوع</th><th>العدد</th></tr></thead><tbody>${acts||'<tr><td colspan="3">—</td></tr>'}</tbody></table></div>
     </div>
-  ` : `
-    <div class="hu-card" style="text-align:center;padding:24px">
-      <i data-lucide="brain" style="width:40px;height:40px;color:var(--gold);margin-bottom:10px"></i>
-      <h3>توليد توصيات وكيل الذكاء الاصطناعي الأسبوعية</h3>
-      <p style="color:var(--muted);max-width:550px;margin:8px auto 16px;font-size:13px">
-        يقرأ الوكيل بيانات الاستخدام الحالية في منصتك، ومعدلات التسجيل والاحتفاظ، ويقارنها بأهداف Google Ads ليخرج لك الكلمات والنصوص ومواعيد البث المثالية.
-      </p>
-      <button id="btnMktAi" class="btn btn-gold" onclick="hrMktLoadAi()"><i data-lucide="sparkles"></i> توليد توصيات جديدة بالذكاء الاصطناعي</button>
+    ${terms||cats?`<div style="overflow-x:auto;margin-top:16px"><table class="mk-t"><thead><tr><th>${terms?'عبارات البحث الفعليّة':'فئات البحث (الأداء الأقصى)'}</th><th>نقرات</th><th>الصرف</th><th>تحويلات</th></tr></thead><tbody>${terms||cats}</tbody></table></div>`:''}
+    ${(g.script_errors||[]).length?`<div class="hu-note mk-warn" style="margin-top:10px">أجزاء لم يقرأها السكربت: ${esc(g.script_errors.join(' · '))}</div>`:''}
+  </div>`;
+}
+
+function hrMktReport(){
+  const r=HR_MKT_REPORT,c=(HR_MKT_DATA&&HR_MKT_DATA.config)||{};
+  const runBtn=`<button id="mkRun" class="btn btn-gold btn-sm" onclick="hrMktRun()" ${!c.ready||c.running||(r&&r.status==='running')?'disabled':''}><i data-lucide="sparkles"></i> شغّل الوكيل الآن</button>`;
+  const head=`<div class="hu-h"><h4><i data-lucide="brain"></i> تقرير الوكيل</h4>${runBtn}</div>`;
+  if(!r)return `<div class="hu-card" id="mkReport" style="margin-bottom:16px">${head}<div class="hu-note">${c.ready?'لا تقارير بعد. شغّل الوكيل لأوّل تقرير (دقيقة إلى ثلاث دقائق).':'اربط مفتاح الذكاء الاصطناعيّ في الخادم أوّلاً، ثمّ شغّله من هنا.'}</div></div>`;
+  const meta=`<div class="hu-note" style="margin-bottom:14px">${esc(new Date(r.createdAt).toLocaleString('ar-SA-u-ca-gregory',{dateStyle:'medium',timeStyle:'short'}))} · ${r.trigger==='weekly'?'أسبوعيّ تلقائيّ':'يدويّ'} · آخر ${HR_ar(r.periodDays)} يوماً · <span style="direction:ltr;display:inline-block">${esc(r.model)}</span>${r.durationMs?` · ${HR_ar(Math.round(r.durationMs/1000))} ث`:''}${r.inputTokens?` · ${HR_ar(r.inputTokens)}+${HR_ar(r.outputTokens||0)} رمز`:''}</div>`;
+  if(r.status==='running')return `<div class="hu-card" id="mkReport" style="margin-bottom:16px">${head}${meta}<div class="hu-note"><i data-lucide="loader-2"></i> الوكيل يحلّل البيانات الآن… تتحدّث الصفحة وحدها عند الانتهاء.</div></div>`;
+  if(r.status==='error')return `<div class="hu-card" id="mkReport" style="margin-bottom:16px">${head}${meta}<div class="mk-bad" style="font-weight:700">فشل التشغيل: ${esc(r.error||'')}</div></div>`;
+  const o=r.output||{};
+  const sev=s=>{const v=HR_MKT_SEV[s]||HR_MKT_SEV.low;return `<span style="color:${v[0]};font-weight:900">${v[1]}</span>`;};
+  const pName=p=>`${esc(p)} · ${esc(HR_MKT_PERSONA[p]||'')}`;
+  const diag=(o.diagnosis||[]).map(d=>`<li>${sev(d.severity)} — <b>${esc(d.finding)}</b><div class="mk-m">${esc(d.evidence)}</div></li>`).join('');
+  const acts=(o.google_ads_actions||[]).slice().sort((a,b)=>a.priority-b.priority).map(a=>`<li><b>${a.priority===1?'اليوم':a.priority===2?'هذا الأسبوع':'لاحقاً'}: ${esc(a.action)}</b><div class="mk-m">أين: ${esc(a.where)}</div><div class="mk-m">لماذا: ${esc(a.why)}</div><div class="mk-m">الأثر: ${esc(a.expected_effect)}</div></li>`).join('');
+  const ads=(o.ad_copy||[]).map(a=>`<div class="mk-ad"><div class="f">${pName(a.persona)}</div><div class="h">${esc(a.headline)}</div><div class="d">${esc(a.long_headline)}</div><div class="d">${esc(a.description)}</div><div class="f" style="direction:ltr;text-align:right">${esc(a.landing_path)}</div><div class="f">${esc(a.rationale)}</div><button class="btn btn-ghost btn-sm" onclick='hrMktCopy(this,${hrMktArg([a.headline,a.long_headline,a.description].join("\n"))})'><i data-lucide="copy"></i> نسخ</button></div>`).join('');
+  const themes=(o.search_themes||[]).map(t=>t.theme);
+  const themesHtml=(o.search_themes||[]).map(t=>`<li><b>${esc(t.theme)}</b> <span class="hu-note">— ${pName(t.persona)}</span><div class="mk-m">${esc(t.rationale)}</div></li>`).join('');
+  const neg=o.negative_keywords||[];
+  const sb=o.schedule_and_budget||{};
+  const bids=(sb.bid_adjustments||[]).map(b=>`<tr><td>${esc(b.when)}</td><td class="n" style="color:${b.change_pct>=0?'#22c55e':'#f87171'};font-weight:900"><span dir="ltr">${b.change_pct>0?'+':''}${HR_ar(b.change_pct)}٪</span></td><td>${esc(b.why)}</td></tr>`).join('');
+  const tweaks=(o.product_tweaks||[]).map(t=>`<li><b>${esc(t.tool)}</b>: ${esc(t.change)}<div class="mk-m">المشكلة: ${esc(t.problem)}</div><div class="mk-m">نقيسه بـ: ${esc(t.metric_to_watch)}</div></li>`).join('');
+  const kpis=(o.next_week_kpis||[]).map(k=>`<tr><td>${esc(k.metric)}</td><td>${esc(k.current)}</td><td style="font-weight:900">${esc(k.target)}</td></tr>`).join('');
+  const gaps=(o.measurement_gaps||[]).map(g=>`<li>${esc(g)}</li>`).join('');
+  return `<div class="hu-card" id="mkReport" style="margin-bottom:16px">${head}${meta}
+    <div style="font-size:15.5px;line-height:1.9;font-weight:700;margin-bottom:18px">${esc(o.summary||'')}</div>
+    <div class="mk-2">
+      <div><div class="hu-lbl" style="margin-bottom:10px"><i data-lucide="list-checks"></i> ماذا تفعل في Google Ads</div><ol class="mk-list">${acts||'<li>—</li>'}</ol></div>
+      <div><div class="hu-lbl" style="margin-bottom:10px"><i data-lucide="stethoscope"></i> التشخيص</div><ul class="mk-list">${diag||'<li>—</li>'}</ul></div>
     </div>
-  `;
-
-  const personasHTML = Object.entries(data.personas || {}).map(([key, p]) => `
-    <div style="border:1px solid var(--line);border-radius:10px;padding:12px;background:var(--card-bg, #1e1e1e)">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-weight:800;color:var(--gold)">${key}: ${p.title}</span>
-        <span class="hr-chip" style="font-size:10px">${p.category}</span>
-      </div>
-      <div style="font-size:12px;margin-bottom:4px"><b>الرسالة:</b> «${p.primaryHook}»</div>
-      <div style="font-size:11px;color:var(--muted)"><b>العرض:</b> ${p.defaultCta}</div>
+    ${ads?`<div class="hu-lbl" style="margin:6px 0 10px"><i data-lucide="pen-line"></i> نصوص إعلانيّة (كلّ نصّ لشخصيّة واحدة)</div><div class="mk-ads" style="margin-bottom:16px">${ads}</div>`:''}
+    <div class="mk-2">
+      <div><div class="hu-h" style="margin-bottom:10px"><div class="hu-lbl"><i data-lucide="search"></i> موضوعات البحث</div>${themes.length?`<button class="btn btn-ghost btn-sm" onclick='hrMktCopy(this,${hrMktArg(themes.join("\n"))})'><i data-lucide="copy"></i> نسخ الكلّ</button>`:''}</div><ul class="mk-list">${themesHtml||'<li>—</li>'}</ul></div>
+      <div><div class="hu-h" style="margin-bottom:10px"><div class="hu-lbl"><i data-lucide="ban"></i> كلمات سلبيّة</div>${neg.length?`<button class="btn btn-ghost btn-sm" onclick='hrMktCopy(this,${hrMktArg(neg.join("\n"))})'><i data-lucide="copy"></i> نسخ الكلّ</button>`:''}</div><div class="mk-words">${neg.length?neg.map(esc).join('، '):'—'}</div>
+        <div class="hu-lbl" style="margin:18px 0 8px"><i data-lucide="clock"></i> الجدولة والميزانيّة</div><div class="hu-note" style="font-size:13.5px">${esc(sb.advice||'')}</div>
+        ${bids?`<table class="mk-t" style="margin-top:10px"><tbody>${bids}</tbody></table>`:''}</div>
     </div>
-  `).join('');
-
-  hrSet(`
-    <style>${HRU_CSS}</style>
-    <div class="hru">
-      <div class="hu-top">
-        <div>
-          <h3><i data-lucide="target" style="width:24px;height:24px;vertical-align:-3px;color:var(--gold)"></i> لوحة التسويق وجوجل ادز والـ AI Agent</h3>
-          <p>ربط بيانات استخدام حروف ودروس بإعلانات Google وخوارزميات الذكاء الاصطناعي.</p>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <a class="glass-btn" href="${gAdsUrl}" target="_blank"><i data-lucide="external-link"></i> لوحة إحالات Google Ads</a>
-          ${seg}
-        </div>
-      </div>
-
-      <!-- تنبيه حالة التحويلات -->
-      <div style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.3);padding:14px 18px;border-radius:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
-        <div>
-          <span style="font-weight:700;color:#22c55e"><i data-lucide="check-circle" style="vertical-align:-2px"></i> حالة ربط الإحالات:</span>
-          <span style="font-size:13px;margin-right:8px">الهدف الأساسي: <b>sign_up</b> | الأهداف الثانوية: <b>page_view / lead_form</b> | التحويلات المحسنة: <b>مفعلة (SHA-256)</b></span>
-        </div>
-        <button class="btn btn-sm btn-ghost" onclick="hrMktLoadAi()"><i data-lucide="refresh-cw"></i> تحديث تحليل الـ AI</button>
-      </div>
-
-      <!-- بطاقات المؤشرات الأساسية -->
-      <div class="hu-kpis">
-        <div class="hu-card">
-          <div class="hu-lbl"><i data-lucide="users"></i>المسجلون من الحملات</div>
-          <div class="hu-big">${hruN((data.conversions || []).find(c => c.conversion_event === 'sign_up')?.count || 0)}</div>
-          <div class="hu-note">تسجيلات موثقة من إعلانات Google</div>
-        </div>
-        <div class="hu-card">
-          <div class="hu-lbl"><i data-lucide="mouse-pointer"></i>مغناطيس الزوار (Traffic Magnet)</div>
-          <div class="hu-big" style="font-size:19px;color:var(--gold)">${(data.trafficDrivers && data.trafficDrivers[0]) ? hruName(data.trafficDrivers[0]) : 'لعبة الحروف'}</div>
-          <div class="hu-note">أعلى لعبة فتحاً بنسبة 26% من الزيارات</div>
-        </div>
-        <div class="hu-card">
-          <div class="hu-lbl"><i data-lucide="sparkles"></i>مغناطيس التسجيل والعودة</div>
-          <div class="hu-big" style="font-size:19px;color:#22c55e">${(data.retentionDrivers && data.retentionDrivers[0]) ? hruName(data.retentionDrivers[0]) : 'أسئلتي'}</div>
-          <div class="hu-note">أعلى أداة تدفع لإنشاء حساب والاحتفاظ</div>
-        </div>
-        <div class="hu-card">
-          <div class="hu-lbl"><i data-lucide="shield-check"></i>Enhanced Conversions</div>
-          <div class="hu-big" style="font-size:20px;color:#22c55e">نشط 100٪</div>
-          <div class="hu-note">مزامنة المعلمين بين الجوال واللابتوب</div>
-        </div>
-      </div>
-
-      <!-- صندوق الذكاء الاصطناعي -->
-      ${aiBox}
-
-      <!-- مصفوفة الشخصيات المستهدفة P1..P7 -->
-      <div class="hu-card">
-        <div class="hu-h">
-          <h4><i data-lucide="users" style="color:var(--gold);vertical-align:-3px"></i> الشخصيات المستهدفة في الحملات (Personas P1..P7)</h4>
-          <span class="hu-sub">مرجع الرسائل الإعلانية والمجموعات في Google Ads</span>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px">
-          ${personasHTML}
-        </div>
-      </div>
-
-      <!-- جدول مصادر الزيارات والحملات (UTM Attribution) -->
-      <div class="hu-card">
-        <div class="hu-h">
-          <h4><i data-lucide="link-2" style="color:var(--gold);vertical-align:-3px"></i> مصادر الزيارات والحملات النشطة (UTM & GCLID)</h4>
-          <span class="hu-sub">ربط النقرات بحسابات المسجلين والأجهزة</span>
-        </div>
-        <div style="overflow-x:auto">
-          <table style="width:100%;border-collapse:collapse;font-size:13px">
-            <thead>
-              <tr style="border-bottom:1px solid var(--line);text-align:right;color:var(--muted)">
-                <th style="padding:8px">الحملة (Campaign)</th>
-                <th style="padding:8px">المصدر (Source)</th>
-                <th style="padding:8px">الفئة / المحتوى</th>
-                <th style="padding:8px">الزيارات</th>
-                <th style="padding:8px">الأجهزة</th>
-                <th style="padding:8px">المسجلون</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${(data.utmSummary && data.utmSummary.length) ? data.utmSummary.map(r => `
-                <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
-                  <td style="padding:10px 8px;font-weight:700">${esc(r.campaign)}</td>
-                  <td style="padding:10px 8px"><span class="hr-chip">${esc(r.source)}</span></td>
-                  <td style="padding:10px 8px">${esc(r.content)} (${esc(r.persona)})</td>
-                  <td style="padding:10px 8px">${hruN(r.visits)}</td>
-                  <td style="padding:10px 8px">${hruN(r.devices)}</td>
-                  <td style="padding:10px 8px;font-weight:700;color:#22c55e">${hruN(r.registered_users)}</td>
-                </tr>
-              `).join('') : `
-                <tr><td colspan="6" style="padding:24px;text-align:center;color:var(--muted)">لا توجد زيارات مسجلة بـ UTM في هذه الفترة بعد.</td></tr>
-              `}
-            </tbody>
-          </table>
-        </div>
-      </div>
+    <div class="mk-2" style="margin-bottom:0">
+      <div><div class="hu-lbl" style="margin-bottom:10px"><i data-lucide="wrench"></i> تعديلات في المنتج</div><ul class="mk-list">${tweaks||'<li>—</li>'}</ul>
+        ${gaps?`<div class="hu-lbl" style="margin:18px 0 10px"><i data-lucide="eye-off"></i> نواقص القياس</div><ul class="mk-list">${gaps}</ul>`:''}</div>
+      <div><div class="hu-lbl" style="margin-bottom:10px"><i data-lucide="target"></i> مؤشّرات الأسبوع القادم</div>${kpis?`<table class="mk-t"><thead><tr><th>المقياس</th><th>الآن</th><th>الهدف</th></tr></thead><tbody>${kpis}</tbody></table>`:'—'}</div>
     </div>
-  `);
-  refreshIcons();
+  </div>`;
+}
+
+function hrMktHistory(){
+  const h=HR_MKT_HISTORY||[];
+  if(h.length<2)return '';
+  const cur=HR_MKT_REPORT&&HR_MKT_REPORT.id;
+  return `<div class="hu-card mk-hist" style="margin-bottom:16px"><div class="hu-h"><h4><i data-lucide="history"></i> التقارير السابقة</h4></div>
+    ${h.map(r=>`<button class="${r.id===cur?'on':''}" onclick="hrMktOpen(${Number(r.id)})"><b>${esc(new Date(r.createdAt).toLocaleDateString('ar-SA-u-ca-gregory',{dateStyle:'medium'}))}</b> · ${r.trigger==='weekly'?'أسبوعيّ':'يدويّ'} · ${r.status==='ok'?'':r.status==='running'?'<span class="mk-warn">قيد التشغيل</span> · ':'<span class="mk-bad">فشل</span> · '}<span class="hu-note">${esc((r.summary||r.error||'').slice(0,140))}</span></button>`).join('')}
+  </div>`;
+}
+
+function hrMktRender(){
+  const d=HR_MKT_DATA;if(!d)return;
+  const i=d.input||{};
+  const seg=`<div class="hu-seg">${[7,14,30,90].map(x=>`<button class="${HR_MKT_DAYS===x?'on':''}" onclick="hrMktSetDays(${x})">${hruN(x)} يوم</button>`).join('')}</div>`;
+  const gaps=(i.data_gaps||[]);
+  hrSet(`<style>${HRU_CSS}${HR_MKT_CSS}</style><div class="hru">
+    <div class="hu-top"><div><h3><i data-lucide="target" style="width:30px;height:30px"></i> التسويق والوكيل</h3>
+      <p>من نقرة الإعلان إلى التسجيل والاشتراك، وتقرير الوكيل بما تغيّره في Google Ads والمنتج.</p></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">${seg}
+        <button class="btn btn-ghost btn-sm" onclick="hrMktToggleJson()"><i data-lucide="braces"></i> مدخل الوكيل</button></div></div>
+    <div id="mkJson" class="hu-card" style="margin-bottom:16px" hidden><div class="hu-h"><h4>ما يراه الوكيل (أرقام مجمّعة، بلا أسماء ولا بريد)</h4><button class="btn btn-ghost btn-sm" onclick="hrMktCopyJson(this)"><i data-lucide="copy"></i> نسخ</button></div><pre class="mk-json">${esc(JSON.stringify(i,null,2))}</pre></div>
+    ${hrMktStatus(d)}
+    ${gaps.length?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="alert-triangle"></i><div><b>نواقص في البيانات:</b><ul style="margin:6px 0 0;padding-inline-start:18px">${gaps.map(g=>`<li>${esc(g)}</li>`).join('')}</ul></div></div>`:''}
+    ${hrMktKpis(i)}
+    ${hrMktReport()}
+    ${hrMktFunnel(i)}
+    ${hrMktAds(i)}
+    ${hrMktHistory()}
+  </div>`);
 }
