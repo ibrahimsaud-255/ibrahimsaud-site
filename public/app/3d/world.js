@@ -8,8 +8,9 @@
  */
 import * as THREE from 'three';
 import {Reflector} from 'three/addons/objects/Reflector.js';
-import {buildCampus} from './campus.js?v=3';
-import {buildMemories} from './memories.js?v=2';
+import {buildCampus} from './campus.js?v=4';
+import {buildMemories} from './memories.js?v=3';
+import {buildFun} from './fun.js?v=1';
 
 const W=window.W3D;
 const FONT='"Thmanyah Sans","Tajawal",system-ui,sans-serif',SERIF='"Thmanyah Serif","Thmanyah Sans",serif';
@@ -123,7 +124,8 @@ function floorLamp(x,z){const g=grp(x,0,z);
   for(let i=0;i<3;i++){const a=i*Math.PI*2/3+.4;const l=cyl(.013,.013,1.48,0xcfae84,Math.sin(a)*.13,0,Math.cos(a)*.13,g,5);l.rotation.set(-Math.cos(a)*.15,0,Math.sin(a)*.15)}
   const sh=new THREE.Mesh(new THREE.CylinderGeometry(.19,.26,.3,10,1,true),mat(0x58544f,{side:THREE.DoubleSide,roughness:1}));sh.position.y=1.58;put(sh,g);
   const bulb=new THREE.Mesh(new THREE.SphereGeometry(.05,8,6),new THREE.MeshBasicMaterial({color:0xffe2b0}));bulb.position.y=1.5;g.add(bulb);
-  lampLight.position.set(x,1.48,z);scene.add(lampLight);return solid(g,-.06)}
+  lampLight.position.set(x,1.48,z);scene.add(lampLight);LAMP={group:g,light:lampLight,bulb};return solid(g,-.06)}
+let LAMP=null;
 floorLamp(-.2,-2.72);
 
 // رفّ السلّم الخشبيّ والمصحف
@@ -286,7 +288,7 @@ box(.34,.17,.05,0x111111,.05,1.62,Z1-.03,scene);box(.04,.02,.01,0x34d058,.05,1.7
 box(.12,.09,.04,0xf2f2f2,-1.98,1.6,Z1-.025,scene);
 
 // وحدة الرفوف الخشبيّة ومعدّات التصوير
-let gearShelf;
+let gearShelf,RC;const PADS=[];
 {const g=grp(.15,0,Z1-.22);gearShelf=g;const C=OAK,w=.88,d=.42;
   for(const sx of[-w/2,w/2])box(.035,2.05,d,C,sx,0,0,g);box(w+.035,.02,d,C,0,2.03,0,g);
   box(w,2.05,.01,0x3d3f42,0,0,d/2-.005,g,false);
@@ -294,7 +296,8 @@ let gearShelf;
   // الرف الأدنى: رودكاستر بأزرار مضيئة
   box(.38,.045,.24,0x141414,-.12,.085,-.02,g).rotation.x=-.06;
   const pads=[0xff3b6b,0xff8a1f,0x2ee66d,0x26c6ff,0xffd22e,0xff4fd8,0x6c7bff,0x2ee6c8];
-  pads.forEach((c,i)=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.035,.012,.035),new THREE.MeshBasicMaterial({color:c,toneMapped:false}));p.position.set(-.26+(i%4)*.045,.135,-.06+Math.floor(i/4)*.045);g.add(p)});
+  RC=grp(0,0,0,0,g); // أزرار تعزف (fun.js)
+  pads.forEach((c,i)=>{const p=new THREE.Mesh(new THREE.BoxGeometry(.035,.012,.035),new THREE.MeshBasicMaterial({color:c,toneMapped:false}));p.position.set(-.26+(i%4)*.045,.135,-.06+Math.floor(i/4)*.045);RC.add(p);PADS.push(p)});
   const scr=new THREE.Mesh(new THREE.BoxGeometry(.09,.01,.06),new THREE.MeshBasicMaterial({color:0xd8c79a,toneMapped:false}));scr.position.set(-.02,.137,-.03);g.add(scr);
   box(.32,.12,.24,0x4a4a4a,.22,.085,0,g);
   // الرف الثاني: كانون + زي كام + سمّاعات
@@ -368,7 +371,7 @@ function drawScreen(g,w,h){
     if(u){g.fillStyle='#71717a';g.font='400 24px '+FONT;g.fillText(u,x+cw-28,cy+182)}});
   rrect(g,w/2-210,522,420,58,29);g.fillStyle=GOLD;g.fill();g.fillStyle='#0a0a0a';g.font='700 28px '+FONT;g.textAlign='center';
   g.fillText(signed?(isTouch?'اضغط «افتح» لفتح النظام':'اضغط E لفتح النظام'):'سجّل دخولك — اضغط هنا',w/2,561);
-  if(W.demo){g.textAlign='left';g.direction='ltr';g.fillStyle='#f59e0b';g.font='700 22px '+FONT;g.fillText('DEMO',28,620)}
+  if(W.demo||(K&&K.guest)){g.textAlign='left';g.fillStyle='#f59e0b';g.font='700 24px '+FONT;g.fillText(K&&K.guest?'وضع العرض · أرقام توضيحيّة':'DEMO',28,620)}
 }
 /* ── رسم لوحة الفلّين ── */
 function drawCork(g,w,h){
@@ -388,6 +391,8 @@ function drawCork(g,w,h){
 /* ══════════════════ اللاعب ══════════════════ */
 const C={THREE,scene,mat,M,put,box,cyl,ball,grp,plane,rnd,ctex,paint,tmat,rrect,wrap,fmt,solid,block,act,palm,openSys,openPanel,toast,info:setInfo,getK:()=>K,ACTS,COL,FONT,SERIF,GOLD};
 const CAMPUS=buildCampus(C);
+Object.assign(C,{bounds:CAMPUS.bounds,PADS,rc:RC,lamp:LAMP});
+const FUN=buildFun(C);
 bakeSolids();
 const P={x:.25,y:0,z:-.15,vx:0,vz:0,vy:0,ground:true,yaw:Math.PI-.12,pitch:-.06};
 const R=.24,STEP=.36,EYE=1.62,G=19,JUMP=5.6;
@@ -409,7 +414,7 @@ function step(dt){
   if(!P.launch){P.vx+=(tx-P.vx)*k;P.vz+=(tz-P.vz)*k} // أثناء قفزة المنصّة لا نتحكّم في المسار
   let nx=P.x+P.vx*dt;if(!hits(nx,P.z,P.y))P.x=nx;else if(!P.launch)P.vx=0;
   let nz=P.z+P.vz*dt;if(!hits(P.x,nz,P.y))P.z=nz;else if(!P.launch)P.vz=0;
-  const B=CAMPUS.bounds;P.x=Math.max(B.x0,Math.min(B.x1,P.x));P.z=Math.max(B.z0,Math.min(B.z1,P.z));
+  const B=CAMPUS.bounds;if(P.x<B.x0){P.x=Math.max(B.lane.x0,P.x);P.z=Math.max(B.lane.z0,Math.min(B.lane.z1,P.z))}else P.x=Math.min(B.x1,P.x);if(P.x>=B.x0)P.z=Math.max(B.z0,Math.min(B.z1,P.z));
   P.vy-=G*dt;let ny=P.y+P.vy*dt;const gnd=groundAt(P.x,P.z,P.y);
   if(ny<=gnd){if(!P.ground&&P.vy<-3)bob=-.06;ny=gnd;P.vy=0;P.ground=true;P.launch=false}else P.ground=false;
   if(P.x<X1&&P.x>X0&&P.z>Z0&&P.z<Z1&&ny+1.78>RH){ny=RH-1.78;if(P.vy>0)P.vy=0} // سقف الاستوديو فقط
@@ -443,7 +448,10 @@ function pause(title,panel){
 }
 // لوحة HTML داخل الإطار نفسه (الخريطة، معرض الذكريات) — بلا النظام
 function openPanel(title,html,onClick){pause(title,true);const b=$('panelBody');b.innerHTML=html;b.scrollTop=0;b.onclick=onClick||null}
+// وضع العرض: الشاشة تشرح ما تفعله بدل أن تفتح النظام وبياناته
+const GUIDE={home:'لوحة التحكّم: نظرة يوميّة على المحصّل والمستحقّ والعروض والمهام.',invoicing:'الفواتير: إصدار فواتير عاديّة أو ضريبيّة برمز QR، وتسجيل الدفعات والتحصيل.',sales:'عروض الأسعار: إنشاء العرض وإرساله وتحويله إلى فاتورة بنقرة.',quotedesign:'مصمّم العروض: قوالب عروض الأسعار بهويّة المنشأة.',products:'المنتجات والخدمات: الباقات والأسعار التي تُبنى منها العروض.',pricing:'مستشار التسعير: يقترح سعر المشروع من نطاقه ومدّته.',projects:'المشاريع والمهام: لوحات بنمط Trello لكلّ مشروع ومراحله.',calendar:'التقويم: المواعيد مع Google Calendar في مكان واحد.',dashboards:'لوحات المؤشّرات: الأرقام المهمّة في رسوم ولوحات.',settings:'الإعدادات: الهويّة، ونوع الفاتورة، وبيانات المنشأة.',accounting:'المحاسبة: دفتر يوميّة موحّد وقوائم ماليّة متوازنة تلقائيّاً.',subs:'الاشتراكات: كلّ اشتراك شهريّ أو سنويّ وتكلفته.',suppliers:'الموردون: من تشتري منهم وماذا.',crm:'العملاء: كلّ عميل في مرحلته من أوّل تواصل حتى التسليم.',pipeline:'خطّ المبيعات: الفرص وقيمتها المتوقّعة.',contacts:'جهات الاتصال: كلّ من تتعامل معه في مكان واحد.',partners:'الشركاء: برنامج شركاء مؤتمت.',blog:'المدوّنة: كتابة المقالات ونشرها على الموقع.',newsletter:'القائمة البريدية: المشتركون وإرسال الرسائل.',sitework:'أعمال الموقع: الأعمال والشعارات المعروضة في الموقع.',huroof:'حروف ودروس: لوحة إدارة المنصّة التعليميّة.',boards:'الخرائط الذهنية: لوحات حرّة بنمط Freeform تُشارَك برابط.',workspace:'مساحة العمل: تقويم المحتوى والحملات.',desktop:'سطح المكتب: كلّ تطبيقات النظام في شاشة واحدة.',lab:'المختبر: أدوات وتجارب جديدة.',habits:'العادات: تتبّع يوميّ وشجرة تُثمر.',appointments:'المواعيد: الحجوزات القادمة.'};
 function openSys(view,title){
+  if(W.guest){openPanel(title,`<div class="mem"><div class="yr">وضع العرض</div><h2>${title}</h2><p>${GUIDE[view]||'جزء من نظام إبراهيم سعود.'}</p><p style="color:#A1A1AA;font-size:14px">هذا عرض للزوّار — البيانات الحقيقيّة مخفيّة، والأرقام في العالم توضيحيّة.</p></div>`);return}
   pause(title,false);usedSys=true;
   let done=false;
   try{const w=frame.contentWindow,shell=frame.contentDocument&&frame.contentDocument.getElementById('appShell');
@@ -500,7 +508,10 @@ let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.remo
 
 /* ── البيانات ── */
 function refreshData(){paint(screenTex);paint(corkTex);CAMPUS.refresh()}
-function setStatus(){const s=$('status');s.classList.toggle('ok',!!(K&&K.signed));s.lastElementChild.textContent=K&&K.signed?(K.demo?'نسخة تجريبيّة — أرقام محلّيّة':'متّصل ببياناتك'):'غير مسجّل — الأرقام مخفيّة؛ سجّل من شاشة المكتب'}
+// زرّ وضع العرض: للمالك فقط، ليعرض العالم على أحد دون بياناته
+async function toggleGuest(){W.guest=!W.guest;K=await W.load();refreshData();setStatus();toast(W.guest?'وضع العرض: أرقام توضيحيّة، والشاشات لا تفتح النظام':'رجعت بياناتك الحقيقيّة')}
+$('guestBtn').onclick=toggleGuest;
+function setStatus(){$('guestBtn').classList.toggle('hidden',!W.signed);$('guestBtn').classList.toggle('on',!!W.guest);if(K&&K.guest){const s=$('status');s.classList.add('ok');s.lastElementChild.textContent=W.signed?'وضع العرض — بياناتك مخفيّة':'جولة زائر — الأرقام توضيحيّة';return}const s=$('status');s.classList.toggle('ok',!!(K&&K.signed));s.lastElementChild.textContent=K&&K.signed?(K.demo?'نسخة تجريبيّة — أرقام محلّيّة':'متّصل ببياناتك'):'غير مسجّل — الأرقام مخفيّة؛ سجّل من شاشة المكتب'}
 
 /* ── الحلقة ── */
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
@@ -508,14 +519,14 @@ const clk=new THREE.Clock();let tick=0;
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05);
   if(playing)step(dt);else camera.position.set(P.x,P.y+EYE,P.z),camera.rotation.set(P.pitch,P.yaw,0);
   if(playing)aim();
-  CAMPUS.update(dt,P,G,playing);
+  CAMPUS.update(dt,P,G,playing);FUN.update(dt,P,playing);
   // الباب يُفتح حين تقترب، والمرآة لا تُرسم وأنت خارج الغرفة
   const near=Math.hypot(P.x-X1,P.z-(DOOR.z0+DOOR.z1)/2)<2.4;doorA+=((near?-1.45:0)-doorA)*Math.min(1,dt*5);door.rotation.y=doorA;
   if(mirror)mirror.visible=P.x<X1+1.5&&P.z>Z0-.5&&P.z<Z1+.5;
   if((tick+=dt)>30){tick=0;paint(screenTex);paint(clockFace)}
   renderer.render(scene,camera)}
 
-if(/[?&]debug/.test(location.search))window.W3DBG={P,camera,scene,step,aim,ACTS,COL,get target(){return target},interact,view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.85)},tick:dt=>{step(dt);CAMPUS.update(dt,P,G,true)},setPlaying:v=>{playing=v;$('start').classList.add('hidden')}};
+if(/[?&]debug/.test(location.search))window.W3DBG={P,camera,scene,step,aim,ACTS,COL,get target(){return target},interact,view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.85)},tick:dt=>{step(dt);CAMPUS.update(dt,P,G,true);FUN.update(dt,P,true)},setPlaying:v=>{playing=v;$('start').classList.add('hidden')}};
 /* ── الإقلاع ── */
 (async()=>{
   if(isTouch){$('keysDesk').classList.add('hidden');$('keysTouch').classList.remove('hidden')}

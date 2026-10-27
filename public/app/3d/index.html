@@ -40,6 +40,7 @@
   .card p{margin:0 0 18px;color:var(--muted);line-height:1.7;font-size:14.5px}
   .keys{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;font-size:13.5px;margin-bottom:20px;align-items:center}
   .keys kbd{font-family:inherit;background:#262626;border:1px solid #333;border-bottom-width:2px;border-radius:7px;padding:2px 8px;font-size:12.5px;white-space:nowrap;justify-self:start}
+  .tour{font-size:13.5px!important;background:rgba(232,199,102,.08);border:1px solid rgba(232,199,102,.25);border-radius:12px;padding:10px 12px;color:#e4e4e7!important}
   .go{width:100%;background:var(--gold);color:#0a0a0a;border:0;border-radius:12px;padding:13px;font-size:16px;font-weight:700}
   .status{margin-top:14px;font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:center}
   .status i{width:7px;height:7px;border-radius:50%;background:#71717a}
@@ -61,6 +62,7 @@
 
   /* الخريطة، لوحة المعلومات، المعرض */
   .mapbtn{position:fixed;top:calc(12px + env(safe-area-inset-top));left:96px;z-index:5;background:rgba(23,23,23,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink)}
+  .guestbtn{left:196px}.guestbtn.on{background:var(--gold);color:#0a0a0a;border-color:var(--gold)}
   .mapbtn kbd{font-family:inherit;color:var(--gold);margin-right:6px}
   #info{position:fixed;top:calc(58px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:5;background:rgba(10,10,10,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(232,199,102,.4);border-radius:16px;padding:12px 20px;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;min-width:220px}
   #info b{font-family:"Thmanyah Serif",serif;font-size:22px;color:var(--gold)}
@@ -78,7 +80,7 @@
   .mem .ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
   .mem .ph img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;background:#171717}
   .mem .ph img.big{grid-column:1/-1;aspect-ratio:auto;cursor:zoom-out}
-  @media (max-width:700px){.mapbtn{left:16px;top:calc(52px + env(safe-area-inset-top))}#sys.panel{inset:0}}
+  @media (max-width:700px){.mapbtn{left:16px;top:calc(52px + env(safe-area-inset-top))}.guestbtn{left:116px}#sys.panel{inset:0}}
 
   /* لمس */
   .touch{display:none}
@@ -94,7 +96,7 @@
 <script src="../js/01-core.js?v=6"></script>
 <script src="../js/04-home.js?v=3"></script>
 <script src="../js/05-helpers.js?v=4"></script>
-<script src="./data.js?v=2"></script>
+<script src="./data.js?v=3"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
@@ -103,6 +105,7 @@
 <div class="brand"><i></i><b>إبراهيم سعود</b><span>الاستوديو</span></div>
 <a class="back" href="../">النظام ↗</a>
 <button class="mapbtn" id="mapBtn"><kbd>M</kbd>الخريطة</button>
+<button class="mapbtn guestbtn hidden" id="guestBtn">وضع العرض</button>
 <div id="info" class="hidden"></div>
 <div id="cross"></div>
 <div id="hint" class="hidden"></div>
@@ -131,6 +134,7 @@
     <kbd>اسحب يميناً</kbd><span>النظر</span>
     <kbd>افتح</kbd><span>يظهر حين تقترب من شيء</span>
   </div>
+  <p class="tour" id="tour">جرّب: اركل الكرة في الساحة، اضغط زرّ الاحتفال، اقفز فوق أعمدة المبيعات، اعزف على أزرار RØDECaster، اطلب قهوة في المجلس، وامشِ في ممرّ الذكريات.</p>
   <button class="go" id="enter">ادخل الاستوديو</button>
   <div class="status" id="status"><i></i><span>…</span></div>
 </div></div>
@@ -141,6 +145,6 @@
   <div id="panelBody"></div>
 </div>
 
-<script type="module" src="./world.js?v=4"></script>
+<script type="module" src="./world.js?v=7"></script>
 </body>
 </html>

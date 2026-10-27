@@ -29,9 +29,10 @@ const sky=new THREE.Mesh(new THREE.SphereGeometry(190,24,16),new THREE.MeshBasic
 const moonLight=new THREE.DirectionalLight(0x8fa4ff,.45);moonLight.position.set(-70,85,-120);scene.add(moonLight);
 
 const sandTex=ctex(256,256,(g,w,h)=>{g.fillStyle='#b48f62';g.fillRect(0,0,w,h);const r=rnd(5);for(let i=0;i<1400;i++){g.fillStyle=r()<.5?'rgba(90,60,30,.10)':'rgba(255,230,190,.10)';g.fillRect(r()*w,r()*h,2,2)}},{repeat:[36,36]});
-{const gr=new THREE.Mesh(new THREE.PlaneGeometry(160,160),tmat(sandTex,{roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.set(PC.x,-.004,PC.z);gr.receiveShadow=true;scene.add(gr)}
+{const gr=new THREE.Mesh(new THREE.PlaneGeometry(240,240),tmat(sandTex,{roughness:1}));gr.rotation.x=-Math.PI/2;gr.position.set(PC.x,-.004,PC.z);gr.receiveShadow=true;scene.add(gr)}
 // كثبان حول الحدود
-{const r=rnd(13);for(let i=0;i<34;i++){const a=i/34*Math.PI*2,R=46+r()*8;const d=new THREE.Mesh(new THREE.IcosahedronGeometry(6+r()*5,1),mat(0xa9845a,{roughness:1}));d.scale.y=.28+r()*.2;d.position.set(PC.x+Math.cos(a)*R*1.05,-.6,PC.z+Math.sin(a)*R*.95);d.rotation.y=r()*3;scene.add(d)}}
+{const r=rnd(13);for(let i=0;i<34;i++){const a=i/34*Math.PI*2,R=46+r()*8;const dx=PC.x+Math.cos(a)*R*1.05,dz=PC.z+Math.sin(a)*R*.95;if(dx<-8&&Math.abs(dz-4.4)<18)continue; // طريق الذكريات غرباً
+  const d=new THREE.Mesh(new THREE.IcosahedronGeometry(6+r()*5,1),mat(0xa9845a,{roughness:1}));d.scale.y=.28+r()*.2;d.position.set(PC.x+Math.cos(a)*R*1.05,-.6,PC.z+Math.sin(a)*R*.95);d.rotation.y=r()*3;scene.add(d)}}
 
 /* ══════════ قطع متكرّرة ══════════ */
 function lantern(x,z,h=2.4){const g=grp(x,0,z);cyl(.05,.07,h,0x1d1d1d,0,0,0,g,6);box(.24,.3,.24,0x1d1d1d,0,h,0,g);
@@ -267,5 +268,6 @@ function update(dt,P,G,live=true){
   if(a!==active){active=a;const d=a>=0&&VAL[a].d;
     info(d?`<b>${d.title||d.label}</b><span>محصّل <em>${money(d.collected)}</em></span><span>مفوتر ${money(d.invoiced)} · ${fmt(d.count)} فاتورة</span>`:(a>=0?'<b>لا بيانات</b>':null))}
 }
-return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:33}};
+// غرب x0 لا يُمشى إلا على طريق الذكريات (lane)
+return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:33,lane:{x0:-80,z0:4.4-6.4,z1:4.4+6.4}}};
 }

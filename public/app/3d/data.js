@@ -12,11 +12,13 @@ let S=JSON.parse(JSON.stringify(def));
 const W3D={
   demo:/[?&]demo=/.test(location.search),
   signed:false,
+  // وضع العرض للزوّار: أرقام توضيحيّة ولا يُفتح النظام. تلقائيّ لغير المسجّل، ويبدّله المالك بزرّ
+  guest:/[?&]guest=/.test(location.search),
   // تحميل كامل: الجلسة ثمّ السحابة (مصدر الحقيقة)
   async load(){
     if(this.demo){this._local('ws_demo_v1');return w3dKpis()}
     try{const {data}=await sb.auth.getSession();const u=data&&data.session&&data.session.user;this.signed=!!(u&&u.email&&u.email.toLowerCase()===ADMIN_EMAIL)}catch(_){this.signed=false}
-    if(!this.signed)return w3dKpis();
+    if(!this.signed||this.guest){this.guest=true;return w3dSample()}
     this._local(KEY);
     try{const {data:rows,error}=await sb.from('app_state').select('data').limit(1);if(!error&&rows&&rows[0])S=deepMerge(JSON.parse(JSON.stringify(def)),rows[0].data||{})}catch(_){}
     return w3dKpis();
@@ -24,6 +26,7 @@ const W3D={
   // بعد إغلاق النظام: الإطار كتب localStorage فوراً (والسحابة بتأخير)، فنقرأ المحلّيّ
   async reload(){
     if(this.demo){this._local('ws_demo_v1');return w3dKpis()}
+    if(this.guest)return w3dSample();
     if(!this.signed)return this.load();
     this._local(KEY);return w3dKpis();
   },
@@ -59,4 +62,13 @@ function w3dClients(){const m={};(S.invoices||[]).forEach(x=>{const n=(x.contact
 // مراحل العملاء: عددها وقيمتها — فوانيس «المجلس»
 function w3dStages(){const cs=(S.contacts||[]).filter(c=>(c.type||'عميل')!=='مورد');return (S.clientStages||[]).map(st=>{const l=cs.filter(c=>(c.stageKey||S.clientStages[0].key)===st.key);return {label:st.label,count:l.length,value:l.reduce((a,c)=>a+Number(c.value||0),0),lost:!!st.lost,final:!!st.final}})}
 function w3dHabits(){const h=S.habits||{};const list=Array.isArray(h.list)?h.list:[];const log=(h.log||{})[localDay()]||{};return {total:list.length,done:list.filter(x=>log[x.id]).length}}
+// أرقام توضيحيّة ثابتة لوضع العرض — لا تمسّ بيانات أحد
+function w3dSample(){const now=new Date();const mv=[18,22,15,27,31,26,34,29,38,42,36,47];
+  const months=mv.map((v,i)=>{const d=new Date(now.getFullYear(),now.getMonth()-11+i,1);return {key:'',label:d.toLocaleDateString('ar-EG-u-nu-latn',{month:'short'}),title:d.toLocaleDateString('ar-EG-u-nu-latn',{month:'long',year:'numeric'}),value:v*1000,collected:v*1000,invoiced:v*1150,count:3+i%5}});
+  const cn=['متجر إلكترونيّ','عيادة','مطعم','جمعيّة خيريّة','مدرسة','شركة تقنية','معرض سيّارات','مقهى','مكتب محاماة','صالون','أكاديميّة','فندق'];
+  const clients=cn.map((n,i)=>({label:n,title:n,value:(60-i*4.4)*1000,invoiced:(60-i*4.4)*1000,collected:(52-i*4)*1000,count:9-Math.floor(i/2)}));
+  const st=['عميل جديد','مؤهّل','أُرسل عرض السعر','تفاوض ومراجعة','تم الاعتماد','قيد التنفيذ','تم التسليم','لم يكتمل'],sc=[6,4,5,3,7,4,9,2];
+  return {guest:true,signed:true,demo:false,owner:'إبراهيم سعود',cur:'ر.س',month:now.toLocaleDateString('ar-EG-u-nu-latn',{month:'long'}),
+    collected:47000,due:12500,quotes:5,taskCount:8,tasks:[],months,clients,stages:st.map((l,i)=>({label:l,count:sc[i],value:sc[i]*8000,lost:i===7,final:i>=6})),
+    habits:{total:6,done:4},yearCollected:mv.slice(-10).reduce((a,v)=>a+v*1000,0),subsCount:6,subsMonthly:890,contacts:44}}
 window.W3D=W3D;
