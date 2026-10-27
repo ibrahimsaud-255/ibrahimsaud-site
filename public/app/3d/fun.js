@@ -14,6 +14,7 @@ let AC=null;const ac=()=>{if(!AC)AC=new (window.AudioContext||window.webkitAudio
 function tone(f,d=.15,type='sine',v=.2,to=0,at=0){const a=ac(),t=a.currentTime+at,o=a.createOscillator(),g=a.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(g).connect(a.destination);o.start(t);o.stop(t+d+.02)}
 function noise(d=.2,v=.3,freq=800,type='highpass',at=0){const a=ac(),t=a.currentTime+at,b=a.createBuffer(1,Math.ceil(a.sampleRate*d),a.sampleRate),c=b.getChannelData(0);for(let i=0;i<c.length;i++)c[i]=(Math.random()*2-1)*(1-i/c.length);
   const s=a.createBufferSource();s.buffer=b;const f=a.createBiquadFilter();f.type=type;f.frequency.value=freq;const g=a.createGain();g.gain.value=v;s.connect(f).connect(g).connect(a.destination);s.start(t)}
+C.sfx={tone,noise,ac}; // تشاركه arena.js
 const kick=at=>tone(150,.22,'sine',.5,45,at),snare=at=>{noise(.16,.35,1500,'highpass',at);tone(190,.08,'triangle',.18,0,at)},hat=at=>noise(.05,.18,7000,'highpass',at);
 
 /* ── RØDECaster: إيقاع من ٨ خطوات وأزرار تومض ── */

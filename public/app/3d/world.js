@@ -8,9 +8,10 @@
  */
 import * as THREE from 'three';
 import {Reflector} from 'three/addons/objects/Reflector.js';
-import {buildCampus} from './campus.js?v=6';
+import {buildCampus} from './campus.js?v=7';
 import {buildMemories} from './memories.js?v=5';
-import {buildFun} from './fun.js?v=1';
+import {buildFun} from './fun.js?v=3';
+import {buildArena} from './arena.js?v=3';
 
 const W=window.W3D;
 const FONT='"Thmanyah Sans","Tajawal",system-ui,sans-serif',SERIF='"Thmanyah Serif","Thmanyah Sans",serif';
@@ -393,6 +394,7 @@ const C={THREE,scene,mat,M,put,box,cyl,ball,grp,plane,rnd,ctex,paint,tmat,rrect,
 const CAMPUS=buildCampus(C);
 Object.assign(C,{bounds:CAMPUS.bounds,PADS,rc:RC,lamp:LAMP});
 const FUN=buildFun(C);
+const ARENA=buildArena(Object.assign(C,{camera}));
 bakeSolids();
 const P={x:.25,y:0,z:-.15,vx:0,vz:0,vy:0,ground:true,yaw:Math.PI-.12,pitch:-.06};
 const R=.24,STEP=.36,EYE=1.62,G=19,JUMP=5.6;
@@ -401,14 +403,16 @@ function hits(x,z,y){for(const c of COL){if(c.top<=y+STEP||c.y0>=y+1.75)continue
 function groundAt(x,z,y){let gnd=0;const r=R*.55;for(const c of COL){if(c.top>y+STEP)continue;if(x+r>c.x0&&x-r<c.x1&&z+r>c.z0&&z-r<c.z1)gnd=Math.max(gnd,c.top)}return gnd}
 function jump(){if(P.ground){P.vy=JUMP;P.ground=false}}
 const joy={id:null,x0:0,y0:0,dx:0,dy:0},look={id:null,x:0,y:0};
-let bob=0;
+// إحساس الكاميرا كألعاب الشوتر: اهتزاز خطوات، تمايل جانبيّ، ميل مع الانعطاف الجانبيّ، توسّع الرؤية عند الجري، وهبوط بعد القفز
+let bob=0,phase=0,roll=0,fovK=0,landK=0;const FOV0=camera.fov;
 function step(dt){
   let f=0,s=0;
   if(keys.has('KeyW')||keys.has('ArrowUp'))f++;if(keys.has('KeyS')||keys.has('ArrowDown'))f--;
   if(keys.has('KeyD')||keys.has('ArrowRight'))s++;if(keys.has('KeyA')||keys.has('ArrowLeft'))s--;
   if(joy.id!==null){f-=joy.dy;s+=joy.dx}
   const len=Math.hypot(f,s);if(len>1){f/=len;s/=len}
-  const sp=(keys.has('ShiftLeft')||keys.has('ShiftRight'))?4.3:2.5;
+  // الجري: Shift، أو دفع العصا لآخرها على الجوال
+  const run=keys.has('ShiftLeft')||keys.has('ShiftRight')||(joy.id!==null&&Math.hypot(joy.dx,joy.dy)>.92),sp=run?9.5:3.6;
   const sn=Math.sin(P.yaw),cs=Math.cos(P.yaw);
     const tx=(-sn*f+cs*s)*sp,tz=(-cs*f-sn*s)*sp,k=1-Math.exp(-dt*(P.ground?12:4));
   if(!P.launch){P.vx+=(tx-P.vx)*k;P.vz+=(tz-P.vz)*k} // أثناء قفزة المنصّة لا نتحكّم في المسار
@@ -416,12 +420,21 @@ function step(dt){
   let nz=P.z+P.vz*dt;if(!hits(P.x,nz,P.y))P.z=nz;else if(!P.launch)P.vz=0;
   const B=CAMPUS.bounds;if(P.x<B.x0){P.x=Math.max(B.lane.x0,P.x);P.z=Math.max(B.lane.z0,Math.min(B.lane.z1,P.z))}else P.x=Math.min(B.x1,P.x);if(P.x>=B.x0)P.z=Math.max(B.z0,Math.min(B.z1,P.z));
   P.vy-=G*dt;let ny=P.y+P.vy*dt;const gnd=groundAt(P.x,P.z,P.y);
-  if(ny<=gnd){if(!P.ground&&P.vy<-3)bob=-.06;ny=gnd;P.vy=0;P.ground=true;P.launch=false}else P.ground=false;
+  if(ny<=gnd){if(!P.ground&&P.vy<-3)landK=Math.min(1,-P.vy/12);ny=gnd;P.vy=0;P.ground=true;P.launch=false}else P.ground=false;
   if(P.x<X1&&P.x>X0&&P.z>Z0&&P.z<Z1&&ny+1.78>RH){ny=RH-1.78;if(P.vy>0)P.vy=0} // سقف الاستوديو فقط
   P.y=ny;
-  const moving=Math.hypot(P.vx,P.vz);bob+=(0-bob)*Math.min(1,dt*10);
-  const b=P.ground?Math.sin(performance.now()/1000*(moving>3?12:8.5))*.022*Math.min(1,moving/2.5):0;
-  camera.position.set(P.x,P.y+EYE+b+bob,P.z);camera.rotation.set(P.pitch,P.yaw,0);
+  const moving=Math.hypot(P.vx,P.vz),spk=Math.min(1,moving/9.5),sprint=run&&moving>5;
+  if(P.ground)phase+=dt*(5.5+moving*1.05);                               // تردّد الخطوة يتبع السرعة
+  const amp=P.ground?Math.min(1,moving/3.6):0;
+  const bobY=Math.abs(Math.sin(phase))*(.03+.05*spk)*amp-(.015+.03*spk)*amp; // قفزة كلّ خطوة
+  const swayX=Math.sin(phase)*(.018+.03*spk)*amp;                          // تمايل يمين/يسار
+  const strafe=(cs*P.vx-sn*P.vz)/9.5;                         // السرعة على محور اليمين
+  roll+=((-strafe*.06)+Math.sin(phase)*.012*amp*(sprint?1.6:1)-roll)*Math.min(1,dt*8);
+  fovK+=((sprint?1:0)-fovK)*Math.min(1,dt*(sprint?4:6));
+  landK=Math.max(0,landK-dt*3.5);bob=-Math.sin(Math.min(1,landK)*Math.PI)*.14*landK;
+  camera.position.set(P.x+cs*swayX,P.y+EYE+bobY+bob,P.z-sn*swayX);
+  camera.rotation.set(P.pitch-bob*.6-(sprint?.03*Math.abs(Math.sin(phase*.5)):0),P.yaw+Math.sin(phase*.5)*.004*amp,roll);
+  const fv=FOV0+fovK*12;if(Math.abs(camera.fov-fv)>.01){camera.fov=fv;camera.updateProjectionMatrix()}
 }
 
 /* ── التصويب على الأشياء ── */
@@ -444,7 +457,7 @@ const sys=$('sys'),frame=$('frame');
 function pause(title,panel){
   sysOpen=true;playing=false;keys.clear();joy.id=look.id=null;if(document.pointerLockElement)document.exitPointerLock();
   $('sysTitle').textContent=title;sys.classList.remove('hidden');$('start').classList.add('hidden');$('hint').classList.add('hidden');
-  sys.classList.toggle('panel',!!panel);setInfo(null);
+  sys.classList.toggle('panel',!!panel);setInfo(null);ARENA.trigger(false);
 }
 // لوحة HTML داخل الإطار نفسه (الخريطة، معرض الذكريات) — بلا النظام
 function openPanel(title,html,onClick){pause(title,true);const b=$('panelBody');b.innerHTML=html;b.scrollTop=0;b.onclick=onClick||null}
@@ -467,7 +480,7 @@ async function closeSys(){
 }
 /* ── الخريطة: انتقال فوريّ بين الأماكن ── */
 function teleport(d){Object.assign(P,{x:d.x,z:d.z,y:0,vx:0,vz:0,vy:0,yaw:d.yaw,pitch:-.05,launch:false});closeSys()}
-function openMap(){const L=CAMPUS.districts.concat(MEM?MEM.districts:[]);
+function openMap(){const L=CAMPUS.districts.concat(MEM?MEM.districts:[],ARENA.districts);
   openPanel('الخريطة',`<div class="map">${L.map((d,i)=>`<button data-i="${i}"><b>${d.name}</b><span>${d.desc}</span></button>`).join('')}</div>`,e=>{const b=e.target.closest('button[data-i]');if(b)teleport(L[+b.dataset.i])})}
 $('mapBtn').onclick=()=>{if(!sysOpen)openMap()};
 let infoOn=false;function setInfo(html){const el=$('info');if(!html){if(infoOn){el.classList.add('hidden');infoOn=false}return}el.innerHTML=html;el.classList.remove('hidden');infoOn=true}
@@ -482,14 +495,16 @@ addEventListener('keydown',e=>{
   if(e.code==='Space'){jump();e.preventDefault()}
   if(e.code==='KeyE'||e.code==='Enter')interact();
   if(e.code==='KeyM'){keys.clear();openMap()}
+  // الأسلحة — للّعب في ساحة الرماية
+  if(e.code==='Digit1')ARENA.equip('pistol');if(e.code==='Digit2')ARENA.equip('ak');if(e.code==='KeyQ')ARENA.equip(null);if(e.code==='KeyR')ARENA.reload();
 });
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>keys.clear());
 $('enter').onclick=()=>{if(isTouch){$('start').classList.add('hidden');playing=true}else lock()};
 document.addEventListener('pointerlockchange',()=>{const on=document.pointerLockElement===canvas;if(on)dragLook=false;if(dragLook)return;playing=on;if(!on)keys.clear();$('start').classList.toggle('hidden',on||sysOpen)});
 
-canvas.addEventListener('mousedown',()=>{if(isTouch||sysOpen)return;dragMoved=0;if(!playing)lock();else if(!dragLook)interact()});
-canvas.addEventListener('mouseup',()=>{if(dragLook&&playing&&dragMoved<5)interact()});
+canvas.addEventListener('mousedown',()=>{if(isTouch||sysOpen)return;dragMoved=0;if(!playing)lock();else if(!dragLook&&!ARENA.trigger(true))interact()});
+addEventListener('mouseup',()=>{if(isTouch)return;if(dragLook&&playing&&dragMoved<5){if(ARENA.armed()){ARENA.trigger(true);ARENA.trigger(false)}else interact()}else ARENA.trigger(false)});
 document.addEventListener('mousemove',e=>{if(!playing||isTouch)return;if(dragLook){if(!(e.buttons&1))return;dragMoved+=Math.abs(e.movementX)+Math.abs(e.movementY)}P.yaw-=e.movementX*.0022;P.pitch=Math.max(-1.45,Math.min(1.45,P.pitch-e.movementY*.0022))});
 // لمس: عصا يساراً، سحب يميناً للنظر
 const knob=$('joy').firstElementChild;
@@ -519,14 +534,14 @@ const clk=new THREE.Clock();let tick=0;
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05);
   if(playing)step(dt);else camera.position.set(P.x,P.y+EYE,P.z),camera.rotation.set(P.pitch,P.yaw,0);
   if(playing)aim();
-  CAMPUS.update(dt,P,G,playing);FUN.update(dt,P,playing);
+  CAMPUS.update(dt,P,G,playing);FUN.update(dt,P,playing);ARENA.update(dt,P,playing);
   // الباب يُفتح حين تقترب، والمرآة لا تُرسم وأنت خارج الغرفة
   const near=Math.hypot(P.x-X1,P.z-(DOOR.z0+DOOR.z1)/2)<2.4;doorA+=((near?-1.45:0)-doorA)*Math.min(1,dt*5);door.rotation.y=doorA;
   if(mirror)mirror.visible=P.x<X1+1.5&&P.z>Z0-.5&&P.z<Z1+.5;
   if((tick+=dt)>30){tick=0;paint(screenTex);paint(clockFace)}
   renderer.render(scene,camera)}
 
-if(/[?&]debug/.test(location.search))window.W3DBG={P,camera,scene,step,aim,ACTS,COL,get target(){return target},interact,view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.85)},tick:dt=>{step(dt);CAMPUS.update(dt,P,G,true);FUN.update(dt,P,true)},setPlaying:v=>{playing=v;$('start').classList.add('hidden')}};
+if(/[?&]debug/.test(location.search))window.W3DBG={P,camera,scene,step,aim,ACTS,COL,get target(){return target},interact,view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.85)},tick:dt=>{step(dt);CAMPUS.update(dt,P,G,true);FUN.update(dt,P,true);ARENA.update(dt,P,true)},ARENA:()=>ARENA,setPlaying:v=>{playing=v;$('start').classList.add('hidden')}};
 /* ── الإقلاع ── */
 (async()=>{
   if(isTouch){$('keysDesk').classList.add('hidden');$('keysTouch').classList.remove('hidden')}

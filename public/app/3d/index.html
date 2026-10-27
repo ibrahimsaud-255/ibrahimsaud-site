@@ -100,6 +100,17 @@
   #shotCap{display:none}.shot #shotCap{display:flex;position:fixed;right:44px;bottom:40px;z-index:9;flex-direction:column;gap:6px;background:rgba(10,10,10,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(232,199,102,.45);border-radius:20px;padding:20px 28px}
   #shotCap b{font-family:"Thmanyah Serif",serif;font-size:46px;line-height:1.1;display:flex;align-items:center;gap:14px}#shotCap b:before{content:"";width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 16px var(--gold)}
   #shotCap span{font-size:21px;color:#e4e4e7}#shotCap small{font-size:16px;color:var(--gold);letter-spacing:.3px}
+  /* السلاح */
+  #cross.gun{width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:0;background:none;transform:none;box-shadow:none}
+  #cross.gun:before,#cross.gun:after{content:"";position:absolute;background:rgba(255,255,255,.9);box-shadow:0 0 3px #000}
+  #cross.gun:before{left:8px;top:0;width:2px;height:18px}#cross.gun:after{top:8px;left:0;height:2px;width:18px}
+  #weap{position:fixed;right:20px;bottom:calc(20px + env(safe-area-inset-bottom));z-index:5;background:rgba(10,10,10,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,107,74,.45);border-radius:14px;padding:10px 16px;display:flex;flex-direction:column;align-items:flex-start;gap:2px;pointer-events:none}
+  #weap b{font-size:15px}#weap span{font-size:26px;font-weight:700;color:#ff6b4a}#weap small{font-size:11.5px;color:var(--muted)}
+  #score{position:fixed;left:50%;top:calc(14px + env(safe-area-inset-top));transform:translateX(-50%);z-index:5;background:rgba(10,10,10,.7);border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:13px;pointer-events:none}
+  #gunBtn{left:auto;right:calc(22px + env(safe-area-inset-right));bottom:calc(104px + env(safe-area-inset-bottom))}
+  #fireBtn{right:calc(100px + env(safe-area-inset-right));bottom:calc(24px + env(safe-area-inset-bottom));width:78px;height:78px;background:rgba(214,40,40,.75);border:0}
+  #relBtn{right:calc(100px + env(safe-area-inset-right));bottom:calc(112px + env(safe-area-inset-bottom));width:46px;height:46px}
+  .is-touch #weap{bottom:auto;top:calc(100px + env(safe-area-inset-top))}
   /* لمس */
   .touch{display:none}
   .is-touch .touch{display:block}
@@ -146,6 +157,7 @@
     <kbd>Shift</kbd><span>الجري</span>
     <kbd>E · نقرة</kbd><span>افتح ما أمامك</span>
     <kbd>M</kbd><span>الخريطة والانتقال بين الأماكن</span>
+    <kbd>1 · 2 · Q</kbd><span>مسدس · كلاشنكوف · إخفاء (للّعب)</span>
     <kbd>Esc</kbd><span>إيقاف مؤقّت</span>
   </div>
   <div class="keys hidden" id="keysTouch">
@@ -153,7 +165,7 @@
     <kbd>اسحب يميناً</kbd><span>النظر</span>
     <kbd>افتح</kbd><span>يظهر حين تقترب من شيء</span>
   </div>
-  <p class="tour" id="tour">جرّب: اركل الكرة في الساحة، اضغط زرّ الاحتفال، اقفز فوق أعمدة المبيعات، اعزف على أزرار RØDECaster، اطلب قهوة في المجلس، وامشِ في ممرّ الذكريات.</p>
+  <p class="tour" id="tour">جرّب: اركل الكرة في الساحة، اضغط زرّ الاحتفال، اقفز فوق أعمدة المبيعات، اعزف على أزرار RØDECaster، اطلب قهوة في المجلس، وامشِ في ممرّ الذكريات، أو جرّب ساحة الرماية.</p>
   <button class="go" id="enter">ادخل الاستوديو</button>
   <div class="status" id="status"><i></i><span>…</span></div>
 </div></div>
@@ -164,6 +176,6 @@
   <div id="panelBody"></div>
 </div>
 
-<script type="module" src="./world.js?v=11"></script>
+<script type="module" src="./world.js?v=16"></script>
 </body>
 </html>

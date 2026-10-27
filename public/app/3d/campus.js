@@ -88,8 +88,8 @@ const leds=[];
   for(let i=0;i<7;i++){box(.8,.05,.02,0x2a3038,0,.3+i*.25,.36,g);for(let j=0;j<5;j++){const d=new THREE.Mesh(new THREE.BoxGeometry(.03,.03,.01),glow(j%3?0x22c55e:0x3b82f6));d.position.set(-.3+j*.05,.4+i*.25,.37);g.add(d);leds.push(d)}}
   solid(g);totem(x-1.2,z+.7,face(x-1.2,z+.7),'settings','الإعدادات','الهويّة · الفوترة · النظام',0x94a3b8)}
 // لافتة الاتّجاهات
-const DIRS=[['وادي المبيعات',16,-12],['الخزنة',28,2],['المجلس',16,15],['غرفة البثّ',29,-13],['أكاديمية حروف',29,16],['الورشة',5,-14],['الحديقة',5,15],['ممرّ الذكريات',-6,4.4]];
-{const x=10.2,z=4.4,g=grp(x,0,z);cyl(.06,.07,3.2,0x5a3e28,0,0,0,g,6);block(x,z,.1,.1,3.2);
+const DIRS=[['وادي المبيعات',16,-12],['الخزنة',28,2],['المجلس',16,15],['غرفة البثّ',29,-13],['أكاديمية حروف',29,16],['الورشة',5,-14],['الحديقة',5,15],['ممرّ الذكريات',-6,4.4],['ساحة الرماية',18,30]];
+{const x=10.2,z=4.4,g=grp(x,0,z);cyl(.06,.07,3.6,0x5a3e28,0,0,0,g,6);block(x,z,.1,.1,3.6);
   // لوح سهم بوجهين: الأماميّ رأسه يمين، والخلفيّ مرسوم معكوس الشكل لا النصّ — فيُقرأ ويشير للهدف من الجهتين
   const arrow=(n,tipRight)=>ctex(384,72,(c,w,h)=>{c.fillStyle='#e9dcc0';c.beginPath();if(tipRight){c.moveTo(0,0);c.lineTo(w-36,0);c.lineTo(w,h/2);c.lineTo(w-36,h);c.lineTo(0,h)}else{c.moveTo(w,0);c.lineTo(36,0);c.lineTo(0,h/2);c.lineTo(36,h);c.lineTo(w,h)}c.fill();c.fillStyle='#1c1712';c.font='700 36px '+FONT;c.textAlign='center';c.fillText(n,w/2+(tipRight?-14:14),48)});
   DIRS.forEach(([n,tx,tz],i)=>{const b=new THREE.Group();b.position.y=1.15+i*.28;b.rotation.y=Math.atan2(tx-x,tz-z)-Math.PI/2;g.add(b);
@@ -270,5 +270,5 @@ function update(dt,P,G,live=true){
     info(d?`<b>${d.title||d.label}</b><span>محصّل <em>${money(d.collected)}</em></span><span>مفوتر ${money(d.invoiced)} · ${fmt(d.count)} فاتورة</span>`:(a>=0?'<b>لا بيانات</b>':null))}
 }
 // غرب x0 لا يُمشى إلا على طريق الذكريات (lane)
-return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:33,lane:{x0:-98,z0:4.4-6.4,z1:4.4+6.4}}};
+return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:42,lane:{x0:-98,z0:4.4-6.4,z1:4.4+6.4}}};
 }
