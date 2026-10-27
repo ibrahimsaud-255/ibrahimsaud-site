@@ -210,14 +210,13 @@ function renderSiteWorks(){
     ${swBarHTML()}
     <div class="sw-tabs">${SW_TABS.map(t=>`<button class="sw-tab${SW_TAB===t[0]?' on':''}" onclick="swGo('${t[0]}')"><i data-lucide="${t[2]}"></i>${t[1]}</button>`).join('')}</div>
     ${SW_TAB==='content'?cmsTabHTML():''}
-    ${SW_TAB==='preview'?swPreviewHTML():''}
     ${SW_TAB!=='works'?'':`
-    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="film"></i> الأعمال — تظهر في قسم «الأعمال» بالموقع مع فلتر تصنيف تلقائي</h2>
+    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="film"></i> الأعمال</h2>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" onclick="swLoad(true)" title="إعادة تحميل من قاعدة البيانات"><i data-lucide="refresh-cw"></i> تحديث</button>
         ${works.length?'':`<button class="btn btn-ghost" onclick="swImport('works')"><i data-lucide="download"></i> استيراد الأعمال الحالية</button>`}
         <button class="btn btn-gold" onclick="swWorkModal()"><i data-lucide="plus"></i> عمل جديد</button></div></div>
-    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="globe"></i> <div>الموقع الجديد يعرض <b>كل الأعمال</b> مع فلتر تصنيف مشتقّ تلقائياً من التصنيفات المسجّلة هنا، ويقدّم الأعمال المميّزة (<i class="inl" data-lucide="star"></i>) أولاً. الصورة المصغّرة تُشتق من رابط يوتيوب ما لم ترفع صورة. حقل «القسم» (شركات/متاجر) صار اختياري ولا يؤثّر على مكان الظهور.</div></div>
+    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="globe"></i> <div>يظهر في الموقع قسم <b>«الأعمال الرسمية»</b> فقط: الأعمال التي قسمها <b>«الشركات والجهات»</b> ولها رابط فيديو، بترتيبها هنا. أيّ عمل بقسم آخر (متاجر أو خاص) <b>لا يظهر للزوار</b> — الشارة على كل بطاقة توضّح ذلك.</div></div>
     ${(function(){
       // مجموعات بالتصنيف حسب ترتيب أوّل ظهور
       const cats=[];const byCat={};works.forEach(w=>{const c=w.category||'بدون تصنيف';if(!(c in byCat)){byCat[c]=[];cats.push(c)}byCat[c].push(w);});
@@ -225,7 +224,7 @@ function renderSiteWorks(){
       const kpis=`<div class="stats" style="margin-bottom:16px">
         <div class="stat"><span class="ic"><i data-lucide="film"></i></span><div class="v">${works.length}</div><div class="l">إجمالي الأعمال</div></div>
         <div class="stat"><span class="ic"><i data-lucide="star"></i></span><div class="v">${featCount}</div><div class="l">مميّز (يظهر أولاً)</div></div>
-        <div class="stat"><span class="ic"><i data-lucide="tag"></i></span><div class="v">${cats.length}</div><div class="l">تصنيفات ظاهرة كفلاتر</div></div>
+        <div class="stat"><span class="ic"><i data-lucide="eye"></i></span><div class="v">${works.filter(w=>w.audience==='companies'&&w.video_url).length}</div><div class="l">ظاهر للزوار</div></div>
       </div>`;
       if(!works.length)return kpis+`<div class="card"><p style="color:var(--muted)">لا أعمال بعد. أضف عملاً جديداً أو استورد الأعمال الحالية.</p></div>`;
       const catBlocks=cats.map(c=>{const items=byCat[c].slice().sort((a,b)=>Number(!!b.featured)-Number(!!a.featured));return `
@@ -240,12 +239,12 @@ function renderSiteWorks(){
               </div>
               <div style="padding:13px">
                 <div style="font-weight:800">${esc(w.title||'')}</div>
-                <div style="font-size:12px;color:var(--muted);margin:3px 0 9px">${esc(w.client||'')}${w.kind==='gallery'?' · <span style="color:var(--gold2)">معرض</span>':''}</div>
+                <div style="font-size:12px;color:var(--muted);margin:3px 0 6px">${esc(w.client||'')}${w.kind==='gallery'?' · <span style="color:var(--gold2)">معرض</span>':''}</div>
+                <div style="margin-bottom:9px">${w.audience==='companies'&&w.video_url?'<span class="pill done">ظاهر في الموقع</span>':'<span class="pill" style="background:rgba(155,155,163,.16);color:var(--muted)">غير ظاهر للزوار</span>'}</div>
                 <div style="display:flex;gap:6px;flex-wrap:wrap">
                   <button class="btn btn-ghost btn-sm" onclick="swWorkModal('${w.id}')"><i data-lucide="pencil"></i> تعديل</button>
                   <button class="btn btn-ghost btn-sm" onclick="swToggleFeatured('${w.id}')" title="${w.featured?'إلغاء التمييز':'اجعله مميّزاً'}"><i data-lucide="star"></i></button>
                   ${w.video_url?`<a class="btn btn-ghost btn-sm" href="${esc(w.video_url)}" target="_blank" rel="noopener"><i data-lucide="play"></i> معاينة</a>`:''}
-                  <a class="btn btn-ghost btn-sm" href="/works/${esc(w.id)}" target="_blank" rel="noopener" title="اذهب لصفحة العمل على الموقع"><i data-lucide="external-link"></i></a>
                   <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelWork('${w.id}')"><i data-lucide="trash-2"></i></button>
                 </div>
               </div></div>`}).join('')}
@@ -260,42 +259,14 @@ function renderSiteWorks(){
     <div class="grid">
     ${brands.length?brands.map(b=>`<div class="card" style="display:flex;align-items:center;gap:12px">
       <img src="${esc(b.logo)}" loading="lazy" style="height:40px;max-width:110px;object-fit:contain;background:#fff;border-radius:7px;padding:4px">
-      <div style="flex:1;font-weight:700">${esc(b.name||'')}</div>
+      <div style="flex:1;font-weight:700">${b.name?esc(b.name):'<span style="color:#fcd34d">بلا اسم — أضف الاسم (يُقرأ للزوار ومحرّكات البحث)</span>'}</div>
       <button class="btn btn-ghost btn-sm" onclick="swBrandModal('${b.id}')"><i data-lucide="pencil"></i></button>
       <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelBrand('${b.id}')"><i data-lucide="trash-2"></i></button>
     </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا شعارات بعد.</p></div>`}
     </div>`}
-    ${SW_TAB!=='services'?'':`
-    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="layout-grid"></i> خدمات الموقع (تبويبات قسم «خدماتي»)</h2>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        ${(SITESERVICES&&SITESERVICES.length)?'':`<button class="btn btn-ghost" onclick="swImportServices()"><i data-lucide="download"></i> استيراد الخدمات الافتراضية</button>`}
-        <button class="btn btn-gold" onclick="swServiceModal()"><i data-lucide="plus"></i> خدمة جديدة</button></div></div>
-    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="info"></i> <div>هذه التبويبات تظهر في قسم «خدماتي» بالموقع: اسم التبويب، عنوان كبير، وصف، وصورة مربعة. لو القائمة فارغة يستخدم الموقع النسخة الافتراضية المدمجة.</div></div>
-    <div class="grid">
-    ${(SITESERVICES||[]).length?(SITESERVICES||[]).map(s=>`<div class="card" style="display:flex;align-items:center;gap:12px">
-      ${s.image?`<img src="${esc(s.image)}" loading="lazy" style="width:52px;height:52px;object-fit:cover;border-radius:10px">`:`<div style="width:52px;height:52px;border-radius:10px;background:#0006;display:grid;place-items:center;color:var(--muted)"><i data-lucide="image"></i></div>`}
-      <div style="flex:1;min-width:0"><div style="font-weight:800">${esc(s.title||'')}</div><div style="font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.headline||'')}</div></div>
-      <button class="btn btn-ghost btn-sm" onclick="swServiceModal('${s.id}')"><i data-lucide="pencil"></i></button>
-      <button class="btn btn-ghost btn-sm" style="color:var(--bad)" onclick="swDelService('${s.id}')"><i data-lucide="trash-2"></i></button>
-    </div>`).join(''):`<div class="card"><p style="color:var(--muted)">لا خدمات مخصّصة بعد — الموقع يعرض الافتراضية.</p></div>`}
-    </div>`}
-    ${SW_TAB!=='look'?'':`
-    <div class="page-head"><h2 style="margin:0;font-size:19px"><i data-lucide="settings-2"></i> إعدادات واجهة الموقع</h2></div>
-    <div class="badge-note" style="margin-bottom:16px"><i data-lucide="zap"></i> <div>هذا التبويب يُحفظ <b>وينشر مباشرة</b> على الموقع (صور الواجهة وروابط التواصل) — بدون مسودة.</div></div>
+    ${SW_TAB!=='social'?'':`
     <div class="card">
-      <div class="row2">
-        <div class="field"><label>صورة الوجه الدائرية (واجهة الموقع)</label>
-          <input type="file" accept="image/*" id="st_photo_file" onchange="swUploadSetting('st_photo_file','hero_photo','st_photo_pv')">
-          <img id="st_photo_pv" src="${esc((SITESETTINGS&&SITESETTINGS.hero_photo&&SITESETTINGS.hero_photo.url)||'')}" style="${(SITESETTINGS&&SITESETTINGS.hero_photo&&SITESETTINGS.hero_photo.url)?'':'display:none;'}width:72px;height:72px;object-fit:cover;border-radius:50%;margin-top:8px;border:2px solid var(--gold,#e7b24c)">
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">فارغة = يستخدم الموقع الصورة الافتراضية المدمجة.</div>
-        </div>
-        <div class="field"><label>صورة خلفية الواجهة (Artboard)</label>
-          <input type="file" accept="image/*" id="st_bg_file" onchange="swUploadSetting('st_bg_file','hero_bg','st_bg_pv')">
-          <img id="st_bg_pv" src="${esc((SITESETTINGS&&SITESETTINGS.hero_bg&&SITESETTINGS.hero_bg.url)||'')}" style="${(SITESETTINGS&&SITESETTINGS.hero_bg&&SITESETTINGS.hero_bg.url)?'':'display:none;'}max-height:72px;border-radius:10px;margin-top:8px">
-          <div style="font-size:12px;color:var(--muted);margin-top:4px">تظهر خلف الواجهة بشفافية أنيقة.</div>
-        </div>
-      </div>
-      <div style="font-weight:800;margin:14px 0 8px"><i class="inl" data-lucide="share-2"></i> روابط مواقع التواصل (تظهر كأيقونات رسمية في الموقع)</div>
+      <div style="font-weight:800;margin:0 0 8px"><i class="inl" data-lucide="share-2"></i> روابط مواقع التواصل — تظهر أيقوناتٍ في قسم التواصل والفوتر، وتُنشر فوراً</div>
       <div class="row2">
         <div class="field"><label>تيك توك</label><input id="st_tiktok" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.tiktok)||'')}" placeholder="https://www.tiktok.com/@..."></div>
         <div class="field"><label>يوتيوب</label><input id="st_youtube" value="${esc((SITESETTINGS&&SITESETTINGS.socials&&SITESETTINGS.socials.youtube)||'')}" placeholder="https://www.youtube.com/@..."></div>
@@ -322,7 +293,7 @@ function renderSiteWorks(){
    المعاينة تفتح الموقع بـ ?preview=1 فيعرض المسودة،
    وزر «نشر» ينسخ draft → value فيظهر للزوار فوراً بلا إعادة بناء.
    يتطلب تشغيل supabase/site_cms.sql مرة واحدة (يضيف عمود draft). */
-const SW_TABS=[['content','محتوى الموقع','type'],['works','الأعمال والشعارات','film'],['services','الخدمات','layout-grid'],['look','واجهة الموقع','image'],['preview','المعاينة','eye']];
+const SW_TABS=[['content','محتوى الموقع','type'],['works','الأعمال والشعارات','film'],['social','روابط التواصل','share-2']];
 function swGo(t){SW_TAB=t;renderSiteWorks()}
 function swCssHTML(){return `<style>
   .sw-tabs{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0 18px}
@@ -335,17 +306,17 @@ function swCssHTML(){return `<style>
   .cms-card .d{color:var(--muted);font-size:12.5px;min-height:32px}
   .cms-card .a{display:flex;gap:6px;flex-wrap:wrap}
 </style>`}
+// ⚠️ هذه الافتراضيّات نسخة من النصوص الاحتياطيّة داخل مكوّنات الموقع (src/components/Hero.tsx،
+//    About.tsx، Contact.tsx، AdReels.tsx، HomeSections.tsx، وsrc/lib/site.ts). إن تغيّر نصّ هناك
+//    فحدّثه هنا أيضاً — وإلا فأوّل «حفظ» من اللوحة يستبدل نصّ الموقع الحيّ بنسخة قديمة.
+//    (مُزامَنة في ٢٦ أكتوبر ٢٠٢٦)
 const CMS_DEF={
- site:{whatsapp:'966504895213',email:'ibrahimsaud25@gmail.com',bio:'إبراهيم سعود — فيديوهات إعلانية تبيع',fabMsg:'السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: '},
- hero:{title:'فيديو إعلاني *يبيع* — تستلمه خلال ٣ أيام.',sub:'أنا إبراهيم سعود. أكتب الفكرة والسكربت، وأصوّر، وأمنتج — وتستلم إعلاناً طولياً (٩:١٦) بهوك يوقف التمرير في أول ثانيتين، جاهزاً للنشر على تيك توك وسناب وريلز وشورتس.',cta1:{label:'اطلب إعلانك الآن',waMsg:'السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: \nهدفي من الإعلان: '},cta2:{label:'شوف الإعلانات أولاً',href:'#works'},note:'٣ أيام تسليم · جولتا تعديل مجانية · تصوير في موقعك بالرياض أو في استوديو مجهّز'},
+ site:{whatsapp:'966504895213',email:'ibrahimsaud25@gmail.com',bio:'مدير إبداعي · مخرج ومنتج',fabMsg:'السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: '},
+ hero:{role:'مخرج · منتج · مدير إبداعي',title:'أُخرج قصتك *كما تستحق أن تُروى*.',sub:'أقود العمل من الفكرة حتى التسليم — كتابةً وإخراجاً وتصويراً ومونتاجاً. أفلام، حملات، بودكاست، وتغطيات لعلامات في السعودية والخليج، بأكثر من ٣٠ عملاً مرئياً.',cta1:{label:'ابدأ مشروعك',waMsg:'السلام عليكم إبراهيم، عندي مشروع أبي أنفّذه 🎬\nالفكرة: \nالهدف: '},cta2:{label:'شاهد أعمالي',href:'#works'},note:'من الفكرة إلى التسليم · تصوير وإخراج احترافي · الرياض والخليج'},
  reels:{label:'الأعمال',title:'شوف الإعلانات قبل ما تقرّر.',sub:'عقار · قهوة · أقفال ذكية · زيوت سيارات · متاجر إلكترونية · تطبيقات — قطاعات ما تشبه بعض، ونفس المعيار في كلها: هوك سريع، رسالة واحدة، ودعوة واضحة في النهاية.',hint:'اضغط أي مقطع وشغّله'},
- packages:{label:'الأسعار',title:'سعر واضح — بلا مفاجآت.',sub:'كل باقة تشمل الفكرة والسكربت والتصوير والمونتاج، وتسليماً خلال ٣ أيام مع جولتَي تعديل مجانية.'},
- faq:{label:'قبل ما تطلب',title:'أسئلة تجي في بالك — والجواب عليها هنا.',items:[{q:'كم ياخذ الإعلان وقت؟',a:'٣ أيام عمل من الاتفاق حتى تستلم الفيديو جاهزاً للنشر. لو عندك موعد إطلاق، قل لي وأرتّب الجدول عليه.'},{q:'لازم أجهّز فكرة أو سكربت؟',a:'لا. الفكرة والسكربت جزء من الخدمة — تعطيني منتجك وجمهورك، وأرجع لك بسكربت تعتمده قبل التصوير.'},{q:'لازم أظهر بنفسي أمام الكاميرا؟',a:'لا. تبي تظهر؟ نصوّرك ونخرجك بأفضل صورة. ما تبي؟ أظهر أنا، أو نصوّر المنتج بتعليق صوتي — عندي أعمال بالطريقتين.'},{q:'وين يصير التصوير؟',a:'في موقعك أو متجرك داخل الرياض، أو في استوديو مجهّز بالإضاءة والصوت — تختار الأنسب لمنتجك.'},{q:'وش لو ما عجبني الناتج؟',a:'عندك جولتا تعديل مجانية بعد التسليم. وقبلها تعتمد السكربت بنفسك، فالنتيجة ما تفاجئك.'},{q:'كم السعر؟',a:'يعتمد على عدد الإعلانات وطبيعة التصوير. أرسل لي منتجك وأرجع لك بعرض واضح ومكتوب — بلا التزام.'}],ctaLabel:'سؤالك مو هنا؟ اسألني مباشرة',ctaMsg:'السلام عليكم إبراهيم، عندي سؤال عن خدمة الفيديو الإعلاني: '},
- about:{label:'عني',title:'إبراهيم سعود',paragraphs:['تقنية أعمال وبودكاست — أوظّف التقنية في تطوير الأعمال والأنظمة، وأنتج البودكاست والمحتوى المرئي الذي يبني الحضور.','مقدّم ومنتج بودكاست *سَعي*، وأبني أنظمة وأدوات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). اشتغلت مع جامعة الملك سعود في هاكاثون *هيلثون*، ومع علامات تجارية في السعودية والخليج بأكثر من ٣٠ عملاً مرئياً.','فلسفتي بسيطة: التقنية والمحتوى الناجح وراهما قصة وتجهيز ونظام — وهذا ما أصنعه لك.'],photo:'/profile.jpg',ventures:[{title:'منصة حروف ودروس',desc:'منصة تعليمية تساعد المعلّم وتولّد له أسئلة عالية الجودة — منتج تقني قيد الإطلاق.',href:'https://ibrahimsaud.com/app/',tag:'منتج تقني'}]},
- process:{label:'كيف نشتغل',title:'من رسالة واتساب إلى إعلان جاهز — في ٣ أيام.',sub:'ما تحتاج وكالة ولا فريق ولا اجتماعات: شخص واحد يمسك الفكرة والسكربت والتصوير والمونتاج، وأنت تعتمد وتستلم.',steps:[{n:'01',title:'ترسل لي منتجك',desc:'رسالة واتساب تكفي: وش تبيع، مين جمهورك، ووش تبي الإعلان يحقّق.'},{n:'02',title:'أكتب الهوك والسكربت',desc:'فكرة مبنية على منتجك، أول ثانيتين توقف التمرير — وتعتمدها أنت قبل أي كاميرا.'},{n:'03',title:'نصوّر طولي ٩:١٦',desc:'في موقعك بالرياض أو في استوديو مجهّز — إضاءة وصوت احترافي، وكادر مبني للجوال لا مقصوص من فيديو أفقي.'},{n:'04',title:'تستلم خلال ٣ أيام',desc:'مونتاج وموسيقى ونص على الشاشة، وجولتا تعديل مجانية — ثم انشره وأنت مطمئن.'}]},
- contact:{title:'جاهز؟ *أرسل منتجك الحين.*',sub:'رسالة واحدة تكفي: وش المنتج ومين جمهورك — وأرجع لك بفكرة الإعلان وعرض السعر، وبعدها بـ٣ أيام يكون إعلانك جاهز للنشر.',cta1:{label:'أرسل منتجك عبر واتساب',waMsg:'السلام عليكم إبراهيم، أبي إعلان لمنتجي 🎬\nالمنتج: \nجمهوري: \nهدفي من الإعلان: '},cta2:{label:'عندي سؤال قبل ما أطلب',waMsg:'السلام عليكم إبراهيم، عندي سؤال عن خدمة الفيديو الإعلاني: '}},
- layout:{sections:[{id:'works',on:true},{id:'brands',on:true},{id:'process',on:true},{id:'faq',on:true},{id:'packages',on:false},{id:'newsletter',on:false},{id:'contact',on:true}]},
- theme:{gold:'#e7b24c',goldSoft:'#f3cd83'},
+ about:{label:'من أنا',title:'إبراهيم سعود',paragraphs:['أنا *إبراهيم سعود*، مخرج ومنتج ومدير إبداعي سعودي. أقود العمل المرئي من *الفكرة حتى التسليم* — كتابةً للقصة، وإخراجاً وتصويراً في الموقع، ثم مونتاجاً وتصحيحاً لونياً وصوتاً — حتى يخرج العمل بصوت واحد متماسك.','على مدى السنوات الأخيرة أنجزت *أكثر من ٣٠ عملاً مرئياً* لعلامات تجارية وجهات حكومية وشركات مؤسسية في *السعودية والخليج*: أفلام قصيرة، وحملات إعلانية، وتغطيات، وبودكاست. أشتغل بأدوات المحترفين — من Final Cut وDaVinci Resolve إلى أحدث أدوات الذكاء الاصطناعي في الإنتاج.','أقدّم وأنتج بودكاست *سَعي* الذي يحوّل خبرة الضيف إلى حكاية تُروى، وأبني منتجات تقنية تخدم الأعمال (منها منصة *حروف ودروس*). خلفيّتي بين الإبداع والتقنية تعطي كل مشروع رؤيةً وتجهيزاً ونظاماً.','قناعتي بسيطة: خلف كل عمل ناجح *قصة تستحق أن تُروى كما ينبغي*. هذا ما أصنعه — من الرياض، إلى علامتك أينما كانت.'],photo:'/ibrahim-portrait.jpg',ventures:[{title:'منصة حروف ودروس',desc:'منصة تعليمية تساعد المعلّم وتولّد له أسئلة عالية الجودة — منتج تقني قيد الإطلاق.',href:'https://huroofduroos.com',tag:'منتج تقني'}]},
+ contact:{title:'عندك مشروع؟ *لنعمل معاً.*',sub:'سواء كان فيلماً، حملة، بودكاست، أو محتوى مرئياً لعلامتك — تواصل معي مباشرة ونناقش فكرتك وأرجع لك بالتفاصيل.',cta1:{label:'تواصل عبر واتساب',waMsg:'السلام عليكم إبراهيم، حاب أتواصل معك بخصوص مشروع 🎬\nالفكرة: '},cta2:{label:'راسلني على البريد',waMsg:''}},
+ layout:{sections:[{id:'brands',on:true},{id:'official',on:true},{id:'works',on:true},{id:'tools',on:true},{id:'about',on:true},{id:'process',on:false},{id:'faq',on:false},{id:'packages',on:false},{id:'newsletter',on:false},{id:'contact',on:true}]},
  prices:{podcastPrice:2499,
   ads:{
    single:{name:'باقة الإعلان الواحد',price:750,tagline:'إعلان واحد احترافي من الفكرة حتى التسليم',badge:''},
@@ -359,19 +330,15 @@ const CMS_DEF={
   showRentalPrices:false}
 };
 const CMS_SECTIONS=[
- {key:'hero',name:'الواجهة الرئيسية (الهيرو)',icon:'sparkles',desc:'الشارة، العنوان الكبير، النبذة، وزرَّي الطلب والمشاهدة'},
- {key:'reels',name:'قسم الإعلانات الطولية',icon:'clapperboard',desc:'عناوين قسم الأعمال (المقاطع نفسها من ملف src/lib/reels.ts)'},
- {key:'packages',name:'قسم الباقات في الرئيسية',icon:'tag',desc:'عناوين قسم الأسعار (الباقات والأسعار من «الأسعار والباقات»)'},
- {key:'faq',name:'قسم الأسئلة (قبل ما تطلب)',icon:'help-circle',desc:'الأسئلة والأجوبة التي تزيل تردّد العميل قبل الطلب'},
- {key:'layout',name:'أقسام الصفحة الرئيسية',icon:'layout-list',desc:'أظهر/أخفِ أي قسم من أقسام الصفحة'},
- {key:'about',name:'قسم «عني»',icon:'user-round',desc:'محفوظ للاستخدام لاحقاً — غير معروض في الموقع حالياً'},
- {key:'process',name:'قسم «كيف نشتغل»',icon:'list-ordered',desc:'العناوين وخطوات العمل (فعّله من «أقسام الصفحة»)'},
- {key:'contact',name:'قسم «تواصل معي»',icon:'message-circle',desc:'عنوان الدعوة، النص، ونصوص أزرار الواتساب'},
- {key:'site',name:'الهوية والتواصل',icon:'id-card',desc:'رقم الواتساب، الإيميل، النبذة (الفوتر)، ورسالة الزر العائم'},
- {key:'prices',name:'الأسعار والباقات',icon:'banknote',desc:'سعر تسجيل الحلقة، باقات الإعلانات الثلاث، وباقات تأجير الاستوديو'},
- {key:'theme',name:'ألوان الهوية',icon:'palette',desc:'اللون الذهبي الأساسي والفاتح لكل الموقع'},
+ {key:'hero',name:'الواجهة الرئيسية',icon:'sparkles',desc:'الدور، العنوان الكبير، النبذة، والزرّان'},
+ {key:'about',name:'قسم «من أنا»',icon:'user-round',desc:'الفقرات والصورة والمشاريع'},
+ {key:'reels',name:'قسم الإعلانات الطولية',icon:'clapperboard',desc:'عناوين القسم فقط (المقاطع من src/lib/reels.ts)'},
+ {key:'contact',name:'قسم «تواصل معي»',icon:'message-circle',desc:'العنوان والنص وزرّا الواتساب والبريد'},
+ {key:'site',name:'الهوية والتواصل',icon:'id-card',desc:'رقم الواتساب، الإيميل، نبذة الفوتر، ورسالة الزر العائم'},
+ {key:'layout',name:'أقسام الصفحة',icon:'layout-list',desc:'أظهر/أخفِ أقسام الصفحة الرئيسية'},
+ {key:'prices',name:'أسعار صفحة الباقات',icon:'banknote',desc:'باقات الإعلانات الثلاث في /ad-packages'},
 ];
-const CMS_SEC_NAMES={works:'الإعلانات الطولية (الأعمال)',brands:'شريط الشعارات (موثوق من)',process:'كيف نشتغل',faq:'الأسئلة قبل الطلب',packages:'الباقات والأسعار',newsletter:'النشرة البريدية',contact:'تواصل معي'};
+const CMS_SEC_NAMES={official:'الأعمال الرسمية (جهات وشركات)',tools:'الأدوات',about:'من أنا',works:'الإعلانات الطولية (الأعمال)',brands:'شريط الشعارات (موثوق من)',process:'كيف نشتغل',faq:'الأسئلة قبل الطلب',packages:'الباقات والأسعار',newsletter:'النشرة البريدية',contact:'تواصل معي'};
 function cmsMerge(d,s){if(s==null)return d;if(Array.isArray(s)||typeof s!=='object')return s;const o={...(d||{})};for(const k in s){o[k]=(d&&d[k]&&typeof d[k]==='object'&&!Array.isArray(d[k])&&s[k]&&typeof s[k]==='object'&&!Array.isArray(s[k]))?cmsMerge(d[k],s[k]):s[k]}return o}
 function cmsVal(k){return cmsMerge(cmsMerge(CMS_DEF[k],(SITESETTINGS||{})[k]),(SITEDRAFTS||{})[k])}
 function cmsDraftKeys(){return CMS_SECTIONS.map(s=>s.key).filter(k=>SITEDRAFTS&&SITEDRAFTS[k]!=null)}
@@ -452,13 +419,14 @@ function cmsModal(key){
   const v=cmsVal(key);
   if(key==='hero'){
     openModal('الواجهة الرئيسية (الهيرو)',`
-      ${cmsField('cm_title','العنوان الكبير — ضع النجمتين حول الكلمة الذهبية: *تبيع*',v.title)}
+      ${cmsField('cm_role','سطر الدور الصغير فوق العنوان',v.role)}
+      ${cmsField('cm_title','العنوان الكبير — ضع النجمتين حول الكلمة المميّزة: *كذا*',v.title)}
       ${cmsArea('cm_sub','النبذة تحت العنوان',v.sub,3)}
       <div class="row2">${cmsField('cm_c1l','نص الزر الذهبي (واتساب)',v.cta1.label)}${cmsField('cm_c1m','رسالة الواتساب عند الضغط',v.cta1.waMsg)}</div>
       <div class="row2">${cmsField('cm_c2l','نص الزر الثاني',v.cta2.label)}${cmsField('cm_c2h','رابطه (مثل #works)',v.cta2.href)}</div>
       ${cmsField('cm_note','السطر الصغير أسفل الأزرار',v.note)}`,
     async()=>{
-      const obj={title:cmsG('cm_title'),sub:cmsG('cm_sub'),
+      const obj={role:cmsG('cm_role'),title:cmsG('cm_title'),sub:cmsG('cm_sub'),
         cta1:{label:cmsG('cm_c1l'),waMsg:cmsG('cm_c1m')},cta2:{label:cmsG('cm_c2l'),href:cmsG('cm_c2h')},note:cmsG('cm_note')};
       if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
     });
@@ -519,9 +487,9 @@ function cmsModal(key){
       ${cmsField('cm_title','العنوان — *كذا* للجزء الذهبي',v.title)}
       ${cmsArea('cm_sub','النص',v.sub,2)}
       <div class="row2">${cmsField('cm_c1l','نص الزر الأول',v.cta1.label)}${cmsField('cm_c1m','رسالة واتساب الزر الأول',v.cta1.waMsg)}</div>
-      <div class="row2">${cmsField('cm_c2l','نص الزر الثاني',v.cta2.label)}${cmsField('cm_c2m','رسالة واتساب الزر الثاني',v.cta2.waMsg)}</div>`,
+      ${cmsField('cm_c2l','نص الزر الثاني (يفتح البريد المسجّل في «الهوية والتواصل»)',v.cta2.label)}`,
     async()=>{
-      const obj={title:cmsG('cm_title'),sub:cmsG('cm_sub'),cta1:{label:cmsG('cm_c1l'),waMsg:cmsG('cm_c1m')},cta2:{label:cmsG('cm_c2l'),waMsg:cmsG('cm_c2m')}};
+      const obj={title:cmsG('cm_title'),sub:cmsG('cm_sub'),cta1:{label:cmsG('cm_c1l'),waMsg:cmsG('cm_c1m')},cta2:{label:cmsG('cm_c2l'),waMsg:''}};
       if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
     });
   }else if(key==='site'){
@@ -541,22 +509,11 @@ function cmsModal(key){
               :cmsField(pfx+id+'_badge','شارة (مثل: الأوفر — فارغة = بدون)',p.badge)}
         ${cmsField(pfx+id+'_tag','السطر التعريفي',p.tagline)}
       </div>`;
-    openModal('الأسعار والباقات',`
-      <div style="font-weight:800;margin:2px 0 8px"><i class="inl" data-lucide="mic"></i> تسجيل حلقة البودكاست</div>
-      ${cmsField('cm_pod_price','سعر تسجيل الحلقة الكاملة (ريال)',v.podcastPrice)}
-      <div style="font-weight:800;margin:16px 0 8px"><i class="inl" data-lucide="clapperboard"></i> باقات الفيديوهات الإعلانية</div>
-      ${['single','review','triple'].map(id=>grp('cm_ad_',id,v.ads[id]||{},false)).join('')}
-      <div style="font-weight:800;margin:16px 0 8px"><i class="inl" data-lucide="video"></i> باقات تأجير الاستوديو</div>
-      <label style="display:flex;align-items:center;gap:8px;margin:0 0 10px;cursor:pointer;font-size:13.5px">
-        <input type="checkbox" id="cm_show_rp" ${v.showRentalPrices?'checked':''}> إظهار أسعار التأجير في الموقع (بدون تعليم: تظهر «السعر عند الطلب»)</label>
-      ${['hour','half-day','full-day'].map(id=>grp('cm_rn_',id,v.rental[id]||{},true)).join('')}
-      ${cmsArea('cm_rn_note','النص التعريفي لقسم التأجير',v.rentalNote,2)}`,
+    openModal('أسعار صفحة الباقات (/ad-packages)',`
+      ${['single','review','triple'].map(id=>grp('cm_ad_',id,v.ads[id]||{},false)).join('')}`,
     async()=>{
-      const pick=(pfx,id,unit)=>{const o={name:cmsG(pfx+id+'_name'),price:Number(cmsG(pfx+id+'_price')||0),tagline:cmsG(pfx+id+'_tag'),badge:cmsG(pfx+id+'_badge').trim()};if(unit)o.unit=cmsG(pfx+id+'_unit');return o};
-      const obj={podcastPrice:Number(cmsG('cm_pod_price')||0),
-        ads:{single:pick('cm_ad_','single'),review:pick('cm_ad_','review'),triple:pick('cm_ad_','triple')},
-        rental:{'hour':pick('cm_rn_','hour',true),'half-day':pick('cm_rn_','half-day',true),'full-day':pick('cm_rn_','full-day',true)},
-        rentalNote:cmsG('cm_rn_note'),showRentalPrices:document.getElementById('cm_show_rp').checked};
+      const pick=(pfx,id)=>({name:cmsG(pfx+id+'_name'),price:Number(cmsG(pfx+id+'_price')||0),tagline:cmsG(pfx+id+'_tag'),badge:cmsG(pfx+id+'_badge').trim()});
+      const obj=Object.assign({},v,{ads:{single:pick('cm_ad_','single'),review:pick('cm_ad_','review'),triple:pick('cm_ad_','triple')}});
       if(await cmsSaveDraft(key,obj)){closeModal();renderSiteWorks()}
     });
   }else if(key==='layout'){

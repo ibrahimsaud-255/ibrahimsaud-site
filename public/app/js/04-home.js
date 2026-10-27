@@ -192,7 +192,6 @@ function rerender(){(RENDER[CUR]||renderHome)()}
 /* ===== HOME (branded) — كروت مركّبة قابلة للتخصيص ===== */
 const HOME_WIDGETS=[
   {key:'huroof_goal',label:'هدف حروف ودروس (١٠٠ ألف مستخدم · ٨٠٠ مشترك)',size:'wide',default:true},
-  {key:'focus',label:'تركيز اليوم الواعي',size:'wide',default:true},
   {key:'prayer',label:'مواقيت الصلاة',size:'wide',default:true},
   {key:'kpi_collected',label:'محصّل الشهر حتى الآن',size:'stat',default:true},
   {key:'kpi_due',label:'مستحقات غير مدفوعة',size:'stat',default:true},
@@ -209,7 +208,7 @@ const HOME_WIDGETS=[
   {key:'upcoming_appts',label:'مواعيد قادمة',size:'card',default:true},
   {key:'pipeline_mini',label:'مسار العملاء — مختصر',size:'card',default:false},
 ];
-function homeCfg(){if(!S.home)S.home={};if(!Array.isArray(S.home.widgets))S.home.widgets=HOME_WIDGETS.filter(w=>w.default).map(w=>w.key);if(!S.home.seededHuroofGoal){if(!S.home.widgets.includes('huroof_goal'))S.home.widgets.unshift('huroof_goal');S.home.seededHuroofGoal=true;}return S.home}
+function homeCfg(){if(!S.home)S.home={};if(!Array.isArray(S.home.widgets))S.home.widgets=HOME_WIDGETS.filter(w=>w.default).map(w=>w.key);S.home.widgets=S.home.widgets.filter(k=>HOME_WIDGETS.some(w=>w.key===k));if(!S.home.seededHuroofGoal){if(!S.home.widgets.includes('huroof_goal'))S.home.widgets.unshift('huroof_goal');S.home.seededHuroofGoal=true;}return S.home}
 function homeHasWidget(k){return homeCfg().widgets.includes(k)}
 function homeToggleWidget(k){const c=homeCfg();const i=c.widgets.indexOf(k);if(i>-1)c.widgets.splice(i,1);else c.widgets.push(k);save();renderHome();}
 function homeResetWidgets(){S.home={widgets:HOME_WIDGETS.filter(w=>w.default).map(w=>w.key),seededHuroofGoal:true};save();renderHome();}
@@ -286,7 +285,7 @@ function renderHome(){
     ${wide?`<div class="grid" style="margin-bottom:24px">${wide}</div>`:''}
     ${stats?`<div class="stats">${stats}</div>`:''}
     ${cards?`<div class="grid">${cards}</div>`:''}`;
-  applyWallpaper();if(active.includes('huroof_goal')&&typeof hrGoalLoadLive==='function')hrGoalLoadLive(false);if(active.includes('focus'))paintFocus();if(active.includes('prayer')){loadPrayer();startPrayerTicker();}if(active.includes('kpi_visits'))loadHomeVisits();refreshIcons();
+  applyWallpaper();if(active.includes('huroof_goal')&&typeof hrGoalLoadLive==='function')hrGoalLoadLive(false);if(active.includes('prayer')){loadPrayer();startPrayerTicker();}if(active.includes('kpi_visits'))loadHomeVisits();refreshIcons();
 }
 async function loadHomeVisits(){const el=document.getElementById('homeVisits');if(!el)return;try{
   const since1=new Date(Date.now()-864e5).toISOString();
@@ -359,14 +358,18 @@ function prayerInner(){
   const order=[['Fajr','الفجر'],['Dhuhr','الظهر'],['Asr','العصر'],['Maghrib','المغرب'],['Isha','العشاء']];
   const np=nextPrayerInfo();const now=new Date();const cd=np?Math.max(0,Math.floor((np.at-now)/1000)):0;const ch=Math.floor(cd/3600),cm=Math.floor(cd%3600/60);
   const adOn=adhanEnabled();
-  return `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:6px">
-      <div style="font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span class="inl"><i data-lucide="map-pin"></i></span> ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()"><i class="inl" data-lucide="settings-2"></i> تغيير</button>
-        <button class="link-btn" title="${adOn?'إيقاف الأذان':'تفعيل الأذان'}" onclick="toggleAdhan()"><i class="inl" data-lucide="${adOn?'volume-2':'volume-x'}"></i> ${adOn?'الأذان مفعّل':'الأذان مُعطّل'}</button>
-        <button class="link-btn" title="تجربة الأذان" onclick="playAdhan()"><i class="inl" data-lucide="play"></i> تجربة</button></div>
-      ${np?`<div style="font-size:13px">القادمة: <b style="color:var(--gold2)">${np.name}</b> بعد ${ch>0?ch+'س ':''}${cm}د</div>`:''}</div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;text-align:center">
-      ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'rgba(245,166,35,.18)':'rgba(255,255,255,.05)'};backdrop-filter:blur(8px) saturate(140%);-webkit-backdrop-filter:blur(8px) saturate(140%);border:1px solid ${isNext?'var(--gold)':'rgba(255,255,255,.10)'};border-radius:10px;padding:8px 3px;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)"><div style="font-size:12px;color:var(--muted)">${it[1]}</div><div style="font-weight:800;font-size:13px">${fmt12(t[it[0]])}</div></div>`}).join('')}
-    </div>`;
+  const hm=x=>{const v=fmt12(x).split(' ');return `<span style="font-variant-numeric:tabular-nums">${v[0]}</span><span style="font-size:.42em;font-weight:700;opacity:.7;margin-inline-start:4px">${v[1]||''}</span>`};
+  return `${np?`<div style="display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <div><div style="font-size:13px;color:var(--muted)">الصلاة القادمة</div><div style="font-size:30px;font-weight:900;color:var(--gold2);line-height:1.2">${np.name}</div></div>
+        <div style="text-align:end"><div style="font-size:13px;color:var(--muted)">بعد</div><div style="font-size:30px;font-weight:900;line-height:1.2;font-variant-numeric:tabular-nums">${ch>0?ch+':'+String(cm).padStart(2,'0'):cm}<span style="font-size:14px;font-weight:700;opacity:.7;margin-inline-start:4px">${ch>0?'ساعة':'دقيقة'}</span></div></div></div>`:''}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:8px;text-align:center">
+      ${order.map(it=>{const isNext=np&&np.name===it[1];return `<div style="background:${isNext?'rgba(245,166,35,.16)':'rgba(255,255,255,.04)'};border:1px solid ${isNext?'var(--gold)':'var(--line)'};border-radius:14px;padding:12px 6px">
+        <div style="font-size:13px;font-weight:700;color:${isNext?'var(--gold2)':'var(--muted)'}">${it[1]}</div>
+        <div style="font-weight:900;font-size:28px;line-height:1.25;margin-top:4px;color:${isNext?'var(--gold2)':'var(--ink)'}">${hm(t[it[0]])}</div></div>`}).join('')}
+    </div>
+    <div style="font-size:12px;color:var(--muted);display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px"><span class="inl"><i data-lucide="map-pin"></i></span> ${esc((S.prayer&&S.prayer.city)||'الرياض')} <button class="link-btn" onclick="prayerSettings()"><i class="inl" data-lucide="settings-2"></i> تغيير</button>
+      <button class="link-btn" title="${adOn?'إيقاف الأذان':'تفعيل الأذان'}" onclick="toggleAdhan()"><i class="inl" data-lucide="${adOn?'volume-2':'volume-x'}"></i> ${adOn?'الأذان مفعّل':'الأذان مُعطّل'}</button>
+      <button class="link-btn" title="تجربة الأذان" onclick="playAdhan()"><i class="inl" data-lucide="play"></i> تجربة</button></div>`;
 }
 /* ----- الأذان: تشغيل صوت عمر هشام العربي عند دخول الوقت (يمكن تعطيله) ----- */
 let ADHAN_AUDIO=null;

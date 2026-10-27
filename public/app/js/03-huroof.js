@@ -235,87 +235,41 @@ function hrGoalCardHTML(inHuroofTab){
   const paybackMonths=targetRev>0?Math.round((estTotalAdSpend/targetRev)*10)/10:0;
   const subsPerMonthAtBudget=cacSub>0?Math.max(1,Math.round(monthlyBudget/cacSub)):50;
 
+  const ring=(pct,c1,c2,id)=>{const r=30,C=2*Math.PI*r,v=Math.max(pct>0?1.5:0,Math.min(100,pct));return `<svg width="76" height="76" viewBox="0 0 76 76" style="flex:none"><defs><linearGradient id="hgr_${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><circle cx="38" cy="38" r="${r}" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="8"/><circle cx="38" cy="38" r="${r}" fill="none" stroke="url(#hgr_${id})" stroke-width="8" stroke-linecap="round" stroke-dasharray="${C*v/100} ${C}" transform="rotate(-90 38 38)"/><text x="38" y="43" text-anchor="middle" font-size="14" font-weight="800" fill="currentColor">${pct}%</text></svg>`};
+  const tile=(lbl,cur,tgt,unit,pct,c1,c2,id,col)=>`<div style="display:flex;align-items:center;gap:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:14px 16px">
+      ${ring(pct,c1,c2,id)}
+      <div style="min-width:0"><div style="font-size:12.5px;color:var(--muted);font-weight:700">${lbl}</div>
+        <div style="font-size:30px;font-weight:900;line-height:1.15;color:${col||'var(--ink)'};font-variant-numeric:tabular-nums">${HR_ar(cur)}</div>
+        <div style="font-size:12px;color:var(--muted)">من ${HR_ar(tgt)} ${unit}</div></div></div>`;
   return `
-    <div class="card" style="background:radial-gradient(110% 120% at 100% 0%,rgba(245,166,35,.18),transparent 58%),linear-gradient(160deg,rgba(255,255,255,.07),rgba(255,255,255,.02));border:1px solid rgba(245,166,35,.38);border-radius:18px;padding:22px;position:relative;overflow:hidden">
-      <!-- رأس البطاقة -->
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px">
-        <div>
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(245,166,35,.16);color:var(--gold2);border:1px solid rgba(245,166,35,.35);padding:3px 11px;border-radius:99px;font-size:11.5px;font-weight:800;margin-bottom:8px">
-            <i data-lucide="compass" style="width:13px;height:13px"></i> البوصلة والهدف الشخصي — حروف ودروس
-          </div>
-          <h3 style="margin:0;font-size:20px;font-weight:900;color:var(--ink);display:flex;align-items:center;gap:8px">
-            هدف الـ ${HR_ar(targetRev)} ر.س شهرياً (${HR_ar(targetSubs)} مشترك دافع · ${HR_ar(targetUsers)} مستخدم مسجّل)
-          </h3>
-          <div style="color:var(--muted);font-size:13px;margin-top:4px">${esc(g.visionNote||'')}</div>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <button class="btn btn-gold btn-sm" onclick="hrGoalModal()"><i data-lucide="sliders-horizontal"></i> تعديل الهدف</button>
-          <button class="btn btn-ghost btn-sm" onclick="hrGoalPaidListModal()"><i data-lucide="badge-check"></i> المشتركون الدافعون (${HR_ar(curPaid)})</button>
-          <button class="btn btn-ghost btn-sm" onclick="hrGoalLoadLive(true)" title="تحديث حي من قاعدة بيانات حروف"><i data-lucide="refresh-cw"></i></button>
-          ${!inHuroofTab?`<button class="btn btn-ghost btn-sm" onclick="go('huroof')"><i data-lucide="graduation-cap"></i> لوحة حروف</button>`:''}
+    <div class="card" style="border-radius:18px;padding:18px 20px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px">
+        <h3 style="margin:0;display:flex;align-items:center;gap:8px"><i data-lucide="compass"></i> هدف حروف ودروس</h3>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn btn-ghost btn-sm" onclick="hrGoalLoadLive(true)" title="تحديث حيّ من حروف"><i data-lucide="refresh-cw"></i></button>
+          <button class="btn btn-ghost btn-sm" onclick="hrGoalModal()" title="تعديل الهدف والمعادلة"><i data-lucide="settings-2"></i></button>
+          ${!inHuroofTab?`<button class="btn btn-ghost btn-sm" onclick="go('huroof')" title="لوحة حروف"><i data-lucide="arrow-left"></i></button>`:''}
         </div>
       </div>
-
-      <!-- البطاقات الثلاث الكبرى: الدخل الشهري، المشتركون الدافعون، المستخدمون المسجلون -->
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:16px">
-        <!-- 1. المشتركون الدافعون -->
-        <div style="background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.28);border-radius:14px;padding:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <span style="font-size:12.5px;font-weight:800;color:#86efac;display:flex;align-items:center;gap:6px"><i data-lucide="credit-card" style="width:15px;height:15px"></i> المشتركون الدافعون (المدفوع فقط)</span>
-            <span class="pill" style="background:rgba(34,197,94,.2);color:#86efac;font-size:11px">${pctSubs}%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
-            <span style="font-size:32px;font-weight:900;color:var(--ink);line-height:1">${HR_ar(curPaid)}</span>
-            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetSubs)} مشترك</span>
-          </div>
-          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
-            <div style="height:100%;width:${Math.max(curPaid>0?2:0,pctSubs)}%;background:linear-gradient(90deg,#16a34a,#22c55e);border-radius:99px"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
-            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remSubs)} مشترك دافع</b></span>
-            <span title="المنح المجانية مستبعدة من حسبة الهدف المالي">(+${HR_ar(curGranted)} منحة مجانية)</span>
-          </div>
-        </div>
-
-        <!-- 2. المستخدمون المسجلون -->
-        <div style="background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.28);border-radius:14px;padding:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <span style="font-size:12.5px;font-weight:800;color:#7dd3fc;display:flex;align-items:center;gap:6px"><i data-lucide="users" style="width:15px;height:15px"></i> المستخدمون المسجّلون</span>
-            <span class="pill" style="background:rgba(14,165,233,.2);color:#7dd3fc;font-size:11px">${pctUsers}%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
-            <span style="font-size:32px;font-weight:900;color:var(--ink);line-height:1">${HR_ar(curUsers)}</span>
-            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetUsers)} مسجّل</span>
-          </div>
-          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
-            <div style="height:100%;width:${Math.max(curUsers>0?2:0,pctUsers)}%;background:linear-gradient(90deg,#0284c7,#38bdf8);border-radius:99px"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
-            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remUsers)} مستخدم</b></span>
-            <span style="color:#7dd3fc">+${HR_ar(st.signups30d||0)} آخر ٣٠ يوم</span>
-          </div>
-        </div>
-
-        <!-- 3. الدخل الشهري المتكرر من الاشتراكات -->
-        <div style="background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.32);border-radius:14px;padding:16px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-            <span style="font-size:12.5px;font-weight:800;color:var(--gold2);display:flex;align-items:center;gap:6px"><i data-lucide="wallet" style="width:15px;height:15px"></i> الدخل الشهري المتكرر (MRR)</span>
-            <span class="pill" style="background:rgba(245,166,35,.22);color:var(--gold2);font-size:11px">${pctRev}%</span>
-          </div>
-          <div style="display:flex;align-items:baseline;gap:8px;margin:6px 0">
-            <span style="font-size:32px;font-weight:900;color:var(--gold2);line-height:1">${HR_ar(curRev)}</span>
-            <span style="font-size:13px;color:var(--muted);font-weight:700">من ${HR_ar(targetRev)} ر.س / شهرياً</span>
-          </div>
-          <div style="height:9px;background:rgba(255,255,255,.08);border-radius:99px;overflow:hidden;margin:10px 0 8px">
-            <div style="height:100%;width:${Math.max(curRev>0?2:0,pctRev)}%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:99px"></div>
-          </div>
-          <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:4px">
-            <span>الباقي للهدف: <b style="color:var(--ink)">${HR_ar(remRev)} ر.س/شهر</b></span>
-            <span>بمتوسط ${HR_ar(avgPrice)} ر.س/مشترك</span>
-          </div>
-        </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px">
+        ${tile('الدخل الشهري',curRev,targetRev,'ر.س',pctRev,'#f5a623','#ffd27a','rev','var(--gold2)')}
+        ${tile('المشتركون الدافعون',curPaid,targetSubs,'مشترك',pctSubs,'#16a34a','#4ade80','subs')}
+        ${tile('المستخدمون المسجّلون',curUsers,targetUsers,'مستخدم',pctUsers,'#0284c7','#38bdf8','users')}
       </div>
-
+    </div>`;
+}
+// المعادلة والتحليل (القمع + الحملات) — تظهر داخل «تعديل الهدف» لا في الرئيسية
+function hrGoalFunnelHTML(){
+  const g=hrGoalCfg(),st=hrGoalStats();
+  const targetRev=Math.max(1,Number(g.targetRevenue||20000)),targetSubs=Math.max(1,Number(g.targetSubscribers||800)),targetUsers=Math.max(1,Number(g.targetUsers||100000)),targetVisitors=Math.max(1,Number(g.targetVisitors||500000));
+  const cacSub=Math.max(1,Number(g.estCacSub||60)),monthlyBudget=Math.max(100,Number(g.monthlyAdBudget||3000));
+  const curPaid=Number(st.paidSubscribers||0),curUsers=Number(st.totalUsers||0),curVisitors=Number(st.devicesOpened||0);
+  const remSubs=Math.max(0,targetSubs-curPaid),remVisitors=Math.max(0,targetVisitors-curVisitors),pctVisitors=Math.min(100,Math.round((curVisitors/targetVisitors)*1000)/10);
+  const targetConvRate=Math.round((targetSubs/targetUsers)*10000)/100,actualConvRate=curUsers>0?Math.round((curPaid/curUsers)*10000)/100:0;
+  const actualRegRate=curVisitors>0?Math.round((curUsers/curVisitors)*1000)/10:0,targetRegRate=Math.round((targetUsers/targetVisitors)*1000)/10;
+  const usersNeededAtActualConv=actualConvRate>0?Math.round(targetSubs/(actualConvRate/100)):targetUsers;
+  const estTotalAdSpend=Math.round(remSubs*cacSub),paybackMonths=targetRev>0?Math.round((estTotalAdSpend/targetRev)*10)/10:0,subsPerMonthAtBudget=cacSub>0?Math.max(1,Math.round(monthlyBudget/cacSub)):50;
+  return `
       <!-- شريط تحليل القمع وحاسبة الحملات (كم أحتاج زوار + مسجلين + ميزانية حملات) -->
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;background:rgba(0,0,0,.26);border:1px solid var(--line);border-radius:13px;padding:14px">
         <div>
@@ -338,13 +292,13 @@ function hrGoalCardHTML(inHuroofTab){
             • <b>بميزانية ${HR_ar(monthlyBudget)} ر.س/شهر:</b> تضيف <b>~${HR_ar(subsPerMonthAtBudget)} مشترك دافع شهرياً</b> (+ النمو العضوي من مقاطع 3D).
           </div>
         </div>
-      </div>
-    </div>`;
+      </div>`;
 }
 
 function hrGoalModal(){
   const g=hrGoalCfg();
   openModal('إعدادات هدف حروف ودروس (قابل للتعديل)',`
+    <details style="margin-bottom:14px"><summary style="cursor:pointer;font-weight:800;margin-bottom:10px"><i class="inl" data-lucide="filter"></i> المعادلة والتحليل (القمع والحملات)</summary>${hrGoalFunnelHTML()}</details>
     <div class="badge-note" style="margin-bottom:14px"><i data-lucide="compass"></i>
       <div>عدّل أرقام هدفك في أي وقت. يمكنك تثبيتها على <b>١٠٠,٠٠٠ مستخدم</b> و<b>٨٠٠ مشترك</b> و<b>٢٠,٠٠٠ ريال شهرياً</b> أو تغييرها حسب خطتك، وتُحفظ فوراً في النظام.</div>
     </div>

@@ -9,6 +9,7 @@
  *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== APPS / ROUTER ===== */
+// الكاشير وبنك الأفكار والفريق أُزيلت من الواجهة، و«المواعيد» دُمجت في التقويم (٢٦ أكتوبر ٢٠٢٦) — دوالّها وبياناتها باقية
 const APPS=[
   {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
@@ -17,21 +18,18 @@ const APPS=[
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette'},
   {id:'products',name:'المنتجات',icon:'package'},
-  {id:'pos',name:'الكاشير',icon:'scan-barcode'},
   {id:'subs',name:'الاشتراكات والمصروفات',icon:'credit-card'},
   {id:'accounting',name:'المحاسبة',icon:'calculator'},
   {id:'habits',name:'العادات',icon:'repeat'},
   {id:'pipeline',name:'مسار العملاء',icon:'git-branch'},
   {id:'contacts',name:'العملاء',icon:'contact'},
   {id:'suppliers',name:'الموردون',icon:'truck'},
-  {id:'appointments',name:'المواعيد',icon:'calendar-clock'},
   {id:'calendar',name:'التقويم',icon:'calendar-days'},
   {id:'projects',name:'المشروع',icon:'clapperboard'},
   {id:'boards',name:'الخرائط الذهنية',icon:'git-fork'},
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
-  {id:'ideas',name:'بنك الأفكار',icon:'lightbulb'},
 ];
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDeskto */
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name: */
@@ -45,22 +43,18 @@ const LAUNCH=[
   {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
   {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488'},
-  {id:'pos',name:'الكاشير',icon:'scan-barcode',c:'#22c55e,#15803d'},
   {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777'},
   {id:'accounting',name:'المحاسبة',icon:'calculator',c:'#10b981,#047857'},
   {id:'habits',name:'العادات',icon:'repeat',c:'#f59e0b,#b45309'},
   {id:'pipeline',name:'مسار العملاء',icon:'git-branch',c:'#14b8a6,#0d9488'},
   {id:'contacts',name:'العملاء',icon:'contact',c:'#0ea5e9,#0284c7'},
   {id:'suppliers',name:'الموردون',icon:'truck',c:'#f59e0b,#b45309'},
-  {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed'},
   {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
   {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
   {id:'boards',name:'الخرائط الذهنية',icon:'git-fork',c:'#6366f1,#4338ca'},
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
-  {id:'ideas',name:'بنك الأفكار',icon:'lightbulb',c:'#f59e0b,#b45309'},
-  {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
 ];
 function hexA(h,al){h=String(h).trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${al})`}
 function gGrad(c,al){return c.split(',').map(x=>hexA(x,al)).join(',')}

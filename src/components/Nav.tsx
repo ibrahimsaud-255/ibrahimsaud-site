@@ -6,7 +6,7 @@ import { site, waLink } from "@/lib/site";
 // لا رابط للأسعار في الناف — صفحة الباقات /ad-packages/ تبقى موجودة لمن تُرسل له
 // الرابط مباشرة، لكنها لا تُعلَن في الموقع.
 const links = [
-  { href: "/#official", label: "الأعمال" },
+  { href: "/#official-works", label: "الأعمال" },
   { href: "/#tools", label: "الأدوات" },
   { href: "/#about", label: "من أنا" },
   { href: "/#contact", label: "تواصل" },

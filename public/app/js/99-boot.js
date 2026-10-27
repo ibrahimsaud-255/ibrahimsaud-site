@@ -21,7 +21,7 @@ const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspac
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1002 */
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},...APPS];
 ;
 
 /* ⤶ 03-huroof.js · سطر الأصل 1138 */

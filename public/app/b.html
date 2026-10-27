@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<title>خريطة مشتركة</title>
+<!-- صفحة شريك الخريطة الذهنية: تفتح لوحة واحدة بالتوكن (?t=) — بلا حساب ولا وصول لبقيّة النظام.
+     تعيد استخدام محرّك اللوحة نفسه (js/19-freeform.js) وتعرّف له الحدّ الأدنى من الدوالّ العامّة. -->
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800;900&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<style>
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+  @font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+  :root{--bg:#0A0A0A;--panel:#171717;--panel2:#1F1F1F;--line:#262626;--ink:#FAFAFA;--muted:#A1A1AA;--gold:#E8C766;--gold2:#F0D488;--goldsoft:rgba(232,199,102,.14);--good:#22c55e;--bad:#ef4444}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{font-family:'Thmanyah Sans','Tajawal',system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  button,input,select,textarea{font-family:inherit}
+  .hidden{display:none!important}
+  #main{padding:14px 16px;max-width:100%}
+  .bd-canvas{height:calc(100dvh - 92px)!important}
+  .btn{border:none;border-radius:10px;padding:11px 18px;font-weight:700;font-size:15px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+  .btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#1a1205}
+  .btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--line);color:var(--ink)}
+  .btn-sm{padding:7px 13px;font-size:13px;border-radius:8px}
+  .btn svg{width:16px;height:16px}
+  .inl{display:inline-flex;align-items:center;vertical-align:-3px}.inl svg{width:14px;height:14px}
+  .bd-brand{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+</style>
+</head>
+<body>
+<div id="main"><p style="color:var(--muted);text-align:center;margin-top:20vh">…جارٍ فتح الخريطة</p></div>
+<div id="modalRoot"></div>
+<script>
+const SUPA_URL='https://rrerwhhxrjyzmnnjsfev.supabase.co';
+const SUPA_KEY='sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13';
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:false}});
+// الحدّ الأدنى من بيئة النظام الذي يحتاجه محرّك اللوحة
+let S={boards:[],settings:{}},CUR='boards',USER=null,WS_DEMO=false;
+let BRD=null,BSEL=new Set(),BMODE='select',BFROM=null,BTMP=null,BGEST=null,BEDIT=false,BCUR=null,BUNDO=[],BVT=null;
+const BPTRS=new Map();
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const today=()=>{const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())};
+function refreshIcons(){try{if(window.lucide)lucide.createIcons()}catch(e){}}
+function save(){} // الشريك يحفظ عبر مزامنة اللوحة المشتركة فقط
+function ageLabel(d){return d||''}
+function emptyBox(i,t){return '<p>'+t+'</p>'}
+</script>
+<script src="./js/19-freeform.js?v=8"></script>
+<script>
+(function(){const t=new URLSearchParams(location.search).get('t')||'';
+  if(!/^[0-9a-f]{20,64}$/.test(t)){document.getElementById('main').innerHTML='<p style="text-align:center;margin-top:20vh">رابط غير صالح</p>';return}
+  document.addEventListener('keydown',boardKeys);document.addEventListener('keyup',boardKeyUp);document.addEventListener('paste',boardPaste);document.addEventListener('copy',boardCopyEvt);document.addEventListener('cut',boardCopyEvt);window.__bdInit=1;
+  openSharedBoard(t);
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')bShPull()});
+})();
+</script>
+</body>
+</html>

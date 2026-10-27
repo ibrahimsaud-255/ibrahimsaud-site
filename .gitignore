@@ -72,3 +72,4 @@ __pycache__/
 
 # ملف بيانات النشر (يحتوي كلمات مرور)
 deploy/.env
+tools/freeform-import/ocr
