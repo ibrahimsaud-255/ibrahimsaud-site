@@ -28,6 +28,8 @@ function syncInvStatus(inv){const due=invDue(inv);if(invPaid(inv)<=0&&invCredits
    مغلق: فواتير عاديّة بلا ضريبة ولا رمز QR. مفعّل: كلّ فاتورة جديدة بضريبة ١٥٪،
    تبقى «مسودّة» تُعدَّل حتى تُصدَر، وبعد الإصدار تُقفل (لا تعديل ولا حذف — التصحيح
    بإشعار دائن) وتأخذ رقماً من تسلسلٍ خاصّ بلا فجوات. */
+// رابط عميق من «العالم» (/app/3d/): ?view=<شاشة> يفتحها مباشرة، و?embed=1 يخفي القائمة لتُعرض داخل إطار
+function deepView(fallback){const p=new URLSearchParams(location.search);if(p.get('embed'))document.documentElement.classList.add('embed');const v=p.get('view');return v&&RENDER[v]?v:fallback}
 function taxOn(){return !!(S.settings.vat&&S.settings.vat.enabled)}
 function taxDraft(d){return !!(d&&d.vat&&taxOn()&&!d.issued&&d.number!=null&&!d.invoiceId)}
 function docNo(type,d){const s=S.settings;const pad=n=>String(n).padStart(5,'0');

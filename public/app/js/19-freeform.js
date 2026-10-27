@@ -946,7 +946,7 @@ function enterDemo(){
   document.getElementById('appShell').classList.remove('hidden');
   renderNav();initSidebarShell();applyBranding();
   const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});
-  go('workspace');if(typeof calInit==='function')calInit();
+  go(deepView('workspace'));if(typeof calInit==='function')calInit();
 }
 async function bootstrap(){
   const params=new URLSearchParams(location.search);
