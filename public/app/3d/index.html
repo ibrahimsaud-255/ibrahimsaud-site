@@ -59,6 +59,27 @@
   #sys iframe{flex:1;border:0;width:100%;background:var(--bg)}
   @media (max-width:700px){#sys{inset:0;border-radius:0;border:0}}
 
+  /* الخريطة، لوحة المعلومات، المعرض */
+  .mapbtn{position:fixed;top:calc(12px + env(safe-area-inset-top));left:96px;z-index:5;background:rgba(23,23,23,.7);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13px;color:var(--ink)}
+  .mapbtn kbd{font-family:inherit;color:var(--gold);margin-right:6px}
+  #info{position:fixed;top:calc(58px + env(safe-area-inset-top));left:50%;transform:translateX(-50%);z-index:5;background:rgba(10,10,10,.8);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(232,199,102,.4);border-radius:16px;padding:12px 20px;display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none;min-width:220px}
+  #info b{font-family:"Thmanyah Serif",serif;font-size:22px;color:var(--gold)}
+  #info span{font-size:14px;color:var(--muted)}#info em{font-style:normal;color:var(--ink);font-weight:700}
+  #panelBody{display:none;flex:1;overflow:auto;padding:22px;-webkit-user-select:text;user-select:text}
+  #sys.panel #panelBody{display:block}#sys.panel iframe{display:none}
+  #sys.panel{inset:max(6vh,10px) max(10vw,10px)}
+  .map{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+  .map button{text-align:right;background:#171717;border:1px solid var(--line);border-radius:14px;padding:16px;color:var(--ink);display:flex;flex-direction:column;gap:4px;transition:border-color .15s,transform .15s}
+  .map button:hover{border-color:var(--gold);transform:translateY(-2px)}
+  .map b{font-family:"Thmanyah Serif",serif;font-size:20px}.map span{font-size:13px;color:var(--muted)}
+  .mem h2{font-family:"Thmanyah Serif",serif;font-size:34px;margin:0}.mem .yr{color:var(--gold);font-size:15px;font-weight:700}
+  .mem p{color:#d4d4d8;line-height:1.9;font-size:15.5px;max-width:760px}
+  .mem dl{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:14px;margin:0 0 18px}.mem dt{color:var(--muted)}.mem dd{margin:0}
+  .mem .ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+  .mem .ph img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;border:1px solid var(--line);cursor:zoom-in;background:#171717}
+  .mem .ph img.big{grid-column:1/-1;aspect-ratio:auto;cursor:zoom-out}
+  @media (max-width:700px){.mapbtn{left:16px;top:calc(52px + env(safe-area-inset-top))}#sys.panel{inset:0}}
+
   /* لمس */
   .touch{display:none}
   .is-touch .touch{display:block}
@@ -73,7 +94,7 @@
 <script src="../js/01-core.js?v=6"></script>
 <script src="../js/04-home.js?v=3"></script>
 <script src="../js/05-helpers.js?v=4"></script>
-<script src="./data.js?v=1"></script>
+<script src="./data.js?v=2"></script>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
@@ -81,6 +102,8 @@
 
 <div class="brand"><i></i><b>إبراهيم سعود</b><span>الاستوديو</span></div>
 <a class="back" href="../">النظام ↗</a>
+<button class="mapbtn" id="mapBtn"><kbd>M</kbd>الخريطة</button>
+<div id="info" class="hidden"></div>
 <div id="cross"></div>
 <div id="hint" class="hidden"></div>
 <div id="toast" class="hidden"></div>
@@ -93,13 +116,14 @@
 
 <div id="start" class="veil hidden"><div class="card">
   <h1>الاستوديو</h1>
-  <p>غرفة إبراهيم سعود — النظام كعالم تمشي فيه. اقترب من أيّ شيء مضيء في الغرفة لتفتح جزءاً من النظام.</p>
+  <p>غرفة إبراهيم سعود وما حولها — النظام كعالم تمشي فيه. اقترب من أيّ شيء مضيء لتفتح جزءاً من النظام، واخرج من الباب إلى الساحة: وادي المبيعات، الخزنة، المجلس، وممرّ الذكريات.</p>
   <div class="keys" id="keysDesk">
     <kbd>W A S D</kbd><span>المشي</span>
     <kbd>الماوس</kbd><span>النظر</span>
     <kbd>Space</kbd><span>القفز</span>
     <kbd>Shift</kbd><span>الجري</span>
     <kbd>E · نقرة</kbd><span>افتح ما أمامك</span>
+    <kbd>M</kbd><span>الخريطة والانتقال بين الأماكن</span>
     <kbd>Esc</kbd><span>إيقاف مؤقّت</span>
   </div>
   <div class="keys hidden" id="keysTouch">
@@ -114,8 +138,9 @@
 <div id="sys" class="hidden">
   <header><b id="sysTitle">النظام</b><button id="sysClose">رجوع للاستوديو ✕</button></header>
   <iframe id="frame" title="النظام"></iframe>
+  <div id="panelBody"></div>
 </div>
 
-<script type="module" src="./world.js?v=1"></script>
+<script type="module" src="./world.js?v=4"></script>
 </body>
 </html>
