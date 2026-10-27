@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>الاستوديو — إبراهيم سعود</title>
 <meta name="robots" content="noindex, nofollow">
+<meta name="description" content="ادخل عالم إبراهيم سعود ثلاثيّ الأبعاد: الاستوديو، ووادي المبيعات، والمجلس، وممرّ الذكريات.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="إبراهيم سعود">
+<meta property="og:title" content="الاستوديو — عالم إبراهيم سعود ثلاثيّ الأبعاد">
+<meta property="og:description" content="امشِ داخل الاستوديو، واخرج إلى الساحة: وادي المبيعات، والمجلس، وممرّ الذكريات — من المتصفّح مباشرة.">
+<meta property="og:url" content="https://ibrahimsaud.com/app/3d/">
+<meta property="og:image" content="https://ibrahimsaud.com/app/3d/og.jpg?v=1">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="ساحة عالم إبراهيم سعود عند الغروب: برج المؤشّرات وأعمدة المبيعات الضوئيّة">
+<meta property="og:locale" content="ar_SA">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://ibrahimsaud.com/app/3d/og.jpg?v=1">
 <meta name="theme-color" content="#0a0a0a">
 <link rel="icon" href="/logo-ibrahimsaud.png">
 <style>
@@ -82,6 +95,11 @@
   .mem .ph img.big{grid-column:1/-1;aspect-ratio:auto;cursor:zoom-out}
   @media (max-width:700px){.mapbtn{left:16px;top:calc(52px + env(safe-area-inset-top))}.guestbtn{left:116px}#sys.panel{inset:0}}
 
+  /* لقطة المعاينة (?shot=): بلا أزرار، ولافتة العنوان فقط */
+  .shot .back,.shot .mapbtn,.shot #cross,.shot #hint,.shot #toast,.shot .touch,.shot #start,.shot #info,.shot .brand{display:none !important}
+  #shotCap{display:none}.shot #shotCap{display:flex;position:fixed;right:44px;bottom:40px;z-index:9;flex-direction:column;gap:6px;background:rgba(10,10,10,.62);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(232,199,102,.45);border-radius:20px;padding:20px 28px}
+  #shotCap b{font-family:"Thmanyah Serif",serif;font-size:46px;line-height:1.1;display:flex;align-items:center;gap:14px}#shotCap b:before{content:"";width:12px;height:12px;border-radius:50%;background:var(--gold);box-shadow:0 0 16px var(--gold)}
+  #shotCap span{font-size:21px;color:#e4e4e7}#shotCap small{font-size:16px;color:var(--gold);letter-spacing:.3px}
   /* لمس */
   .touch{display:none}
   .is-touch .touch{display:block}
@@ -107,6 +125,7 @@
 <button class="mapbtn" id="mapBtn"><kbd>M</kbd>الخريطة</button>
 <button class="mapbtn guestbtn hidden" id="guestBtn">وضع العرض</button>
 <div id="info" class="hidden"></div>
+<div id="shotCap"><b>الاستوديو</b><span>عالم إبراهيم سعود ثلاثيّ الأبعاد — امشِ فيه</span><small>ibrahimsaud.com/app/3d</small></div>
 <div id="cross"></div>
 <div id="hint" class="hidden"></div>
 <div id="toast" class="hidden"></div>
@@ -145,6 +164,6 @@
   <div id="panelBody"></div>
 </div>
 
-<script type="module" src="./world.js?v=9"></script>
+<script type="module" src="./world.js?v=11"></script>
 </body>
 </html>

@@ -90,9 +90,10 @@ const leds=[];
 // لافتة الاتّجاهات
 const DIRS=[['وادي المبيعات',16,-12],['الخزنة',28,2],['المجلس',16,15],['غرفة البثّ',29,-13],['أكاديمية حروف',29,16],['الورشة',5,-14],['الحديقة',5,15],['ممرّ الذكريات',-6,4.4]];
 {const x=10.2,z=4.4,g=grp(x,0,z);cyl(.06,.07,3.2,0x5a3e28,0,0,0,g,6);block(x,z,.1,.1,3.2);
-  DIRS.forEach(([n,tx,tz],i)=>{const t=ctex(384,72,(c,w,h)=>{c.fillStyle='#e9dcc0';c.beginPath();c.moveTo(0,0);c.lineTo(w-36,0);c.lineTo(w,h/2);c.lineTo(w-36,h);c.lineTo(0,h);c.fill();c.fillStyle='#1c1712';c.font='700 36px '+FONT;c.textAlign='center';c.fillText(n,w/2-14,48)});
-    const b=new THREE.Group();b.position.y=1.15+i*.28;b.rotation.y=Math.atan2(tx-x,tz-z)-Math.PI/2;g.add(b);
-    for(const [zz,ry,flip] of[[.012,0,1],[-.012,Math.PI,-1]]){const m=new THREE.Mesh(new THREE.PlaneGeometry(1.15,.22),new THREE.MeshStandardMaterial({map:t,roughness:.9}));m.position.set(.62,0,zz);m.rotation.y=ry;if(flip<0){m.position.x=.62;m.scale.x=-1}b.add(m)}})}
+  // لوح سهم بوجهين: الأماميّ رأسه يمين، والخلفيّ مرسوم معكوس الشكل لا النصّ — فيُقرأ ويشير للهدف من الجهتين
+  const arrow=(n,tipRight)=>ctex(384,72,(c,w,h)=>{c.fillStyle='#e9dcc0';c.beginPath();if(tipRight){c.moveTo(0,0);c.lineTo(w-36,0);c.lineTo(w,h/2);c.lineTo(w-36,h);c.lineTo(0,h)}else{c.moveTo(w,0);c.lineTo(36,0);c.lineTo(0,h/2);c.lineTo(36,h);c.lineTo(w,h)}c.fill();c.fillStyle='#1c1712';c.font='700 36px '+FONT;c.textAlign='center';c.fillText(n,w/2+(tipRight?-14:14),48)});
+  DIRS.forEach(([n,tx,tz],i)=>{const b=new THREE.Group();b.position.y=1.15+i*.28;b.rotation.y=Math.atan2(tx-x,tz-z)-Math.PI/2;g.add(b);
+    [[.012,0,arrow(n,true)],[-.012,Math.PI,arrow(n,false)]].forEach(([zz,ry,t])=>{const m=new THREE.Mesh(new THREE.PlaneGeometry(1.15,.22),new THREE.MeshStandardMaterial({map:t,roughness:.9}));m.position.set(.62,0,zz);m.rotation.y=ry;b.add(m)})})}
 
 /* ══════════ وادي المبيعات ══════════ */
 gate(16,-9.2,'وادي المبيعات','الفواتير · العروض · المنتجات · التسعير',0xe8c766);

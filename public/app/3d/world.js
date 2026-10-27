@@ -8,7 +8,7 @@
  */
 import * as THREE from 'three';
 import {Reflector} from 'three/addons/objects/Reflector.js';
-import {buildCampus} from './campus.js?v=5';
+import {buildCampus} from './campus.js?v=6';
 import {buildMemories} from './memories.js?v=5';
 import {buildFun} from './fun.js?v=1';
 
@@ -534,6 +534,10 @@ if(/[?&]debug/.test(location.search))window.W3DBG={P,camera,scene,step,aim,ACTS,
   try{await Promise.all([document.fonts.load('700 40px "Thmanyah Sans"'),document.fonts.load('400 40px "Thmanyah Sans"'),document.fonts.load('700 40px "Thmanyah Serif"')])}catch(_){}
   try{K=await W.load()}catch(e){console.warn(e)}
   TEX.forEach(paint);CAMPUS.refresh();setStatus();
+  // ?shot=x,z,yaw,pitch[,y]: لقطة نظيفة للمعاينة (صورة الرابط في واتساب) — بلا أزرار، أرقام توضيحيّة
+  const shot=new URLSearchParams(location.search).get('shot');
+  if(shot){const [x,z,yaw,pitch,y]=shot.split(',').map(Number);document.documentElement.classList.add('shot');$('loading').classList.add('hidden');
+    for(let i=0;i<420;i++)CAMPUS.update(1/60,P,G,false);Object.assign(P,{x,z,yaw,pitch:pitch||0,y:y||0});window.SHOT_READY=true;return}
   try{MEM=await buildMemories(C)}catch(e){console.warn('memories',e)}
   $('loading').classList.add('hidden');$('start').classList.remove('hidden');
 })();
