@@ -269,5 +269,5 @@ function update(dt,P,G,live=true){
     info(d?`<b>${d.title||d.label}</b><span>محصّل <em>${money(d.collected)}</em></span><span>مفوتر ${money(d.invoiced)} · ${fmt(d.count)} فاتورة</span>`:(a>=0?'<b>لا بيانات</b>':null))}
 }
 // غرب x0 لا يُمشى إلا على طريق الذكريات (lane)
-return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:33,lane:{x0:-80,z0:4.4-6.4,z1:4.4+6.4}}};
+return {districts,refresh,update,bounds:{x0:-13,x1:45,z0:-30,z1:33,lane:{x0:-98,z0:4.4-6.4,z1:4.4+6.4}}};
 }

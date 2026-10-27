@@ -8,8 +8,8 @@
  */
 import * as THREE from 'three';
 import {Reflector} from 'three/addons/objects/Reflector.js';
-import {buildCampus} from './campus.js?v=4';
-import {buildMemories} from './memories.js?v=3';
+import {buildCampus} from './campus.js?v=5';
+import {buildMemories} from './memories.js?v=5';
 import {buildFun} from './fun.js?v=1';
 
 const W=window.W3D;
@@ -389,7 +389,7 @@ function drawCork(g,w,h){
 }
 
 /* ══════════════════ اللاعب ══════════════════ */
-const C={THREE,scene,mat,M,put,box,cyl,ball,grp,plane,rnd,ctex,paint,tmat,rrect,wrap,fmt,solid,block,act,palm,openSys,openPanel,toast,info:setInfo,getK:()=>K,ACTS,COL,FONT,SERIF,GOLD};
+const C={THREE,scene,mat,M,put,box,cyl,ball,grp,plane,rnd,ctex,paint,tmat,rrect,wrap,fmt,solid,block,act,palm,openSys,openPanel,teleport,toast,info:setInfo,getK:()=>K,ACTS,COL,FONT,SERIF,GOLD};
 const CAMPUS=buildCampus(C);
 Object.assign(C,{bounds:CAMPUS.bounds,PADS,rc:RC,lamp:LAMP});
 const FUN=buildFun(C);
