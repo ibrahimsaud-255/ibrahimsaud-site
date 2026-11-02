@@ -85,6 +85,8 @@ export default function Home() {
 
           <div className="v2-tile-grid">
             <section className="v2-tile half dark" data-rise>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className="tile-logo" src="/tools/claude.svg" alt="Claude" />
               <h2>هويّة</h2>
               <p className="line">هويّتك. داخل Claude.</p>
               <div className="ctas">

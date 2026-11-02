@@ -12,6 +12,8 @@ export default function DemoCards({ clients = false }: { clients?: boolean }) {
             <img src={d.img} alt={`${d.name} على الجوال`} loading="lazy" />
           </div>
           <div className="tx">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {d.logo && <img className="logo" src={d.logo} alt={d.name} />}
             <span className="kind">{d.client && <b>عمل لعميل · </b>}{d.kind}</span>
             <h3>{d.name}</h3>
             <p>{d.text}</p>

@@ -98,12 +98,12 @@ export const why = [
 // ===== نسخ العرض الحيّة (public/demo — تُبنى بـ tools/build-demos.py) =====
 // كلّها بالوضع التجريبيّ: بيانات الزائر في متصفّحه فقط، بلا قاعدة بيانات.
 // client: عمل سوّاه إبراهيم لعميل (يُعرض تحت «أعمال لعملائي» لا كمنتج له)
-export type Demo = { id: string; name: string; kind: string; text: string; img: string; href: string; dash?: string; qr: string; client?: boolean };
+export type Demo = { id: string; name: string; kind: string; text: string; img: string; href: string; dash?: string; qr: string; client?: boolean; logo?: string };
 export const demos: Demo[] = [
   { id: "nasaq", name: "نَسَق", kind: "نظامي · نسخة عرض", text: "نسخة من نظامي ببيانات تجريبيّة: المكتب، والمبيعات، والفوترة، وعروض الأسعار، والعملاء، والتقويم.", img: "/v2/shots/demo-nasaq.jpg", href: "/demo/nasaq/index.html", qr: "/v2/qr/nasaq.svg" },
-  { id: "ruso", name: "جمعيّة رسو لبناء الشخصيّة", kind: "جمعيّة أهليّة · موقع ونظام داخليّ", client: true, text: "موقع الجمعيّة ولوحة تحكّمها: سندات صرف، وحوكمة، ومستفيدون، وتطوّع.", img: "/v2/shots/demo-ruso-site.jpg", href: "/demo/ruso/website/index.html", dash: "/demo/ruso/system/index.html", qr: "/v2/qr/ruso.svg" },
-  { id: "manabir", name: "منابر", kind: "منصّة دعويّة · خمس صلاحيّات", client: true, text: "تنظيم الأنشطة الدعويّة في المساجد: ادخل كمدير النظام، أو ممثّل الوزارة، أو مشرف المسجد.", img: "/v2/shots/demo-manabir.jpg", href: "/demo/manabir/index.html?login=1", dash: "/demo/manabir/index.html?dash=1", qr: "/v2/qr/manabir.svg" },
-  { id: "takamul", name: "التكامل المتّحدة", kind: "شركة استشارات · موقع ولوحة محتوى", client: true, text: "موقع شركة استشارات بالعربيّ والإنجليزيّ، ومحتواه كلّه يتعدّل من لوحة تحكّم.", img: "/v2/shots/demo-takamul.jpg", href: "/demo/takamul/index.html", dash: "/demo/takamul/dashboard/index.html", qr: "/v2/qr/takamul.svg" },
+  { id: "ruso", name: "جمعيّة رسو لبناء الشخصيّة", kind: "جمعيّة أهليّة · موقع ونظام داخليّ", client: true, logo: "/v2/logos/ruso.svg", text: "موقع الجمعيّة ولوحة تحكّمها: سندات صرف، وحوكمة، ومستفيدون، وتطوّع.", img: "/v2/shots/demo-ruso-site.jpg", href: "/demo/ruso/website/index.html", dash: "/demo/ruso/system/index.html", qr: "/v2/qr/ruso.svg" },
+  { id: "manabir", name: "منابر", kind: "منصّة دعويّة · خمس صلاحيّات", client: true, logo: "/v2/logos/manabir.png", text: "تنظيم الأنشطة الدعويّة في المساجد: ادخل كمدير النظام، أو ممثّل الوزارة، أو مشرف المسجد.", img: "/v2/shots/demo-manabir.jpg", href: "/demo/manabir/index.html?login=1", dash: "/demo/manabir/index.html?dash=1", qr: "/v2/qr/manabir.svg" },
+  { id: "takamul", name: "التكامل المتّحدة", kind: "شركة استشارات · موقع ولوحة محتوى", client: true, logo: "/v2/logos/takamul.png", text: "موقع شركة استشارات بالعربيّ والإنجليزيّ، ومحتواه كلّه يتعدّل من لوحة تحكّم.", img: "/v2/shots/demo-takamul.jpg", href: "/demo/takamul/index.html", dash: "/demo/takamul/dashboard/index.html", qr: "/v2/qr/takamul.svg" },
 ];
 
 // ===== المنتجات (صفحة لكلّ منتج، وكلّ حملة جوجل تودّي لوحدة) =====
@@ -128,7 +128,8 @@ export type Product = {
   highlights: Highlight[];
   journey?: { title: string; steps: { name: string; text: string }[] };
   features: { title: string; sub?: string; items: { title: string; text: string }[] }[];
-  showcase?: { id?: string; eyebrow: string; title: string; text: string; imgs: string[] };
+  // logos: شعار العميل وشعار الأداة فوق العنوان (مثل «سعد السيف × Claude»)
+  showcase?: { id?: string; eyebrow: string; title: string; text: string; imgs: string[]; logos?: { src: string; alt: string; label?: string }[] };
   demos?: boolean;
   showWorks?: boolean;
   compare: Compare;
@@ -189,6 +190,7 @@ export const products: Record<Product["slug"], Product> = {
       title: "هويّتك تشتغل معك كلّ يوم.",
       text: "دليل هويّة ومهارة داخل Claude: تقول له «سوّ لي غلاف لهالحلقة» ويطلع بهويّتك. هذي هويّة سعد السيف اللي سلّمناها، وموشن حلقاته يطلع منها.",
       imgs: ["/v2/shots/saad-quote.jpg", "/v2/shots/saad-name.jpg", "/v2/shots/saad-stat.jpg"],
+      logos: [{ src: "/v2/logos/saad-alsaif-white.png", alt: "سعد السيف" }, { src: "/tools/claude.svg", alt: "Claude", label: "Claude" }],
     },
     compare: {
       models: [

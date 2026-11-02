@@ -136,6 +136,17 @@ export default function ProductPage({ p }: { p: Product }) {
               <article className="v2-build dark" data-rise>
                 <WindowLight style={{ top: -60, right: -80, width: 700, height: 480 }} />
                 <div style={{ position: "relative" }}>
+                  {p.showcase.logos && (
+                    <div className="v2-lockup">
+                      {p.showcase.logos.map((l, i) => (
+                        <span key={l.src} className="lk">
+                          {i > 0 && <span className="x" aria-hidden="true">×</span>}
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={l.src} alt={l.alt} />{l.label && <b>{l.label}</b>}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   <div className="role">{p.showcase.eyebrow}</div>
                   <h3>{p.showcase.title}</h3>
                   <p>{p.showcase.text}</p>
