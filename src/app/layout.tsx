@@ -90,7 +90,7 @@ const structuredData = {
       knowsLanguage: ["ar", "en"],
       sameAs: [
         "https://www.tiktok.com/@ibrahimsaud",
-        "https://www.youtube.com/@Sa3y_Podcast",
+        "https://www.youtube.com/@Sa3Podcast",
       ],
       worksFor: {
         "@type": "Organization",

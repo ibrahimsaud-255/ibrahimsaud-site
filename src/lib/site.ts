@@ -15,7 +15,7 @@ export const site = {
   social: {
     tiktok: "https://www.tiktok.com/@ibrahimsaud", // ← عدّل الرابط
     instagram: "", // ← أضف لو تبي
-    youtube: "https://www.youtube.com/@Sa3y_Podcast",
+    youtube: "https://www.youtube.com/@Sa3Podcast",
     x: "",
     linkedin: "",
     snapchat: "",
@@ -23,7 +23,7 @@ export const site = {
   // ===== بودكاست سَعي (أصبح قسماً داخل الموقع بدل موقع منفصل) =====
   podcast: {
     name: "سَعي",
-    youtube: "https://www.youtube.com/@Sa3y_Podcast",
+    youtube: "https://www.youtube.com/@Sa3Podcast",
     tiktok: "https://www.tiktok.com/@sa3y_podcast",
     registerHref: "/register/", // استمارة «كن ضيفاً»
   },
