@@ -295,6 +295,10 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-pkg .price { font-size: 40px; font-weight: 900; margin-top: 16px; font-variant-numeric: tabular-nums; }
 .v2-pkg .price small { font-size: 17px; font-weight: 500; color: var(--fg-2); margin-inline-start: 6px; }
 .v2-pkg.featured .price small { color: rgba(255, 255, 255, .6); }
+.v2-pkg .half { font-size: 14px; color: var(--fg-2); }
+.v2-pkg.featured .half { color: rgba(255, 255, 255, .62); }
+.v2-pkg .act .v2-link { font-size: 15px; margin-top: 2px; }
+.v2-pkg.featured .act .v2-link { color: var(--blue-on-dark) !important; }
 .v2-pkg .draft { font-size: 12px; color: #B25E00; font-weight: 700; }
 .v2-pkg ul { list-style: none; margin: 20px 0 26px; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.5; }
 .v2-pkg li { display: flex; gap: 10px; }

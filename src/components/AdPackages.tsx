@@ -5,6 +5,9 @@
 
 import Reveal from "@/components/Reveal";
 import { adPackages, waLink } from "@/lib/site";
+import paylinks from "@/lib/paylinks.json";
+
+const pays = paylinks as Record<string, { full?: string; half?: string }>;
 import { useContent } from "@/lib/cms";
 
 const COLORS: Record<string, string> = {
@@ -77,16 +80,29 @@ export default function AdPackages() {
                     ))}
                   </ul>
 
+                  {pays[`ad-${p.id}`]?.full && (
+                    <a
+                      href={pays[`ad-${p.id}`].full}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-6 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black text-white transition hover:opacity-90"
+                      style={{ backgroundColor: c, marginTop: "auto" }}
+                    >
+                      ادفع الآن
+                    </a>
+                  )}
                   <a
                     href={waLink(
                       `السلام عليكم، أبي أطلب «${p.name}» (${p.price} ريال) 🎬`,
                     )}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-6 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black text-white transition hover:opacity-90"
-                    style={{ backgroundColor: c, marginTop: "auto" }}
+                    className={pays[`ad-${p.id}`]?.full
+                      ? "mt-3 inline-flex items-center justify-center gap-2 rounded-full border px-6 py-3 text-sm font-black transition hover:opacity-80"
+                      : "mt-6 inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-black text-white transition hover:opacity-90"}
+                    style={pays[`ad-${p.id}`]?.full ? { borderColor: c, color: c } : { backgroundColor: c, marginTop: "auto" }}
                   >
-                    اطلب هذه الباقة عبر واتساب
+                    {pays[`ad-${p.id}`]?.full ? "تواصل عبر واتساب" : "اطلب هذه الباقة عبر واتساب"}
                   </a>
                 </div>
               </div>

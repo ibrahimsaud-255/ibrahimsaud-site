@@ -10,14 +10,17 @@ export default function PackageCards({ items, compact = false }: { items: Pkg[];
           <h3>{p.name}</h3>
           <div className="price">{p.price}<small>ريال{p.unit ? ` ${p.unit}` : ""}</small></div>
           {!p.approved && <span className="draft">سعر مقترح — ينتظر الاعتماد</span>}
+          {p.half && <span className="half">أو ابدأ بنصف المبلغ: {p.half} ريال</span>}
           <ul>{p.items.map((it) => <li key={it}>{it}</li>)}</ul>
           {(() => {
-            const pay = p.pay || payLinks[p.id];
+            const pay = payLinks[p.id] || {};
             const ask = waHref(`السلام عليكم، مهتمّ بباقة «${p.name}»`);
-            if (pay) return (
+            // رابطان: الكامل زرّ أساسيّ والنصف ثانويّ، والتواصل رابط نصّيّ تحتهما
+            if (pay.full || pay.half) return (
               <div className="act">
-                <FaceOn face="big_happy"><a className="v2-btn v2-btn-primary" href={pay.href} target="_blank" rel="noopener">{pay.label || "ادفع الآن"}</a></FaceOn>
-                <a className="v2-btn v2-btn-ghost" href={ask} target="_blank" rel="noopener">تواصل معي</a>
+                {pay.full && <FaceOn face="big_happy"><a className="v2-btn v2-btn-primary" href={pay.full} target="_blank" rel="noopener">{pay.half ? "ادفع المبلغ كامل" : "ادفع الآن"}</a></FaceOn>}
+                {pay.half && <a className={`v2-btn ${pay.full ? "v2-btn-ghost" : "v2-btn-primary"}`} href={pay.half} target="_blank" rel="noopener">ادفع النصف وابدأ</a>}
+                <a className="v2-link" href={ask} target="_blank" rel="noopener">تواصل معي <span className="chev">‹</span></a>
               </div>
             );
             return (

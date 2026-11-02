@@ -9,6 +9,7 @@
 // «نَسَق» حلّ محلّ «منوال» اسماً لنظام الإدارة.
 
 import { waLink } from "./site";
+import paylinks from "./paylinks.json";
 
 export const waHref = (msg = "السلام عليكم، أبي أحجز مكالمة تعارف") => waLink(msg);
 // رابط Cal.com في site.calLink يرجع 404 (نوفمبر ٢٠٢٦) — الحجز عبر واتساب لين يتفعّل الحساب،
@@ -40,29 +41,24 @@ export type Pkg = {
   approved: boolean; // false = سعر مقترح ينتظر اعتماد إبراهيم
   items: string[];
   featured?: boolean;
+  half?: string; // نصف المبلغ (الدفعة الأولى) للعرض، للباقات اللي تُدفع على دفعتين
   href?: string; // رابط بدل واتساب
-  // رابط دفع (Paylink من لوحة تلر). لو موجود يصير الزرّ الأساسيّ «ادفع الآن» وواتساب ثانويّ.
-  pay?: { href: string; label?: string };
 };
 
 // ===== روابط الدفع =====
-// أنشئ رابط دفع لكلّ باقة من لوحة تلر (Paylinks) والصقه هنا بمعرّف الباقة (id).
-// الدفع عندنا ٥٠٪ مقدّم: لو الرابط للعربون اكتب label: "ادفع العربون ٥٠٪".
-// الباقة اللي لها رابط يصير لها زرّان: «ادفع الآن» و«تواصل معي». بدون رابط: زرّ واتساب وحده.
-// المعرّفات: session · hudoor · hudoor-pro · hudoor-plus · hawiya · publish · podcast · film · store-ads · nasaq · nasaq-pro
-export const payLinks: Record<string, { href: string; label?: string }> = {
-  // "podcast": { href: "https://secure.telr.com/..." },
-};
+// الروابط في src/lib/paylinks.json، وتُعبّأ من جدول الإكسل بـ tools/paylinks.py (make ثمّ import).
+// لكلّ باقة: full = المبلغ كامل، half = الدفعة الأولى (نصف المبلغ). الباقة بلا رابط يبقى زرّها واتساب.
+export const payLinks = paylinks as Record<string, { full?: string; half?: string }>;
 
 export const pkgs = {
   session: { id: "session", name: "جلسة التشخيص", for: "قبل أيّ باقة", price: "٣٠٠", approved: true, items: ["ساعة في الاستوديو أو أونلاين", "خطّة مكتوبة لوضعك", "تُخصم من أيّ باقة"] },
-  hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", approved: true, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
-  hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", approved: true, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
+  hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", half: "٢,٤٥٠", approved: true, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
+  hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", half: "٧,٤٥٠", approved: true, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
   hudoorPlus: { id: "hudoor-plus", name: "حضور+", for: "محتوى كلّ شهر", price: "٦,٥٠٠", unit: "شهريّاً", approved: true, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على حساباتك"] },
-  hawiya: { id: "hawiya", name: "هويّة", for: "هويّتك داخل Claude", price: "١,٤٩٠", approved: true, items: ["مهارة Claude بهويّتك: أغلفة ومنشورات وموشن", "دليل هويّة PDF تعرضه وتشاركه", "الخطّ واللون والشعار", "تشارك المهارة مع فريقك في Claude"] },
-  publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", approved: true, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
-  podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
-  film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "٣,٤٠٠", approved: true, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
+  hawiya: { id: "hawiya", name: "هويّة", for: "هويّتك داخل Claude", price: "١,٤٩٠", half: "٧٤٥", approved: true, items: ["مهارة Claude بهويّتك: أغلفة ومنشورات وموشن", "دليل هويّة PDF تعرضه وتشاركه", "الخطّ واللون والشعار", "تشارك المهارة مع فريقك في Claude"] },
+  publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", half: "١,٩٥٠", approved: true, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
+  podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", half: "١,٣٧٥", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
+  film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "٣,٤٠٠", half: "١,٧٠٠", approved: true, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
   nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
   nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
