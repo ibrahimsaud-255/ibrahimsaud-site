@@ -4,7 +4,7 @@
 //   ~/Desktop/ابراهيم سعود/00_السياق/الفئات_المستهدفة.md
 // الأسعار المعلَّمة «مقترح» تنتظر اعتماد إبراهيم قبل النشر.
 
-import { site, waLink } from "./site";
+import { waLink } from "./site";
 
 export const waHref = (msg = "السلام عليكم، أبي أحجز مكالمة تعارف") => waLink(msg);
 // رابط Cal.com في site.calLink يرجع 404 (نوفمبر ٢٠٢٦) — الحجز عبر واتساب لين يتفعّل الحساب،
