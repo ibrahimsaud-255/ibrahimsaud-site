@@ -1,7 +1,7 @@
 /*
  * 16-blog.js — المدوّنة داخل النظام
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -9,8 +9,8 @@
  *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== المدونة (داخل النظام) — كتابة + تنسيق بالذكاء + نشر ===== */
-let BLOG={settings:{author_name:CONFIG.ownerName||'',author_title:CONFIG.brandTagline||'',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
-const BLOG_AV_FALLBACK=CONFIG.brandLogo||'./logo.png';
+let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'مخرج ومنتج ومدير إبداعي',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
+const BLOG_AV_FALLBACK='https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg';
 function blogAvatar(){return BLOG.settings.author_avatar_url||S.settings.authorPhoto||BLOG_AV_FALLBACK}
 function blogDates(){const now=new Date();let greg='',hijri='';try{greg=now.toLocaleDateString('ar',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}catch(_){greg=now.toISOString().slice(0,10)}try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'})}catch(_){try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric'})}catch(__){hijri=''}}hijri=hijri.replace(/\s*هـ\s*$/,'').trim();return {greg,hijri}}
 function blogReadingMin(html){const t=(html||'').replace(/<[^>]+>/g,' ');const w=t.split(/\s+/).filter(Boolean).length;return Math.max(1,Math.round(w/200))}
@@ -70,7 +70,7 @@ function blogPreview(){
     <h1 style="font-size:24px;font-weight:900;line-height:1.45;margin:0 0 12px">${esc(title||(fm&&fm.title)||'بدون عنوان')}</h1>
     <div style="display:flex;align-items:center;gap:11px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:16px">
       <img src="${esc(blogAvatar())}" style="width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--line)" onerror="this.style.display='none'">
-      <div><div style="font-weight:800;font-size:14px">${esc(BLOG.settings.author_name||CONFIG.ownerName||'الكاتب')}</div>
+      <div><div style="font-weight:800;font-size:14px">${esc(BLOG.settings.author_name||'إبراهيم سعود')}</div>
       <div style="font-size:12px;color:var(--muted);margin-top:2px">${esc(d.greg)} · ${esc(d.hijri)} هـ · ${rm} د قراءة</div></div>
     </div>
     <div class="blog-body">${html}</div>`;

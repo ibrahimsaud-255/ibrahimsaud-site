@@ -118,9 +118,14 @@ export default function ProductPage({ p }: { p: Product }) {
             <div className="v2-wrap">
               <div className="v2-head" data-rise>
                 <h2>جرّبه بنفسك.</h2>
-                <p>نسخ عرض حيّة لأنظمة ومواقع بنيتها. افتحها من جوالك، ادخل بأكثر من صلاحيّة، وشوف لوحة التحكّم من جوّا.</p>
+                <p>نسخة عرض من نظامي اللي أدير فيه شغلي، ببيانات تجريبيّة. افتحها من جوالك وتنقّل بين تطبيقاتها.</p>
               </div>
               <DemoCards />
+              <div className="v2-head" data-rise style={{ marginTop: "clamp(64px, 8vw, 100px)" }}>
+                <h2>أعمال لعملائي.</h2>
+                <p>أنظمة ومواقع بنيتها لجهات اشتغلت معها. هذي نسخ عرض ببيانات تجريبيّة، مو بياناتهم الحقيقيّة: ادخل بأكثر من صلاحيّة وشوف لوحة التحكّم من جوّا.</p>
+              </div>
+              <DemoCards clients />
             </div>
           </section>
         )}

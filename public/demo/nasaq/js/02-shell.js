@@ -1,7 +1,7 @@
 /*
  * 02-shell.js — الغلاف: التطبيقات والموجِّه وشبكة الإطلاق وسطح المكتب
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -9,57 +9,53 @@
  *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== APPS / ROUTER ===== */
-const _ALL_APPS=[
-  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',mod:'dashboard'},
-  {id:'sales',name:'المبيعات',icon:'trending-up',mod:'sales'},
-  {id:'invoicing',name:'الفوترة',icon:'receipt-text',mod:'invoicing'},
-  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',mod:'quoteDesign'},
-  {id:'products',name:'المنتجات',icon:'package',mod:'products'},
-  {id:'pos',name:'الكاشير',icon:'scan-barcode',mod:'pos'},
-  {id:'subs',name:'الاشتراكات والمصروفات',icon:'credit-card',mod:'subscriptions'},
-  {id:'accounting',name:'المحاسبة',icon:'calculator',mod:'accounting'},
-  {id:'habits',name:'العادات',icon:'repeat',mod:'habits'},
-  {id:'pipeline',name:'مسار العملاء',icon:'git-branch',mod:'pipeline'},
-  {id:'contacts',name:'العملاء',icon:'contact',mod:'contacts'},
-  {id:'suppliers',name:'الموردون',icon:'truck',mod:'suppliers'},
-  {id:'appointments',name:'المواعيد',icon:'calendar-clock',mod:'appointments'},
-  {id:'calendar',name:'التقويم',icon:'calendar-days',mod:'calendar'},
-  {id:'projects',name:'المشروع',icon:'clapperboard',mod:'projects'},
-  {id:'boards',name:'الخرائط الذهنية',icon:'git-fork',mod:'boards'},
-  {id:'blog',name:'المدونة',icon:'newspaper',mod:'blog'},
-  {id:'newsletter',name:'القائمة البريدية',icon:'mail',mod:'newsletter'},
-  {id:'ideas',name:'بنك الأفكار',icon:'lightbulb',mod:'ideas'},
-  {id:'workspace',name:'مساحة العمل',icon:'briefcase',mod:'workspace'},
+// الكاشير وبنك الأفكار والفريق أُزيلت من الواجهة، و«المواعيد» دُمجت في التقويم (٢٦ أكتوبر ٢٠٢٦) — دوالّها وبياناتها باقية
+const APPS=[
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap'},
+  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
+  {id:'sales',name:'المبيعات',icon:'trending-up'},
+  {id:'partners',name:'الشركات',icon:'building-2'},  // كان «الشركاء والعمولات» — صار قسماً داخل «الشركات» (المعرّف partners باقٍ للبيانات)
+  {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
+  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette'},
+  {id:'products',name:'المنتجات',icon:'package'},
+  {id:'subs',name:'الاشتراكات والمصروفات',icon:'credit-card'},
+  {id:'accounting',name:'المحاسبة',icon:'calculator'},
+  {id:'habits',name:'العادات',icon:'repeat'},
+  {id:'pipeline',name:'مسار العملاء',icon:'git-branch'},
+  {id:'contacts',name:'العملاء',icon:'contact'},
+  {id:'suppliers',name:'الموردون',icon:'truck'},
+  {id:'calendar',name:'التقويم',icon:'calendar-days'},
+  {id:'projects',name:'المشروع',icon:'clapperboard'},
+  {id:'boards',name:'الخرائط الذهنية',icon:'git-fork'},
+  {id:'sitework',name:'الموقع الإلكتروني',icon:'globe'},
+  {id:'blog',name:'المدونة',icon:'newspaper'},
+  {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
 ];
-const APPS=_ALL_APPS.filter(a=>CONFIG.modules[a.mod]!==false);
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDeskto */
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name: */
 
 /* ===== LAUNCHPAD (شبكة التطبيقات + خلفية لكل أيقونة) ===== */
-const _ALL_LAUNCH=[
-  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb',mod:'dashboard'},
-  {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a',mod:'sales'},
-  {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706',mod:'invoicing'},
-  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf',mod:'quoteDesign'},
-  {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488',mod:'products'},
-  {id:'pos',name:'الكاشير',icon:'scan-barcode',c:'#22c55e,#15803d',mod:'pos'},
-  {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777',mod:'subscriptions'},
-  {id:'accounting',name:'المحاسبة',icon:'calculator',c:'#10b981,#047857',mod:'accounting'},
-  {id:'habits',name:'العادات',icon:'repeat',c:'#f59e0b,#b45309',mod:'habits'},
-  {id:'pipeline',name:'مسار العملاء',icon:'git-branch',c:'#14b8a6,#0d9488',mod:'pipeline'},
-  {id:'contacts',name:'العملاء',icon:'contact',c:'#0ea5e9,#0284c7',mod:'contacts'},
-  {id:'suppliers',name:'الموردون',icon:'truck',c:'#f59e0b,#b45309',mod:'suppliers'},
-  {id:'appointments',name:'المواعيد',icon:'calendar-clock',c:'#a855f7,#7c3aed',mod:'appointments'},
-  {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626',mod:'calendar'},
-  {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48',mod:'projects'},
-  {id:'boards',name:'الخرائط الذهنية',icon:'git-fork',c:'#6366f1,#4338ca',mod:'boards'},
-  {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1',mod:'blog'},
-  {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706',mod:'newsletter'},
-  {id:'ideas',name:'بنك الأفكار',icon:'lightbulb',c:'#f59e0b,#b45309',mod:'ideas'},
-  {id:'workspace',name:'مساحة العمل',icon:'briefcase',c:'#8b5cf6,#6d28d9',mod:'workspace'},
-  {id:'team',name:'الفريق',icon:'users',c:'#64748b,#475569'},
+const LAUNCH=[
+  {id:'huroof',name:'حروف ودروس',icon:'graduation-cap',c:'#f5a623,#d97706'},
+  {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
+  {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
+  {id:'partners',name:'الشركات',icon:'building-2',c:'#0ea5e9,#1e3a8a'},
+  {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
+  {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
+  {id:'products',name:'المنتجات',icon:'package',c:'#14b8a6,#0d9488'},
+  {id:'subs',name:'الاشتراكات',icon:'credit-card',c:'#ec4899,#db2777'},
+  {id:'accounting',name:'المحاسبة',icon:'calculator',c:'#10b981,#047857'},
+  {id:'habits',name:'العادات',icon:'repeat',c:'#f59e0b,#b45309'},
+  {id:'pipeline',name:'مسار العملاء',icon:'git-branch',c:'#14b8a6,#0d9488'},
+  {id:'contacts',name:'العملاء',icon:'contact',c:'#0ea5e9,#0284c7'},
+  {id:'suppliers',name:'الموردون',icon:'truck',c:'#f59e0b,#b45309'},
+  {id:'calendar',name:'التقويم',icon:'calendar-days',c:'#ef4444,#dc2626'},
+  {id:'projects',name:'المشروع',icon:'clapperboard',c:'#f43f5e,#e11d48'},
+  {id:'boards',name:'الخرائط الذهنية',icon:'git-fork',c:'#6366f1,#4338ca'},
+  {id:'sitework',name:'الموقع الإلكتروني',icon:'globe',c:'#e11d48,#9f1239'},
+  {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
+  {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
 ];
-const LAUNCH=_ALL_LAUNCH.filter(a=>!a.mod||CONFIG.modules[a.mod]!==false);
 function hexA(h,al){h=String(h).trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${al})`}
 function gGrad(c,al){return c.split(',').map(x=>hexA(x,al)).join(',')}
 function lpTile(a){

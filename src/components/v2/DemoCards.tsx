@@ -1,17 +1,18 @@
-// «جرّبه بنفسك» — نسخ العرض الحيّة: صورة الجوال، زرّ يفتحها، وكود QR يفتحها على جوالك من الكمبيوتر.
+// نسخ العرض الحيّة: صورة الجوال، زرّ يفتحها، وكود QR يفتحها على جوالك من الكمبيوتر.
+// clients=false: نظام إبراهيم نفسه (نَسَق)، clients=true: أعمال سوّاها لعملائه.
 import { demos } from "@/lib/v2";
 
-export default function DemoCards() {
+export default function DemoCards({ clients = false }: { clients?: boolean }) {
   return (
-    <div className="v2-demos">
-      {demos.map((d) => (
+    <div className={`v2-demos ${clients ? "" : "solo"}`}>
+      {demos.filter((d) => !!d.client === clients).map((d) => (
         <article key={d.id} className="v2-demo" data-rise>
           <div className="phone">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={d.img} alt={`${d.name} على الجوال`} loading="lazy" />
           </div>
           <div className="tx">
-            <span className="kind">{d.kind}</span>
+            <span className="kind">{d.client && <b>عمل لعميل · </b>}{d.kind}</span>
             <h3>{d.name}</h3>
             <p>{d.text}</p>
             <div className="acts">

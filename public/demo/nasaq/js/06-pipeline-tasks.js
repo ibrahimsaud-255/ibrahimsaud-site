@@ -1,7 +1,7 @@
 /*
  * 06-pipeline-tasks.js — مسار العملاء والكانبان والمهام
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -38,8 +38,8 @@ function rottingClients(){return (S.contacts||[]).filter(c=>inPipeline(c)&&isRot
 function migrateData(){
   // ترحيل لمرّة واحدة: تحديث الاسم القديم إلى اسم المؤسسة المسجّل (قابل للتغيير من الإعدادات لاحقاً)
   if(S.settings && !S.settings.brandMigrated){
-    if(!S.settings.brand)S.settings.brand=CONFIG.brandName||'';
-    if(S.settings.vat && !S.settings.vat.sellerName)S.settings.vat.sellerName=CONFIG.vatSeller||CONFIG.brandName||'';
+    if((S.settings.brand||'')==='إبراهيم سعود')S.settings.brand='مؤسسة حروف ودروس';
+    if(S.settings.vat && (S.settings.vat.sellerName||'')==='إبراهيم سعود')S.settings.vat.sellerName='مؤسسة حروف ودروس';
     S.settings.brandMigrated=true;
   }
   (S.projects||[]).forEach(p=>{

@@ -1,7 +1,7 @@
 /*
  * 14-accounting.js — المحاسبة والاستيراد والإرسال والمرتجعات ونموذج المستند
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -15,8 +15,9 @@ function acc(){
   if(!S.accounting)S.accounting={};
   const A=S.accounting;
   if(!Array.isArray(A.units)||!A.units.length)A.units=[
-    {id:'main',name:'النشاط الرئيسي',color:'#f5a623'},
-    {id:'secondary',name:'النشاط الثانوي',color:'#0ea5e9'},
+    {id:'prod',name:'الإنتاج (أعمال إبراهيم سعود)',color:'#f5a623'},
+    {id:'minwal',name:'مِنوال (مواقع وأنظمة)',color:'#0ea5e9'},
+    {id:'huroof',name:'منصّة حروف ودروس (SaaS)',color:'#8b5cf6'},
     {id:'general',name:'عام / مشترك',color:'#64748b'},
   ];
   if(!Array.isArray(A.tx))A.tx=[];
@@ -67,6 +68,7 @@ function accCompute(from,to){
     byUnitIncome,byUnitExpense,byExpCat,byIncUnitP,byExpCatP,balanceOk:Math.abs(totalAssets-(liabilities+equity))<0.01};
 }
 function renderAccounting(){
+  if(accSyncPayments())save();
   const A=acc();const tab=A.tab||'overview';
   const tabs=[['overview','نظرة عامة','layout-dashboard'],['journal','دفتر اليومية','book-open'],['assets','الأصول الثابتة','package'],['statements','القوائم المالية','file-bar-chart'],['setup','الوحدات والإعداد','settings']];
   document.getElementById('main').innerHTML=`
@@ -79,7 +81,6 @@ function renderAccounting(){
     <div class="page-head"><h1><i data-lucide="calculator"></i> المحاسبة</h1>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn btn-ghost btn-sm" onclick="accPasteModal()"><i data-lucide="clipboard-paste"></i> استيراد بلصق</button>
-        <button class="btn btn-ghost btn-sm" onclick="accImportInvoices()"><i data-lucide="download"></i> مدفوعات الفواتير</button>
         <button class="btn btn-gold btn-sm" onclick="accTxModal()"><i data-lucide="plus"></i> قيد جديد</button>
       </div></div>
     <div class="acc-tabs">${tabs.map(t=>`<button class="acc-tab${tab===t[0]?' on':''}" onclick="accGo('${t[0]}')"><i data-lucide="${t[2]}"></i>${t[1]}</button>`).join('')}</div>
@@ -125,16 +126,16 @@ function accOverviewHTML(){
 }
 function accJournalHTML(){
   const A=acc();const tx=A.tx.slice().sort((a,b)=>String(b.date).localeCompare(String(a.date)));
-  if(!tx.length)return emptyBox('book-open','لا قيود بعد. أضف أول قيد بزر «قيد جديد» بالأعلى، أو استورد مدفوعات الفواتير.');
+  if(!tx.length)return emptyBox('book-open','لا قيود بعد. دفعات الفواتير تُسجَّل هنا تلقائياً، وغيرها بزر «قيد جديد».');
   return `<table><thead><tr><th>التاريخ</th><th>النوع</th><th>البيان</th><th>الوحدة</th><th>الحساب</th><th>المبلغ</th><th></th></tr></thead><tbody>
     ${tx.map(t=>{const k=ACC_KINDS[t.kind]||{};return `<tr>
       <td dir="ltr" style="white-space:nowrap">${esc(t.date)}</td>
       <td><span class="acc-chip" style="background:${k.color}22;color:${k.color}"><i data-lucide="${k.icon}" style="width:12px;height:12px"></i>${k.label}</span></td>
-      <td>${esc(t.desc||'')}${t.category?`<div style="font-size:11px;color:var(--muted)">${esc(t.category)}</div>`:''}</td>
+      <td>${esc(t.desc||'')}${t.payId?` <span class="acc-chip" style="background:rgba(148,163,184,.15);color:var(--muted)" title="يتبع دفعة الفاتورة">تلقائي</span>`:''}${t.category?`<div style="font-size:11px;color:var(--muted)">${esc(t.category)}</div>`:''}</td>
       <td style="font-size:12px"><span style="display:inline-flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:50%;background:${accUnit(t.unit).color}"></span>${esc(accUnit(t.unit).name)}</span></td>
       <td style="font-size:12px">${esc(ACC_ACCOUNTS[t.account]||t.account||'—')}</td>
       <td style="white-space:nowrap;font-weight:800;color:${k.sign>0?'#22c55e':k.sign<0?'#ef4444':'var(--ink)'}">${k.sign<0?'−':k.sign>0?'+':''}${accMoney(t.amount)}${t.origCur==='USD'?`<div style="font-size:10.5px;color:var(--muted);font-weight:600" dir="ltr">$${t.origAmount} × ${t.rate||''}</div>`:''}</td>
-      <td style="white-space:nowrap"><button class="link-btn" onclick="accTxModal('${t.id}')">تعديل</button><button class="link-btn del" onclick="accTxDel('${t.id}')">حذف</button></td>
+      <td style="white-space:nowrap"><button class="link-btn" onclick="accTxModal('${t.id}')">تعديل</button>${t.payId&&S.invoices.some(i=>i.id===t.invoiceId)?`<button class="link-btn" onclick="openDoc('invoice','${t.invoiceId}')">الفاتورة</button>`:`<button class="link-btn del" onclick="accTxDel('${t.id}')">حذف</button>`}</td>
     </tr>`}).join('')}
   </tbody></table>`;
 }
@@ -229,8 +230,8 @@ function accTxModal(id){
   const A=acc();let t=id?{...A.tx.find(x=>x.id===id)}:{id:'',date:today(),kind:'expense',category:'اشتراكات',amount:0,unit:'general',account:'bank',toAccount:'cash',desc:''};
   const kinds=Object.entries(ACC_KINDS).filter(([k])=>k!=='asset'); // الأصول تُضاف من تبويبها
   const rate=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
-  const inUsd=t.origCur==='USD';const shownAmt=inUsd?(t.origAmount||''):(t.amount||'');
-  openModal(id?'تعديل قيد':'قيد جديد',`
+  const inUsd=t.origCur==='USD';const shownAmt=inUsd?(t.origAmount||''):(t.amount||'');const auto=!!t.payId;
+  openModal(id?'تعديل قيد':'قيد جديد',`${auto?`<div class="badge-note" style="margin-bottom:14px"><i data-lucide="link"></i><div>قيد تلقائيّ من دفعة فاتورة — المبلغ والتاريخ والحساب تتبع الدفعة (عدّلها من الفاتورة). هنا تغيّر الوحدة والبيان فقط.</div></div>`:''}
     <div class="row2"><div class="field"><label>النوع</label><select id="ax_kind" onchange="accTxKindToggle()">${kinds.map(([k,v])=>`<option value="${k}" ${t.kind===k?'selected':''}>${v.label}</option>`).join('')}</select></div>
       <div class="field"><label>المبلغ</label>
         <div style="display:flex;gap:6px"><input id="ax_amt" type="number" inputmode="decimal" min="0" value="${shownAmt}" onfocus="this.select()" oninput="accAmtConv()" style="flex:1">
@@ -245,12 +246,13 @@ function accTxModal(id){
     <div class="field"><label>البيان / الوصف</label><input id="ax_desc" value="${esc(t.desc||'')}" placeholder="مثال: اشتراك Adobe الشهري"></div>`,
     ()=>{const g=i=>document.getElementById(i);const kind=g('ax_kind').value;const raw=Number(g('ax_amt').value||0);if(raw<=0){alert('أدخل مبلغاً صحيحاً');return}
       const cur=g('ax_cur').value;const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);const amt=cur==='USD'?Number((raw*r).toFixed(2)):raw;
+      if(auto){t.unit=g('ax_unit').value;t.desc=g('ax_desc').value;const i=A.tx.findIndex(x=>x.id===id);A.tx[i]=t;save();closeModal();renderAccounting();return}
       t.kind=kind;t.amount=amt;t.date=g('ax_date').value;t.unit=g('ax_unit').value;t.account=g('ax_acct').value;t.desc=g('ax_desc').value;
       if(cur==='USD'){t.origCur='USD';t.origAmount=raw;t.rate=r;}else{delete t.origCur;delete t.origAmount;delete t.rate;}
       t.category=(kind==='expense')?g('ax_cat').value:'';if(kind==='transfer')t.toAccount=g('ax_to').value;
       if(id){const i=A.tx.findIndex(x=>x.id===id);A.tx[i]=t}else{t.id='tx_'+uid();A.tx.push(t)}save();closeModal();renderAccounting();},
-    id?()=>{accTxDel(id);}:null);
-  setTimeout(()=>{accTxKindToggle();accAmtConv();},0);
+    id&&!auto?()=>{accTxDel(id);}:null);
+  setTimeout(()=>{accTxKindToggle();accAmtConv();if(auto)['ax_kind','ax_amt','ax_cur','ax_date','ax_acct'].forEach(i=>{const el=document.getElementById(i);if(el)el.disabled=true});},0);
 }
 function accAmtConv(){const a=document.getElementById('ax_amt'),c=document.getElementById('ax_cur'),o=document.getElementById('ax_conv');if(!a||!c||!o)return;const v=Number(a.value||0);const r=Number((S.accounting&&S.accounting.usdRate)||USD_RATE||3.75);
   if(c.value==='USD')o.innerHTML=v>0?`= <b style="color:var(--gold2)">${money(v*r)}</b> <span style="opacity:.7">(بسعر ${r})</span>`:`سيُحفظ بالريال بسعر صرف ${r}`;
@@ -282,16 +284,29 @@ function accAssetModal(id){
     id?()=>{accAssetDel(id);}:null);
 }
 function accAssetDel(id){if(!confirm('حذف الأصل؟ سيُحذف قيده المرتبط أيضاً.'))return;const A=acc();const x=A.assets.find(a=>a.id===id);if(x&&x.txId)A.tx=A.tx.filter(t=>t.id!==x.txId);A.assets=A.assets.filter(a=>a.id!==id);const mr=document.getElementById('modalRoot');if(mr)mr.innerHTML='';save();renderAccounting();}
-function accImportInvoices(){
-  const A=acc();const existing=new Set(A.tx.filter(t=>t.invoiceId).map(t=>t.invoiceId+'|'+(t.payDate||'')));
-  let added=0;
-  (S.invoices||[]).forEach(inv=>{
-    const pays=(inv.payments&&inv.payments.length)?inv.payments:(inv.status==='paid'?[{date:inv.paidDate||inv.date,amount:invTotal(inv)}]:[]);
-    pays.forEach(p=>{const key=inv.id+'|'+(p.date||'');if(existing.has(key))return;
-      A.tx.push({id:'tx_'+uid(),date:p.date||inv.date,kind:'income',amount:Number(p.amount||0),unit:'general',account:'bank',desc:'تحصيل فاتورة '+ (S.settings.invPrefix||'INV-')+String(inv.number).padStart(5,'0')+' — '+resolveClientName(inv),invoiceId:inv.id,payDate:p.date||''});added++;});
-  });
-  save();renderAccounting();
-  alert(added?('استُوردت '+added+' دفعة كإيرادات ✓ — راجعها في دفتر اليومية وصنّفها حسب الوحدة.'):'لا مدفوعات جديدة لاستيرادها.');
+/* ═══════════════ قيود تلقائيّة من دفعات الفواتير ═══════════════
+   كلّ دفعة على فاتورة = قيد إيراد واحد مربوط بها (payId): تسجيل الدفعة ينشئ قيدها،
+   وحذفها أو حذف فاتورتها يحذفه، وتعديلها يحدّثه. لا زرّ استيراد ولا عدٌّ مزدوج.
+   الحساب من طريقة الدفع (نقداً ← الصندوق، وغيرها ← البنك)، والوحدة من تصميم الفاتورة،
+   ويبقى للمستخدم تغيير الوحدة والبيان من دفتر اليومية.
+   القيود القديمة التي استوردها الزرّ السابق تُتبنّى (تُربط بدفعتها) فلا تتكرّر. */
+const ACC_BRAND_UNIT={ibrahim:'prod',minwal:'minwal',huroof:'huroof'};
+function accPayAccount(method){return /نقد|كاش|cash/i.test(method||'')?'cash':'bank'}
+function accSyncPayments(){
+  const A=acc();let changed=false;const live=new Set();
+  const legacy=A.tx.filter(t=>t.invoiceId&&!t.payId);
+  (S.invoices||[]).forEach(inv=>{(inv.payments||[]).forEach(p=>{
+    if(!p.id){p.id=uid();changed=true}
+    live.add(p.id);
+    let t=A.tx.find(x=>x.payId===p.id);
+    if(!t){const i=legacy.findIndex(x=>x.invoiceId===inv.id);if(i>=0){t=legacy.splice(i,1)[0];t.payId=p.id;changed=true}}
+    const want={kind:'income',date:p.date||inv.date,amount:r2(p.amount),account:accPayAccount(p.method)};
+    if(!t){A.tx.push({id:'tx_'+uid(),unit:acc().units.some(u=>u.id===ACC_BRAND_UNIT[inv.brandId])?ACC_BRAND_UNIT[inv.brandId]:'general',
+      desc:'تحصيل '+docNo('invoice',inv)+' — '+resolveClientName(inv),invoiceId:inv.id,payId:p.id,...want});changed=true;return}
+    for(const k in want)if(t[k]!==want[k]){t[k]=want[k];changed=true}
+  })});
+  const n=A.tx.length;A.tx=A.tx.filter(t=>!t.payId||live.has(t.payId));if(A.tx.length!==n)changed=true;
+  return changed;
 }
 /* ===== استيراد قيود بلصق كشف حساب (كلود، Adobe، استضافة…) ===== */
 function accParseDate(s){s=String(s).trim();const d=new Date(s);if(!isNaN(d)&&/[0-9]{4}|,/.test(s)&&/[A-Za-z؀-ۿ]/.test(s.replace(/[0-9,\s\/.-]/g,'')+s))return d;
@@ -363,27 +378,29 @@ function accPasteConfirm(){
 
 /* ===== SEND (WhatsApp / Email / Copy) ===== */
 function _docFind(type,id){return (type==='invoice'?S.invoices:type==='credit'?S.credits:S.sales).find(x=>x.id===id)}
-function docText(type,id){const isInv=type==='invoice';const d=_docFind(type,id);if(!d)return'';const s=S.settings;const pfx=isInv?(s.invPrefix||'INV-'):(s.salePrefix||'S');const lines=(d.items||[]).map(it=>`• ${it.desc} ×${it.qty} = ${money(lineTotal(it))} ${s.currency}`).join('\n');const title=isInv?'فاتورة':'عرض سعر';const notes=d.notes?(isInv?d.notes:resolveQuoteNotes(d,d.notes)):'';return `${title} ${pfx}${String(d.number).padStart(5,'0')} — ${s.brand}\nالعميل: ${resolveClientName(d)}\nالتاريخ: ${d.date}\n${lines}\nالإجمالي: ${money(invTotal(d))} ${s.currency}${isInv&&invDue(d)>0?`\nالمتبقي: ${money(invDue(d))} ${s.currency}`:''}\n\n${notes||(isInv?(s.terms||''):'بانتظار موافقتكم على العرض، وشاكرين لكم.')}`;}
+function docText(type,id){const isInv=type==='invoice';const d=_docFind(type,id);if(!d)return'';const s=S.settings;const lines=(d.items||[]).map(it=>`• ${it.desc} ×${it.qty} = ${money(lineTotal(it))}`).join('\n');const title=isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):'عرض سعر';const notes=d.notes?(isInv?d.notes:resolveQuoteNotes(d,d.notes)):'';return `${title} ${isInv&&taxDraft(d)?'(مسودّة)':docNo(type,d)} — ${s.brand}\nالعميل: ${resolveClientName(d)}\nالتاريخ: ${d.date}\n${lines}\n${d.vat?'الإجمالي شامل الضريبة':'الإجمالي'}: ${money(invTotal(d))}${isInv&&invDue(d)>0?`\nالمتبقي: ${money(invDue(d))}`:''}\n\n${notes||(isInv?(s.terms||''):'بانتظار موافقتكم على العرض، وشاكرين لكم.')}`;}
 function sendWhatsApp(type,id){const d=_docFind(type,id);const ct=S.contacts.find(c=>c.id===(d&&d.contactId));const phone=((ct&&ct.phone)||'').replace(/[^0-9]/g,'');window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(docText(type,id)),'_blank');}
 function sendEmail(type,id){const d=_docFind(type,id);const ct=S.contacts.find(c=>c.id===(d&&d.contactId));const subj=encodeURIComponent((type==='invoice'?'فاتورة':'عرض سعر')+' من '+S.settings.brand);window.location.href='mailto:'+((ct&&ct.email)||'')+'?subject='+subj+'&body='+encodeURIComponent(docText(type,id));}
 function copyDocText(type,id){const t=docText(type,id);if(navigator.clipboard){navigator.clipboard.writeText(t).then(()=>alert('تم نسخ نص المستند — الصقه أينما تريد'),()=>alert(t))}else alert(t);}
 
 /* ===== CREDIT NOTES (إشعارات دائنة / مرتجعات) ===== */
 function creditFromInvoice(invId){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;const reason=prompt('سبب إشعار الدائن / المرتجع:','مرتجع كامل للفاتورة');if(reason===null)return;
-  const cn={id:uid(),number:++S.counters.credit,invoiceId:invId,invNumber:inv.number,client:inv.client,contactId:inv.contactId||'',clientVat:inv.clientVat||'',date:today(),items:JSON.parse(JSON.stringify(inv.items)),notes:reason,vat:inv.vat,vatRate:inv.vatRate};
-  if(!S.credits)S.credits=[];S.credits.push(cn);save();openCredit(cn.id);}
+  if(invCredits(inv)>0){alert('على هذه الفاتورة إشعارٌ دائن سابق.');return}
+  const cn={id:uid(),number:++S.counters.credit,invoiceId:invId,invNumber:inv.number,invNo:docNo('invoice',inv),client:inv.client,contactId:inv.contactId||'',clientVat:inv.clientVat||'',date:today(),items:JSON.parse(JSON.stringify(inv.items)),discType:inv.discType||'none',discVal:Number(inv.discVal||0),notes:reason,vat:inv.vat,vatRate:inv.vatRate,brandId:inv.brandId};
+  if(inv.issued)cn.issued={no:cn.number,at:new Date().toISOString()};
+  if(!S.credits)S.credits=[];S.credits.push(cn);syncInvStatus(inv);save();openCredit(cn.id);}
 function openCredit(id){const cn=(S.credits||[]).find(x=>x.id===id);if(!cn){go('invoicing');return}const s=S.settings;const ct=S.contacts.find(c=>c.id===cn.contactId)||{};const total=invTotal(cn);
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1><button class="link-btn" onclick="go('invoicing')">← الفوترة</button> إشعار دائن CN-${String(cn.number).padStart(5,'0')}</h1></div>
     <div class="doc-acts">
       <button class="btn btn-ghost" onclick="printDoc('credit','${id}')"><i data-lucide="printer"></i> طباعة / PDF</button>
-      <button class="btn btn-ghost" style="color:var(--bad)" onclick="delItem('credits','${id}',()=>go('invoicing'))">حذف</button></div>
+      ${cn.issued?'':`<button class="btn btn-ghost" style="color:var(--bad)" onclick="delCredit('${id}')">حذف</button>`}</div>
     <div class="card">
-      <div style="margin-bottom:10px;color:var(--muted)">مرتجع للفاتورة رقم <b>${esc(s.invPrefix||'INV-')}${String(cn.invNumber).padStart(5,'0')}</b> · العميل: <b>${esc(resolveClientName(cn))}</b>${ct.vat?` · الرقم الضريبي: ${esc(ct.vat)}`:''}</div>
+      <div style="margin-bottom:10px;color:var(--muted)">مرتجع للفاتورة رقم <b>${esc(cn.invNo||((s.invPrefix||'INV-')+String(cn.invNumber).padStart(5,'0')))}</b> · العميل: <b>${esc(resolveClientName(cn))}</b>${ct.vat?` · الرقم الضريبي: ${esc(ct.vat)}`:''}</div>
       <table><thead><tr><th>الوصف</th><th>كمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>
       ${(cn.items||[]).map(it=>`<tr><td>${esc(it.desc)}</td><td>${it.qty}</td><td>${money(it.price)}</td><td>${money(lineTotal(it))}</td></tr>`).join('')}
       </tbody></table>
-      <div class="totals" style="margin-top:14px"><div class="line grand"><span>إجمالي الإشعار الدائن</span><span>${money(total)} ${esc(s.currency)}</span></div></div>
+      <div class="totals" style="margin-top:14px"><div class="line grand"><span>إجمالي الإشعار الدائن</span><span>${money(total)}</span></div></div>
       ${cn.notes?`<div style="margin-top:12px;color:var(--muted)"><i class="inl" data-lucide="sticky-note"></i> ${esc(cn.notes)}</div>`:''}
     </div>`;
   refreshIcons();
@@ -406,20 +423,26 @@ function openDoc(type,id){
     if(!cancelled){
       if(d.status==='draft')acts.push(`<button class="btn btn-gold" onclick="setDocStatus('sale','${id}','sent')"><i data-lucide="send"></i> إرسال للعميل</button>`);
       if(d.status==='draft'||d.status==='sent')acts.push(`<button class="btn btn-gold" onclick="setDocStatus('sale','${id}','sale')"><i data-lucide="check-check"></i> تأكيد أمر البيع</button>`);
-      if(d.status==='sale')acts.push(`<button class="btn btn-gold" onclick="toInvoice('${id}')"><i data-lucide="receipt-text"></i> إنشاء فاتورة</button>`);
+      if(d.status==='sale'&&!d.invoiceId)acts.push(`<button class="btn btn-gold" onclick="toInvoice('${id}')"><i data-lucide="receipt-text"></i> إنشاء فاتورة</button>`);
     }
-  }else{ if(due>0)acts.push(`<button class="btn btn-gold" onclick="paymentModal('${id}')"><i data-lucide="wallet"></i> تسجيل دفعة</button>`); }
+  }else{
+    if(taxDraft(d))acts.push(`<button class="btn btn-gold" onclick="issueInvoice('${id}')"><i data-lucide="stamp"></i> إصدار الفاتورة</button>`);
+    if(due>0)acts.push(`<button class="btn btn-gold" onclick="paymentModal('${id}')"><i data-lucide="wallet"></i> تسجيل دفعة</button>`);
+  }
   acts.push(`<button class="btn btn-ghost" onclick="printDoc('${type}','${id}')"><i data-lucide="printer"></i> طباعة / PDF</button>`);
-  acts.push(`<button class="btn btn-ghost" onclick="docModal('${type}','${id}',null,()=>openDoc('${type}','${id}'))"><i data-lucide="pencil"></i> تعديل</button>`);
+  if(!(isInv&&d.issued))acts.push(`<button class="btn btn-ghost" onclick="docModal('${type}','${id}',null,()=>openDoc('${type}','${id}'))"><i data-lucide="pencil"></i> تعديل</button>`);
+  if(!isInv&&d.invoiceId&&S.invoices.some(x=>x.id===d.invoiceId))acts.push(`<button class="btn btn-ghost" onclick="openDoc('invoice','${d.invoiceId}')"><i data-lucide="receipt-text"></i> فتح الفاتورة</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="sendWhatsApp('${type}','${id}')"><i data-lucide="message-circle"></i> واتساب</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="sendEmail('${type}','${id}')"><i data-lucide="mail"></i> إيميل</button>`);
   acts.push(`<button class="btn btn-ghost" onclick="copyDocText('${type}','${id}')"><i data-lucide="copy"></i> نسخ النص</button>`);
-  if(isInv)acts.push(`<button class="btn btn-ghost" onclick="creditFromInvoice('${id}')"><i data-lucide="rotate-ccw"></i> إشعار دائن</button>`);
+  if(isInv&&!taxDraft(d))acts.push(`<button class="btn btn-ghost" onclick="creditFromInvoice('${id}')"><i data-lucide="rotate-ccw"></i> إشعار دائن</button>`);
   if(!isInv&&!cancelled)acts.push(`<button class="btn btn-ghost" style="color:var(--bad)" onclick="setDocStatus('${type}','${id}','cancel')">إلغاء</button>`);
   if(!isInv&&cancelled)acts.push(`<button class="btn btn-ghost" onclick="setDocStatus('${type}','${id}','draft')">↺ إرجاع لعرض سعر</button>`);
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1><button class="link-btn" onclick="renderDocs('${type}')">← ${isInv?'الفواتير':'المبيعات'}</button> ${esc(prefix)}${String(d.number).padStart(5,'0')}</h1></div>
+    <div class="page-head"><h1><button class="link-btn" onclick="renderDocs('${type}')">← ${isInv?'الفواتير':'المبيعات'}</button> ${isInv&&taxDraft(d)?'مسودّة فاتورة':esc(docNo(type,d))}</h1></div>
     ${bar}
+    ${isInv&&taxDraft(d)?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="file-pen"></i><div>مسودّة — عدّلها كما تشاء، ثم اضغط <b>«إصدار الفاتورة»</b>. بعد الإصدار تأخذ رقمها وتُقفل (لا تعديل ولا حذف).</div></div>`:''}
+    ${isInv&&d.issued?`<div class="badge-note" style="margin-bottom:16px"><i data-lucide="lock"></i><div>فاتورة صادرة ${esc(riyadhStamp(d.issued.at).date)} — مقفلة. للتصحيح: «إشعار دائن».</div></div>`:''}
     <div class="doc-acts">${acts.join('')}</div>
     <div class="card">
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;margin-bottom:14px">
@@ -435,24 +458,35 @@ function openDoc(type,id){
       ${(d.items||[]).map(it=>`<tr><td><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:var(--muted)">${esc(it.details)}</div>`:''}</td><td>${it.qty}</td><td>${money(it.price)}</td><td>${it.discount?it.discount+'%':'—'}</td><td>${money(lineTotal(it))}</td></tr>`).join('')}
       </tbody></table>
       <div class="totals" style="margin-top:14px">
-        <div class="line"><span>المجموع الفرعي</span><span>${money(sub)} ${esc(s.currency)}</span></div>
-        ${discTotal>0.001?`<div class="line" style="color:var(--good)"><span>خصم البنود</span><span>- ${money(discTotal)} ${esc(s.currency)}</span></div>`:''}
-        ${ovr>0.001?`<div class="line" style="color:var(--good)"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span>- ${money(ovr)} ${esc(s.currency)}</span></div>`:''}
-        <div class="line"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span>${money(tax)} ${esc(s.currency)}</span></div>
-        <div class="line grand"><span>الإجمالي</span><span>${money(total)} ${esc(s.currency)}</span></div>
-        ${isInv&&paid>0?`<div class="line"><span>المدفوع</span><span style="color:var(--good)">${money(paid)} ${esc(s.currency)}</span></div>`:''}
-        ${isInv&&due>0?`<div class="line"><span>المتبقي</span><span style="color:var(--warn);font-weight:800">${money(due)} ${esc(s.currency)}</span></div>`:''}
+        <div class="line"><span>المجموع الفرعي</span><span>${money(sub)}</span></div>
+        ${discTotal>0.001?`<div class="line" style="color:var(--good)"><span>خصم البنود</span><span>- ${money(discTotal)}</span></div>`:''}
+        ${ovr>0.001?`<div class="line" style="color:var(--good)"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span>- ${money(ovr)}</span></div>`:''}
+        ${d.vat?`<div class="line"><span>ضريبة القيمة المضافة ١٥٪</span><span>${money(tax)}</span></div>`:''}
+        <div class="line grand"><span>${d.vat?'الإجمالي شامل الضريبة':'الإجمالي'}</span><span>${money(total)}</span></div>
+        ${isInv&&invCredits(d)>0?`<div class="line"><span>إشعارات دائنة</span><span style="color:var(--good)">- ${money(invCredits(d))}</span></div>`:''}
+        ${isInv&&paid>0?`<div class="line"><span>المدفوع</span><span style="color:var(--good)">${money(paid)}</span></div>`:''}
+        ${isInv&&due>0?`<div class="line"><span>المتبقي</span><span style="color:var(--warn);font-weight:800">${money(due)}</span></div>`:''}
       </div>
       ${d.notes?`<div style="margin-top:14px;color:var(--muted);white-space:pre-wrap"><i class="inl" data-lucide="sticky-note"></i> ${esc(isInv?d.notes:resolveQuoteNotes(d,d.notes))}</div>`:''}
     </div>
     ${isInv&&d.payments&&d.payments.length?`<div class="card" style="margin-top:16px"><h3><i data-lucide="wallet"></i> سجل الدفعات</h3>
-      ${d.payments.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${esc(p.date)} · ${esc(p.method||'')}</span><span>${money(p.amount)} ${esc(s.currency)} <button class="link-btn del" onclick="rmPayment('${id}',${i})">×</button></span></div>`).join('')}</div>`:''}
-    ${isInv?(()=>{const cns=(S.credits||[]).filter(c=>c.invoiceId===id);return cns.length?`<div class="card" style="margin-top:16px"><h3><i data-lucide="rotate-ccw"></i> إشعارات دائنة مرتبطة</h3>${cns.map(c=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><button class="link-btn" onclick="openCredit('${c.id}')">CN-${String(c.number).padStart(5,'0')}</button><span>${money(invTotal(c))} ${esc(s.currency)}</span></div>`).join('')}</div>`:''})():''}`;
+      ${d.payments.map((p,i)=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><span>${esc(p.date)} · ${esc(p.method||'')}</span><span>${money(p.amount)} <button class="link-btn del" onclick="rmPayment('${id}',${i})">×</button></span></div>`).join('')}</div>`:''}
+    ${isInv?(()=>{const cns=(S.credits||[]).filter(c=>c.invoiceId===id);return cns.length?`<div class="card" style="margin-top:16px"><h3><i data-lucide="rotate-ccw"></i> إشعارات دائنة مرتبطة</h3>${cns.map(c=>`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--line)"><button class="link-btn" onclick="openCredit('${c.id}')">CN-${String(c.number).padStart(5,'0')}</button><span>${money(invTotal(c))}</span></div>`).join('')}</div>`:''})():''}`;
   refreshIcons();
 }
+/* إصدار الفاتورة الضريبيّة: رقمٌ من تسلسلٍ خاصّ بلا فجوات (المسودّات لا تستهلكه)
+   وطابعُ وقتٍ يدخل في رمز QR، ثم القفل. */
+function issueInvoice(id){const d=S.invoices.find(x=>x.id===id);if(!d||d.issued)return;
+  const miss=taxSettingsIssues();if(miss.length){alert('أكمل بيانات الفاتورة الضريبيّة في الإعدادات أوّلاً:\n• '+miss.join('\n• '));go('settings');return}
+  if(!(d.items||[]).some(it=>Number(it.qty)>0&&String(it.desc||'').trim())){alert('أضف بنداً واحداً على الأقلّ');return}
+  if(d.clientVat&&!/^3\d{13}3$/.test(d.clientVat)){alert('الرقم الضريبي للعميل غير صحيح (١٥ رقماً يبدأ وينتهي بـ3)');return}
+  if(!confirm('إصدار الفاتورة؟ بعد الإصدار لا يمكن تعديلها ولا حذفها — التصحيح بإشعار دائن.'))return;
+  S.counters.taxInvoice=(S.counters.taxInvoice||0)+1;d.issued={no:S.counters.taxInvoice,at:new Date().toISOString()};d.date=riyadhStamp(d.issued.at).date;
+  save();openDoc('invoice',id);}
+function delCredit(id){const cn=(S.credits||[]).find(x=>x.id===id);if(!cn||cn.issued)return;if(!confirm('حذف الإشعار الدائن؟'))return;S.credits=S.credits.filter(x=>x.id!==id);const inv=S.invoices.find(x=>x.id===cn.invoiceId);if(inv)syncInvStatus(inv);save();go('invoicing');}
 function paymentModal(invId){
   const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;const due=invDue(inv);const total=invTotal(inv);
-  const half=Number((total/2).toFixed(2));
+  const half=r2(Math.min(total/2,due));
   openModal('تسجيل دفعة',`
     <div class="badge-note"><i data-lucide="wallet"></i> <div>الإجمالي: <b>${money(total)}</b> · المتبقي على الفاتورة: <b>${money(due)}</b></div></div>
     <div class="row2"><div class="field"><label>المبلغ</label><input id="pa_amt" type="number" inputmode="decimal" value="${Number(due.toFixed(2))}">
@@ -463,6 +497,6 @@ function paymentModal(invId){
       </div></div>
     <div class="field"><label>التاريخ</label><input id="pa_date" type="date" value="${today()}"></div></div>
     <div class="field"><label>طريقة الدفع</label><select id="pa_method"><option>تحويل بنكي</option><option>نقداً</option><option>مدى / بطاقة</option><option>STC Pay</option><option>أخرى</option></select></div>`,
-  ()=>{const amt=Number(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);bumpStage(inv.contactId,'delivery','استلمنا دفعة على الفاتورة #'+inv.number);save();closeModal();openDoc('invoice',invId)});
+  ()=>{const amt=r2(document.getElementById('pa_amt').value||0);if(amt<=0){alert('أدخل مبلغاً صحيحاً');return}if(amt>due+0.004){alert('المبلغ أكبر من المتبقي ('+money(due)+')');return}if(!inv.payments)inv.payments=[];inv.payments.push({id:uid(),date:document.getElementById('pa_date').value,amount:amt,method:document.getElementById('pa_method').value});syncInvStatus(inv);accSyncPayments();bumpStage(inv.contactId,'delivery','استلمنا دفعة على الفاتورة '+docNo('invoice',inv));save();closeModal();openDoc('invoice',invId)});
 }
-function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;if(!confirm('حذف هذه الدفعة؟'))return;inv.payments.splice(idx,1);syncInvStatus(inv);save();openDoc('invoice',invId)}
+function rmPayment(invId,idx){const inv=S.invoices.find(x=>x.id===invId);if(!inv)return;if(!confirm('حذف هذه الدفعة؟'))return;inv.payments.splice(idx,1);syncInvStatus(inv);accSyncPayments();save();openDoc('invoice',invId)}

@@ -1,30 +1,68 @@
 /*
  * 01-core.js — النواة: Supabase والحالة والمصادقة والفريق وعرض المستقلّ
  * ─────────────────────────────────────────────────────────────────────────
- * نظام إدارة الأعمال — نسخة White Label
- * ⚠️ نطاقٌ عامّ واحد — لا تحوّل الملفّات لوحدات ES.
- * ⚠️ هذا الملفّ تعريفات فقط — الجمل التنفيذيّة في 99-boot.js.
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
+ * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
+ * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
+ *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
+ * ⚠️ هذا الملفّ تعريفات فقط: أيّ جملة تنفّذ شيئاً عند التحميل مكانها
+ *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== SUPABASE (cloud) ===== */
-const SUPA_URL=CONFIG.supabaseUrl;
-const SUPA_KEY=CONFIG.supabaseKey;
+const SUPA_URL='https://demo.invalid';
+const SUPA_KEY='demo';
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY); */
 let STATE_ID=null, USER=null, saveTimer=null;
 
 /* ===== STATE ===== */
-const KEY=CONFIG.storageKey;
+const KEY='nasaq_demo_v1';
 const def={
-  settings:{brand:CONFIG.companyName,owner:CONFIG.ownerName,email:CONFIG.ownerEmail,phone:CONFIG.ownerPhone,
-    currency:CONFIG.currency,password:'admin',logo:CONFIG.brandLogo,invPrefix:'INV-',salePrefix:'S',salesperson:CONFIG.ownerName,terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',
-    bankName:CONFIG.bankName,iban:CONFIG.bankIban,accName:CONFIG.bankAccName,bankLogo:CONFIG.bankLogo,
-    quoteDefaults:{depositPct:50,deliveryDays:7,revisions:2,validityDays:14,defaultTemplateId:CONFIG.quoteTemplates[0].id},
-    brandProfiles:CONFIG.brandProfiles,
-    defaultBrandId:CONFIG.brandProfiles[0].id,
-    official:{brand:CONFIG.companyName,owner:CONFIG.ownerName,email:CONFIG.ownerEmail,phone:CONFIG.ownerPhone,vat:CONFIG.vatNumber,cr:CONFIG.vatCR,iban:CONFIG.bankIban,address:CONFIG.companyAddress},
-    quoteTemplates:CONFIG.quoteTemplates,
-    vat:{enabled:CONFIG.vatEnabled,rate:CONFIG.vatRate,number:CONFIG.vatNumber,sellerName:CONFIG.vatSellerName||CONFIG.companyName,address:CONFIG.companyAddress,cr:CONFIG.vatCR},
+  settings:{brand:'مؤسسة حروف ودروس',owner:'إبراهيم سعود',email:'demo@ibrahimsaud.com',phone:'966500000000',
+    currency:'ر.س',password:'admin',logo:'',invPrefix:'INV-',salePrefix:'S',salesperson:'إبراهيم سعود',terms:'شكراً لتعاملكم. تُسدَّد الفاتورة خلال 14 يوماً.',
+    // الحساب البنكي الأساسي للمؤسسة (افتراضي — يظهر في كل عروض الأسعار والفواتير)
+    bankName:'البنك الأهلي السعودي',iban:'SA0000000000000000000000',accName:'مؤسسة حروف و دروس',bankLogo:'',
+    // مكتبة قوالب شروط عرض السعر — تُختار بضغطة داخل نموذج العرض، وتُلصَق مع أرقام محدَّثة تلقائياً.
+    // الرموز المتاحة داخل النص:
+    //   {DEPOSIT_PCT}     نسبة العربون %
+    //   {DEPOSIT_AMOUNT}  قيمة العربون (تُعاد الحسبة لحظياً عند تغيّر الإجمالي)
+    //   {REMAINING}       المتبقي بعد العربون
+    //   {TOTAL}           إجمالي عرض السعر
+    //   {DELIVERY_DAYS}   مدة التسليم بالأيام (من إعدادات القالب)
+    //   {REVISIONS}       عدد جولات التعديل المجانية
+    //   {VALIDITY_DAYS}   صلاحية العرض بالأيام
+    //   {BRAND}           اسم المؤسسة
+    quoteDefaults:{depositPct:50,deliveryDays:3,revisions:2,validityDays:14,defaultTemplateId:'video_ad'},
+    // ملفات هويّة الطباعة — كل عرض/فاتورة يختار براند فيتغيّر التصميم الكامل (غلاف، ألوان، نقش، توقيع)
+    // official = البيانات الرسمية للمؤسسة الأم التي تظهر أسفل الغلاف مهما كان البراند المختار
+    brandProfiles:[
+      {id:'ibrahim',name:'إبراهيم سعود',tagline:'تقنية أعمال · بودكاست · فيديو إعلاني',logo:'/logo_ibrahimsaud.png',accent:'#f5a623',accent2:'#d97706',ink:'#0a0a0b',pattern:'glow',coverStyle:'classic',showPattern:true,showQR:true,titleSize:82,org:{}},
+      {id:'huroof',name:'مؤسسة حروف ودروس',tagline:'منصّة تعليمية · معلّم · أسئلة عالية الجودة',logo:'',accent:'#f5a623',accent2:'#d97706',ink:'#111827',pattern:'dots',coverStyle:'minimal',showPattern:true,showQR:true,titleSize:82,org:{}},
+      {id:'minwal',name:'مِنوال',tagline:'مواقع وأنظمة تقنية للأعمال',logo:'',accent:'#0ea5e9',accent2:'#0369a1',ink:'#0f172a',pattern:'lines',coverStyle:'sidebar',showPattern:true,showQR:true,titleSize:82,org:{}},
+    ],
+    defaultBrandId:'ibrahim',
+    official:{brand:'مؤسسة حروف ودروس',owner:'إبراهيم سعود',email:'demo@ibrahimsaud.com',phone:'966500000000',vat:'',cr:'',iban:'',address:''},
+    quoteTemplates:[
+      {id:'video_ad',name:'فيديو إعلاني قصير',depositPct:50,deliveryDays:3,revisions:2,validityDays:14,
+        template:'📜 الشروط والأحكام:\n\n1) آلية الدفع: يُسدَّد {DEPOSIT_PCT}% ({DEPOSIT_AMOUNT}) مقدَّماً عند التعميد لبدء العمل، والمتبقي {REMAINING} فور تسليم الفيديو النهائي وقبل نقل الملفات.\n\n2) مدة التنفيذ: {DELIVERY_DAYS} أيام عمل من تاريخ استلام العربون واعتماد السكربت.\n\n3) نطاق العمل: يشمل ابتكار الفكرة، كتابة السكربت، التصوير الاحترافي، والمونتاج (مؤثرات بصرية وصوتية وضبط ألوان)، وتسليم الفيديو بالطول والمقاس المناسب للمنصة المتفق عليها (تيك توك / ريلز / سناب / يوتيوب شورتس).\n\n4) جولات التعديل: {REVISIONS} جولتان مجانيتان بعد التسليم — أي تعديل إضافي يُحتسب بسعر مستقل.\n\n5) لا يشمل العرض: أجور ممثلين خارجيين، حقوق موسيقى مدفوعة الترخيص، مواقع تصوير خاصة، أو رسوم تراخيص طرف ثالث — تُضاف على العميل عند طلبها.\n\n6) الملكية الفكرية: الملفات المصدرية (المشاريع الخام) تبقى لدى {BRAND}. يستلم العميل النسخة النهائية بجودتها الأصلية، وتنتقل حقوق النشر والاستخدام كاملةً للعميل بعد سداد كامل المبلغ.\n\n7) صلاحية العرض: {VALIDITY_DAYS} يوماً من تاريخ إصداره.'},
+      {id:'podcast',name:'حلقة بودكاست',depositPct:50,deliveryDays:10,revisions:2,validityDays:14,
+        template:'📜 الشروط والأحكام:\n\n1) آلية الدفع: يُسدَّد {DEPOSIT_PCT}% ({DEPOSIT_AMOUNT}) مقدَّماً عند التعميد لاعتماد موعد التصوير، والمتبقي {REMAINING} فور تسليم الحلقة النهائية وجميع المقاطع.\n\n2) مدة التسليم: تُسلَّم الحلقة الرئيسية والمقاطع القصيرة خلال {DELIVERY_DAYS} أيام عمل من تاريخ الانتهاء من جلسة التصوير.\n\n3) نطاق العمل: تصوير احترافي بكاميرات متعدّدة، مونتاج الحلقة الكاملة، إنتاج (١٠) مقاطع قصيرة عمودية جاهزة للنشر، بالإضافة إلى تصاميم Cover وThumbnails.\n\n4) جولات التعديل: {REVISIONS} جولتان مجانيتان على مونتاج الحلقة والمقاطع القصيرة قبل الاعتماد النهائي.\n\n5) تسليم الملفات: تُسلَّم الملفات النهائية عبر رابط سحابي آمن بجودتها الأصلية، وحقوق النشر كاملةً للعميل بعد سداد كامل المبلغ.\n\n6) لا يشمل العرض: استوديو خارجي أو تصوير خارج الرياض، ضيوف الحلقة أو أجورهم، حقوق موسيقى مدفوعة الترخيص.\n\n7) صلاحية العرض: {VALIDITY_DAYS} يوماً من تاريخ إصداره.'},
+      {id:'website',name:'موقع / منصّة إلكترونية',depositPct:50,deliveryDays:21,revisions:2,validityDays:14,
+        template:'📜 الشروط والأحكام:\n\n1) آلية الدفع: يُسدَّد {DEPOSIT_PCT}% ({DEPOSIT_AMOUNT}) مقدَّماً عند التعميد للبدء في تصميم الواجهات، والمتبقي {REMAINING} عند تسليم المنصّة بالشكل النهائي وقبل نقل ملكية الكود والاستضافة.\n\n2) مدة التنفيذ: {DELIVERY_DAYS} يوم عمل تقريبياً — تتفاوت بحسب سرعة اعتماد الواجهات من الجهة.\n\n3) الاستضافة والنطاق: يشمل هذا العرض تكلفة حجز الاستضافة واسم النطاق (Domain) للسنة الأولى فقط، وتتحمّل الجهة رسوم التجديد السنوية للسنوات القادمة.\n\n4) الصلاحيات وإدارة النظام: يتضمّن العمل بناء لوحة التحكم وتوزيع الصلاحيات الأساسية المتفق عليها. أي أدوار أو صلاحيات معقّدة تُطلب لاحقاً تُسعَّر بشكل منفصل.\n\n5) الملكية الفكرية ونقل الكود: بمجرّد سداد الدفعة الأخيرة تنتقل ملكية الكود المصدري رسمياً إلى حساب الجهة على GitHub مع تسليم كافة بيانات الوصول لضمان الاستقلالية التامّة.\n\n6) جولات التعديل: {REVISIONS} جولتان مجانيتان على تصميم الواجهات قبل بدء التطوير، وجولة تعديلات وظيفية بعد التسليم.\n\n7) لا يشمل العرض: التسويق، إدارة المحتوى بعد الإطلاق، أو التطوير الإضافي بعد الاستلام — إلا باتفاق مستقل.\n\n8) صلاحية العرض: {VALIDITY_DAYS} يوماً من تاريخ إصداره.'},
+      {id:'design',name:'تصميم / هوية بصرية',depositPct:50,deliveryDays:7,revisions:3,validityDays:14,
+        template:'📜 الشروط والأحكام:\n\n1) آلية الدفع: يُسدَّد {DEPOSIT_PCT}% ({DEPOSIT_AMOUNT}) مقدَّماً عند التعميد، والمتبقي {REMAINING} عند تسليم الملفات النهائية.\n\n2) مدة التسليم: {DELIVERY_DAYS} أيام عمل من تاريخ اعتماد الاتجاه الإبداعي (Direction).\n\n3) جولات التعديل: {REVISIONS} جولات تعديل مجانية على الاتجاه المعتمَد.\n\n4) الملفات المسلَّمة: تُسلَّم بصيغ (AI, PDF, PNG, SVG) عبر رابط سحابي آمن.\n\n5) الملكية الفكرية: تنتقل حقوق الاستخدام كاملةً للعميل بعد سداد كامل المبلغ. المقترحات المرفوضة تبقى ملكاً للمصمّم.\n\n6) صلاحية العرض: {VALIDITY_DAYS} يوماً من تاريخ إصداره.'},
+      {id:'blank',name:'مخصّص (بدون قالب)',depositPct:50,deliveryDays:0,revisions:0,validityDays:14,
+        template:''},
+    ],
+    vat:{enabled:false,rate:15,number:'',cr:'',street:'',building:'',district:'',city:'الرياض',postal:'',address:''},
     wallpaper:{type:'url',key:'tahoe-dark',url:'./wallpapers/tahoe-dark.jpg'},wallpapers:[]},
-  products:CONFIG.defaultProducts,
+  products:[
+    {id:'p_pod',name:'إنتاج حلقة بودكاست',price:2000,unit:'حلقة',desc:'تصوير + مونتاج + ١٠ مقاطع قصيرة + تصاميم'},
+    {id:'p_studio',name:'Studio Video Production – Filming & Editing',price:1500,unit:'فيديو',desc:''},
+    {id:'p_model',name:'Model',price:1300,unit:'',desc:''},
+    {id:'p_clips',name:'١٠ مقاطع قصيرة (مقتطفات)',price:200,unit:'باقة',desc:''},
+    {id:'p_book',name:'رسوم الحجز',price:50,unit:'',desc:''},
+    {id:'p_design',name:'تصاميم منشورات التواصل الاجتماعي',price:0,unit:'',desc:''}
+  ],
   contacts:[],crm:[],sales:[],invoices:[],credits:[],projects:[],appointments:[],freelancers:[],boards:[],
   subscriptions:[],
   crmStages:[{key:'todo',label:'مهام'},{key:'doing',label:'جاري العمل عليها'},{key:'done',label:'تم بحمد الله'}],
@@ -40,9 +78,9 @@ const def={
     {key:'delivered',label:'تم التسليم',rot:0,final:true,pill:'done'},
     {key:'lost',label:'لم يكتمل',rot:0,final:true,lost:true,pill:'lost'}
   ],
-  counters:{sale:1000,invoice:1000,credit:1000},
+  counters:{sale:1000,invoice:1000,credit:1000,taxInvoice:0},
   focus:{goalMin:180,breakEveryMin:50,breakLenMin:10,soundOn:true,log:{}},
-  prayer:{city:CONFIG.prayerCity,country:CONFIG.prayerCountry,method:CONFIG.prayerMethod},
+  prayer:{city:'الرياض',country:'Saudi Arabia',method:4},
   habits:{
     list:[
       {id:'h_article',name:'كتابة مقال',desc:'مقال جديد للمدونة/الحساب',icon:'pen-line',color:'#3b82f6',reminder:'09:00',builtin:true},
@@ -57,13 +95,28 @@ const def={
   aiData:{folders:[],chats:[]},
   workspace:{
     team:[
-      {id:'owner',name:CONFIG.ownerName,role:'المالك',color:CONFIG.brandAccent}
+      {id:'ib',name:'إبراهيم',role:'المالك',color:'#f5a623'},
+      {id:'hala',name:'هالا',role:'مدير إبداعي',color:'#a855f7'},
+      {id:'saad',name:'سعد',role:'ماركيتنج أوفيسر',color:'#3b82f6'},
+      {id:'ahmed',name:'أحمد',role:'مصمم',color:'#22c55e'},
+      {id:'rawd',name:'رود',role:'محلل بيانات',color:'#ef4444'}
     ],
-    tasks:[],
-    events:[],
-    files:[],
-    brand:{colors:[CONFIG.brandAccent,'#0a0a0b','#ffffff'],fonts:['Tajawal'],notes:''},
-    growth:{journey:[],resources:[]}
+    tasks:[],   // {id,title,assignee,type,status,due,priority,notes,date}
+    events:[],  // التقويم التسويقي {id,title,date,channel,notes}
+    files:[],   // {id,name,url,cat,note}
+    brand:{colors:['#f5a623','#0a0a0b','#ffffff'],fonts:['Thmanyah','Tajawal'],notes:''},
+    growth:{journey:[],resources:[]}  // journey:[{id,title,done,note}] · resources:[{id,title,url,tag}]
+  },
+  huroofGoal:{
+    targetRevenue:20000,
+    targetSubscribers:800,
+    targetUsers:100000,
+    targetVisitors:500000,
+    avgSubPrice:25,
+    estCacSub:60,
+    estCpaUser:1.5,
+    monthlyAdBudget:3000,
+    visionNote:''
   }
 };
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: let S=load(); */
@@ -78,7 +131,18 @@ function load(){let s;try{const r=localStorage.getItem(KEY);s=r?deepMerge(JSON.p
   if(!s.habits.log)s.habits.log={};if(!s.habits.prayer)s.habits.prayer={};if(!s.habits.reminded)s.habits.reminded={};
   // بذر العادات المدمجة الجديدة للمستخدمين الحاليين (مرة واحدة — يحترم الحذف اليدوي لاحقاً)
   if(!s.habits.seededIdea){if(!s.habits.list.some(h=>h.id==='h_idea'))s.habits.list.push({id:'h_idea',name:'كتابة فكرة',desc:'سجّل فكرة واحدة في بنك الأفكار — تُحتسب تلقائياً',icon:'lightbulb',color:'#f59e0b',reminder:'',builtin:true,linkedApp:'ideas'});s.habits.seededIdea=true}
+  if(!s.huroofGoal||typeof s.huroofGoal!=='object')s.huroofGoal=JSON.parse(JSON.stringify(def.huroofGoal));
+  else s.huroofGoal=Object.assign(JSON.parse(JSON.stringify(def.huroofGoal)),s.huroofGoal);
+  migrateCompanyData(s);
   return s;}
+/* بيانات المنشأة كانت في ٣ أماكن (الإعدادات، «البيانات الرسميّة»، الضريبة) والطباعة
+   تفضّل «الرسميّة» التي لم يعد لها محرّر. تُنقل مرّةً إلى الإعدادات — المصدر الوحيد
+   الآن — بالقيم التي كانت تُطبع فعلاً، فلا يتغيّر شكل أيّ مستند. */
+function migrateCompanyData(s){const st=s.settings;if(!st||st.companyV2)return;const off=st.official||{};const v=st.vat=st.vat||{};
+  if(off.vat)v.number=off.vat;if(off.cr)v.cr=off.cr;if(off.iban)st.iban=off.iban;if(off.address&&!v.address)v.address=off.address;
+  ['brand','owner','email','phone'].forEach(k=>{if(off[k]&&!(st[k]||'').trim())st[k]=off[k]});
+  if(v.sellerName&&!(st.brand||'').trim())st.brand=v.sellerName;
+  if(v.rate==null)v.rate=15;st.companyV2=true;}
 function deepMerge(a,b){for(const k in b){if(b[k]&&typeof b[k]==='object'&&!Array.isArray(b[k])){a[k]=deepMerge(a[k]||{},b[k])}else a[k]=b[k]}return a}
 function save(){localStorage.setItem(KEY,JSON.stringify(S));scheduleCloudSave();scheduleHomeRefresh()}
 /* تحديث فوري للرئيسية عقب أي حركة بيانات (بدون كسر النوافذ المنبثقة) */
@@ -88,7 +152,7 @@ function scheduleCloudSave(){if(!USER)return;clearTimeout(saveTimer);saveTimer=s
 async function saveCloud(){if(!USER||!STATE_ID)return;try{const{freelancers,...rest}=S;await sb.from('app_state').update({data:rest,updated_at:new Date().toISOString()}).eq('id',STATE_ID);const d=document.getElementById('syncDot');if(d){d.style.color='var(--good)';d.title='تمت المزامنة';}}catch(e){const d=document.getElementById('syncDot');if(d){d.style.color='var(--bad)';d.title='تعذّرت المزامنة'}}}
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const money=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+S.settings.currency;
-const USD_RATE=CONFIG.usdRate;
+const USD_RATE=3.75; // ريال لكل دولار
 const num2=n=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
 const usdMoney=n=>'$'+num2(n);            // دولار فقط — بدون رمز الريال
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -98,7 +162,7 @@ const today=()=>{const d=new Date();return d.getFullYear()+'-'+_pad2(d.getMonth(
 const ymKey=d=>d.getFullYear()+'-'+_pad2(d.getMonth()+1);
 
 /* ===== AUTH (Supabase) ===== */
-const LOGO=CONFIG.brandLogo;
+const LOGO='/v2/ibrahim-saud-logo-white-tight.png';
 let RECOVERY_MODE=false;
 function lerr(m){document.getElementById('loginErr').textContent=m||''}
 function lmsg(m){document.getElementById('loginMsg').textContent=m||''}
@@ -113,17 +177,17 @@ async function doForgot(){const em=document.getElementById('em').value.trim().to
 function showReset(){document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.add('hidden');document.getElementById('resetView').classList.remove('hidden');const f=document.getElementById('np1');if(f)f.focus()}
 function pwStrength(){const v=document.getElementById('np1').value;let s=0;if(v.length>=8)s++;if(v.length>=12)s++;if(/[0-9]/.test(v))s++;if(/[^A-Za-z0-9]/.test(v))s++;if(/[A-Z]/.test(v)&&/[a-z]/.test(v))s++;const bar=document.getElementById('pwBar');const col=s<=1?'var(--bad)':s<=2?'var(--warn)':s<=3?'var(--gold)':'var(--good)';bar.style.width=Math.min(100,s*22)+'%';bar.style.background=col;document.getElementById('pwHint').textContent=v.length<8?'قصيرة جدًا — 8 أحرف على الأقل.':s<=2?'ضعيفة — أضف أرقامًا ورموزًا وحروفًا كبيرة.':s<=3?'متوسطة — يمكن تقويتها أكثر.':'قوية'}
 async function doSetNewPassword(){const p1=document.getElementById('np1').value;const p2=document.getElementById('np2').value;rerr('');if(p1.length<8){rerr('كلمة المرور يجب أن تكون 8 أحرف على الأقل.');return}if(p1!==p2){rerr('كلمتا المرور غير متطابقتين.');return}busy('btnReset',true);rmsg('جارٍ الحفظ...');const {data,error}=await sb.auth.updateUser({password:p1});busy('btnReset',false);if(error){rmsg('');rerr('تعذّر الحفظ: '+authMsg(error.message)+' — قد يكون الرابط منتهيًا، اطلب رابطًا جديدًا.');return}rmsg('تم تحديث كلمة المرور');RECOVERY_MODE=false;history.replaceState(null,'',location.origin+location.pathname);document.getElementById('resetView').classList.add('hidden');await enterApp(data.user)}
-const ADMIN_EMAIL=CONFIG.ownerEmail.toLowerCase();
-async function enterApp(user){if(USER&&user&&USER.id===user.id)return;if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط. الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers();migrateData();save()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();initSidebarShell();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go('home')}
+const ADMIN_EMAIL='demo@ibrahimsaud.com';
+async function enterApp(user){if(USER&&user&&USER.id===user.id)return;if(!user.email||user.email.toLowerCase()!==ADMIN_EMAIL){await sb.auth.signOut();lmsg('');lerr('هذا النظام مخصّص لحساب المدير فقط ('+ADMIN_EMAIL+'). الفريلانسرز يدخلون عبر روابطهم الخاصة.');return}USER=user;lmsg('جارٍ تحميل بياناتك...');try{await loadCloud();await loadFreelancers();migrateData();save()}catch(e){lerr('تعذّر تحميل البيانات: '+e.message);lmsg('');return}lmsg('');document.getElementById('loginView').classList.add('hidden');document.getElementById('appShell').classList.remove('hidden');renderNav();initSidebarShell();applyBranding();const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});go(deepView('home'));if(typeof calInit==='function')calInit()}
 async function logout(){await sb.auth.signOut();USER=null;STATE_ID=null;document.getElementById('appShell').classList.add('hidden');document.getElementById('loginView').classList.remove('hidden')}
 async function oauth(provider){lerr('');lmsg('جارٍ التحويل إلى '+(provider==='google'?'Google':'Apple')+'…');const {error}=await sb.auth.signInWithOAuth({provider,options:{redirectTo:location.origin+location.pathname}});if(error){lmsg('');lerr('تعذّر: '+error.message+' — تأكد من تفعيل المزوّد في Supabase.')}}
-async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));if(!S.clientStages||!S.clientStages.length)S.clientStages=JSON.parse(JSON.stringify(def.clientStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
+async function loadCloud(){const {data:rows,error}=await sb.from('app_state').select('*').limit(1);if(error)throw error;if(rows&&rows.length){STATE_ID=rows[0].id;const d=rows[0].data||{};S=deepMerge(JSON.parse(JSON.stringify(def)),d);migrateCompanyData(S);if(!S.crmStages||!S.crmStages.length)S.crmStages=JSON.parse(JSON.stringify(def.crmStages));if(!S.projectStages||!S.projectStages.length)S.projectStages=JSON.parse(JSON.stringify(def.projectStages));if(!S.clientStages||!S.clientStages.length)S.clientStages=JSON.parse(JSON.stringify(def.clientStages));(S.crm||[]).forEach(o=>{if(!o.stageKey)o.stageKey=o.stage||S.crmStages[0].key});(S.projects||[]).forEach(p=>{if(!p.stageKey)p.stageKey=S.projectStages[0].key})}else{const {freelancers,...rest}=S;const {data:ins,error:e2}=await sb.from('app_state').insert({data:rest,owner:USER.id}).select('id').single();if(e2)throw e2;STATE_ID=ins.id}}
 async function loadFreelancers(){const {data}=await sb.from('freelancers').select('*').order('created_at');S.freelancers=data||[]}
 function flName(id){const f=(S.freelancers||[]).find(x=>x.id===id);return f?f.name:''}
 function flLink(token){return location.origin+location.pathname+'?ft='+token}
 
 /* ===== TASK SYNC (for freelancer links) ===== */
-async function syncTasks(){if(!USER)return;try{const rows=[];S.projects.forEach(p=>{(p.tasks||[]).forEach(t=>{if(t.assignee&&t.id){rows.push({owner:USER.id,client_id:t.id,project_id:p.id,project_title:p.title,title:t.title,stage:(S.projectStages.find(s=>s.key===p.stageKey)||{}).label||'',freelancer_id:t.assignee})}})});if(rows.length)await sb.from('tasks').upsert(rows,{onConflict:'owner,client_id'});const keep=rows.map(r=>r.client_id);const {data:ex}=await sb.from('tasks').select('id,client_id');const toDel=(ex||[]).filter(r=>!keep.includes(r.client_id)).map(r=>r.id);if(toDel.length)await sb.from('tasks').delete().in('id',toDel)}catch(e){console.warn('syncTasks',e)}}
+async function syncTasks(){if(!USER)return;try{const rows=[];S.projects.forEach(p=>{(p.tasks||[]).forEach(t=>{if(t.assignee&&t.id&&!t.archived&&!p.closed){rows.push({owner:USER.id,client_id:t.id,project_id:p.id,project_title:p.title,title:t.title,stage:(S.projectStages.find(s=>s.key===p.stageKey)||{}).label||'',freelancer_id:t.assignee})}})});if(rows.length)await sb.from('tasks').upsert(rows,{onConflict:'owner,client_id'});const keep=rows.map(r=>r.client_id);const {data:ex}=await sb.from('tasks').select('id,client_id');const toDel=(ex||[]).filter(r=>!keep.includes(r.client_id)).map(r=>r.id);if(toDel.length)await sb.from('tasks').delete().in('id',toDel)}catch(e){console.warn('syncTasks',e)}}
 
 /* ===== TEAM (freelancers) ===== */
 function renderTeam(){

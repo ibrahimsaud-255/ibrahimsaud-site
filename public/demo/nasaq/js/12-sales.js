@@ -1,7 +1,7 @@
 /*
  * 12-sales.js — المبيعات والفوترة والقوالب والطباعة وZATCA
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -24,15 +24,15 @@ function renderDocs(type){
   const groupHTML=[...groups.entries()].map(([ym,rows])=>{
     // ملخّص الشهر
     let sumTotal=0,sumDue=0,cQuoted=0,cSent=0,cSale=0,cCancel=0,cPaid=0,cPartial=0,cUnpaid=0;
-    rows.forEach(d=>{const t=isInv?invTotal(d):docTotal(d);sumTotal+=t;if(isInv){sumDue+=invDue(d);if(d.status==='paid')cPaid++;else if(d.status==='partial')cPartial++;else cUnpaid++;}else{if(d.status==='draft')cQuoted++;else if(d.status==='sent')cSent++;else if(d.status==='sale')cSale++;else if(d.status==='cancel')cCancel++;}});
+    rows.forEach(d=>{const t=invTotal(d);sumTotal+=t;if(isInv){sumDue+=invDue(d);if(d.status==='paid')cPaid++;else if(d.status==='partial')cPartial++;else cUnpaid++;}else{if(d.status==='draft')cQuoted++;else if(d.status==='sent')cSent++;else if(d.status==='sale')cSale++;else if(d.status==='cancel')cCancel++;}});
     const chips=isInv
       ?`<span class="chip good">مدفوعة ${cPaid}</span><span class="chip warn">جزئية ${cPartial}</span><span class="chip">غير مدفوعة ${cUnpaid}</span>`
       :`<span class="chip">عرض ${cQuoted}</span><span class="chip info">مُرسل ${cSent}</span><span class="chip good">أمر بيع ${cSale}</span><span class="chip del">ملغى ${cCancel}</span>`;
-    const rowsHTML=rows.map(d=>{const total=isInv?invTotal(d):docTotal(d);return `<tr><td><button class="link-btn" style="padding:0" onclick="openDoc('${type}','${d.id}')">${esc(pfx)}${String(d.number).padStart(5,'0')}</button></td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(total)}</td>${isInv?`<td>${invDue(d)>0?`<span style="color:var(--warn)">${money(invDue(d))}</span>`:'—'}</td>`:''}<td>${pill(d.status)}</td>
-      <td style="white-space:nowrap">${!isInv&&d.status==='sale'?`<button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button>`:''}
+    const rowsHTML=rows.map(d=>{const total=invTotal(d);return `<tr><td><button class="link-btn" style="padding:0" onclick="openDoc('${type}','${d.id}')">${isInv&&taxDraft(d)?'مسودّة':esc(docNo(type,d))}</button></td><td>${esc(resolveClientName(d))}</td><td>${d.date}</td><td>${money(total)}</td>${isInv?`<td>${invDue(d)>0?`<span style="color:var(--warn)">${money(invDue(d))}</span>`:'—'}</td>`:''}<td>${pill(d.status)}</td>
+      <td style="white-space:nowrap">${!isInv&&d.status==='sale'&&!d.invoiceId?`<button class="link-btn" onclick="toInvoice('${d.id}')">→ فاتورة</button>`:''}
         <button class="link-btn" onclick="printDoc('${type}','${d.id}')">طباعة</button>
         <button class="link-btn" onclick="openDoc('${type}','${d.id}')">عرض</button>
-        <button class="link-btn del" onclick="delDoc('${type}','${d.id}')">حذف</button></td></tr>`}).join('');
+        ${isInv&&d.issued?'':`<button class="link-btn del" onclick="delDoc('${type}','${d.id}')">حذف</button>`}</td></tr>`}).join('');
     return `<div class="mo-block">
       <div class="mo-head">
         <div class="mo-title"><i data-lucide="calendar-days"></i> ${esc(monthLabel(ym))} <span class="mo-count">· ${rows.length}</span></div>
@@ -45,12 +45,19 @@ function renderDocs(type){
 
   document.getElementById('main').innerHTML=`
     <div class="page-head"><h1>${title}</h1><button class="btn btn-gold" onclick="docModal('${type}')">+ ${isInv?'فاتورة':'عرض سعر'}</button></div>
-    ${isInv?`<div class="badge-note"><i data-lucide="receipt-text"></i> <div>الفواتير مهيأة للتوافق مع <b>زاتكا</b>: عند الطباعة يُولَّد رمز QR وفق مواصفة TLV. فعّل الضريبة وأدخل رقمك الضريبي من الإعدادات.</div></div>`:''}
+    ${isInv&&taxOn()?`<div class="badge-note"><i data-lucide="badge-percent"></i> <div>الفاتورة الضريبيّة مفعّلة: الفاتورة الجديدة مسودّة حتى تضغط «إصدار»، وبعدها تُقفل وتُطبع بمواصفات الهيئة.</div></div>`:''}
     ${!list.length?emptyBox(isInv?'receipt-text':'trending-up',`لا توجد ${title} بعد.`):groupHTML}`;
   refreshIcons();
 }
-function delDoc(type,id){if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);save();renderDocs(type)}
-function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);const ct=S.contacts.find(c=>c.id===s.contactId);const inv={id:uid(),number:++S.counters.invoice,client:s.client,contactId:s.contactId||'',clientVat:(ct&&ct.vat)||'',date:today(),items:JSON.parse(JSON.stringify(s.items)),discType:s.discType||'none',discVal:Number(s.discVal||0),notes:s.notes,status:'unpaid',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:''};S.invoices.push(inv);bumpStage(inv.contactId,'won','تحويل عرض السعر إلى فاتورة #'+inv.number);save();go('invoicing');alert('تم إنشاء فاتورة من عرض السعر')}
+function delDoc(type,id){if(type==='invoice'){const v=S.invoices.find(x=>x.id===id);if(v&&v.issued){alert('فاتورة صادرة — لا تُحذف. لتصحيحها أصدر إشعاراً دائناً.');return}if(v&&invPaid(v)>0&&!confirm('على هذه الفاتورة دفعات مسجّلة. حذفها يحذف الدفعات معها — متأكّد؟'))return}if(!confirm('تأكيد الحذف؟'))return;const k=type==='invoice'?'invoices':'sales';S[k]=S[k].filter(d=>d.id!==id);if(type==='invoice')accSyncPayments();save();renderDocs(type)}
+/* عرض السعر ← فاتورة: مرّةً واحدة (يُربط العرض بفاتورته)، وتنتقل الاختيارات
+   كلّها (الضريبة، التصميم، رابط الدفع)، ثم تُفتح الفاتورة الجديدة مباشرة. */
+function toInvoice(saleId){const s=S.sales.find(x=>x.id===saleId);if(!s)return;
+  const ex=s.invoiceId&&S.invoices.find(x=>x.id===s.invoiceId);if(ex){openDoc('invoice',ex.id);return}
+  const ct=S.contacts.find(c=>c.id===s.contactId);
+  const inv={id:uid(),number:++S.counters.invoice,client:s.client,contactId:s.contactId||'',clientVat:(ct&&ct.vat)||'',date:today(),items:JSON.parse(JSON.stringify(s.items)),discType:s.discType||'none',discVal:Number(s.discVal||0),notes:'',status:'unpaid',vat:taxOn()?true:!!s.vat,vatRate:15,paidDate:'',payments:[],brandId:s.brandId||defaultBrandId(),payUrl:s.payUrl||'',payQr:s.payQr||'',fromSaleId:s.id};
+  S.invoices.push(inv);s.invoiceId=inv.id;if(s.status!=='sale')s.status='sale';
+  bumpStage(inv.contactId,'won','تحويل عرض السعر إلى فاتورة');save();openDoc('invoice',inv.id)}
 /* ===== قوالب ملاحظات عرض السعر — عربون تلقائي وشروط بلاغة موحّدة ===== */
 function quoteDef(){const q=(S.settings&&S.settings.quoteDefaults)||{};return {depositPct:Number(q.depositPct||50),deliveryDays:Number(q.deliveryDays||3),revisions:Number(q.revisions||2),validityDays:Number(q.validityDays||14),defaultTemplateId:q.defaultTemplateId||'video_ad'}}
 function quoteTemplates(){if(!S.settings.quoteTemplates||!S.settings.quoteTemplates.length)S.settings.quoteTemplates=[{id:'blank',name:'مخصّص',depositPct:50,deliveryDays:3,revisions:2,validityDays:14,template:''}];return S.settings.quoteTemplates}
@@ -87,9 +94,10 @@ function pickTemplateFromProducts(d){
 function brandProfiles(){if(!S.settings.brandProfiles||!S.settings.brandProfiles.length)S.settings.brandProfiles=[{id:'default',name:S.settings.brand||'مؤسسة',logo:S.settings.logo||'',accent:'#f5a623',accent2:'#d97706',ink:'#0a0a0b',pattern:'sun',tagline:''}];return S.settings.brandProfiles}
 function brandById(id){return brandProfiles().find(b=>b.id===id)||brandProfiles()[0]}
 function defaultBrandId(){return S.settings.defaultBrandId||brandProfiles()[0].id}
-function officialInfo(){const o=S.settings.official||{};const s=S.settings;return {brand:o.brand||s.brand||'',owner:o.owner||s.owner||'',email:o.email||s.email||'',phone:o.phone||s.phone||'',vat:o.vat||s.vat.number||'',cr:o.cr||s.vat.cr||'',iban:o.iban||s.iban||'',address:o.address||''}}
+/* بيانات المنشأة الرسميّة — مصدرها الإعدادات وحدها (هوية المؤسسة + الفاتورة الضريبيّة + بيانات الدفع). */
+function officialInfo(){const s=S.settings;const si=sellerInfo();return {brand:s.brand||'',owner:s.owner||'',email:s.email||'',phone:s.phone||'',vat:si.vat,cr:si.cr,iban:s.iban||'',address:si.address}}
 /* الحساب البنكي الأساسي للمؤسسة — يُعتمد افتراضياً في كل مستند بلا إدخال يدويّ */
-const DEFAULT_BANK={name:CONFIG.bankName,iban:CONFIG.bankIban,accName:CONFIG.bankAccName,logo:CONFIG.bankLogo};
+const DEFAULT_BANK={name:'البنك الأهلي السعودي',iban:'SA0000000000000000000000',accName:'مؤسسة حروف و دروس',logo:'/app/snb-logo.png'};
 function bankInfo(org){const s=S.settings;const ibn=(org&&org.iban)||s.iban||DEFAULT_BANK.iban;return {name:s.bankName||DEFAULT_BANK.name,iban:ibn,accName:s.accName||DEFAULT_BANK.accName,logo:s.bankLogo||DEFAULT_BANK.logo};}
 /* كتلة الدفع في المستند: بيانات البنك + آيبان قابل للنسخ + باركود رابط الدفع السريع (قابل للنقر) */
 function payBlockHTML(d,org,acc,ink){
@@ -117,9 +125,11 @@ function payBlockHTML(d,org,acc,ink){
     </div>`;
 }
 /* بيانات المؤسسة الظاهرة على المستند: أولوية لبيانات التصميم نفسه، ثم العامة الرسمية */
+/* التصميم يغيّر الاسم التجاريّ ووسائل التواصل والآيبان فقط؛ الرقم الضريبيّ والسجلّ
+   والعنوان للمنشأة نفسها دائماً — لا تُكتب في التصميم فتتعارض مع الإعدادات. */
 function designOrg(b){const o=(b&&b.org)||{};const off=officialInfo();return {
   brand:o.brand||off.brand,owner:(o.owner!=null&&o.owner!=='')?o.owner:off.owner,email:o.email||off.email,
-  phone:o.phone||off.phone,iban:o.iban||off.iban,cr:o.cr||off.cr,vat:o.vat||off.vat,address:o.address||off.address};}
+  phone:o.phone||off.phone,iban:o.iban||off.iban,cr:off.cr,vat:off.vat,address:off.address};}
 /* أنماط زخرفية (SVG inline) — تظهر أسفل الغلاف وفوق ترويسة المستند */
 /* موتيفات احترافية خفيفة — تُوضع كطبقة شفّافة فوق المنطقة الملوّنة (أبيض بشفافية منخفضة).
    بسيطة ورسمية تناسب الشركات — بلا حروف أو شموس. */
@@ -244,21 +254,23 @@ function quoteTemplateManager(currentId,onPick){
 }
 function docModal(type,id,presetName,cb){
   const isInv=type==='invoice';const k=isInv?'invoices':'sales';
+  if(isInv&&id){const cur=S.invoices.find(x=>x.id===id);if(cur&&cur.issued){alert('فاتورة صادرة — لا تُعدَّل. لتصحيحها أصدر إشعاراً دائناً.');return}}
   const _defTplId=quoteDef().defaultTemplateId;const _defTpl=quoteTemplateById(_defTplId);
   let d=id?JSON.parse(JSON.stringify(S[k].find(x=>x.id===id))):
-    {id:'',number:S.counters[type]+1,client:'',clientVat:'',date:today(),expiry:isInv?'':(function(){const dd=new Date();dd.setDate(dd.getDate()+Number(_defTpl.validityDays||14));return dd.toISOString().slice(0,10)})(),salesperson:S.settings.salesperson||'',items:[{desc:'',qty:1,price:0,discount:0}],discType:'none',discVal:0,notes:'',notesAuto:!isInv,templateId:isInv?null:_defTplId,depositPct:isInv?null:Number(_defTpl.depositPct||50),brandId:defaultBrandId(),status:isInv?'unpaid':'draft',vat:S.settings.vat.enabled,vatRate:S.settings.vat.rate,paidDate:'',payments:[],payUrl:'',payQr:''};
+    {id:'',number:S.counters[type]+1,client:'',clientVat:'',date:today(),expiry:isInv?'':(function(){const dd=new Date();dd.setDate(dd.getDate()+Number(_defTpl.validityDays||14));return dd.toISOString().slice(0,10)})(),salesperson:S.settings.salesperson||'',items:[{desc:'',qty:1,price:0,discount:0}],discType:'none',discVal:0,notes:isInv?(S.settings.terms||''):'',notesAuto:!isInv,templateId:isInv?null:_defTplId,depositPct:isInv?null:Number(_defTpl.depositPct||50),brandId:defaultBrandId(),status:isInv?'unpaid':'draft',vat:taxOn(),vatRate:15,paidDate:'',payments:[],payUrl:'',payQr:''};
   if(d.payUrl===undefined)d.payUrl='';if(d.payQr===undefined)d.payQr='';
   if(!id&&presetName){d.client=presetName;const pc=S.contacts.find(c=>(c.name||'').trim().toLowerCase()===presetName.trim().toLowerCase());if(pc){d.contactId=pc.id;if(pc.vat)d.clientVat=pc.vat}}
   if(d.vat===undefined)d.vat=false;
   // ملء تلقائي للملاحظات لعرض السعر الجديد فقط
   if(!id&&!isInv&&!d.notes){d.notes=buildInitialQuoteNotes(d);d.notesAuto=true;}
   const statuses=isInv?['unpaid','partial','paid']:['draft','sent','sale','cancel'];
-  function body(){const sub=docTotal(d);const tax=d.vat?sub*(Number(d.vatRate||0)/100):0;
+  /* المحرّر: العميل والتاريخ والبنود والملاحظات أمامك؛ وكلّ ما يُحتاج نادراً في
+     «خيارات إضافيّة». لا حالة يدويّة (الفاتورة تتبع دفعاتها، والعرض أزراره)، ولا
+     اختيار ضريبة (يتبع مفتاح الفاتورة الضريبيّة في الإعدادات). */
+  function body(){
     return `<div class="row2"><div class="field"><label>العميل</label>${clientFieldHTML('d_client',resolveClientName(d))}</div>
     <div class="field"><label>التاريخ</label><input type="date" id="d_date" value="${d.date}"></div></div>
-    <div class="row2"><div class="field"><label>مندوب المبيعات</label><input id="d_sp" value="${esc(d.salesperson||'')}"></div>
-    <div class="field"><label>${isInv?'تاريخ الاستحقاق':'صلاحية العرض حتى'}</label><input type="date" id="d_expiry" value="${esc(d.expiry||'')}"></div></div>
-    ${isInv?`<div class="field"><label>الرقم الضريبي للعميل (اختياري — B2B)</label><input id="d_cvat" value="${esc(d.clientVat)}"></div>`:''}
+    ${isInv&&d.vat?`<div class="field"><label>الرقم الضريبي للعميل <span style="font-weight:400;color:var(--muted)">(للمنشآت فقط — يجعلها «فاتورة ضريبية» بدل «مبسّطة»)</span></label><input id="d_cvat" value="${esc(d.clientVat)}" dir="ltr" placeholder="3xxxxxxxxxxxxx3"></div>`:''}
     <div class="field"><label>البنود</label>
     <table class="items-tbl"><thead><tr><th>الوصف</th><th style="width:54px">كمية</th><th style="width:88px">السعر</th><th style="width:56px">خصم%</th><th style="width:90px">المجموع</th><th></th></tr></thead><tbody id="itemsBody">
     ${d.items.map((it,i)=>`<tr><td><input data-i="${i}" data-f="desc" value="${esc(it.desc)}" placeholder="عنوان الخدمة"></td>
@@ -270,20 +282,27 @@ function docModal(type,id,presetName,cb){
     <tr><td colspan="6" style="padding-top:0;padding-bottom:8px"><input data-i="${i}" data-f="details" value="${esc(it.details||'')}" placeholder="↳ تفاصيل تحت الخدمة (اختياري)…" style="font-size:13px;color:var(--muted);background:transparent;border:none;border-bottom:1px dashed var(--line);border-radius:0;padding:5px 4px"></td></tr>`).join('')}
     </tbody></table><button class="link-btn" onclick="addItem()">+ بند</button>
     ${(S.products&&S.products.length)?`<span style="color:var(--muted);font-size:12px;margin:0 8px">أضف من المنتجات:</span><select onchange="if(this.value){addProduct(this.value);this.value=''}" style="width:auto;display:inline-block;padding:7px 10px"><option value="">— اختر منتجاً —</option>${S.products.map(p=>`<option value="${p.id}">${esc(p.name)} (${money(p.price)})</option>`).join('')}</select>`:''}</div>
-    <div class="row2"><div class="field"><label>الحالة</label><select id="d_status">${statuses.map(s=>`<option value="${s}" ${d.status===s?'selected':''}>${ST[s]||s}</option>`).join('')}</select></div>
-    <div class="field"><label>ضريبة القيمة المضافة</label><select id="d_vat" onchange="toggleVat(this.value)"><option value="0" ${!d.vat?'selected':''}>بدون ضريبة</option><option value="1" ${d.vat?'selected':''}>تطبيق ${d.vatRate}%</option></select></div></div>
-    <div class="row2"><div class="field"><label>خصم إجمالي على العرض</label><select id="d_disctype" onchange="docDisc()"><option value="none" ${(d.discType||'none')==='none'?'selected':''}>بدون</option><option value="percent" ${d.discType==='percent'?'selected':''}>نسبة %</option><option value="amount" ${d.discType==='amount'?'selected':''}>مبلغ ثابت (${esc(S.settings.currency)})</option></select></div>
-    <div class="field"><label>قيمة الخصم</label><input id="d_discval" type="number" inputmode="decimal" min="0" value="${d.discVal||0}" onfocus="this.select()" oninput="docDisc()" ${(d.discType||'none')==='none'?'disabled':''}></div></div>
-    <div class="row2">
-      <div class="field"><label>هويّة الطباعة (التصميم)</label>
-        <select id="d_brand" class="field" onchange="qBrandChange(this.value)">${brandProfiles().map((b,i)=>`<option value="${esc(b.id)}" ${(d.brandId||defaultBrandId())===b.id?'selected':''}>${esc(b.name&&b.name.trim()?b.name:('تصميم '+(i+1)))}</option>`).join('')}</select>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">يحدّد شكل الغلاف والألوان والشعار عند الطباعة/الإرسال — البيانات الرسمية تظهر أسفل الغلاف مهما كان التصميم.</div>
-      </div>
-      <div class="field" style="display:flex;flex-direction:column;justify-content:flex-end">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal();go('quotedesign')"><i data-lucide="palette"></i> تصميم عروض الأسعار</button>
-      </div>
-    </div>
-    <div class="field"><label style="display:flex;align-items:center;gap:6px"><i class="inl" data-lucide="qr-code"></i> رابط الدفع السريع + باركود <span style="font-weight:400;color:var(--muted);font-size:11px">(خاص بهذا العميل والمبلغ)</span></label>
+    
+    ${isInv?`<div class="field"><label>ملاحظات</label><textarea id="d_notes" rows="2">${esc(d.notes)}</textarea></div>`:
+    /* شروط العرض تُكتب من القالب تلقائياً: تظهر كما ستُطبع، والتحرير عند الحاجة فقط. */
+    `<div class="field"><label style="display:flex;justify-content:space-between;align-items:center">الشروط والملاحظات <button type="button" class="link-btn" onclick="qNotesEdit()">${d._editNotes?'إخفاء المحرّر':'تعديل'}</button></label>
+      <div id="qNotesPv" style="padding:10px 12px;background:rgba(245,166,35,.08);border:1px dashed rgba(245,166,35,.35);border-radius:10px;font-size:12.5px;color:var(--ink);white-space:pre-wrap;line-height:1.7;max-height:150px;overflow:auto"></div>
+      <textarea id="d_notes" rows="6" oninput="qNotesLive()" style="margin-top:8px;${d._editNotes?'':'display:none'}">${esc(d.notes)}</textarea>
+      <div style="font-size:11px;color:var(--muted);margin-top:4px;${d._editNotes?'':'display:none'}" id="qNotesHint">القيم بين {} تتحوّل تلقائياً إلى أرقام حسب الإجمالي.</div></div>`}
+    <details class="doc-more" ${d._more?'open':''} ontoggle="docMoreToggle(this.open)" style="margin:4px 0 14px;border:1px solid var(--line);border-radius:12px;padding:10px 14px">
+      <summary style="cursor:pointer;font-weight:700;color:var(--muted)">خيارات إضافيّة <span style="font-weight:400;font-size:12px">— خصم إجمالي، ${isInv?'الاستحقاق':'الصلاحية، قالب الشروط والعربون'}، التصميم، رابط الدفع</span></summary>
+      <div style="margin-top:12px">
+      <div class="row2"><div class="field"><label>خصم إجمالي</label><select id="d_disctype" onchange="docDisc()"><option value="none" ${(d.discType||'none')==='none'?'selected':''}>بدون</option><option value="percent" ${d.discType==='percent'?'selected':''}>نسبة %</option><option value="amount" ${d.discType==='amount'?'selected':''}>مبلغ ثابت</option></select></div>
+      <div class="field"><label>قيمة الخصم</label><input id="d_discval" type="number" inputmode="decimal" min="0" value="${d.discVal||0}" onfocus="this.select()" oninput="docDisc()" ${(d.discType||'none')==='none'?'disabled':''}></div></div>
+      <div class="row2"><div class="field"><label>${isInv?'تاريخ الاستحقاق':'صلاحية العرض حتى'}</label><input type="date" id="d_expiry" value="${esc(d.expiry||'')}"></div>
+      <div class="field"><label>مندوب المبيعات</label><input id="d_sp" value="${esc(d.salesperson||'')}"></div></div>
+      ${isInv?'':`<div class="row2">
+        <div class="field"><label>قالب الشروط</label><select id="d_tpl" onchange="qTplChange(this.value)">${quoteTemplates().map(t=>`<option value="${esc(t.id)}" ${d.templateId===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select></div>
+        <div class="field"><label>نسبة العربون %</label><input id="d_deppct" type="number" inputmode="decimal" min="0" max="100" value="${d.depositPct!=null?d.depositPct:quoteDef().depositPct}" oninput="qDepChange(this.value)"></div></div>
+        <button type="button" class="btn btn-ghost btn-sm" style="margin:-6px 0 14px" onclick="qNotesReset()"><i data-lucide="rotate-ccw"></i> إعادة كتابة الشروط من القالب</button>`}
+      <div class="field"><label>التصميم عند الطباعة</label>
+        <select id="d_brand" onchange="qBrandChange(this.value)">${brandProfiles().map((b,i)=>`<option value="${esc(b.id)}" ${(d.brandId||defaultBrandId())===b.id?'selected':''}>${esc(b.name&&b.name.trim()?b.name:('تصميم '+(i+1)))}</option>`).join('')}</select></div>
+      <div class="field"><label style="display:flex;align-items:center;gap:6px"><i class="inl" data-lucide="qr-code"></i> رابط الدفع السريع + باركود <span style="font-weight:400;color:var(--muted);font-size:11px">(خاص بهذا العميل والمبلغ)</span></label>
       <input id="d_payurl" value="${esc(d.payUrl||'')}" dir="ltr" placeholder="https://secure.telr.com/gateway/ql/..." oninput="qPayUrl(this.value)">
       <div style="font-size:11px;color:var(--muted);margin-top:4px">الصق رابط الدفع من البوابة — يتحوّل تلقائياً إلى باركود قابل للمسح والنقر داخل ملف PDF. كل عرض له رابطه ومبلغه.</div>
       <div style="display:flex;align-items:center;gap:14px;margin-top:8px;flex-wrap:wrap">
@@ -291,31 +310,16 @@ function docModal(type,id,presetName,cb){
         <div id="qPayQrPrev">${d.payQr?`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${esc(d.payQr)}" style="width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px"><button type="button" class="link-btn del" onclick="qPayQrClear()">حذف</button></span>`:''}</div>
       </div>
     </div>
-    ${isInv?'':`
-    <div class="row2">
-      <div class="field"><label>قالب الشروط</label>
-        <select id="d_tpl" onchange="qTplChange(this.value)">${quoteTemplates().map(t=>`<option value="${esc(t.id)}" ${d.templateId===t.id?'selected':''}>${esc(t.name)}</option>`).join('')}</select>
+
       </div>
-      <div class="field"><label>نسبة العربون %</label><input id="d_deppct" type="number" inputmode="decimal" min="0" max="100" value="${d.depositPct!=null?d.depositPct:quoteDef().depositPct}" oninput="qDepChange(this.value)"></div>
-    </div>
-    <div class="field"><label style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
-      <span>الملاحظات — الشروط والأحكام</span>
-      <span style="display:flex;gap:6px;flex-wrap:wrap">
-        <button type="button" class="btn btn-ghost btn-sm" onclick="qNotesReset()"><i data-lucide="rotate-ccw"></i> إعادة توليد</button>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="qMgrOpen()" title="مكتبة القوالب"><i data-lucide="library"></i> مكتبة القوالب</button>
-      </span>
-    </label></div>`}
-    <div class="field">${isInv?'<label>ملاحظات</label>':''}<textarea id="d_notes" rows="${isInv?2:8}" oninput="qNotesLive()">${esc(d.notes)}</textarea>
-      ${isInv?'':`<div id="qNotesPv" style="margin-top:8px;padding:10px 12px;background:rgba(245,166,35,.08);border:1px dashed rgba(245,166,35,.35);border-radius:10px;font-size:12.5px;color:var(--ink);white-space:pre-wrap;line-height:1.7"></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px"><i class="inl" data-lucide="eye"></i> معاينة حيّة — القيم بين المعقوفات {} تتحوّل تلقائياً إلى أرقام حسب الإجمالي الحالي، وتظل كذلك عند الطباعة والإرسال.</div>`}
-    </div>
+    </details>
     <div class="totals" id="docTotals">${totalsHTML()}</div>`;}
-  function totalsHTML(){const gross=docGross(d),lineSub=docLineSubtotal(d),lineDisc=gross-lineSub,ovr=docOverallDisc(d),net=lineSub-ovr,tax=d.vat?net*(Number(d.vatRate||0)/100):0,total=net+tax;
+  function totalsHTML(){const gross=docGross(d),lineSub=docLineSubtotal(d),lineDisc=r2(gross-lineSub),ovr=docOverallDisc(d),tax=invVat(d),total=invTotal(d);
     return `${lineDisc>0.001?`<div class="line"><span>إجمالي البنود قبل الخصم</span><span>${money(gross)}</span></div><div class="line" style="color:var(--good)"><span>خصم البنود</span><span>- ${money(lineDisc)}</span></div>`:''}
     <div class="line"><span>المجموع الفرعي</span><span>${money(lineSub)}</span></div>
     ${ovr>0.001?`<div class="line" style="color:var(--good)"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span>- ${money(ovr)}</span></div>`:''}
-    <div class="line"><span>الضريبة (${d.vat?d.vatRate:0}%)</span><span>${money(tax)}</span></div>
-    <div class="line grand"><span>الإجمالي</span><span>${money(total)}</span></div>`;}
+    ${d.vat?`<div class="line"><span>ضريبة القيمة المضافة ١٥٪</span><span>${money(tax)}</span></div>`:''}
+    <div class="line grand"><span>${d.vat?'الإجمالي شامل الضريبة':'الإجمالي'}</span><span>${money(total)}</span></div>`;}
   function updateTotals(){const el=document.getElementById('docTotals');if(el)el.innerHTML=totalsHTML();paintQNotesPreview();}
   function paintQNotesPreview(){if(isInv)return;const pv=document.getElementById('qNotesPv');if(!pv)return;const ta=document.getElementById('d_notes');const raw=ta?ta.value:(d.notes||'');pv.textContent=resolveQuoteNotes(d,raw)||'—';}
   window.docDisc=()=>{const t=document.getElementById('d_disctype'),v=document.getElementById('d_discval');if(t)d.discType=t.value;if(v){d.discVal=Number(v.value||0);v.disabled=(d.discType||'none')==='none'}updateTotals()};
@@ -328,13 +332,17 @@ function docModal(type,id,presetName,cb){
   window.qPayUrl=v=>{d.payUrl=v;};
   window.qPayQrUpload=e=>{const f=e.target.files&&e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{d.payQr=r.result;const pv=document.getElementById('qPayQrPrev');if(pv)pv.innerHTML=`<span style="display:inline-flex;align-items:center;gap:8px"><img src="${d.payQr}" style="width:64px;height:64px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:8px;padding:4px"><button type="button" class="link-btn del" onclick="qPayQrClear()">حذف</button></span>`;};r.readAsDataURL(f);};
   window.qPayQrClear=()=>{d.payQr='';const pv=document.getElementById('qPayQrPrev');if(pv)pv.innerHTML='';const f=document.getElementById('d_payqr_file');if(f)f.value='';};
-  openModal(`${id?'تعديل':'جديد'} — ${isInv?'فاتورة':'عرض سعر'} #${d.number}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);
-    bumpStage(d.contactId,isInv?'won':'quoted',isInv?('فاتورة #'+d.number):('عرض سعر #'+d.number));if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>renderDocs(type)))()});
+  openModal(`${id?'تعديل':'جديد'} — ${isInv?(d.vat&&taxOn()?'فاتورة (مسودّة)':'فاتورة'):'عرض سعر'}`,body(),()=>{collect();d.contactId=findOrCreateContact(d.client);const ct=S.contacts.find(c=>c.id===d.contactId);if(ct&&ct.vat&&!d.clientVat)d.clientVat=ct.vat;if(d.status==='paid'&&!d.paidDate)d.paidDate=today();S.counters[type]=Math.max(S.counters[type],d.number);
+    delete d._more;delete d._editNotes;if(isInv)syncInvStatus(d);
+    bumpStage(d.contactId,isInv?'won':'quoted',isInv?('فاتورة #'+d.number):('عرض سعر #'+d.number));if(id){const idx=S[k].findIndex(x=>x.id===id);S[k][idx]=d}else{d.id=uid();S[k].push(d)}save();closeModal();(cb||(()=>openDoc(type,d.id)))()});
+  /* نقرةٌ خارج النافذة لا تُغلق محرّراً فيه عمل غير محفوظ. */
+  {const bg=document.querySelector('#modalRoot .modal-bg');if(bg)bg.onclick=null;}
   window.addItem=()=>{collect();d.items.push({desc:'',qty:1,price:0,discount:0});refresh()};
   window.addProduct=pid=>{collect();const p=(S.products||[]).find(x=>x.id===pid);if(!p)return;const line={desc:p.name,qty:1,price:Number(p.price||0),discount:0,details:p.desc||'',productId:p.id};if(d.items.length===1&&!d.items[0].desc)d.items[0]=line;else d.items.push(line);if(!isInv){const auto=pickTemplateFromProducts(d);if(auto&&auto!==d.templateId){d.templateId=auto;const t=quoteTemplateById(auto);if(t)d.depositPct=Number(t.depositPct||50);}if(d.notesAuto)d.notes=buildInitialQuoteNotes(d);}refresh()};
   window.rmItem=i=>{collect();d.items.splice(i,1);if(!d.items.length)d.items.push({desc:'',qty:1,price:0,discount:0});if(!isInv&&d.notesAuto){d.notes=buildInitialQuoteNotes(d);}refresh()};
-  window.toggleVat=v=>{collect();d.vat=v==='1';refresh()};
-  function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.status=g('d_status').value;d.notes=g('d_notes').value;d.vat=g('d_vat').value==='1';if(g('d_cvat'))d.clientVat=g('d_cvat').value;if(g('d_sp'))d.salesperson=g('d_sp').value;if(g('d_expiry'))d.expiry=g('d_expiry').value;if(g('d_disctype'))d.discType=g('d_disctype').value;if(g('d_discval'))d.discVal=Number(g('d_discval').value||0);if(g('d_deppct'))d.depositPct=Number(g('d_deppct').value||0);if(g('d_brand'))d.brandId=g('d_brand').value;if(g('d_payurl'))d.payUrl=g('d_payurl').value;}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
+  window.docMoreToggle=o=>{d._more=o};
+  window.qNotesEdit=()=>{d._editNotes=!d._editNotes;const ta=document.getElementById('d_notes'),h=document.getElementById('qNotesHint');if(ta)ta.style.display=d._editNotes?'':'none';if(h)h.style.display=d._editNotes?'':'none';const b=event&&event.target;if(b)b.textContent=d._editNotes?'إخفاء المحرّر':'تعديل';};
+  function collect(){const g=i=>document.getElementById(i);if(g('d_client')){d.client=g('d_client').value;d.date=g('d_date').value;d.notes=g('d_notes').value;if(g('d_cvat'))d.clientVat=g('d_cvat').value;if(g('d_sp'))d.salesperson=g('d_sp').value;if(g('d_expiry'))d.expiry=g('d_expiry').value;if(g('d_disctype'))d.discType=g('d_disctype').value;if(g('d_discval'))d.discVal=Number(g('d_discval').value||0);if(g('d_deppct'))d.depositPct=Number(g('d_deppct').value||0);if(g('d_brand'))d.brandId=g('d_brand').value;if(g('d_payurl'))d.payUrl=g('d_payurl').value;}document.querySelectorAll('#itemsBody input').forEach(inp=>{const i=+inp.dataset.i,f=inp.dataset.f;if(d.items[i])d.items[i][f]=inp.value})}
   function refresh(){document.querySelector('#modalRoot .modal-body').innerHTML=body();setTimeout(paintQNotesPreview,0);}
   setTimeout(()=>{paintQNotesPreview();const mb=document.querySelector('#modalRoot .modal-body');if(!mb)return;mb.addEventListener('input',e=>{const t=e.target;if(!t.dataset||t.dataset.f===undefined||!t.closest('#itemsBody'))return;const i=+t.dataset.i,f=t.dataset.f;if(d.items[i])d.items[i][f]=t.value;if(f==='qty'||f==='price'||f==='discount'){const cell=mb.querySelector('#itemsBody [data-total="'+i+'"]');if(cell)cell.textContent=money(lineTotal(d.items[i]));updateTotals();}});},0);
 }
@@ -350,15 +358,22 @@ function printDocHTML(type,id,previewBrand){
   const s=S.settings;const b=previewBrand||brandById(d.brandId||defaultBrandId());const org=designOrg(b);
   const acc=b.accent||'#f5a623',acc2=b.accent2||b.accent||'#d97706',ink=b.ink||'#0a0a0b';
   const coverStyle=b.coverStyle||'classic';const showPat=b.showPattern!==false;const showQR=b.showQR!==false;
-  const gross=docGross(d);const lineSub=docLineSubtotal(d);const lineDisc=gross-lineSub;const ovr=docOverallDisc(d);const net=lineSub-ovr;const tax=d.vat?net*(Number(d.vatRate||0)/100):0;const total=net+tax;const disc=lineDisc;const paid=isInv?invPaid(d):0;const due=isInv?Math.max(0,total-paid):0;
-  const kind=isInv?(d.vat?'فاتورة ضريبية':'فاتورة'):isCredit?'إشعار دائن':'عرض سعر';
+  const gross=docGross(d);const lineSub=docLineSubtotal(d);const lineDisc=r2(gross-lineSub);const ovr=docOverallDisc(d);const net=r2(lineSub-ovr);const tax=invVat(d);const total=invTotal(d);const disc=lineDisc;const paid=isInv?invPaid(d):0;const due=isInv?invDue(d):0;
+  const ct=S.contacts.find(c=>c.id===d.contactId)||{};const cname=resolveClientName(d);const cvat=d.clientVat||ct.vat||'';const caddr=[ct.company,ct.address,ct.city].filter(Boolean).join('، ');
+  /* الفاتورة الضريبيّة: مسودّة قبل الإصدار، وبعده بمواصفات الهيئة — البائع والمشتري
+     برقميهما الضريبيّين، تاريخ الإصدار ووقته، ضريبة كلّ بند، ورمز QR. */
+  const draftT=isInv&&taxDraft(d);const vatDoc=!!d.vat&&(isInv||isCredit);const seller=sellerInfo();
+  const kind=isInv?(d.vat?(cvat?'فاتورة ضريبية':'فاتورة ضريبية مبسطة'):'فاتورة'):isCredit?'إشعار دائن':'عرض سعر';
+  const stamp=d.issued?riyadhStamp(d.issued.at):null;const shownDate=stamp?stamp.date+' '+stamp.time.slice(0,5):d.date;
   const titleText=(b.titleText&&String(b.titleText).trim())?String(b.titleText).trim():kind;
   const titleSize=Number(b.titleSize||82);
-  const prefix=isInv?(s.invPrefix||'INV-'):isCredit?'CN-':(s.salePrefix||'S');
-  const docNo=prefix+String(d.number).padStart(5,'0');
-  const ct=S.contacts.find(c=>c.id===d.contactId)||{};const cname=resolveClientName(d);const cvat=d.clientVat||ct.vat||'';const caddr=[ct.company,ct.address,ct.city].filter(Boolean).join('، ');
+  const docNo=draftT?'مسودّة':window.docNo(type,d);
+  /* رمز QR الضريبيّ (المرحلة الأولى): للمستند الضريبيّ الصادر فقط، وبرقمٍ ضريبيّ
+     صحيح — لا يُطبع أبداً برقمٍ وهميّ، ولا يتبع خيار التصميم لأنّه إلزاميّ. */
   let qrBlock='';
-  if(showQR&&(isInv||isCredit)){const iso=new Date(d.date+'T12:00:00').toISOString();const b64=zatcaBase64(org.brand||s.vat.sellerName||s.brand,org.vat||s.vat.number||'0000000000000',iso,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64)}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — زاتكا</div></div>`;}
+  if(vatDoc&&!draftT&&/^3\d{13}3$/.test(seller.vat)){const ts=stamp?stamp.date+'T'+stamp.time:d.date+'T12:00:00';const b64=zatcaBase64(seller.name,seller.vat,ts,total.toFixed(2),tax.toFixed(2));qrBlock=`<div style="text-align:center">${qrImg(b64).replace('<img ','<img style="width:118px;height:118px" ')}<div style="font-size:10px;color:#64748b;margin-top:2px">رمز QR — الفاتورة الإلكترونيّة</div></div>`;}
+  const sellerBlock=vatDoc?`<div style="margin-bottom:14px;font-size:12.5px;color:#334155;line-height:1.8;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px"><b>البائع:</b> ${esc(seller.name)} · <b>الرقم الضريبي:</b> <span dir="ltr">${esc(seller.vat||'—')}</span>${seller.cr?` · <b>س.ت:</b> <span dir="ltr">${esc(seller.cr)}</span>`:''}${seller.address?`<br><b>العنوان:</b> ${esc(seller.address)}`:''}</div>`:'';
+  const draftBanner=draftT?`<div style="margin-bottom:12px;padding:8px 12px;border-radius:8px;background:#fff4e5;color:#9a5b00;font-weight:700;font-size:12.5px">مسودّة — لم تُصدر بعد، وليست فاتورة ضريبية</div>`:'';
   // ===== كتل مشتركة =====
   const logoTag=(h,onDark)=>b.logo?`<img src="${esc(b.logo)}" style="height:${h}px;max-width:230px;object-fit:contain${onDark?';filter:drop-shadow(0 3px 10px rgba(0,0,0,.22))':''}">`:`<div style="color:${onDark?'#fff':ink};font-weight:900;font-size:26px;letter-spacing:.5px${onDark?';text-shadow:0 2px 8px rgba(0,0,0,.28)':''}">${esc(b.name)}</div>`;
   const clientBlock=(dark)=>`<div style="font-size:11px;color:${dark?'rgba(255,255,255,.7)':'#94a3b8'};font-weight:800;letter-spacing:3px;margin-bottom:6px">مُقدَّم إلى</div>
@@ -367,7 +382,7 @@ function printDocHTML(type,id,previewBrand){
       ${ct.email?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px">${esc(ct.email)}</div>`:''}
       ${ct.phone?`<div style="color:${dark?'rgba(255,255,255,.85)':'#475569'};font-size:13px;margin-top:2px" dir="ltr">${esc(ct.phone)}</div>`:''}`;
   const metaBlock=`<div style="display:flex;justify-content:space-between;gap:16px;margin-bottom:14px">
-        <div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.date)}</div></div>
+        <div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">التاريخ</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(shownDate)}</div></div>
         ${d.expiry?`<div><div style="font-size:10.5px;color:#94a3b8;font-weight:800;letter-spacing:2px">صالح حتى</div><div style="font-size:15px;font-weight:800;margin-top:2px;white-space:nowrap" dir="ltr">${esc(d.expiry)}</div></div>`:''}
       </div>
       <div style="margin-top:14px;padding:14px 16px;background:linear-gradient(135deg,${acc}18,${acc}08);border:1px solid ${acc}44;border-radius:12px">
@@ -485,9 +500,10 @@ function printDocHTML(type,id,previewBrand){
         <div style="color:#475569;font-size:12px">${esc(b.tagline||'')}</div>
       </div>
       <div style="text-align:left">${qrBlock}
-        <div style="margin-top:6px"><div style="font-size:20px;font-weight:800">${esc(kind)}</div><div style="color:#475569;font-size:13px">رقم: ${esc(docNo)} · التاريخ: ${d.date}</div></div>
+        <div style="margin-top:6px"><div style="font-size:20px;font-weight:800">${esc(kind)}</div><div style="color:#475569;font-size:13px">رقم: <span dir="ltr">${esc(docNo)}</span> · التاريخ: <span dir="ltr">${esc(shownDate)}</span></div></div>
       </div>
     </div>
+    ${draftBanner}${sellerBlock}
     <div style="margin-bottom:14px;background:#fafafa;border:1px solid #e2e8f0;border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px">
       <div><div style="font-size:11px;color:#64748b;font-weight:700;letter-spacing:1.5px">${isInv?'فاتورة إلى':'عرض إلى'}</div>
         <div style="font-weight:800;font-size:16px;margin-top:2px">${esc(cname)}</div>
@@ -503,7 +519,8 @@ function printDocHTML(type,id,previewBrand){
         <th style="padding:11px 8px;width:64px;font-size:13px">الكمية</th>
         <th style="padding:11px 8px;width:110px;font-size:13px">السعر</th>
         ${disc>0.001?'<th style="padding:11px 8px;width:70px;font-size:13px">خصم</th>':''}
-        <th style="padding:11px 8px;width:130px;font-size:13px">المجموع</th>
+        <th style="padding:11px 8px;width:130px;font-size:13px">${vatDoc?'المجموع قبل الضريبة':'المجموع'}</th>
+        ${vatDoc?'<th style="padding:11px 8px;width:90px;font-size:13px">الضريبة ١٥٪</th>':''}
       </tr></thead>
       <tbody>${d.items.map((it,i)=>`<tr style="background:${i%2?'#fafafa':'#fff'}">
         <td style="padding:11px 14px;word-wrap:break-word"><b>${esc(it.desc)}</b>${it.details?`<div style="font-size:12px;color:#64748b;margin-top:3px;line-height:1.7">${esc(it.details)}</div>`:''}</td>
@@ -511,6 +528,7 @@ function printDocHTML(type,id,previewBrand){
         <td style="padding:11px 8px;text-align:center;white-space:nowrap" dir="ltr">${Number(it.price).toFixed(2)}</td>
         ${disc>0.001?`<td style="padding:11px 8px;text-align:center;white-space:nowrap">${it.discount?it.discount+'%':'—'}</td>`:''}
         <td style="padding:11px 8px;text-align:center;font-weight:800;white-space:nowrap" dir="ltr">${lineTotal(it).toFixed(2)}</td>
+        ${vatDoc?`<td style="padding:11px 8px;text-align:center;white-space:nowrap" dir="ltr">${r2(lineTotal(it)*Number(d.vatRate||15)/100).toFixed(2)}</td>`:''}
       </tr>`).join('')}</tbody>
     </table>
     </div>
@@ -520,8 +538,9 @@ function printDocHTML(type,id,previewBrand){
         <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>المجموع الفرعي</span><span style="white-space:nowrap" dir="ltr">${lineSub.toFixed(2)} ${esc(s.currency)}</span></div>
         ${disc>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم البنود</span><span style="white-space:nowrap" dir="ltr">- ${disc.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
         ${ovr>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>خصم إجمالي${d.discType==='percent'?' ('+Number(d.discVal||0)+'%)':''}</span><span style="white-space:nowrap" dir="ltr">- ${ovr.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
-        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة (${d.vat?d.vatRate:0}%)</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${acc};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>الإجمالي</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
+        ${d.vat?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>الإجمالي غير شامل الضريبة</span><span style="white-space:nowrap" dir="ltr">${net.toFixed(2)} ${esc(s.currency)}</span></div>
+        <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px;gap:10px"><span>ضريبة القيمة المضافة ١٥٪</span><span style="white-space:nowrap" dir="ltr">${tax.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;margin-top:8px;background:${acc};color:#fff;border-radius:10px;font-weight:900;font-size:16px;gap:12px"><span>${d.vat?'الإجمالي شامل الضريبة':'الإجمالي'}</span><span style="white-space:nowrap;font-size:18px" dir="ltr">${total.toFixed(2)} ${esc(s.currency)}</span></div>
         ${isInv&&paid>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;color:#16a34a;font-size:13px;gap:10px"><span>المدفوع</span><span style="white-space:nowrap" dir="ltr">${paid.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
         ${isInv&&due>0.001?`<div style="display:flex;justify-content:space-between;padding:5px 0;font-weight:800;font-size:13px;gap:10px"><span>المتبقي</span><span style="white-space:nowrap" dir="ltr">${due.toFixed(2)} ${esc(s.currency)}</span></div>`:''}
       </div>
@@ -564,8 +583,7 @@ function docFileName(type,id){
   const d=(type==='invoice'?S.invoices:type==='credit'?S.credits:S.sales).find(x=>x.id===id);if(!d)return 'مستند';
   const isInv=type==='invoice';const isCredit=type==='credit';
   const label=isInv?(d.vat?'فاتورة_ضريبية':'فاتورة'):isCredit?'إشعار_دائن':'عرض_سعر';
-  const prefix=isInv?(S.settings.invPrefix||'INV-'):isCredit?'CN-':(S.settings.salePrefix||'S');
-  const no=prefix+String(d.number).padStart(5,'0');
+  const no=isInv&&taxDraft(d)?'مسودة':docNo(type,d);
   const client=(resolveClientName(d)||'').replace(/[\\\/:*?"<>|]/g,'').trim().replace(/\s+/g,'_').slice(0,45);
   return [label,client,no].filter(Boolean).join('_');
 }

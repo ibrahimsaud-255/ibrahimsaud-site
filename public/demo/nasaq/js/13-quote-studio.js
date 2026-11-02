@@ -1,7 +1,7 @@
 /*
  * 13-quote-studio.js — استوديو تصميم عروض الأسعار
  * ─────────────────────────────────────────────────────────────────────────
- * جزء من نظام إدارة الأعمال بعد تفكيك الملفّ الواحد (index.html) إلى
+ * جزء من لوحة نَسَق بعد تفكيك الملفّ الواحد (index.html) إلى
  * سكربتات كلاسيكيّة تُحمَّل بالترتيب الرقميّ من index.html.
  * ⚠️ نطاقٌ عامّ واحد: الدوالّ هنا عامّة عمداً (مئات onclick="..." تناديها
  *    بالاسم) — لا تحوّلها إلى وحدات ES ولا تغلّفها بدالّة.
@@ -92,7 +92,7 @@ function renderQuoteDesign(){
           </div>`)}
 
         ${sec('tag','اسم التصميم والهوية',`
-          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم الشركة/البراند (يظهر على المستند وفي قائمة الاختيار)')}<input value="${esc(b.name||'')}" oninput="qdSet('name',this.value)" placeholder="مثال: اسم الشركة"></div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم الشركة/البراند (يظهر على المستند وفي قائمة الاختيار)')}<input value="${esc(b.name||'')}" oninput="qdSet('name',this.value)" placeholder="مثال: إبراهيم سعود"></div>
           <div class="qd-field">${lbl('وسم تعريفي (سطر صغير تحت الاسم)')}<input value="${esc(b.tagline||'')}" oninput="qdSet('tagline',this.value)" placeholder="مثال: فيديوهات إعلانية تبيع"></div>`)}
 
         ${sec('image','الشعار',`
@@ -114,22 +114,18 @@ function renderQuoteDesign(){
             <div class="qd-field">${lbl('النقش الزخرفي')}<select onchange="qdSet('pattern',this.value)">${PATS.map(p=>`<option value="${p[0]}" ${(b.pattern||'sun')===p[0]?'selected':''}>${p[1]}</option>`).join('')}</select></div>
             <div class="qd-field">${lbl('إظهار النقش')}<select onchange="qdSetBool('showPattern',this.value==='1')"><option value="1" ${b.showPattern!==false?'selected':''}>نعم</option><option value="0" ${b.showPattern===false?'selected':''}>لا (سادة)</option></select></div>
           </div>
-          <div class="qd-field" style="margin-top:10px">${lbl('رمز QR للزكاة (يظهر في الفواتير)')}<select onchange="qdSetBool('showQR',this.value==='1')"><option value="1" ${b.showQR!==false?'selected':''}>مفعّل</option><option value="0" ${b.showQR===false?'selected':''}>مخفي</option></select></div>`)}
+          `)}
 
         ${sec('building-2','بيانات المؤسسة على المستند',`
-          <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px">تظهر أسفل المستند. اتركها فارغة لتُستعمل البيانات الرسمية العامة تلقائياً.</div>
-          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم المؤسسة الرسمي')}<input value="${esc((b.org&&b.org.brand)||'')}" oninput="qdSetOrg('brand',this.value)" placeholder="${esc(officialInfo().brand||CONFIG.brandName||'اسم المؤسسة')}"></div>
+          <div style="font-size:11.5px;color:var(--muted);margin-bottom:10px">اختياريّة — لاسمٍ تجاريّ مختلف لهذا التصميم. الفارغ يأخذ بيانات الإعدادات.</div>
+          <div class="qd-field" style="margin-bottom:10px">${lbl('اسم المؤسسة الرسمي')}<input value="${esc((b.org&&b.org.brand)||'')}" oninput="qdSetOrg('brand',this.value)" placeholder="${esc(officialInfo().brand||'مؤسسة حروف ودروس')}"></div>
           <div class="qd-row">
             <div class="qd-field">${lbl('المالك / التوقيع')}<input value="${esc((b.org&&b.org.owner)||'')}" oninput="qdSetOrg('owner',this.value)" placeholder="${esc(officialInfo().owner||'')}"></div>
             <div class="qd-field">${lbl('الجوال / واتساب')}<input value="${esc((b.org&&b.org.phone)||'')}" oninput="qdSetOrg('phone',this.value)" dir="ltr" placeholder="${esc(officialInfo().phone||'')}"></div>
           </div>
           <div class="qd-field" style="margin:10px 0">${lbl('البريد الإلكتروني')}<input value="${esc((b.org&&b.org.email)||'')}" oninput="qdSetOrg('email',this.value)" dir="ltr" placeholder="${esc(officialInfo().email||'')}"></div>
           <div class="qd-field" style="margin-bottom:10px">${lbl('الآيبان (IBAN)')}<input value="${esc((b.org&&b.org.iban)||'')}" oninput="qdSetOrg('iban',this.value)" dir="ltr" placeholder="SA00 0000 0000 0000 0000 0000"></div>
-          <div class="qd-row">
-            <div class="qd-field">${lbl('السجل التجاري')}<input value="${esc((b.org&&b.org.cr)||'')}" oninput="qdSetOrg('cr',this.value)" dir="ltr"></div>
-            <div class="qd-field">${lbl('الرقم الضريبي')}<input value="${esc((b.org&&b.org.vat)||'')}" oninput="qdSetOrg('vat',this.value)" dir="ltr"></div>
-          </div>
-          <div class="qd-field" style="margin-top:10px">${lbl('العنوان')}<input value="${esc((b.org&&b.org.address)||'')}" oninput="qdSetOrg('address',this.value)" placeholder="${esc(officialInfo().address||'')}"></div>`)}
+          <div style="font-size:11.5px;color:var(--muted)">الرقم الضريبي والسجل التجاري والعنوان تُؤخذ دائماً من الإعدادات — واحدة لكلّ التصاميم.</div>`)}
 
         <div style="display:flex;align-items:center;gap:8px;color:var(--good);font-size:12.5px;padding:4px 2px"><i data-lucide="check-circle-2" style="width:15px;height:15px"></i> كل تعديل يُحفظ تلقائياً.</div>
       </div>

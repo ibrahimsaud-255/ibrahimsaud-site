@@ -9,7 +9,7 @@
  *    اسم عند التهيئة) — وإلا عادت مشكلة الترتيب.
  */
 /* ⤶ 01-core.js · سطر الأصل 764 */
-const sb=(SUPA_URL&&SUPA_KEY)?window.supabase.createClient(SUPA_URL,SUPA_KEY):null;
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 ;
 
 /* ⤶ 01-core.js · سطر الأصل 874 */
@@ -17,18 +17,26 @@ let S=load();
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1001 */
-const RENDER={home:renderHome,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
-/* حزمة المنظمات (js/20..23-org-*.js) — تُسجَّل فقط إن كانت محمّلة (orgSuite:true) */
-if(typeof renderTasks==='function')Object.assign(RENDER,{tasks:renderTasks,library:renderLibrary,inbox:renderInbox,site:renderSite,finance:renderFinance,requests:renderRequests});
-if(typeof renderLedgerApp==='function')RENDER.ledger=renderLedgerApp;
-if(typeof ERP_MODS==='object')Object.keys(ERP_MODS).forEach(k=>{RENDER[k]=window['renderErp_'+k];});
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,partners:renderPartners,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1002 */
-const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},...APPS,{id:'team',name:'الفريق',icon:'users'}];
+const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'المكتب',icon:'layout-grid'},...APPS];
 ;
 
-/* ⤶ 04-home.js */
+/* ⤶ 03-huroof.js · سطر الأصل 1138 */
+const HR_VIEWS={
+  overview:hrViewOverview, users:hrViewUsers, manage:hrViewManage, subscribers:hrViewSubscribers,
+  teachers:hrViewTeachers, tquestions:hrViewTQuestions, tickets:hrViewTickets,
+  waitlist:hrViewWaitlist, content:hrViewContent, banners:hrViewBanners, settings:hrViewSettings,
+};
+;
+
+/* ⤶ 03-huroof.js · سطر الأصل 1907 */
+Object.assign(HR_VIEWS,{usage:hrViewUsage,marketing:hrViewMarketing,questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog});
+;
+
+/* ⤶ 04-home.js · سطر الأصل 2094 */
 document.addEventListener('click',(e)=>{
   const link=e.target.closest('.sidebar .nav a, .sidebar .nav-foot a');
   if(link){document.getElementById('sidebar')?.classList.remove('open');}
@@ -60,7 +68,7 @@ const BPTRS=new Map();
 ;
 
 /* ⤶ 19-freeform.js · سطر الأصل 6548 */
-if(sb)sb.auth.onAuthStateChange((event,session)=>{
+sb.auth.onAuthStateChange((event,session)=>{
   if(event==='PASSWORD_RECOVERY'){RECOVERY_MODE=true;showReset();return}
   if(event==='SIGNED_OUT'){USER=null;STATE_ID=null}
 });
