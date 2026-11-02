@@ -78,7 +78,6 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 .v2-memoji { position: relative; width: clamp(260px, 38vw, 470px); aspect-ratio: 1; perspective: 900px; }
 .v2-memoji .tilt { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .6s var(--ease); will-change: transform; }
 .v2-memoji img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .35s ease; filter: drop-shadow(0 34px 44px rgba(30, 45, 90, .18)); }
-.v2-memoji .glare { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle at var(--gx, 30%) var(--gy, 20%), rgba(255, 255, 255, .55), transparent 45%); mix-blend-mode: soft-light; pointer-events: none; transform: translateZ(30px); }
 .v2-memoji .shadow { position: absolute; left: 18%; right: 18%; bottom: -4%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgba(30, 45, 90, .22), transparent); filter: blur(6px); }
 @media (prefers-reduced-motion: reduce) { .v2-memoji .tilt { transition: none; transform: none !important; } }
 

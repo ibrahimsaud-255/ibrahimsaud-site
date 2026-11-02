@@ -59,7 +59,6 @@ export default function Memoji3D({ base = "happy", className = "" }: { base?: Me
           <img key={n} src={`/v2/memoji/${n}.png`} alt={n === base ? "إيموجي إبراهيم سعود" : ""} aria-hidden={n !== base}
             style={{ opacity: n === face ? 1 : 0 }} draggable={false} />
         ))}
-        <div className="glare" />
       </div>
     </div>
   );
