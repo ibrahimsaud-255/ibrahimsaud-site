@@ -28,7 +28,7 @@ const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name:'�
 const HR_VIEWS={
   overview:hrViewOverview, users:hrViewUsers, manage:hrViewManage, subscribers:hrViewSubscribers,
   teachers:hrViewTeachers, tquestions:hrViewTQuestions, tickets:hrViewTickets,
-  waitlist:hrViewWaitlist, content:hrViewContent, banners:hrViewBanners, settings:hrViewSettings,
+  waitlist:hrViewWaitlist, content:hrViewContent, settings:hrViewSettings,
 };
 ;
 
