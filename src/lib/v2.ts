@@ -6,7 +6,7 @@
 //
 // التسميات على طريقة آبل: كلّ منتج اسمه كلمة وحدة، والفئة لاحقة ثابتة:
 //   بلا لاحقة = الأساس · Pro = الكامل · + = اشتراك شهريّ.
-// «ديوان» حلّ محلّ «منوال» اسماً لنظام الإدارة.
+// «نَسَق» حلّ محلّ «منوال» اسماً لنظام الإدارة.
 
 import { waLink } from "./site";
 
@@ -48,6 +48,8 @@ export type Pkg = {
 // ===== روابط الدفع =====
 // أنشئ رابط دفع لكلّ باقة من لوحة تلر (Paylinks) والصقه هنا بمعرّف الباقة (id).
 // الدفع عندنا ٥٠٪ مقدّم: لو الرابط للعربون اكتب label: "ادفع العربون ٥٠٪".
+// الباقة اللي لها رابط يصير لها زرّان: «ادفع الآن» و«تواصل معي». بدون رابط: زرّ واتساب وحده.
+// المعرّفات: session · hudoor · hudoor-pro · hudoor-plus · hawiya · publish · podcast · film · store-ads · nasaq · nasaq-pro
 export const payLinks: Record<string, { href: string; label?: string }> = {
   // "podcast": { href: "https://secure.telr.com/..." },
 };
@@ -62,8 +64,8 @@ export const pkgs = {
   podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
   film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "من ٨,٥٠٠", approved: false, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
-  diwan: { id: "diwan", name: "ديوان", for: "للمنشآت وشركات الشخص الواحد", price: "من ١٠,٠٠٠", approved: false, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
-  diwanPro: { id: "diwan-pro", name: "ديوان Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٢٠,٠٠٠", approved: false, featured: true, items: ["كلّ ما في ديوان", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
+  nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ١٠,٠٠٠", approved: false, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
+  nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٢٠,٠٠٠", approved: false, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
 } satisfies Record<string, Pkg>;
 
 export const studio = {
@@ -109,7 +111,7 @@ export const why = [
 // كلّها بالوضع التجريبيّ: بيانات الزائر في متصفّحه فقط، بلا قاعدة بيانات.
 export type Demo = { id: string; name: string; kind: string; text: string; img: string; href: string; dash?: string; qr: string };
 export const demos: Demo[] = [
-  { id: "diwan", name: "ديوان", kind: "نظام إدارة · نسخة عرض", text: "ادخل كمدير، وبدّل «عرض كـ» تشوف النظام بعين أيّ موظّف: المالية والمهامّ والوارد.", img: "/v2/shots/demo-diwan.jpg", href: "/demo/diwan/index.html", qr: "/v2/qr/diwan.svg" },
+  { id: "nasaq", name: "نَسَق", kind: "نظام إدارة · نسخة عرض", text: "ادخل كمدير، وبدّل «عرض كـ» تشوف النظام بعين أيّ موظّف: المالية والمهامّ والوارد.", img: "/v2/shots/demo-nasaq.jpg", href: "/demo/nasaq/index.html", qr: "/v2/qr/nasaq.svg" },
   { id: "ruso", name: "جمعيّة رسو", kind: "موقع + نظام داخليّ", text: "موقع الجمعيّة ولوحة تحكّمها: سندات صرف، وحوكمة، ومستفيدون، وتطوّع.", img: "/v2/shots/demo-ruso-site.jpg", href: "/demo/ruso/website/index.html", dash: "/demo/ruso/system/index.html", qr: "/v2/qr/ruso.svg" },
   { id: "manabir", name: "منابر", kind: "منصّة بخمس صلاحيّات", text: "تنظيم الأنشطة الدعويّة في المساجد: ادخل كمدير النظام، أو ممثّل الوزارة، أو مشرف المسجد.", img: "/v2/shots/demo-manabir.jpg", href: "/demo/manabir/index.html?login=1", dash: "/demo/manabir/index.html?dash=1", qr: "/v2/qr/manabir.svg" },
   { id: "takamul", name: "التكامل المتّحدة", kind: "موقع شركة + لوحة محتوى", text: "موقع شركة استشارات بالعربيّ والإنجليزيّ، ومحتواه كلّه يتعدّل من لوحة تحكّم.", img: "/v2/shots/demo-takamul.jpg", href: "/demo/takamul/index.html", dash: "/demo/takamul/dashboard/index.html", qr: "/v2/qr/takamul.svg" },
@@ -131,6 +133,9 @@ export type Product = {
   memoji: Memoji;
   heroPhones?: string[];
   heroImg?: string;
+  heroScreen?: { src: string; url: string; phone?: string };
+  // قسم «نظام على الكمبيوتر»: لقطة حقيقيّة في نافذة متصفّح
+  screen?: { title: string; text: string; src: string; url: string; phone?: string; href?: string };
   highlights: Highlight[];
   journey?: { title: string; steps: { name: string; text: string }[] };
   features: { title: string; sub?: string; items: { title: string; text: string }[] }[];
@@ -162,7 +167,7 @@ export const products: Record<Product["slug"], Product> = {
       { title: "صفحة تبيع بدالك.", text: "من أنت، ووش تقدّم، وكم سعره، وزرّ حجز. مثل هذي الصفحة.", img: "/v2/memoji/hands_on_hips.png", kind: "memoji" },
       { title: "حلقة تصير عشرة مقاطع.", text: "استوديو بثلاث كاميرات في الرياض، وحلقة تتقطّع لمحتوى شهر.", img: "/v2/shots/studio.jpg", kind: "cover", dark: true },
       { title: "هويّتك داخل Claude.", text: "تقول «سوّ لي غلاف لهالحلقة» ويطلع بخطّك ولونك.", img: "/v2/shots/saad-quote.jpg", kind: "frame", dark: true },
-      { title: "نظام بدل المدير.", text: "عروض أسعار وفواتير ومتابعة عملاء في مكان واحد.", img: "/v2/shots/demo-diwan.jpg", kind: "phone" },
+      { title: "نظام بدل المدير.", text: "عروض أسعار وفواتير ومتابعة عملاء في مكان واحد.", img: "/v2/shots/hl-office.jpg", kind: "phone" },
     ],
     journey: {
       title: "الصقر والبرّ.",
@@ -181,6 +186,14 @@ export const products: Record<Product["slug"], Product> = {
         { title: "نظام بدل المدير", text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، تعدّل عليه بـClaude." },
       ],
     }],
+    screen: {
+      title: "نظام الخبير.",
+      text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، باسمك وشعارك. هذا نظامي أنا اللي أدير فيه شغلي، وتقدر تجرّبه الحين.",
+      src: "/v2/shots/desk-office.jpg",
+      url: "ibrahimsaud.com/app",
+      phone: "/v2/shots/phone-office.jpg",
+      href: "/demo/nasaq/index.html",
+    },
     showcase: {
       id: "identity",
       eyebrow: "هويّة",
@@ -215,21 +228,23 @@ export const products: Record<Product["slug"], Product> = {
   systems: {
     slug: "systems",
     href: "/systems/",
-    name: "ديوان",
+    name: "نَسَق",
     kicker: "نظام الإدارة",
     meta: {
-      title: "ديوان — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
-      description: "ديوان نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
+      title: "نَسَق — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
+      description: "نَسَق نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
     },
     headline: "شغلك كلّه. في مكان واحد.",
     sub: "نظام إدارة عربيّ على مقاسك، بدل إكسل وواتساب وبرنامج فواتير. ملكك أنت، وتعدّل عليه بالذكاء الاصطناعيّ بكلام عاديّ.",
     from: "يبدأ من ١٠,٠٠٠ ريال",
     memoji: "proud",
-    heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-diwan.jpg", "/v2/shots/demo-manabir-dash.jpg"],
+    heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-nasaq.jpg", "/v2/shots/demo-manabir-dash.jpg"],
+    heroScreen: { src: "/v2/shots/desk-office.jpg", url: "ibrahimsaud.com/app", phone: "/v2/shots/phone-office.jpg" },
     highlights: [
-      { title: "جرّبه من جوالك.", text: "نسخ عرض حيّة تفتحها الحين، بدون حساب وبدون تحميل.", img: "/v2/shots/demo-diwan.jpg", kind: "phone" },
+      { title: "المكتب.", text: "كلّ تطبيقات شغلك في شاشة وحدة: المبيعات والفوترة والعملاء والمحاسبة والتقويم.", img: "/v2/shots/hl-office.jpg", kind: "phone" },
       { title: "كلّ موظّف يشوف شغله.", text: "صلاحيّات لكلّ قسم، و«عرض كـ» تجرّب فيه النظام بعين أيّ موظّف.", img: "/v2/shots/demo-manabir.jpg", kind: "phone" },
       { title: "الموقع من نفس النظام.", text: "أخبار وبرامج وشركاء وتسجيلات، تتعدّل من لوحة التحكّم.", img: "/v2/shots/demo-ruso-site.jpg", kind: "phone", dark: true },
+      { title: "جرّبه من جوالك.", text: "نسخ عرض حيّة تفتحها الحين، بدون حساب وبدون تحميل.", img: "/v2/shots/demo-manabir-dash.jpg", kind: "phone" },
       { title: "الأرقام قدّامك.", text: "طلبات تنتظرك، ومهامّ متأخّرة، وصافي حركة السنة، من أوّل شاشة.", img: "/v2/shots/demo-ruso-sys.jpg", kind: "phone" },
     ],
     demos: true,
@@ -255,8 +270,8 @@ export const products: Record<Product["slug"], Product> = {
     ],
     compare: {
       models: [
-        { name: "ديوان", price: "من ١٠,٠٠٠" },
-        { name: "ديوان Pro", price: "من ٢٠,٠٠٠" },
+        { name: "نَسَق", price: "من ١٠,٠٠٠" },
+        { name: "نَسَق Pro", price: "من ٢٠,٠٠٠" },
       ],
       rows: [
         { label: "المستخدمون", v: ["أنت وفريق صغير", "فريق بأقسام وصلاحيّات"] },
@@ -273,7 +288,7 @@ export const products: Record<Product["slug"], Product> = {
         { label: "ملكك، وبياناتك باسمك", v: [true, true] },
       ],
     },
-    packages: [pkgs.session, pkgs.diwan, pkgs.diwanPro],
+    packages: [pkgs.session, pkgs.nasaq, pkgs.nasaqPro],
     faqs: [
       { q: "النظام ملكي ولا اشتراك؟", a: "ملكك. ينبني لك وتستلمه، وبياناتك في قاعدة بيانات باسمك." },
       { q: "نسخ العرض تحفظ بياناتي؟", a: "لا. نسخ العرض تحفظ كلّ شي في متصفّحك أنت بس، ولا ترسل شي لأيّ خادم. جرّب براحتك." },
@@ -281,7 +296,7 @@ export const products: Record<Product["slug"], Product> = {
       { q: "كم ياخذ وقت؟", a: "يعتمد على حجم الجهة. نحدّده في جلسة التشخيص قبل أيّ عرض سعر." },
       faqs[3],
     ],
-    final: "ديوانك ينتظرك.",
+    final: "نظامك ينتظرك.",
   },
 
   video: {
@@ -351,11 +366,11 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    label: "ديوان", href: "/systems/",
+    label: "نَسَق", href: "/systems/",
     menu: [
-      { title: "استكشف ديوان", big: true, links: [{ label: "ديوان", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
+      { title: "استكشف نَسَق", big: true, links: [{ label: "نَسَق", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
       { title: "نسخ العرض", links: demos.map((d) => ({ label: d.name, href: d.href })) },
-      { title: "اطلب", links: [{ label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "ديوان", href: "/systems/#buy" }, { label: "ديوان Pro", href: "/systems/#buy" }] },
+      { title: "اطلب", links: [{ label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "نَسَق", href: "/systems/#buy" }, { label: "نَسَق Pro", href: "/systems/#buy" }] },
     ],
   },
   {

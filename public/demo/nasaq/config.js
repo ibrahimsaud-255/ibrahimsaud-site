@@ -16,7 +16,7 @@ const CONFIG = {
   ownerName:    'اسمك هنا',
   ownerEmail:   'demo@ibrahimsaud.com',            // البريد المستخدم للدخول (Admin)
   ownerPhone:   '966500000000',
-  companyName:  'ديوان — نسخة عرض',
+  companyName:  'نَسَق — نسخة عرض',
   companyAddress: 'المدينة، الدولة',
 
   /* ═══════ الحساب البنكي ═══════ */

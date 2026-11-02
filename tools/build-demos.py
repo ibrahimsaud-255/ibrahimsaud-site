@@ -9,7 +9,7 @@ SRC = os.path.expanduser('~/التقنية_نظام/works')
 DST = os.path.join(ROOT, 'public', 'demo')
 DEMOS = ['erp', 'ruso', 'manabir', 'takamul']
 SKIP = shutil.ignore_patterns('.git', '*.py', '*.md', '*.sql', '_headers', '.DS_Store')
-RENAME = {'erp': 'diwan'}  # «ERP مِنوال» صار «ديوان»
+RENAME = {'erp': 'nasaq'}  # «ERP مِنوال» صار «نَسَق»
 
 def rd(p): return open(p, encoding='utf-8').read()
 def wr(p, s): open(p, 'w', encoding='utf-8').write(s)
@@ -25,18 +25,18 @@ for dp, _, fs in os.walk(DST):
     for f in fs:
         if not f.endswith(('.html', '.js', '.webmanifest', '.css')) or f == 'bar.js': continue
         p = os.path.join(dp, f); s = rd(p); o = s
-        s = s.replace('/works/preview-bar.js', '/demo/bar.js').replace('/works/erp/', '/demo/diwan/').replace('/works/', '/demo/')
+        s = s.replace('/works/preview-bar.js', '/demo/bar.js').replace('/works/erp/', '/demo/nasaq/').replace('/works/', '/demo/')
         s = s.replace('#mnwbar', '#isbar').replace('bottom:58px', 'bottom:70px').replace('bottom:74px', 'bottom:86px').replace('bottom:84px', 'bottom:96px')
-        s = s.replace('ERP مِنوال — نسخة عرض', 'ديوان — نسخة عرض').replace('data-name="ERP مِنوال"', 'data-name="ديوان"')
+        s = s.replace('ERP مِنوال — نسخة عرض', 'نَسَق — نسخة عرض').replace('data-name="ERP مِنوال"', 'data-name="نَسَق"')
         s = s.replace('معاينة في مِنوال', 'معاينة').replace('معرض أعمال مِنوال', 'أعمال إبراهيم سعود').replace('demo@minwal.tech', 'demo@ibrahimsaud.com')
         s = s.replace("'/assets/logo-black.png'", "'/v2/ibrahim-saud-logo-black-tight.png'").replace("'/assets/logo-white.png'", "'/v2/ibrahim-saud-logo-white-tight.png'")
         if f.endswith('.html') and 'name="robots"' not in s:
             s = s.replace('<head>', '<head>\n<meta name="robots" content="noindex,nofollow">', 1)
         if s != o: wr(p, s)
 
-# شريط ديوان: الواجهة/لوحة التحكّم غير موجودة في ERP (نظام فقط)
-p = os.path.join(DST, 'diwan', 'index.html'); s = rd(p)
-s = s.replace('data-name="ديوان"', 'data-name="ديوان" data-dash="/demo/diwan/index.html"')
+# شريط نَسَق: الواجهة/لوحة التحكّم غير موجودة في ERP (نظام فقط)
+p = os.path.join(DST, 'nasaq', 'index.html'); s = rd(p)
+s = s.replace('data-name="نَسَق"', 'data-name="نَسَق" data-dash="/demo/nasaq/index.html"')
 wr(p, s)
 total = sum(os.path.getsize(os.path.join(dp, f)) for dp, _, fs in os.walk(DST) for f in fs)
 print(f'✓ {DST} ({total / 1e6:.1f} MB)')

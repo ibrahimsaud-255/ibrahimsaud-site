@@ -13,6 +13,7 @@ import CompareTable from "./CompareTable";
 import WorksRail from "./WorksRail";
 import PackageCards from "./PackageCards";
 import WhyCards from "./WhyCards";
+import Devices from "./Devices";
 import { brands } from "@/lib/site";
 import { bookHref, waHref, type Product } from "@/lib/v2";
 
@@ -45,7 +46,9 @@ export default function ProductPage({ p }: { p: Product }) {
             <p className="from">{p.from}</p>
           </div>
           <div className="v2-wrap media" style={{ position: "relative" }}>
-            {p.heroPhones ? (
+            {p.heroScreen ? (
+              <Devices s={p.heroScreen} className="hero" />
+            ) : p.heroPhones ? (
               <div className="phones">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 {p.heroPhones.map((s) => <img key={s} src={s} alt="" />)}
@@ -94,6 +97,20 @@ export default function ProductPage({ p }: { p: Product }) {
             </div>
           </section>
         ))}
+
+        {/* ===== النظام على الكمبيوتر ===== */}
+        {p.screen && (
+          <section className="v2-sec v2-screen" style={{ paddingTop: 0 }}>
+            <div className="v2-wrap">
+              <div className="v2-head center" data-rise>
+                <h2>{p.screen.title}</h2>
+                <p>{p.screen.text}</p>
+                {p.screen.href && <a className="v2-link" href={p.screen.href} target="_blank" rel="noopener">جرّبه الحين <span className="chev">‹</span></a>}
+              </div>
+              <div data-rise><Devices s={p.screen} /></div>
+            </div>
+          </section>
+        )}
 
         {/* ===== جرّبه (نسخ العرض الحيّة) ===== */}
         {p.demos && (

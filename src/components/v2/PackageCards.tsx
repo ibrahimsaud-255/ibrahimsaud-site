@@ -17,7 +17,7 @@ export default function PackageCards({ items, compact = false }: { items: Pkg[];
             if (pay) return (
               <div className="act">
                 <FaceOn face="big_happy"><a className="v2-btn v2-btn-primary" href={pay.href} target="_blank" rel="noopener">{pay.label || "ادفع الآن"}</a></FaceOn>
-                <a className="v2-link" href={ask} target="_blank" rel="noopener">عندك سؤال قبل الدفع؟</a>
+                <a className="v2-btn v2-btn-ghost" href={ask} target="_blank" rel="noopener">تواصل معي</a>
               </div>
             );
             return (

@@ -8,6 +8,7 @@ import FaceOn from "@/components/v2/FaceOn";
 import WindowLight from "@/components/v2/WindowLight";
 import Manifesto from "@/components/v2/Manifesto";
 import WorksRail from "@/components/v2/WorksRail";
+import Devices from "@/components/v2/Devices";
 import { brands } from "@/lib/site";
 import { bookHref, hero, manifesto, products, studio, tools, waHref } from "@/lib/v2";
 
@@ -17,7 +18,7 @@ import { bookHref, hero, manifesto, products, studio, tools, waHref } from "@/li
 export const metadata: Metadata = {
   title: "إبراهيم سعود — أبني لك الحضور والمحتوى والنظام",
   description:
-    "إبراهيم سعود يبني للخبراء والمنشآت والجمعيّات ما يحتاجونه لينموا: حضور شخصيّ وموقع يبيع، ديوان لإدارة الشغل، واستوديو بودكاست وفيديو في الرياض.",
+    "إبراهيم سعود يبني للخبراء والمنشآت والجمعيّات ما يحتاجونه لينموا: حضور شخصيّ وموقع يبيع، نَسَق لإدارة الشغل، واستوديو بودكاست وفيديو في الرياض.",
   alternates: { canonical: "https://ibrahimsaud.com" },
 };
 
@@ -68,10 +69,7 @@ export default function Home() {
               <a className="v2-btn v2-btn-primary sm" href={systems.href}>اعرف أكثر</a>
               <a className="v2-btn v2-btn-ghost sm" href={`${systems.href}#try`}>جرّبه من جوالك</a>
             </div>
-            <div className="art phones">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              {systems.heroPhones!.map((s) => <img key={s} src={s} alt="" loading="lazy" />)}
-            </div>
+            <div className="art screen"><Devices s={systems.heroScreen!} /></div>
           </section>
 
           <section className="v2-tile photo" data-rise>

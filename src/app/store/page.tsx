@@ -10,14 +10,14 @@ import { bookHref, pkgs, studio, waHref } from "@/lib/v2";
 // «الباقات» — كلّ ما يُطلب في صفحة وحدة، مثل متجر آبل: صفّ المنتجات فوق، ثمّ باقات كلّ منتج.
 
 export const metadata: Metadata = {
-  title: "الباقات والأسعار — حضور وديوان والاستوديو | إبراهيم سعود",
-  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، ديوان لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة، تأجير الاستوديو في الرياض، وهويّة في Claude.",
+  title: "الباقات والأسعار — حضور ونَسَق والاستوديو | إبراهيم سعود",
+  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، نَسَق لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة، تأجير الاستوديو في الرياض، وهويّة في Claude.",
   alternates: { canonical: "https://ibrahimsaud.com/store/" },
 };
 
 const row = [
   { name: "حضور", href: "#hudoor", img: "/v2/memoji/hands_on_hips.png", kind: "memoji" },
-  { name: "ديوان", href: "#diwan", img: "/v2/shots/demo-diwan.jpg", kind: "phone" },
+  { name: "نَسَق", href: "#nasaq", img: "/v2/shots/demo-nasaq.jpg", kind: "phone" },
   { name: "الاستوديو", href: "#studio", img: "/v2/shots/studio.jpg", kind: "photo" },
   { name: "هويّة", href: "#addons", img: "/v2/shots/saad-quote.jpg", kind: "photo" },
   { name: "حزمة النشر", href: "#addons", img: "/v2/memoji/surprise.png", kind: "memoji" },
@@ -25,7 +25,7 @@ const row = [
 
 const groups = [
   { id: "hudoor", title: "حضور.", sub: "البراند الشخصيّ للخبراء.", more: "/brand/", items: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus] },
-  { id: "diwan", title: "ديوان.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.session, pkgs.diwan, pkgs.diwanPro] },
+  { id: "nasaq", title: "نَسَق.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.session, pkgs.nasaq, pkgs.nasaqPro] },
   { id: "studio", title: "الاستوديو.", sub: "بودكاست وأفلام وإعلانات.", more: "/video/", items: [pkgs.podcast, pkgs.film, pkgs.storeAds] },
   { id: "addons", title: "إضافات.", sub: "تشتغل وحدها أو مع أيّ باقة.", more: "", items: [pkgs.hawiya, pkgs.publish] },
 ];
