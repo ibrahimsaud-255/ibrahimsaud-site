@@ -114,12 +114,6 @@ export default function Services() {
             >
               باقات الإعلانات وأسعارها
             </a>
-            <a
-              href="/studio-rental/"
-              className="rounded-full border border-cream/30 px-7 py-3.5 text-sm font-bold text-cream backdrop-blur-sm transition hover:border-gold hover:text-gold"
-            >
-              احجز الاستوديو
-            </a>
           </div>
         </div>
       </div>

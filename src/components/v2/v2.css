@@ -366,12 +366,12 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-store-head .help span { color: var(--blue); line-height: 1.5; }
 .v2-store-row { display: flex; gap: clamp(20px, 4vw, 44px); overflow-x: auto; padding: 44px 0 10px; scrollbar-width: none; }
 .v2-store-row::-webkit-scrollbar { display: none; }
-.v2-store-row a { flex: none; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
-.v2-store-row .ic { width: 112px; height: 80px; display: grid; place-items: center; transition: transform .4s var(--ease); }
-.v2-store-row a:hover .ic { transform: translateY(-4px); }
-.v2-store-row .ic.memoji img { height: 80px; }
-.v2-store-row .ic.phone img { height: 80px; border-radius: 10px; border: 3px solid var(--bezel); }
-.v2-store-row .ic.photo img { width: 112px; height: 72px; object-fit: cover; border-radius: 12px; }
+.v2-store-row a { flex: none; display: flex; flex-direction: column; align-items: center; gap: 12px; font-size: 14px; font-weight: 700; min-width: 84px; }
+/* أيقونة بنمط «المكتب»: مربّع زجاجيّ بلمعة علويّة وظلّ ملوّن */
+.v2-store-row .app { position: relative; width: 76px; height: 76px; border-radius: 22px; display: grid; place-items: center; color: #fff; overflow: hidden; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .45), inset 0 -2px 6px rgba(0, 0, 0, .18), 0 12px 24px -10px rgba(47, 102, 255, .55); transition: transform .4s var(--ease); }
+.v2-store-row .app::before { content: ""; position: absolute; inset: 0 0 45% 0; background: linear-gradient(to bottom, rgba(255, 255, 255, .32), rgba(255, 255, 255, 0)); border-radius: 22px 22px 40% 40%; }
+.v2-store-row .app svg { position: relative; width: 36px; height: 36px; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .2)); }
+.v2-store-row a:hover .app { transform: translateY(-4px) scale(1.03); }
 .v2-store-group .v2-head { flex-direction: row; justify-content: space-between; align-items: baseline; flex-wrap: wrap; }
 .v2-store-group .v2-head h2 { font-size: clamp(28px, 3.6vw, 40px); }
 .v2-store-group + .v2-store-group { padding-top: 0; }
