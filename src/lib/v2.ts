@@ -55,7 +55,7 @@ export const payLinks: Record<string, { href: string; label?: string }> = {
 };
 
 export const pkgs = {
-  session: { id: "session", name: "جلسة التشخيص", for: "قبل أيّ باقة", price: "٥٠٠", approved: false, items: ["ساعة في الاستوديو أو أونلاين", "خطّة مكتوبة لوضعك", "تُخصم من أيّ باقة"] },
+  session: { id: "session", name: "جلسة التشخيص", for: "قبل أيّ باقة", price: "٣٠٠", approved: true, items: ["ساعة في الاستوديو أو أونلاين", "خطّة مكتوبة لوضعك", "تُخصم من أيّ باقة"] },
   hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", approved: false, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
   hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", approved: false, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
   hudoorPlus: { id: "hudoor-plus", name: "حضور+", for: "محتوى كلّ شهر", price: "٦,٥٠٠", unit: "شهريّاً", approved: false, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على حساباتك"] },
@@ -64,8 +64,8 @@ export const pkgs = {
   podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
   film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "من ٨,٥٠٠", approved: false, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
-  nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ١٠,٠٠٠", approved: false, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
-  nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٢٠,٠٠٠", approved: false, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
+  nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
+  nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
 } satisfies Record<string, Pkg>;
 
 export const studio = {
@@ -236,7 +236,7 @@ export const products: Record<Product["slug"], Product> = {
     },
     headline: "شغلك كلّه. في مكان واحد.",
     sub: "نظام إدارة عربيّ على مقاسك، بدل إكسل وواتساب وبرنامج فواتير. ملكك أنت، وتعدّل عليه بالذكاء الاصطناعيّ بكلام عاديّ.",
-    from: "يبدأ من ١٠,٠٠٠ ريال",
+    from: "يبدأ من ٥,٠٠٠ ريال",
     memoji: "proud",
     heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-nasaq.jpg", "/v2/shots/demo-manabir-dash.jpg"],
     heroScreen: { src: "/v2/shots/desk-office.jpg", url: "ibrahimsaud.com/app", phone: "/v2/shots/phone-office.jpg" },
@@ -270,8 +270,8 @@ export const products: Record<Product["slug"], Product> = {
     ],
     compare: {
       models: [
-        { name: "نَسَق", price: "من ١٠,٠٠٠" },
-        { name: "نَسَق Pro", price: "من ٢٠,٠٠٠" },
+        { name: "نَسَق", price: "من ٥,٠٠٠" },
+        { name: "نَسَق Pro", price: "من ٧,٠٠٠" },
       ],
       rows: [
         { label: "المستخدمون", v: ["أنت وفريق صغير", "فريق بأقسام وصلاحيّات"] },
