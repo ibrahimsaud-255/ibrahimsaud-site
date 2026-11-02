@@ -6,9 +6,10 @@
 
 import { site, waLink } from "./site";
 
-export const calUrl = `https://cal.com/${site.calLink}`;
-export const bookHref = calUrl;
 export const waHref = (msg = "السلام عليكم، أبي أحجز مكالمة تعارف") => waLink(msg);
+// رابط Cal.com في site.calLink يرجع 404 (نوفمبر ٢٠٢٦) — الحجز عبر واتساب لين يتفعّل الحساب،
+// وبعدها: bookHref = `https://cal.com/${site.calLink}`
+export const bookHref = waHref("السلام عليكم، أبي أحجز مكالمة تعارف ٢٠ دقيقة");
 
 export type Memoji =
   | "happy" | "big_happy" | "wink" | "one_raised_eyebrow" | "head_tilt" | "hands_on_hips"
