@@ -62,7 +62,7 @@ export const pkgs = {
   hawiya: { id: "hawiya", name: "هويّة", for: "تصمّم بنفسك داخل Claude", price: "٥,٩٠٠", approved: false, items: ["جلسة تصوير", "الخطّ واللون والشعار", "دليل هويّة PDF", "مهارة Claude للأغلفة والمنشورات والموشن"] },
   publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", approved: false, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
   podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
-  film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "من ٨,٥٠٠", approved: false, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
+  film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "٣,٤٠٠", approved: true, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
   nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
   nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
@@ -331,7 +331,7 @@ export const products: Record<Product["slug"], Product> = {
     compare: {
       models: [
         { name: "حلقة بودكاست", price: "٢,٧٥٠" },
-        { name: "فيلم الخدمة", price: "من ٨,٥٠٠" },
+        { name: "فيلم الخدمة", price: "٣,٤٠٠" },
         { name: "إعلانات المتاجر", price: "من ٧٥٠" },
       ],
       rows: [
