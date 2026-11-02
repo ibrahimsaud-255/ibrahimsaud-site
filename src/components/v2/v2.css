@@ -1,76 +1,130 @@
-/* ===== الموقع الجديد — هوية «ضوء الاستوديو» بأسلوب آبل =====
-   كلّ شي تحت .v2 حتى ما يلمس الصفحات القديمة (/classic والنظام والمواقع المصغّرة). */
+/* ===== الموقع الجديد — هوية «ضوء الاستوديو» بهندسة صفحات آبل =====
+   كلّ شي تحت .v2 حتى ما يلمس الصفحات القديمة (/classic والنظام والمواقع المصغّرة).
+   الإيقاع مأخوذ من apple.com: أبيض أساس، رماديّ #F5F5F7 للأقسام المتناوبة، أسود للّوحات الداكنة،
+   شريط علويّ زجاجيّ ٤٨px بقوائم منسدلة، وشريط منتج لاصق بزرّ «اطلب». */
 
-html:has(.v2), html:has(.v2) body { background: #FBFBFD; color: #1D1D1F; }
+html:has(.v2), html:has(.v2) body { background: #FFFFFF; color: #1D1D1F; }
 /* globals.css يضع overflow-x:hidden على html وbody فيصير body حاوية تمرير ويكسر position:sticky.
    clip يمنع الانسحاب الأفقيّ بدون ما يكسر الشريط العلويّ والبيان. */
 html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
+html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 
 .v2 {
-  --bg: #FBFBFD;
-  --surface: #F2F4F8;
+  --bg: #FFFFFF;
+  --alt: #F5F5F7;
   --card: #FFFFFF;
   --fg: #1D1D1F;
   --fg-2: #6E6E73;
-  --fg-3: #A1A1A6;
-  --line: #E5E6EA;
+  --fg-3: #86868B;
+  --line: #D2D2D7;
   --blue: #2F66FF;
   --blue-press: #1F4FE0;
-  --ink: #0A0D14;
-  --ink-2: #121A2B;
+  --blue-on-dark: #7FA2FF;
+  --ink: #000000;
+  --bezel: #1D1D1F;
+  --glass: rgba(250, 250, 252, .78);
   --ease: cubic-bezier(.16, 1, .3, 1);
   background: var(--bg);
   color: var(--fg);
   font-family: "Thmanyah Sans", system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
 }
-.v2 h1, .v2 h2, .v2 h3 { font-family: "Thmanyah Sans", system-ui, sans-serif; font-weight: 900; margin: 0; text-wrap: balance; }
+.v2 h1, .v2 h2, .v2 h3 { font-family: "Thmanyah Sans", system-ui, sans-serif; font-weight: 800; margin: 0; text-wrap: balance; }
 .v2 p { margin: 0; }
 .v2 a { color: inherit; text-decoration: none; }
 .v2 :focus-visible { outline: 2px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
 
-.v2-wrap { max-width: 1120px; margin: 0 auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
-.v2-section { padding-block: clamp(80px, 12vw, 160px); }
+.v2-wrap { max-width: 1080px; margin: 0 auto; padding-inline: max(20px, env(safe-area-inset-left, 0px)); }
+.v2-sec { padding-block: clamp(72px, 10vw, 130px); }
+.v2-sec.alt { background: var(--alt); }
+.v2-title { font-size: clamp(34px, 5vw, 56px); line-height: 1.25; margin-bottom: clamp(36px, 4.5vw, 56px); }
+.v2-subtitle { font-size: clamp(24px, 3vw, 32px); margin: clamp(48px, 6vw, 72px) 0 24px; }
 
 /* ---------- الأزرار ---------- */
-.v2-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; font-weight: 700; font-size: 17px; padding: 13px 26px; transition: background .25s var(--ease), transform .25s var(--ease); white-space: nowrap; }
+.v2-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; font-weight: 700; font-size: 17px; padding: 12px 24px; border: 1px solid transparent; transition: background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease); white-space: nowrap; }
+.v2-btn.sm { font-size: 15px; padding: 8px 18px; }
 .v2-btn-primary { background: var(--blue); color: #fff !important; }
 .v2-btn-primary:hover { background: var(--blue-press); }
-.v2-btn-primary:active { transform: scale(.97); }
+.v2-btn:active { transform: scale(.97); }
+.v2-btn-ghost { border-color: var(--blue); color: var(--blue) !important; background: transparent; }
+.v2-btn-ghost:hover { background: var(--blue); color: #fff !important; }
 .v2-link { color: var(--blue) !important; font-weight: 700; font-size: 17px; display: inline-flex; align-items: center; gap: 4px; }
 .v2-link:hover { text-decoration: underline; text-underline-offset: 4px; }
 .v2-link .chev { display: inline-block; transition: transform .25s var(--ease); }
 .v2-link:hover .chev { transform: translateX(-3px); }
+.dark .v2-link, .photo .v2-link { color: var(--blue-on-dark) !important; }
+.dark .v2-btn-ghost, .photo .v2-btn-ghost { border-color: var(--blue-on-dark); color: var(--blue-on-dark) !important; }
+.dark .v2-btn-ghost:hover, .photo .v2-btn-ghost:hover { background: var(--blue-on-dark); color: #000 !important; }
 
-/* ---------- الشريط العلويّ (زجاج فاتح) ---------- */
-.v2-nav { position: sticky; top: 0; z-index: 50; background: rgba(251, 251, 253, .72); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0, 0, 0, .06); }
-.v2-nav-in { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
-.v2-nav-links { display: flex; gap: 28px; font-size: 15px; color: var(--fg-2); }
-.v2-nav-links a:hover { color: var(--fg); }
-.v2-nav .v2-btn { padding: 7px 16px; font-size: 14px; }
-@media (max-width: 760px) { .v2-nav-links { display: none; } }
+/* ---------- الشريط العلويّ (زجاج) ---------- */
+.v2-gnav { position: relative; z-index: 60; background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); }
+.v2-gnav.sticky { position: sticky; top: 0; }
+.v2-gnav-in { max-width: 1080px; margin: 0 auto; padding-inline: 20px; height: 48px; display: flex; align-items: center; gap: 24px; }
+.v2-gnav .logo img { height: 24px; width: auto; display: block; }
+.v2-gnav .items { list-style: none; margin: 0 auto; padding: 0; display: flex; align-items: center; gap: 30px; height: 100%; }
+.v2-gnav .items > li { height: 100%; display: flex; align-items: center; }
+.v2-gnav .items > li > a { font-size: 13.5px; color: rgba(0, 0, 0, .8); transition: color .2s; }
+.v2-gnav .items > li:hover > a { color: #000; }
+.v2-gnav .book { font-size: 13px; font-weight: 700; color: var(--blue); }
+.v2-gnav .burger { display: none; width: 44px; height: 44px; margin-inline-start: auto; border: 0; background: none; position: relative; cursor: pointer; }
+.v2-gnav .burger span { position: absolute; inset-inline: 13px; height: 1.5px; background: var(--fg); transition: transform .35s var(--ease), top .35s var(--ease); }
+.v2-gnav .burger span:first-child { top: 18px; }
+.v2-gnav .burger span:last-child { top: 25px; }
+.v2-gnav.open .burger span:first-child { top: 21.5px; transform: rotate(45deg); }
+.v2-gnav.open .burger span:last-child { top: 21.5px; transform: rotate(-45deg); }
+
+/* القائمة المنسدلة لكلّ منتج (على الكمبيوتر) */
+.v2-gnav .fly { position: absolute; inset-inline: 0; top: 48px; background: #FBFBFD; backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); box-shadow: 0 24px 40px -24px rgba(0, 0, 0, .18); visibility: hidden; opacity: 0; transform: translateY(-6px); transition: opacity .25s var(--ease), transform .35s var(--ease), visibility 0s .25s; }
+.v2-gnav .has-menu:hover .fly, .v2-gnav .has-menu:focus-within .fly { visibility: visible; opacity: 1; transform: none; transition-delay: .08s, .08s, 0s; }
+.v2-gnav .fly-in { max-width: 1080px; margin: 0 auto; padding: 36px 20px 48px; display: flex; gap: 64px; }
+.v2-gnav .col { display: flex; flex-direction: column; gap: 10px; min-width: 140px; }
+.v2-gnav .col .h { font-size: 12px; color: var(--fg-3); margin-bottom: 4px; }
+.v2-gnav .col a { font-size: 13px; font-weight: 700; color: var(--fg); }
+.v2-gnav .col.big a { font-size: 24px; font-weight: 800; line-height: 1.25; }
+.v2-gnav .col a:hover { color: var(--blue); }
+
+/* قائمة الجوال */
+.v2-mmenu { position: fixed; inset: 48px 0 0; z-index: 59; background: #FBFBFD; padding: 24px 32px; display: flex; flex-direction: column; gap: 6px; overflow-y: auto; }
+.v2-mmenu[hidden] { display: none; }
+.v2-mmenu a { font-size: 30px; font-weight: 800; padding-block: 6px; animation: v2-in .5s var(--ease) both; }
+.v2-mmenu a:nth-child(2) { animation-delay: .03s; } .v2-mmenu a:nth-child(3) { animation-delay: .06s; } .v2-mmenu a:nth-child(4) { animation-delay: .09s; } .v2-mmenu a:nth-child(5) { animation-delay: .12s; }
+.v2-mmenu a.small { font-size: 17px; color: var(--blue); margin-top: 18px; }
+@keyframes v2-in { from { opacity: 0; transform: translateY(-8px); } }
+@media (max-width: 833px) {
+  .v2-gnav .items, .v2-gnav .book { display: none; }
+  .v2-gnav .burger { display: block; }
+}
+
+/* ---------- شريط المنتج اللاصق ---------- */
+.v2-lnav { position: sticky; top: 0; z-index: 55; background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); border-bottom: 1px solid rgba(0, 0, 0, .12); }
+.v2-lnav-in { height: 52px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.v2-lnav .name { font-size: 21px; font-weight: 800; }
+.v2-lnav .links { display: flex; align-items: center; gap: 24px; font-size: 13px; color: var(--fg-2); }
+.v2-lnav .links a:hover { color: var(--fg); }
+.v2-lnav .buy { background: var(--blue); color: #fff !important; font-weight: 700; font-size: 13px; padding: 5px 14px; border-radius: 999px; }
+@media (max-width: 600px) { .v2-lnav .links a:not(.buy) { display: none; } }
 
 /* ---------- ضوء النافذة ---------- */
 .v2-light { position: absolute; pointer-events: none; perspective: 1400px; filter: blur(34px); opacity: .16; }
 .v2-light > div { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, 1fr); gap: 4%; transform: rotateY(-32deg) rotateX(10deg) rotateZ(-6deg); }
 .v2-light i { background: var(--blue); }
-.v2-dark .v2-light { opacity: .5; filter: blur(26px); }
+.dark .v2-light { opacity: .45; filter: blur(26px); }
 
-/* ---------- الواجهة ---------- */
+/* ---------- واجهة الرئيسيّة ---------- */
 .v2-hero { position: relative; overflow: hidden; text-align: center; padding-block: clamp(48px, 7vw, 88px) 0; }
 .v2-eyebrow { color: var(--blue); font-weight: 700; font-size: 19px; }
-.v2-hero h1 { font-size: clamp(52px, 9.6vw, 120px); line-height: 1.04; margin-top: 10px; }
+.v2-hero h1 { font-size: clamp(52px, 9.6vw, 120px); line-height: 1.04; margin-top: 10px; font-weight: 900; }
 .v2-hero h1 span { display: block; }
 .v2-hero h1 .blue { color: var(--blue); }
 .v2-hero .sub { font-size: clamp(19px, 2.2vw, 24px); line-height: 1.55; color: var(--fg-2); max-width: 640px; margin: 24px auto 0; }
-.v2-hero .ctas { display: flex; gap: 26px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 34px; }
+.v2-hero .ctas { display: flex; gap: 14px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 34px; }
 .v2-stage { position: relative; height: clamp(320px, 46vw, 560px); margin-top: 24px; display: grid; place-items: center; }
 @media (min-width: 980px) {
   .v2-hero { text-align: right; padding-block: 40px 20px; }
   .v2-hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 20px; }
   .v2-hero .sub { margin-inline: 0; }
   .v2-hero .ctas { justify-content: flex-start; }
-  .v2-stage { margin-top: 0; height: 600px; }
+  .v2-hero .v2-stage { margin-top: 0; height: 600px; }
   .v2-hero h1 { font-size: clamp(64px, 7.4vw, 112px); }
 }
 
@@ -79,7 +133,39 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 .v2-memoji .tilt { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .6s var(--ease); will-change: transform; }
 .v2-memoji img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; transition: opacity .35s ease; filter: drop-shadow(0 34px 44px rgba(30, 45, 90, .18)); }
 .v2-memoji .shadow { position: absolute; left: 18%; right: 18%; bottom: -4%; height: 9%; border-radius: 50%; background: radial-gradient(closest-side, rgba(30, 45, 90, .22), transparent); filter: blur(6px); }
+.v2-memoji.small { width: clamp(170px, 20vw, 240px); }
 @media (prefers-reduced-motion: reduce) { .v2-memoji .tilt { transition: none; transform: none !important; } }
+
+/* ---------- لوحات الرئيسيّة (مثل apple.com) ---------- */
+.v2-tiles { display: grid; gap: 12px; padding: 12px; }
+.v2-tile { position: relative; overflow: hidden; border-radius: 24px; background: var(--alt); text-align: center; min-height: clamp(560px, 62vw, 692px); padding: 52px 20px 0; display: flex; flex-direction: column; align-items: center; }
+.v2-tile > *:not(.bg):not(.v2-light) { position: relative; }
+.v2-tile h2 { font-size: clamp(42px, 5.6vw, 64px); line-height: 1.08; }
+.v2-tile .line { font-size: clamp(20px, 2.4vw, 28px); line-height: 1.35; margin-top: 8px; font-weight: 500; }
+.v2-tile .ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
+.v2-tile .art { margin-top: auto; width: 100%; display: flex; justify-content: center; align-items: flex-end; }
+.v2-tile .art.memoji img { height: clamp(260px, 32vw, 420px); width: auto; filter: drop-shadow(0 30px 40px rgba(30, 45, 90, .2)); transition: transform .8s var(--ease); }
+.v2-tile:hover .art.memoji img { transform: translateY(-8px) rotate(-2deg); }
+.v2-tile .art.phones { gap: clamp(10px, 2vw, 24px); height: clamp(300px, 36vw, 440px); overflow: hidden; align-items: flex-start; padding-top: 30px; }
+.v2-tile .art.phones img { width: min(26%, 230px); border-radius: clamp(22px, 3vw, 36px); border: clamp(5px, .7vw, 8px) solid var(--bezel); box-shadow: 0 0 0 1.5px #3A3A3C, 0 30px 60px -20px rgba(0, 0, 0, .5); transition: transform .8s var(--ease); }
+.v2-tile .art.phones img:nth-child(2) { transform: translateY(-26px); }
+.v2-tile:hover .art.phones img { transform: translateY(-10px); }
+.v2-tile:hover .art.phones img:nth-child(2) { transform: translateY(-36px); }
+.v2-tile .art.phones.two img { width: min(38%, 220px); }
+.v2-tile .art.frame img { width: 86%; border-radius: 14px; margin-bottom: 40px; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .6); }
+.v2-tile.dark { background: var(--ink); color: #F5F5F7; }
+.v2-tile.photo { color: #fff; justify-content: flex-start; }
+.v2-tile.photo .bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+.v2-tile.photo::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, .7), rgba(0, 0, 0, .15) 55%, rgba(0, 0, 0, 0)); z-index: 1; }
+.v2-tile.photo > *:not(.bg) { z-index: 2; }
+.v2-tile-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.v2-tile.half { min-height: 580px; padding-top: 44px; }
+.v2-tile.half h2 { font-size: clamp(34px, 3.6vw, 44px); }
+.v2-tile.half .line { font-size: clamp(18px, 1.8vw, 21px); }
+.v2-tile.half .ctas { gap: 24px; }
+.v2-tile.half .art.memoji img { height: clamp(220px, 24vw, 320px); }
+.v2-tile.half .v2-rates { margin: auto 0 56px; }
+@media (max-width: 760px) { .v2-tile-grid { grid-template-columns: 1fr; } .v2-tile.half { min-height: 520px; } }
 
 /* ---------- البيان (يتلوّن مع التمرير) ---------- */
 .v2-manifesto { position: relative; height: 240vh; }
@@ -90,50 +176,79 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 @media (prefers-reduced-motion: reduce) { .v2-manifesto { height: auto; } .v2-manifesto .sticky { position: static; height: auto; padding-block: 120px; } .v2-manifesto .w.dim { color: var(--fg); } }
 
 /* ---------- عناوين الأقسام ---------- */
-.v2-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(36px, 5vw, 60px); }
-.v2-head h2 { font-size: clamp(38px, 5.6vw, 72px); line-height: 1.08; }
-.v2-head p { font-size: clamp(18px, 2vw, 22px); color: var(--fg-2); max-width: 640px; line-height: 1.55; }
+.v2-head { display: flex; flex-direction: column; gap: 14px; margin-bottom: clamp(36px, 5vw, 56px); }
+.v2-head h2 { font-size: clamp(34px, 5vw, 56px); line-height: 1.2; }
+.v2-head h2 .gray { color: var(--fg-2); }
+.v2-head p { font-size: clamp(18px, 2vw, 21px); color: var(--fg-2); max-width: 640px; line-height: 1.55; }
 .v2-head.center { text-align: center; align-items: center; }
 
-/* ---------- الأبواب ---------- */
-.v2-doors { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.v2-door { position: relative; overflow: hidden; border-radius: 28px; min-height: 560px; display: flex; flex-direction: column; padding: 34px 32px 0; background: var(--card); box-shadow: 0 1px 0 rgba(0, 0, 0, .03); transition: transform .5s var(--ease), box-shadow .5s var(--ease); }
-.v2-door:hover { transform: translateY(-6px) scale(1.01); box-shadow: 0 30px 60px -30px rgba(30, 45, 90, .25); }
-.v2-door.dark { background: var(--ink); color: #fff; }
-.v2-door .eb { font-size: 15px; font-weight: 700; color: var(--blue); }
-.v2-door.dark .eb { color: #8FB0FF; }
-.v2-door h3 { font-size: 36px; line-height: 1.12; margin-top: 8px; }
-.v2-door p { font-size: 17px; line-height: 1.55; color: var(--fg-2); margin-top: 10px; }
-.v2-door.dark p { color: rgba(255, 255, 255, .7); }
-.v2-door .v2-link { margin-top: 16px; }
-.v2-door.dark .v2-link { color: #8FB0FF !important; }
-.v2-door .art { margin-top: auto; position: relative; height: 280px; }
-.v2-door .art img.memoji { position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); height: 290px; filter: drop-shadow(0 24px 30px rgba(30, 45, 90, .18)); transition: transform .6s var(--ease); }
-.v2-door:hover .art img.memoji { transform: translateX(-50%) translateY(-6px) rotate(-2deg); }
-.v2-door .art img.shot { position: absolute; bottom: -24px; right: -40px; width: 120%; max-width: none; border-radius: 14px 14px 0 0; box-shadow: 0 -10px 40px rgba(0, 0, 0, .35); transition: transform .6s var(--ease); }
-.v2-door:hover .art img.shot { transform: translateY(-8px); }
-@media (max-width: 900px) { .v2-doors { grid-template-columns: 1fr; } .v2-door { min-height: 480px; } }
+/* ---------- واجهة صفحة المنتج ---------- */
+.v2-phero { position: relative; overflow: hidden; text-align: center; padding-top: clamp(48px, 7vw, 90px); }
+.v2-phero .kicker { font-size: clamp(17px, 1.8vw, 21px); font-weight: 700; color: var(--blue); }
+.v2-phero h1 { font-size: clamp(72px, 13vw, 156px); line-height: 1; font-weight: 900; margin-top: 6px; letter-spacing: -.01em; }
+.v2-phero .headline { font-size: clamp(26px, 3.6vw, 44px); font-weight: 800; line-height: 1.2; margin-top: 14px; }
+.v2-phero .sub { font-size: clamp(18px, 2vw, 21px); line-height: 1.6; color: var(--fg-2); max-width: 620px; margin: 18px auto 0; }
+.v2-phero .ctas { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+.v2-phero .from { font-size: 15px; color: var(--fg-2); margin-top: 14px; }
+.v2-phero .media { margin-top: clamp(40px, 6vw, 70px); }
+.v2-phero .phones { display: flex; justify-content: center; align-items: flex-start; gap: clamp(12px, 2.4vw, 32px); height: clamp(360px, 48vw, 600px); overflow: hidden; padding-top: 30px; }
+.v2-phero .phones img { width: min(28%, 270px); border-radius: clamp(26px, 4vw, 44px); border: clamp(6px, .9vw, 10px) solid var(--bezel); box-shadow: 0 0 0 1.5px #3A3A3C, 0 50px 80px -30px rgba(30, 45, 90, .45); }
+.v2-phero .phones img:nth-child(2) { transform: translateY(-30px); }
+.v2-phero .wide { width: 100%; border-radius: 28px; display: block; box-shadow: 0 50px 90px -40px rgba(30, 45, 90, .4); }
+.v2-phero .v2-stage { margin-top: 0; }
 
-/* ---------- أشياء بنيتها ---------- */
-.v2-build { border-radius: 32px; overflow: hidden; display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; gap: 40px; padding: clamp(28px, 5vw, 64px); background: var(--surface); margin-bottom: 20px; position: relative; }
-.v2-build.dark { background: var(--ink); color: #fff; }
-.v2-build .role { font-size: 15px; font-weight: 700; color: var(--blue); }
-.v2-build.dark .role { color: #8FB0FF; }
-.v2-build h3 { font-size: clamp(36px, 4.6vw, 56px); line-height: 1.08; margin-top: 6px; }
-.v2-build p { font-size: 19px; line-height: 1.6; color: var(--fg-2); margin-top: 14px; max-width: 460px; }
-.v2-build.dark p { color: rgba(255, 255, 255, .7); }
-.v2-build .v2-link { margin-top: 20px; }
-.v2-build.dark .v2-link { color: #8FB0FF !important; }
-.v2-build .media { position: relative; min-height: 360px; display: flex; align-items: center; justify-content: center; gap: 16px; }
-.v2-build .phone { width: 31%; max-width: 200px; border-radius: 26px; border: 7px solid #1D1D1F; box-shadow: 0 30px 50px -20px rgba(0, 0, 0, .35); }
-.v2-build .phone:nth-child(2) { transform: translateY(-26px); }
-.v2-build .screen { width: 100%; border-radius: 14px; box-shadow: 0 30px 60px -24px rgba(0, 0, 0, .45); }
-.v2-build .screens { position: relative; width: 100%; }
-.v2-build .screens img:nth-child(2) { position: absolute; width: 58%; left: -6%; bottom: -14%; border-radius: 12px; box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .5); }
-.v2-build .frames { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
-.v2-build .frames img { width: 100%; border-radius: 12px; }
-.v2-build .frames img:first-child { grid-column: 1 / -1; }
-@media (max-width: 900px) { .v2-build { grid-template-columns: 1fr; } .v2-build .media { min-height: 0; } }
+/* ---------- أبرز المزايا ---------- */
+.v2-hl { display: grid; grid-auto-flow: column; grid-auto-columns: min(372px, 80vw); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 8px; scrollbar-width: none; }
+.v2-hl::-webkit-scrollbar { display: none; }
+.v2-hl-card { scroll-snap-align: start; margin: 0; position: relative; overflow: hidden; border-radius: 28px; background: var(--card); height: clamp(480px, 46vw, 600px); padding: 32px 28px 0; display: flex; flex-direction: column; }
+.v2-hl-card figcaption { position: relative; z-index: 1; font-size: clamp(19px, 1.9vw, 22px); line-height: 1.4; font-weight: 500; color: var(--fg-2); }
+.v2-hl-card figcaption b { color: var(--fg); font-weight: 800; }
+.v2-hl-card.dark { background: var(--ink); }
+.v2-hl-card.dark figcaption { color: rgba(255, 255, 255, .68); }
+.v2-hl-card.dark figcaption b { color: #fff; }
+.v2-hl-card .art { margin-top: auto; display: flex; justify-content: center; align-items: flex-end; }
+.v2-hl-card.phone .art img { width: 64%; border-radius: 34px 34px 0 0; border: 8px solid var(--bezel); border-bottom: 0; transform: translateY(14px); box-shadow: 0 0 0 1.5px #3A3A3C; }
+.v2-hl-card.memoji .art img { height: 300px; width: auto; filter: drop-shadow(0 24px 30px rgba(30, 45, 90, .2)); }
+.v2-hl-card.frame .art img { width: 100%; border-radius: 14px; margin-bottom: 30px; }
+.v2-hl-card.cover .art { position: absolute; inset: 0; }
+.v2-hl-card.cover .art img { width: 100%; height: 100%; object-fit: cover; }
+.v2-hl-card.cover::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(0, 0, 0, .75), rgba(0, 0, 0, 0) 45%); }
+.v2-hl-card.cover figcaption { z-index: 2; }
+
+/* أزرار التمرير الأفقيّ */
+.v2-rail-ctl { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
+.v2-rail-ctl button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .07); color: var(--fg); font-size: 20px; cursor: pointer; transition: background .2s; }
+.v2-rail-ctl button:hover { background: rgba(0, 0, 0, .12); }
+
+/* ---------- نسخ العرض ---------- */
+.v2-demos { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.v2-demo { background: var(--card); border-radius: 28px; padding: 28px; display: grid; grid-template-columns: 40% 1fr; gap: 26px; align-items: start; }
+.v2-demo .phone { border: 7px solid var(--bezel); border-radius: 30px; overflow: hidden; aspect-ratio: 9 / 17; box-shadow: 0 0 0 1.5px #3A3A3C, 0 24px 40px -20px rgba(30, 45, 90, .4); }
+.v2-demo .phone img { width: 100%; display: block; }
+.v2-demo .tx { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+.v2-demo .kind { font-size: 13px; font-weight: 700; color: var(--blue); }
+.v2-demo h3 { font-size: clamp(22px, 2.4vw, 28px); line-height: 1.2; }
+.v2-demo p { font-size: 16px; line-height: 1.6; color: var(--fg-2); }
+.v2-demo .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.v2-demo .qr { margin-top: auto; padding-top: 18px; display: flex; align-items: center; gap: 12px; font-size: 13px; line-height: 1.5; color: var(--fg-3); }
+.v2-demo .qr img { width: 84px; height: 84px; padding: 6px; background: #fff; border-radius: 12px; box-shadow: 0 0 0 1px var(--line); }
+@media (max-width: 900px) { .v2-demos { grid-template-columns: 1fr; } }
+@media (hover: none), (max-width: 700px) { .v2-demo .qr { display: none; } }
+@media (max-width: 480px) { .v2-demo { padding: 20px; gap: 18px; grid-template-columns: 38% 1fr; } .v2-demo p { font-size: 14.5px; } .v2-demo .phone { border-width: 5px; border-radius: 22px; } }
+
+/* ---------- قارن ---------- */
+.v2-cmp { display: grid; grid-template-columns: repeat(var(--cols), 1fr); text-align: center; max-width: 900px; margin: 0 auto; }
+.v2-cmp .col { padding-inline: clamp(8px, 2vw, 24px); display: flex; flex-direction: column; align-items: center; }
+.v2-cmp .col + .col { border-inline-start: 1px solid var(--line); }
+.v2-cmp h3 { font-size: clamp(19px, 2.4vw, 28px); }
+.v2-cmp .price { font-size: clamp(14px, 1.6vw, 17px); color: var(--fg-2); margin: 6px 0 16px; font-variant-numeric: tabular-nums; }
+.v2-cmp .price small { font-size: inherit; }
+.v2-cmp ul { list-style: none; margin: 30px 0 0; padding: 0; width: 100%; }
+.v2-cmp li { padding: 18px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 4px; min-height: 92px; justify-content: center; }
+.v2-cmp .v { font-size: clamp(14px, 1.6vw, 17px); font-weight: 700; line-height: 1.4; }
+.v2-cmp .l { font-size: clamp(11.5px, 1.2vw, 13px); color: var(--fg-2); line-height: 1.4; }
+.v2-cmp li.off .v { color: var(--fg-3); font-weight: 400; }
+.v2-cmp .tick { color: var(--blue); font-size: 22px; }
 
 /* ---------- العملاء ---------- */
 .v2-logos { display: flex; flex-wrap: wrap; gap: 28px 56px; justify-content: center; align-items: center; }
@@ -144,54 +259,76 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 /* ---------- الأعمال ---------- */
 .v2-rail { display: grid; grid-auto-flow: column; grid-auto-columns: min(420px, 82vw); gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 12px; scrollbar-width: none; }
 .v2-rail::-webkit-scrollbar { display: none; }
-.v2-work { scroll-snap-align: start; border-radius: 22px; overflow: hidden; background: var(--card); display: flex; flex-direction: column; transition: transform .5s var(--ease); }
+.v2-work { scroll-snap-align: start; border-radius: 22px; overflow: hidden; background: var(--alt); display: flex; flex-direction: column; transition: transform .5s var(--ease); }
 .v2-work:hover { transform: translateY(-4px); }
-.v2-work .th { aspect-ratio: 16 / 10; background: var(--surface); overflow: hidden; }
+.v2-work .th { aspect-ratio: 16 / 10; background: #E8E8ED; overflow: hidden; }
 .v2-work .th img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .8s var(--ease); }
 .v2-work:hover .th img { transform: scale(1.04); }
 .v2-work .tx { padding: 18px 20px 22px; }
 .v2-work .cl { font-size: 14px; color: var(--fg-3); font-weight: 700; }
 .v2-work h3 { font-size: 21px; line-height: 1.3; margin-top: 4px; font-weight: 700; }
-.v2-rail-ctl { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
-.v2-rail-ctl button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: #E8E8ED; color: var(--fg); font-size: 20px; cursor: pointer; transition: background .2s; }
-.v2-rail-ctl button:hover { background: #DCDCE1; }
+
+/* ---------- أشياء بنيتها (بطاقة عرض داكنة) ---------- */
+.v2-build { border-radius: 32px; overflow: hidden; display: grid; grid-template-columns: 1fr 1.25fr; align-items: center; gap: 40px; padding: clamp(28px, 5vw, 64px); background: var(--alt); position: relative; }
+.v2-build.dark { background: var(--ink); color: #fff; }
+.v2-build .role { font-size: 15px; font-weight: 700; color: var(--blue); }
+.v2-build.dark .role { color: var(--blue-on-dark); }
+.v2-build h3 { font-size: clamp(34px, 4.4vw, 52px); line-height: 1.1; margin-top: 6px; }
+.v2-build p { font-size: 19px; line-height: 1.6; color: var(--fg-2); margin-top: 14px; max-width: 460px; }
+.v2-build.dark p { color: rgba(255, 255, 255, .7); }
+.v2-build .media { position: relative; display: flex; align-items: center; justify-content: center; }
+.v2-build .frames { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.v2-build .frames img { width: 100%; border-radius: 12px; }
+.v2-build .frames img:first-child { grid-column: 1 / -1; }
+@media (max-width: 900px) { .v2-build { grid-template-columns: 1fr; } }
 
 /* ---------- الباقات ---------- */
 .v2-pkgs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
-.v2-pkg { background: var(--card); border-radius: 28px; padding: 34px 30px; display: flex; flex-direction: column; gap: 6px; }
+.v2-pkgs.compact { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.v2-pkg { background: var(--alt); border-radius: 28px; padding: 34px 30px; display: flex; flex-direction: column; gap: 6px; }
+.v2-sec.alt .v2-pkg { background: var(--card); }
 .v2-pkg.featured { background: var(--ink); color: #fff; }
 .v2-pkg .for { font-size: 15px; color: var(--fg-2); font-weight: 700; }
-.v2-pkg.featured .for { color: #8FB0FF; }
+.v2-pkg.featured .for { color: var(--blue-on-dark); }
 .v2-pkg h3 { font-size: 28px; line-height: 1.2; }
-.v2-pkg .price { font-size: 44px; font-weight: 900; margin-top: 18px; font-variant-numeric: tabular-nums; }
+.v2-pkg .price { font-size: 40px; font-weight: 900; margin-top: 16px; font-variant-numeric: tabular-nums; }
 .v2-pkg .price small { font-size: 17px; font-weight: 500; color: var(--fg-2); margin-inline-start: 6px; }
 .v2-pkg.featured .price small { color: rgba(255, 255, 255, .6); }
 .v2-pkg .draft { font-size: 12px; color: #B25E00; font-weight: 700; }
 .v2-pkg ul { list-style: none; margin: 20px 0 26px; padding: 0; display: flex; flex-direction: column; gap: 10px; font-size: 16px; line-height: 1.5; }
 .v2-pkg li { display: flex; gap: 10px; }
 .v2-pkg li::before { content: ""; flex: none; width: 7px; height: 7px; margin-top: 9px; background: var(--blue); }
-.v2-pkg.featured li::before { background: #8FB0FF; }
-.v2-pkg .v2-btn { margin-top: auto; }
-.v2-pkg:not(.featured) .v2-btn { background: var(--surface); color: var(--fg) !important; }
-.v2-pkg:not(.featured) .v2-btn:hover { background: #E8EBF1; }
+.v2-pkg.featured li::before { background: var(--blue-on-dark); }
+.v2-pkg > .v2-btn, .v2-pkg > span > .v2-btn { margin-top: auto; }
+.v2-pkg:not(.featured) .v2-btn { background: var(--blue); }
+.v2-pkg .act { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.v2-pkg .act .v2-btn { width: 100%; }
+.v2-pkg .act .v2-link { font-size: 15px; }
+.v2-pkg.featured .act .v2-link { color: var(--blue-on-dark) !important; }
+.v2-pkgs.compact .v2-pkg { padding: 28px 26px; }
+.v2-pkgs.compact .v2-pkg .price { font-size: 32px; }
 @media (max-width: 900px) { .v2-pkgs { grid-template-columns: 1fr; } }
 
-/* ---------- الاستوديو ---------- */
-.v2-studio { position: relative; border-radius: 32px; overflow: hidden; min-height: 560px; display: flex; align-items: flex-end; color: #fff; }
-.v2-studio img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.v2-studio::after { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, rgba(10, 13, 20, .92) 0%, rgba(10, 13, 20, .55) 40%, rgba(10, 13, 20, 0) 75%); }
-.v2-studio .in { position: relative; z-index: 1; padding: clamp(28px, 5vw, 56px); display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-end; justify-content: space-between; width: 100%; }
-.v2-studio h2 { font-size: clamp(36px, 5vw, 60px); line-height: 1.08; }
-.v2-studio p { font-size: 18px; line-height: 1.6; color: rgba(255, 255, 255, .78); max-width: 520px; margin-top: 12px; }
-.v2-rates { display: flex; gap: 28px; }
-.v2-rates div { display: flex; flex-direction: column; }
+/* أسعار الاستوديو */
+.v2-rates { display: flex; gap: 28px; justify-content: center; }
+.v2-rates div { display: flex; flex-direction: column; align-items: center; }
 .v2-rates b { font-size: 34px; font-weight: 900; font-variant-numeric: tabular-nums; }
-.v2-rates span { font-size: 14px; color: rgba(255, 255, 255, .65); }
+.v2-rates span { font-size: 14px; color: var(--fg-2); }
+.dark .v2-rates span, .v2-rent .v2-rates span { color: rgba(255, 255, 255, .62); }
 
 /* ---------- الأدوات ---------- */
-.v2-tools { display: flex; flex-wrap: wrap; gap: 34px 48px; justify-content: center; }
-.v2-tools div { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; color: var(--fg-2); }
+.v2-tools { display: flex; flex-wrap: wrap; gap: 34px 48px; justify-content: center; max-width: 820px; margin: 0 auto; }
+.v2-tools div { display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; color: var(--fg-2); width: 96px; text-align: center; }
 .v2-tools img { width: 64px; height: 64px; object-fit: contain; }
+
+/* ---------- لماذا ---------- */
+.v2-why { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.v2-why > div { background: var(--card); border-radius: 28px; padding: 30px 26px 34px; display: flex; flex-direction: column; gap: 10px; }
+.v2-why img { width: 84px; height: 84px; object-fit: contain; margin-bottom: 8px; }
+.v2-why h3 { font-size: 22px; line-height: 1.3; }
+.v2-why p { font-size: 16px; line-height: 1.6; color: var(--fg-2); }
+@media (max-width: 1000px) { .v2-why { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 560px) { .v2-why { grid-template-columns: 1fr; } }
 
 /* ---------- الأسئلة ---------- */
 .v2-faq { max-width: 820px; margin: 0 auto; }
@@ -204,32 +341,17 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 
 /* ---------- الختام ---------- */
 .v2-final { text-align: center; position: relative; overflow: hidden; }
-.v2-final h2 { font-size: clamp(44px, 7vw, 88px); line-height: 1.05; }
+.v2-final h2 { font-size: clamp(44px, 7vw, 88px); line-height: 1.2; }
 .v2-final p { font-size: 21px; color: var(--fg-2); margin-top: 16px; }
 .v2-final .ctas { display: flex; gap: 26px; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 30px; }
 
-/* ---------- الفوتر ---------- */
-.v2-foot { background: var(--surface); font-size: 13px; color: var(--fg-2); padding-block: 40px 48px; }
-.v2-foot-grid { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 30px; }
-.v2-foot nav { display: flex; flex-wrap: wrap; gap: 10px 26px; }
-.v2-foot a:hover { color: var(--fg); }
-.v2-foot .copy { border-top: 1px solid #D2D2D7; margin-top: 26px; padding-top: 18px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-
-/* ---------- الظهور مع التمرير (يبدأ ظاهراً بدون JS) ---------- */
-.v2 [data-rise] { transition: opacity .9s var(--ease), transform .9s var(--ease); }
-.v2.js [data-rise]:not(.risen) { opacity: 0; transform: translateY(40px); }
-@media (prefers-reduced-motion: reduce) { .v2.js [data-rise]:not(.risen) { opacity: 1; transform: none; } }
-
-.v2-memoji.small { width: clamp(170px, 20vw, 240px); }
-
-/* ---------- صفحات الهبوط ---------- */
-.v2-heroshot { width: 100%; border-radius: 22px; box-shadow: 0 50px 90px -40px rgba(30, 45, 90, .35); display: block; }
+/* ---------- صفحات المنتج: الرحلة والتفاصيل ---------- */
 .v2-journey { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.v2-journey > div { background: var(--card); border-radius: 26px; padding: 32px 30px; display: flex; flex-direction: column; gap: 12px; }
+.v2-journey > div { background: var(--alt); border-radius: 26px; padding: 32px 30px; display: flex; flex-direction: column; gap: 12px; }
 .v2-journey > div.on { background: var(--ink); color: #fff; }
 .v2-journey .n { font-size: 42px; font-weight: 900; }
 .v2-journey > div:not(.on) .n { color: var(--fg-3); }
-.v2-journey > div.on .n { color: #8FB0FF; }
+.v2-journey > div.on .n { color: var(--blue-on-dark); }
 .v2-journey p { font-size: 18px; line-height: 1.6; color: var(--fg-2); }
 .v2-journey > div.on p { color: rgba(255, 255, 255, .75); }
 .v2-needs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 48px 64px; }
@@ -238,10 +360,43 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 .v2-needs p { font-size: 18px; line-height: 1.65; color: var(--fg-2); margin-top: 10px; max-width: 460px; }
 @media (max-width: 900px) { .v2-journey, .v2-needs { grid-template-columns: 1fr; } }
 
-@media (min-width: 980px) { .v2-hero.landing h1 { font-size: clamp(52px, 5.4vw, 80px); line-height: 1.1; } }
+/* ---------- الباقات (المتجر) ---------- */
+.v2-store-head { padding-top: clamp(40px, 6vw, 72px); }
+.v2-store-head .v2-wrap:first-child { display: flex; justify-content: space-between; align-items: flex-end; gap: 30px; flex-wrap: wrap; }
+.v2-store-head h1 { font-size: clamp(40px, 6vw, 72px); line-height: 1.08; font-weight: 900; max-width: 640px; }
+.v2-store-head h1 span { color: var(--fg-2); }
+.v2-store-head .help { display: flex; align-items: center; gap: 12px; font-size: 14px; }
+.v2-store-head .help img { width: 56px; height: 56px; }
+.v2-store-head .help b { display: block; font-size: 14px; }
+.v2-store-head .help span { color: var(--blue); line-height: 1.5; }
+.v2-store-row { display: flex; gap: clamp(20px, 4vw, 44px); overflow-x: auto; padding: 44px 0 10px; scrollbar-width: none; }
+.v2-store-row::-webkit-scrollbar { display: none; }
+.v2-store-row a { flex: none; display: flex; flex-direction: column; align-items: center; gap: 10px; font-size: 14px; font-weight: 700; }
+.v2-store-row .ic { width: 112px; height: 80px; display: grid; place-items: center; transition: transform .4s var(--ease); }
+.v2-store-row a:hover .ic { transform: translateY(-4px); }
+.v2-store-row .ic.memoji img { height: 80px; }
+.v2-store-row .ic.phone img { height: 80px; border-radius: 10px; border: 3px solid var(--bezel); }
+.v2-store-row .ic.photo img { width: 112px; height: 72px; object-fit: cover; border-radius: 12px; }
+.v2-store-group .v2-head { flex-direction: row; justify-content: space-between; align-items: baseline; flex-wrap: wrap; }
+.v2-store-group .v2-head h2 { font-size: clamp(28px, 3.6vw, 40px); }
+.v2-store-group + .v2-store-group { padding-top: 0; }
+.v2-rent { margin-top: 20px; background: var(--ink); color: #fff; border-radius: 28px; padding: clamp(26px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between; }
+.v2-rent h3 { font-size: 28px; }
+.v2-rent p { font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, .7); max-width: 440px; margin-top: 8px; }
 
-.v2-pkg .act { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.v2-pkg .act .v2-btn { width: 100%; }
-.v2-pkg .act .v2-link { font-size: 15px; }
-.v2-pkg.featured .act .v2-link { color: #8FB0FF !important; }
-.v2-build .phone { width: 31%; max-width: 220px; }
+/* ---------- الفوتر (مثل apple.com) ---------- */
+.v2-foot { background: var(--alt); font-size: 12px; color: var(--fg-2); padding-block: 20px 26px; }
+.v2-foot .notes { padding-block: 14px 18px; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; line-height: 1.6; }
+.v2-foot .dir { display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px; padding-block: 22px 26px; }
+.v2-foot .dir nav { display: flex; flex-direction: column; gap: 8px; }
+.v2-foot .dir .h { font-size: 12.5px; font-weight: 700; color: var(--fg); margin-bottom: 2px; }
+.v2-foot .dir a { font-size: 12.5px; color: #424245; }
+.v2-foot .dir a:hover { text-decoration: underline; }
+.v2-foot .copy { border-top: 1px solid var(--line); padding-top: 16px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
+@media (max-width: 760px) { .v2-foot .dir { grid-template-columns: 1fr 1fr; } }
+
+/* ---------- الظهور مع التمرير (يبدأ ظاهراً بدون JS) ---------- */
+.v2 [data-rise] { transition: opacity .9s var(--ease), transform .9s var(--ease); }
+.v2.js [data-rise]:not(.risen) { opacity: 0; transform: translateY(40px); }
+@media (prefers-reduced-motion: reduce) { .v2.js [data-rise]:not(.risen) { opacity: 1; transform: none; } }
+@media (max-width: 560px) { .v2-tools { gap: 28px 12px; } .v2-tools div { width: 92px; } }

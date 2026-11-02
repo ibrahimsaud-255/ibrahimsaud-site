@@ -1,8 +1,12 @@
-// ===== محتوى الموقع الجديد (هوية «ضوء الاستوديو» — نوفمبر ٢٠٢٦) =====
-// كل نصوص الرئيسية وصفحات الهبوط هنا. الخطة والفئات في:
+// ===== محتوى الموقع (هوية «ضوء الاستوديو» بهندسة صفحات آبل — نوفمبر ٢٠٢٦) =====
+// كلّ النصوص والأسعار هنا. الخطّة والفئات في:
 //   ~/Desktop/ابراهيم سعود/03_الاستراتيجية/خطة_الموقع_والبراند_نوفمبر_2026.md
 //   ~/Desktop/ابراهيم سعود/00_السياق/الفئات_المستهدفة.md
-// الأسعار المعلَّمة «مقترح» تنتظر اعتماد إبراهيم قبل النشر.
+// الأسعار المعلَّمة approved: false مقترحة وتنتظر اعتماد إبراهيم قبل النشر.
+//
+// التسميات على طريقة آبل: كلّ منتج اسمه كلمة وحدة، والفئة لاحقة ثابتة:
+//   بلا لاحقة = الأساس · Pro = الكامل · + = اشتراك شهريّ.
+// «ديوان» حلّ محلّ «منوال» اسماً لنظام الإدارة.
 
 import { waLink } from "./site";
 
@@ -26,78 +30,9 @@ export const hero = {
 export const manifesto =
   "قبل ما أبيعها لك، بنيتها لنفسي. موقع يجيب العملاء، ونظام يطلع عروض الأسعار والفواتير، واستوديو يصوّر، وذكاء اصطناعي يكتب وينشر. هذي قصّتي، وممكن تصير قصّتك.";
 
-export type Door = {
-  href: string;
-  eyebrow: string;
-  title: string;
-  desc: string;
-  img: string;
-  imgKind: "memoji" | "shot" | "phone";
-  tone: "light" | "dark";
-};
-
-export const doors: Door[] = [
-  {
-    href: "/brand/",
-    eyebrow: "للخبراء والمستشارين",
-    title: "البراند الشخصيّ",
-    desc: "خبرتك ٢٠ سنة.. خلّ السوق يشوفها. موقع، بودكاست، صور، وخطّة محتوى.",
-    img: "/v2/memoji/hands_on_hips.png",
-    imgKind: "memoji",
-    tone: "light",
-  },
-  {
-    href: "/systems/",
-    eyebrow: "للمنشآت والجمعيّات",
-    title: "نظام منوال",
-    desc: "شغلك كلّه في نظام واحد على مقاسك: العملاء والفواتير والمالية والحوكمة.",
-    img: "/v2/shots/minwal-system.jpg",
-    imgKind: "shot",
-    tone: "dark",
-  },
-  {
-    href: "/video/",
-    eyebrow: "لشركات التقنية والجهات",
-    title: "فيديو يشرح ويبيع",
-    desc: "خدمتك معقّدة؟ نخلّيها تنفهم في ٦٠ ثانية، من الفكرة إلى التسليم.",
-    img: "/v2/shots/studio.jpg",
-    imgKind: "shot",
-    tone: "dark",
-  },
-];
-
-// «أشياء بنيتها» — البراهين، تُعرض كمنتجات
-export const builds = [
-  {
-    name: "حروف ودروس",
-    role: "المؤسّس",
-    line: "منصّة تعليميّة كاملة بنيتها بنفسي: ألعاب صفّيّة ودروس ثلاثيّة الأبعاد للمنهج السعوديّ، على الويب وفي متجر آبل.",
-    href: "https://huroofduroos.com",
-    cta: "زُر المنصّة",
-    imgs: ["/v2/shots/huroof-home.jpg", "/v2/shots/huroof-moon3d.jpg", "/v2/shots/huroof-millionaire.jpg"],
-    kind: "phones" as const,
-  },
-  {
-    name: "منوال",
-    role: "أنظمة الإدارة",
-    line: "نظام إدارة عربيّ على مقاس كلّ جهة: مالية وحوكمة ومستفيدون وتطوّع وموقع، يشتغل اليوم في جمعيّات وشركات.",
-    href: "/systems/",
-    cta: "شوف النظام",
-    imgs: ["/v2/shots/minwal-system.jpg", "/v2/shots/minwal-site.jpg"],
-    kind: "screens" as const,
-  },
-  {
-    name: "هويّة في Claude",
-    role: "هويّة سعد السيف",
-    line: "دليل هويّة ومهارة داخل Claude: العميل يكمّل موشن حلقاته وأغلفته بهويّته، بدون مصمّم كلّ مرّة.",
-    href: "/brand/#identity",
-    cta: "اعرف الباقة",
-    imgs: ["/v2/shots/saad-quote.jpg", "/v2/shots/saad-name.jpg", "/v2/shots/saad-stat.jpg"],
-    kind: "frames" as const,
-  },
-];
-
+// ===== الباقات =====
 export type Pkg = {
+  id: string;
   name: string;
   for: string;
   price: string;
@@ -111,36 +46,25 @@ export type Pkg = {
 };
 
 // ===== روابط الدفع =====
-// أنشئ رابط دفع لكلّ باقة من لوحة تلر (Paylinks) والصقه هنا باسم الباقة.
+// أنشئ رابط دفع لكلّ باقة من لوحة تلر (Paylinks) والصقه هنا بمعرّف الباقة (id).
 // الدفع عندنا ٥٠٪ مقدّم: لو الرابط للعربون اكتب label: "ادفع العربون ٥٠٪".
 export const payLinks: Record<string, { href: string; label?: string }> = {
-  // "حلقة بودكاست": { href: "https://secure.telr.com/..." },
+  // "podcast": { href: "https://secure.telr.com/..." },
 };
 
-export const packages: Pkg[] = [
-  {
-    name: "حلقة بودكاست",
-    for: "تبدأ بها حضورك",
-    price: "٢,٧٥٠",
-    approved: true,
-    items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"],
-  },
-  {
-    name: "انطلاقة البراند الشخصيّ",
-    for: "كلّ شي من الصفر",
-    price: "١٤,٩٠٠",
-    approved: false,
-    featured: true,
-    items: ["جلسة تشخيص وخطّة", "هويّتك ومهارتها في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"],
-  },
-  {
-    name: "هويّتك في Claude",
-    for: "تصمّم منشوراتك بنفسك",
-    price: "٥,٩٠٠",
-    approved: false,
-    items: ["جلسة تصوير", "الخطّ واللون والشعار", "دليل هويّة PDF", "مهارة Claude للأغلفة والمنشورات والموشن"],
-  },
-];
+export const pkgs = {
+  session: { id: "session", name: "جلسة التشخيص", for: "قبل أيّ باقة", price: "٥٠٠", approved: false, items: ["ساعة في الاستوديو أو أونلاين", "خطّة مكتوبة لوضعك", "تُخصم من أيّ باقة"] },
+  hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", approved: false, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
+  hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", approved: false, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
+  hudoorPlus: { id: "hudoor-plus", name: "حضور+", for: "محتوى كلّ شهر", price: "٦,٥٠٠", unit: "شهريّاً", approved: false, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على حساباتك"] },
+  hawiya: { id: "hawiya", name: "هويّة", for: "تصمّم بنفسك داخل Claude", price: "٥,٩٠٠", approved: false, items: ["جلسة تصوير", "الخطّ واللون والشعار", "دليل هويّة PDF", "مهارة Claude للأغلفة والمنشورات والموشن"] },
+  publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", approved: false, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
+  podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
+  film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "من ٨,٥٠٠", approved: false, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
+  storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
+  diwan: { id: "diwan", name: "ديوان", for: "للمنشآت وشركات الشخص الواحد", price: "من ١٠,٠٠٠", approved: false, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
+  diwanPro: { id: "diwan-pro", name: "ديوان Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٢٠,٠٠٠", approved: false, featured: true, items: ["كلّ ما في ديوان", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
+} satisfies Record<string, Pkg>;
 
 export const studio = {
   title: "زرنا في الاستوديو",
@@ -162,6 +86,9 @@ export const faqs = [
 
 export const tools = [
   { name: "Claude", img: "/tools/claude.svg" },
+  { name: "Antigravity", img: "/tools/antigravity.png" },
+  { name: "Kimi", img: "/tools/kimi.png" },
+  { name: "Blender", img: "/tools/blender.svg" },
   { name: "Final Cut Pro", img: "/tools/finalcut.png" },
   { name: "DaVinci Resolve", img: "/tools/davinci.png" },
   { name: "Photoshop", img: "/tools/photoshop.webp" },
@@ -170,145 +97,274 @@ export const tools = [
   { name: "Higgsfield", img: "/tools/higgsfield.png" },
 ];
 
-// ===== صفحات الهبوط (لكلّ حملة جوجل صفحة) =====
-export type Landing = {
+// لماذا تشتغل معي — تتكرّر في كلّ صفحة منتج (مثل «لماذا آبل» تحت كلّ منتج)
+export const why = [
+  { title: "المكالمة الأولى مجّانيّة.", text: "٢٠ دقيقة أسمع فيها وضعك وأقول لك وش تحتاج فعلاً، حتى لو أقلّ من باقة.", memoji: "wink" as Memoji },
+  { title: "طبّقته على نفسي أوّل.", text: "كلّ شي أبيعه شغّال عندي اليوم: حروف ودروس، وهذا الموقع، والاستوديو.", memoji: "proud" as Memoji },
+  { title: "تعدّل بنفسك.", text: "تتدرّب تعدّل موقعك ونظامك بـClaude بكلام عاديّ، بدون مبرمج.", memoji: "big_happy" as Memoji },
+  { title: "دفعتين، بفاتورة.", text: "٥٠٪ عند البداية و٥٠٪ عند التسليم، بعرض سعر وفاتورة رسميّة.", memoji: "happy" as Memoji },
+];
+
+// ===== نسخ العرض الحيّة (public/demo — تُبنى بـ tools/build-demos.py) =====
+// كلّها بالوضع التجريبيّ: بيانات الزائر في متصفّحه فقط، بلا قاعدة بيانات.
+export type Demo = { id: string; name: string; kind: string; text: string; img: string; href: string; dash?: string; qr: string };
+export const demos: Demo[] = [
+  { id: "diwan", name: "ديوان", kind: "نظام إدارة · نسخة عرض", text: "ادخل كمدير، وبدّل «عرض كـ» تشوف النظام بعين أيّ موظّف: المالية والمهامّ والوارد.", img: "/v2/shots/demo-diwan.jpg", href: "/demo/diwan/index.html", qr: "/v2/qr/diwan.svg" },
+  { id: "ruso", name: "جمعيّة رسو", kind: "موقع + نظام داخليّ", text: "موقع الجمعيّة ولوحة تحكّمها: سندات صرف، وحوكمة، ومستفيدون، وتطوّع.", img: "/v2/shots/demo-ruso-site.jpg", href: "/demo/ruso/website/index.html", dash: "/demo/ruso/system/index.html", qr: "/v2/qr/ruso.svg" },
+  { id: "manabir", name: "منابر", kind: "منصّة بخمس صلاحيّات", text: "تنظيم الأنشطة الدعويّة في المساجد: ادخل كمدير النظام، أو ممثّل الوزارة، أو مشرف المسجد.", img: "/v2/shots/demo-manabir.jpg", href: "/demo/manabir/index.html?login=1", dash: "/demo/manabir/index.html?dash=1", qr: "/v2/qr/manabir.svg" },
+  { id: "takamul", name: "التكامل المتّحدة", kind: "موقع شركة + لوحة محتوى", text: "موقع شركة استشارات بالعربيّ والإنجليزيّ، ومحتواه كلّه يتعدّل من لوحة تحكّم.", img: "/v2/shots/demo-takamul.jpg", href: "/demo/takamul/index.html", dash: "/demo/takamul/dashboard/index.html", qr: "/v2/qr/takamul.svg" },
+];
+
+// ===== المنتجات (صفحة لكلّ منتج، وكلّ حملة جوجل تودّي لوحدة) =====
+export type Highlight = { title: string; text: string; img: string; kind: "phone" | "cover" | "memoji" | "frame"; dark?: boolean };
+export type Compare = { models: { name: string; price: string; unit?: string }[]; rows: { label: string; v: (string | boolean)[] }[] };
+
+export type Product = {
   slug: "brand" | "systems" | "video";
+  href: string;
+  name: string;
+  kicker: string;
   meta: { title: string; description: string };
-  eyebrow: string;
-  title: [string, string];
+  headline: string;
   sub: string;
+  from: string;
   memoji: Memoji;
-  heroShot?: string;
+  heroPhones?: string[];
+  heroImg?: string;
+  highlights: Highlight[];
   journey?: { title: string; steps: { name: string; text: string }[] };
-  needsTitle: string;
-  needs: { title: string; text: string }[];
-  needsAlt?: { title: string; items: { title: string; text: string }[] };
-  showcase?: { id?: string; eyebrow: string; title: string; text: string; imgs: string[]; kind: "frames" | "screens" };
+  features: { title: string; sub?: string; items: { title: string; text: string }[] }[];
+  showcase?: { id?: string; eyebrow: string; title: string; text: string; imgs: string[] };
+  demos?: boolean;
   showWorks?: boolean;
-  steps?: { name: string; text: string }[];
+  compare: Compare;
   packages: Pkg[];
+  addons?: Pkg[];
   faqs: { q: string; a: string }[];
   final: string;
 };
 
-const pkgPodcast = packages[0], pkgLaunch = packages[1], pkgIdentity = packages[2];
-
-export const landings: Record<Landing["slug"], Landing> = {
+export const products: Record<Product["slug"], Product> = {
   brand: {
     slug: "brand",
+    href: "/brand/",
+    name: "حضور",
+    kicker: "البراند الشخصيّ",
     meta: {
-      title: "بناء البراند الشخصيّ للخبراء — موقع وبودكاست وهويّة | إبراهيم سعود",
+      title: "حضور — بناء البراند الشخصيّ للخبراء: موقع وبودكاست وهويّة | إبراهيم سعود",
       description: "للخبراء والمستشارين والمدرّبين: موقع شخصيّ يبيع، تصوير بودكاست في الرياض، صور لينكدإن، هويّة بصريّة ومهارة Claude، ونظام عروض أسعار وفواتير.",
     },
-    eyebrow: "البراند الشخصيّ — للخبراء والمستشارين",
-    title: ["خبرتك ٢٠ سنة..", "خلّ السوق يشوفها."],
-    sub: "طلعت من الوظيفة أو تفكّر تطلع؟ أبني لك اللي يحتاجه الخبير المستقلّ: حضور يثق فيه العميل، ومحتوى يوصل، ونظام يدير شغلك بدل المدير.",
+    headline: "خبرتك ٢٠ سنة. خلّ السوق يشوفها.",
+    sub: "طلعت من الوظيفة أو تفكّر تطلع؟ حضور يبني لك اللي يحتاجه الخبير المستقلّ: صورة يثق فيها العميل، ومحتوى يوصل، ونظام يدير شغلك.",
+    from: "يبدأ من ٤,٩٠٠ ريال",
     memoji: "one_raised_eyebrow",
+    highlights: [
+      { title: "صفحة تبيع بدالك.", text: "من أنت، ووش تقدّم، وكم سعره، وزرّ حجز. مثل هذي الصفحة.", img: "/v2/memoji/hands_on_hips.png", kind: "memoji" },
+      { title: "حلقة تصير عشرة مقاطع.", text: "استوديو بثلاث كاميرات في الرياض، وحلقة تتقطّع لمحتوى شهر.", img: "/v2/shots/studio.jpg", kind: "cover", dark: true },
+      { title: "هويّتك داخل Claude.", text: "تقول «سوّ لي غلاف لهالحلقة» ويطلع بخطّك ولونك.", img: "/v2/shots/saad-quote.jpg", kind: "frame", dark: true },
+      { title: "نظام بدل المدير.", text: "عروض أسعار وفواتير ومتابعة عملاء في مكان واحد.", img: "/v2/shots/demo-diwan.jpg", kind: "phone" },
+    ],
     journey: {
-      title: "الصقر والبرّ",
+      title: "الصقر والبرّ.",
       steps: [
         { name: "القفص", text: "موظّف بمهامّ محدّدة وراتب ثابت. أمان، بس ما تختار صيدك." },
         { name: "المحميّة", text: "شركة كبيرة: مساحة أوسع وحرّيّة شكليّة، والسور نفسه." },
         { name: "البرّ", text: "مستقلّ، صيدك على مهارتك. وهنا تحتاج أدوات ما علّمتك إيّاها الوظيفة." },
       ],
     },
-    needsTitle: "أدوات البرّ.",
-    needs: [
-      { title: "صفحة تبيع بدالك", text: "موقع فيه من أنت ووش تقدّم وكم سعره وزرّ حجز. بدونه كلّ عميل يجيك من معارفك بس." },
-      { title: "محتوى يشرح خبرتك", text: "حلقة بودكاست تتقطّع لعشرة مقاطع، من استوديو جاهز بثلاث كاميرات." },
-      { title: "صورة تليق بخبرتك", text: "صور لينكدإن وهويّة بسيطة بخطّ ولون ثابتين، تعرفك الناس فيها." },
-      { title: "نظام بدل المدير", text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، تعدّل عليه بـClaude." },
-    ],
+    features: [{
+      title: "أدوات البرّ.",
+      items: [
+        { title: "صفحة تبيع بدالك", text: "موقع فيه من أنت ووش تقدّم وكم سعره وزرّ حجز. بدونه كلّ عميل يجيك من معارفك بس." },
+        { title: "محتوى يشرح خبرتك", text: "حلقة بودكاست تتقطّع لعشرة مقاطع، من استوديو جاهز بثلاث كاميرات." },
+        { title: "صورة تليق بخبرتك", text: "صور لينكدإن وهويّة بسيطة بخطّ ولون ثابتين، تعرفك الناس فيها." },
+        { title: "نظام بدل المدير", text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، تعدّل عليه بـClaude." },
+      ],
+    }],
     showcase: {
       id: "identity",
-      eyebrow: "هويّتك في Claude",
+      eyebrow: "هويّة",
       title: "هويّتك تشتغل معك كلّ يوم.",
       text: "دليل هويّة ومهارة داخل Claude: تقول له «سوّ لي غلاف لهالحلقة» ويطلع بهويّتك. هذي هويّة سعد السيف اللي سلّمناها، وموشن حلقاته يطلع منها.",
       imgs: ["/v2/shots/saad-quote.jpg", "/v2/shots/saad-name.jpg", "/v2/shots/saad-stat.jpg"],
-      kind: "frames",
     },
-    packages: [pkgPodcast, pkgLaunch, pkgIdentity],
+    compare: {
+      models: [
+        { name: "حضور", price: "٤,٩٠٠" },
+        { name: "حضور Pro", price: "١٤,٩٠٠" },
+        { name: "حضور+", price: "٦,٥٠٠", unit: "شهريّاً" },
+      ],
+      rows: [
+        { label: "يوم تصوير", v: ["يوم واحد", "يوم واحد", "كلّ شهر"] },
+        { label: "صور لينكدإن احترافيّة", v: [true, true, false] },
+        { label: "فيديو تعريفيّ", v: [true, true, false] },
+        { label: "صفحتك على الإنترنت", v: ["صفحة وبايو", "موقع بصفحة بيع وباقات", false] },
+        { label: "هويّة في Claude", v: [false, true, false] },
+        { label: "نظام عروض أسعار وفواتير", v: [false, true, false] },
+        { label: "مقاطع قصيرة", v: [false, "٨ مقاطع", "١٦ مقطعاً كلّ شهر"] },
+        { label: "خطّة محتوى", v: [false, "٩٠ يوماً", false] },
+        { label: "النشر على حساباتك", v: [false, false, true] },
+      ],
+    },
+    packages: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus],
+    addons: [pkgs.podcast, pkgs.hawiya, pkgs.publish],
     faqs: [faqs[0], faqs[2], faqs[1], faqs[3]],
     final: "خلّ خبرتك تشتغل لك.",
   },
 
   systems: {
     slug: "systems",
+    href: "/systems/",
+    name: "ديوان",
+    kicker: "نظام الإدارة",
     meta: {
-      title: "نظام منوال — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
-      description: "نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. ملكك وتعدّل عليه بالذكاء الاصطناعيّ.",
+      title: "ديوان — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
+      description: "ديوان نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
     },
-    eyebrow: "نظام منوال — للمنشآت والجمعيّات",
-    title: ["شغلك كلّه", "في نظام واحد."],
+    headline: "شغلك كلّه. في مكان واحد.",
     sub: "نظام إدارة عربيّ على مقاسك، بدل إكسل وواتساب وبرنامج فواتير. ملكك أنت، وتعدّل عليه بالذكاء الاصطناعيّ بكلام عاديّ.",
+    from: "يبدأ من ١٠,٠٠٠ ريال",
     memoji: "proud",
-    heroShot: "/v2/shots/minwal-system.jpg",
-    needsTitle: "للمنشآت والشركات.",
-    needs: [
-      { title: "العملاء والمبيعات", text: "مسار عملاء بمراحل ومتابعة تلقائيّة، ولوحة أرقام واضحة." },
-      { title: "عروض أسعار تليق", text: "عرض سعر احترافيّ بقوالب جاهزة، بدل التصميم في وورد كلّ مرّة." },
-      { title: "الفواتير والمحاسبة", text: "فواتير عاديّة أو ضريبيّة، وقيود ومحاسبة وقوائم ماليّة." },
-      { title: "المشاريع والتقويم", text: "مهامّ بأسلوب Trello، وتقويم، وغرفة مشروع تشاركها مع عميلك." },
+    heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-diwan.jpg", "/v2/shots/demo-manabir-dash.jpg"],
+    highlights: [
+      { title: "جرّبه من جوالك.", text: "نسخ عرض حيّة تفتحها الحين، بدون حساب وبدون تحميل.", img: "/v2/shots/demo-diwan.jpg", kind: "phone" },
+      { title: "كلّ موظّف يشوف شغله.", text: "صلاحيّات لكلّ قسم، و«عرض كـ» تجرّب فيه النظام بعين أيّ موظّف.", img: "/v2/shots/demo-manabir.jpg", kind: "phone" },
+      { title: "الموقع من نفس النظام.", text: "أخبار وبرامج وشركاء وتسجيلات، تتعدّل من لوحة التحكّم.", img: "/v2/shots/demo-ruso-site.jpg", kind: "phone", dark: true },
+      { title: "الأرقام قدّامك.", text: "طلبات تنتظرك، ومهامّ متأخّرة، وصافي حركة السنة، من أوّل شاشة.", img: "/v2/shots/demo-ruso-sys.jpg", kind: "phone" },
     ],
-    needsAlt: {
-      title: "وللجمعيّات.",
-      items: [
-        { title: "سندات بدورة اعتماد", text: "طلب، ثمّ مراجعة ماليّة، ثمّ اعتماد، ثمّ صرف. وحدود اللائحة مطبّقة." },
-        { title: "محاسبة غير ربحيّة", text: "دليل حسابات وقيود وقوائم ماليّة على معيار المنشآت غير الهادفة للربح." },
-        { title: "المستفيدون والتطوّع", text: "تسجيل وحضور وشهادات، وساعات تطوّع معتمدة." },
-        { title: "الحوكمة والموقع", text: "اجتماعات ومحاضر وقرارات، وموقع الجمعيّة يُدار من نفس النظام." },
+    demos: true,
+    features: [
+      {
+        title: "للمنشآت والشركات.",
+        items: [
+          { title: "العملاء والمبيعات", text: "مسار عملاء بمراحل ومتابعة تلقائيّة، ولوحة أرقام واضحة." },
+          { title: "عروض أسعار تليق", text: "عرض سعر احترافيّ بقوالب جاهزة، بدل التصميم في وورد كلّ مرّة." },
+          { title: "الفواتير والمحاسبة", text: "فواتير عاديّة أو ضريبيّة، وقيود ومحاسبة وقوائم ماليّة." },
+          { title: "المشاريع والتقويم", text: "مهامّ بأسلوب Trello، وتقويم، وغرفة مشروع تشاركها مع عميلك." },
+        ],
+      },
+      {
+        title: "وللجمعيّات.",
+        items: [
+          { title: "سندات بدورة اعتماد", text: "طلب، ثمّ مراجعة ماليّة، ثمّ اعتماد، ثمّ صرف. وحدود اللائحة مطبّقة." },
+          { title: "محاسبة غير ربحيّة", text: "دليل حسابات وقيود وقوائم ماليّة على معيار المنشآت غير الهادفة للربح." },
+          { title: "المستفيدون والتطوّع", text: "تسجيل وحضور وشهادات، وساعات تطوّع معتمدة." },
+          { title: "الحوكمة والموقع", text: "اجتماعات ومحاضر وقرارات، وموقع الجمعيّة يُدار من نفس النظام." },
+        ],
+      },
+    ],
+    compare: {
+      models: [
+        { name: "ديوان", price: "من ١٠,٠٠٠" },
+        { name: "ديوان Pro", price: "من ٢٠,٠٠٠" },
+      ],
+      rows: [
+        { label: "المستخدمون", v: ["أنت وفريق صغير", "فريق بأقسام وصلاحيّات"] },
+        { label: "العملاء ومسار المبيعات", v: [true, true] },
+        { label: "عروض أسعار وفواتير", v: [true, true] },
+        { label: "المحاسبة", v: ["قيود وقوائم ماليّة", "معيار المنشآت غير الربحيّة"] },
+        { label: "المشاريع والمهامّ والتقويم", v: [true, true] },
+        { label: "سندات صرف بدورة اعتماد", v: [false, true] },
+        { label: "الحوكمة والاجتماعات", v: [false, true] },
+        { label: "المستفيدون والتطوّع", v: [false, true] },
+        { label: "الموارد البشريّة", v: [false, true] },
+        { label: "موقع يُدار من النظام", v: [false, true] },
+        { label: "يشتغل على الجوال", v: [true, true] },
+        { label: "ملكك، وبياناتك باسمك", v: [true, true] },
       ],
     },
-    showcase: {
-      eyebrow: "يشتغل اليوم",
-      title: "نظام وموقع جمعيّة رسو.",
-      text: "من أعمالنا: النظام الداخليّ لجمعيّة رسو لبناء الشخصيّة بفريقها وصلاحيّاتها، وموقعها اللي يُدار من نفس النظام.",
-      imgs: ["/v2/shots/minwal-system.jpg", "/v2/shots/minwal-site.jpg"],
-      kind: "screens",
-    },
-    packages: [
-      { name: "جلسة التشخيص", for: "قبل أيّ نظام", price: "٥٠٠", approved: false, items: ["ساعة نفهم فيها شغلك", "خريطة النظام اللي تحتاجه", "تُخصم من أيّ باقة"] },
-      { name: "منوال للأعمال", for: "المنشآت وشركات الشخص الواحد", price: "من ١٠,٠٠٠", approved: false, featured: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع", "تدريب التعديل بـClaude"] },
-      { name: "منوال للجمعيّات", for: "الجمعيّات الأهليّة", price: "من ٢٠,٠٠٠", approved: false, items: ["حزمة المنظّمات كاملة", "الماليّة والحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجمعيّة"] },
-    ],
+    packages: [pkgs.session, pkgs.diwan, pkgs.diwanPro],
     faqs: [
       { q: "النظام ملكي ولا اشتراك؟", a: "ملكك. ينبني لك وتستلمه، وبياناتك في قاعدة بيانات باسمك." },
+      { q: "نسخ العرض تحفظ بياناتي؟", a: "لا. نسخ العرض تحفظ كلّ شي في متصفّحك أنت بس، ولا ترسل شي لأيّ خادم. جرّب براحتك." },
       { q: "أقدر أعدّل عليه بعدين؟", a: "نعم. تتدرّب على تعديله بـClaude بكلام عاديّ، أو نعدّل لك حسب الطلب." },
       { q: "كم ياخذ وقت؟", a: "يعتمد على حجم الجهة. نحدّده في جلسة التشخيص قبل أيّ عرض سعر." },
       faqs[3],
     ],
-    final: "نظامك ينتظرك.",
+    final: "ديوانك ينتظرك.",
   },
 
   video: {
     slug: "video",
+    href: "/video/",
+    name: "الاستوديو",
+    kicker: "بودكاست وأفلام",
     meta: {
-      title: "إنتاج فيديو تعريفيّ وموشن للشركات في الرياض | إبراهيم سعود",
-      description: "أفلام تعريفيّة وموشن جرافيك وحملات لشركات التقنية والجهات الحكوميّة في الرياض: فكرة واسكربت وإخراج وتصوير ومونتاج، بنسخ طويلة وقصيرة.",
+      title: "الاستوديو — تصوير بودكاست وأفلام تعريفيّة وموشن في الرياض | إبراهيم سعود",
+      description: "استوديو بودكاست في الرياض بثلاث كاميرات، وأفلام تعريفيّة وموشن جرافيك وحملات لشركات التقنية والجهات: فكرة واسكربت وإخراج وتصوير ومونتاج.",
     },
-    eyebrow: "فيديو للشركات والجهات",
-    title: ["خدمتك معقّدة؟", "نخلّيها تنفهم."],
-    sub: "أفلام تعريفيّة وموشن وحملات لشركات التقنية والجهات: الفكرة والاسكربت قبل الكاميرا، والتسليم بنسخة طويلة ونسخ قصيرة.",
+    headline: "خدمتك معقّدة؟ نخلّيها تنفهم.",
+    sub: "حلقات بودكاست، وأفلام تعريفيّة، وموشن، وإعلانات. الفكرة والاسكربت قبل الكاميرا، والتسليم بنسخة طويلة ونسخ قصيرة.",
+    from: "يبدأ من ٢,٧٥٠ ريال",
     memoji: "big_happy",
-    needsTitle: "من الفكرة إلى التسليم.",
-    needs: [
-      { title: "نفهم الخدمة", text: "جلسة مع فريقك نطلّع فيها الرسالة الوحدة اللي لازم توصل." },
-      { title: "الفكرة والاسكربت", text: "سرد مبنيّ على جمهورك، وتعتمده قبل أيّ تصوير." },
-      { title: "التصوير أو الموشن", text: "في موقعك أو في الاستوديو، أو موشن جرافيك كامل لو الخدمة رقميّة." },
-      { title: "التسليم بالنسخ", text: "نسخة طويلة للموقع والعروض، ونسخ قصيرة للمنصّات." },
+    heroImg: "/v2/shots/studio.jpg",
+    highlights: [
+      { title: "ثلاث كاميرات.", text: "استوديو بودكاست جاهز في الرياض، بمايكات RØDE وإضاءة مجهّزة.", img: "/v2/shots/studio.jpg", kind: "cover", dark: true },
+      { title: "موشن بهويّتك.", text: "عناوين وأرقام ونقاط تتحرّك بخطّك ولونك، في كلّ حلقة.", img: "/v2/shots/saad-name.jpg", kind: "frame", dark: true },
+      { title: "رقم يثبت.", text: "الأرقام المهمّة تطلع على الشاشة، واضحة ومقروءة.", img: "/v2/shots/saad-stat.jpg", kind: "frame", dark: true },
     ],
+    features: [{
+      title: "من الفكرة إلى التسليم.",
+      items: [
+        { title: "نفهم الخدمة", text: "جلسة مع فريقك نطلّع فيها الرسالة الوحدة اللي لازم توصل." },
+        { title: "الفكرة والاسكربت", text: "سرد مبنيّ على جمهورك، وتعتمده قبل أيّ تصوير." },
+        { title: "التصوير أو الموشن", text: "في موقعك أو في الاستوديو، أو موشن جرافيك كامل لو الخدمة رقميّة." },
+        { title: "التسليم بالنسخ", text: "نسخة طويلة للموقع والعروض، ونسخ قصيرة للمنصّات." },
+      ],
+    }],
     showWorks: true,
-    packages: [
-      { name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "من ٨,٥٠٠", approved: false, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
-      { name: "الشريك الشهريّ", for: "محتوى مستمرّ", price: "٦,٥٠٠", unit: "شهريّاً", approved: false, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على المنصّات"] },
-      { name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
-    ],
+    compare: {
+      models: [
+        { name: "حلقة بودكاست", price: "٢,٧٥٠" },
+        { name: "فيلم الخدمة", price: "من ٨,٥٠٠" },
+        { name: "إعلانات المتاجر", price: "من ٧٥٠" },
+      ],
+      rows: [
+        { label: "التصوير", v: ["في الاستوديو بثلاث كاميرات", "في موقعك أو الاستوديو، أو موشن", "إعلان طوليّ ٩:١٦"] },
+        { label: "فكرة واسكربت", v: [false, true, "هوك واسكربت"] },
+        { label: "النسخة الطويلة", v: ["الحلقة كاملة ليوتيوب", "٦٠–٩٠ ثانية", false] },
+        { label: "مقاطع قصيرة", v: ["١٠ مقاطع", "٣ نسخ", false] },
+        { label: "تصاميم وغلاف", v: [true, false, false] },
+      ],
+    },
+    packages: [pkgs.podcast, pkgs.film, pkgs.storeAds],
     faqs: [
       { q: "تصوّرون خارج الرياض؟", a: "نعم، حسب المشروع، وتُضاف تكاليف السفر في عرض السعر." },
       { q: "كم مدّة التسليم؟", a: "الفيلم التعريفيّ عادة من أسبوعين إلى أربعة حسب الموافقات." },
-      { q: "أقدر أشوف أعمال لجهات مثلنا؟", a: "أفلام للأحوال المدنيّة (أبشر) والهيئة العامّة للنقل وريناد المجد وهيلثون. تحت في الأعمال." },
+      { q: "أقدر أشوف أعمال لجهات مثلنا؟", a: "أفلام للأحوال المدنيّة (أبشر) والهيئة العامّة للنقل وريناد المجد وهيلثون. فوق في الأعمال." },
+      { q: "أقدر أأجّر الاستوديو بس؟", a: "نعم: الساعة ١٥٠، ونصف اليوم ٥٠٠، واليوم الكامل ٩٠٠ ريال." },
       faqs[3],
     ],
     final: "خلّ عميلك يفهمك من أوّل دقيقة.",
   },
 };
+
+// ===== التنقّل (الشريط العلويّ وقوائمه المنسدلة، مثل apple.com) =====
+export type NavItem = { label: string; href: string; menu?: { title: string; big?: boolean; links: { label: string; href: string }[] }[] };
+export const navItems: NavItem[] = [
+  {
+    label: "حضور", href: "/brand/",
+    menu: [
+      { title: "استكشف حضور", big: true, links: [{ label: "حضور", href: "/brand/" }, { label: "قارن الباقات", href: "/brand/#compare" }, { label: "هويّة", href: "/brand/#identity" }] },
+      { title: "اطلب", links: [{ label: "حضور", href: "/brand/#buy" }, { label: "حضور Pro", href: "/brand/#buy" }, { label: "حضور+", href: "/brand/#buy" }] },
+      { title: "المزيد", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "حزمة النشر", href: "/store/#addons" }] },
+    ],
+  },
+  {
+    label: "ديوان", href: "/systems/",
+    menu: [
+      { title: "استكشف ديوان", big: true, links: [{ label: "ديوان", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
+      { title: "نسخ العرض", links: demos.map((d) => ({ label: d.name, href: d.href })) },
+      { title: "اطلب", links: [{ label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "ديوان", href: "/systems/#buy" }, { label: "ديوان Pro", href: "/systems/#buy" }] },
+    ],
+  },
+  {
+    label: "الاستوديو", href: "/video/",
+    menu: [
+      { title: "استكشف الاستوديو", big: true, links: [{ label: "الاستوديو", href: "/video/" }, { label: "الأعمال", href: "/video/#works" }, { label: "قارن", href: "/video/#compare" }] },
+      { title: "اطلب", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "فيلم الخدمة", href: "/video/#buy" }, { label: "إعلانات المتاجر", href: "/ad-packages/" }, { label: "تأجير الاستوديو", href: "/store/#studio" }] },
+    ],
+  },
+  { label: "الأعمال", href: "/#works" },
+  { label: "الباقات", href: "/store/" },
+];

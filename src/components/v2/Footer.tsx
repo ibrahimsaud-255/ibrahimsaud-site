@@ -1,27 +1,35 @@
+// الفوتر بأسلوب apple.com: ملاحظات صغيرة، ثمّ دليل الموقع بأعمدة، ثمّ الحقوق.
 import { site } from "@/lib/site";
+import { bookHref, demos, waHref } from "@/lib/v2";
+
+const cols: { title: string; links: { label: string; href: string; ext?: boolean }[] }[] = [
+  { title: "استكشف", links: [{ label: "حضور", href: "/brand/" }, { label: "ديوان", href: "/systems/" }, { label: "الاستوديو", href: "/video/" }, { label: "هويّة", href: "/brand/#identity" }, { label: "حزمة النشر", href: "/store/#addons" }] },
+  { title: "الباقات", links: [{ label: "كلّ الباقات", href: "/store/" }, { label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "تأجير الاستوديو", href: "/store/#studio" }, { label: "إعلانات المتاجر", href: "/ad-packages/" }] },
+  { title: "جرّب", links: demos.map((d) => ({ label: d.name, href: d.href, ext: true })) },
+  { title: "عن إبراهيم", links: [{ label: "حروف ودروس", href: "https://huroofduroos.com", ext: true }, { label: "بودكاست سَعي", href: site.podcast.youtube, ext: true }, { label: "المدوّنة", href: "/blog/" }, { label: "تيك توك", href: site.social.tiktok, ext: true }] },
+  { title: "تواصل", links: [{ label: "احجز مكالمة", href: bookHref, ext: true }, { label: "واتساب", href: waHref(), ext: true }, { label: "البريد", href: `mailto:${site.email}` }] },
+];
 
 export default function Footer() {
   return (
     <footer className="v2-foot">
       <div className="v2-wrap">
-        <div className="v2-foot-grid">
-          <nav aria-label="الخدمات">
-            <a href="/brand/">البراند الشخصيّ</a>
-            <a href="/systems/">نظام منوال</a>
-            <a href="/video/">الفيديو</a>
-            <a href="/ad-packages/">إعلانات المتاجر</a>
-            <a href="/#studio">تأجير الاستوديو</a>
-          </nav>
-          <nav aria-label="روابط">
-            <a href={site.podcast.youtube} target="_blank" rel="noopener">بودكاست سَعي</a>
-            <a href="https://huroofduroos.com" target="_blank" rel="noopener">حروف ودروس</a>
-            <a href="/blog/">المدوّنة</a>
-            <a href={site.social.tiktok} target="_blank" rel="noopener">تيك توك</a>
-          </nav>
+        <div className="notes">
+          <p>١. المكالمة الأولى مجّانيّة ومدّتها ٢٠ دقيقة، أونلاين أو في الاستوديو بالرياض.</p>
+          <p>٢. الأسعار بالريال السعوديّ. الدفع على دفعتين: ٥٠٪ عند البداية و٥٠٪ عند التسليم، بعرض سعر وفاتورة رسميّة.</p>
+          <p>٣. نسخ العرض تحفظ ما تكتبه فيها داخل متصفّحك فقط، ولا ترسل شيئاً لأيّ خادم.</p>
+        </div>
+        <div className="dir">
+          {cols.map((c) => (
+            <nav key={c.title} aria-label={c.title}>
+              <span className="h">{c.title}</span>
+              {c.links.map((l) => <a key={l.label} href={l.href} {...(l.ext ? { target: "_blank", rel: "noopener" } : {})}>{l.label}</a>)}
+            </nav>
+          ))}
         </div>
         <div className="copy">
-          <span>© {new Date().getFullYear()} إبراهيم سعود · الرياض</span>
-          <a href={`mailto:${site.email}`} style={{ direction: "ltr" }}>{site.email}</a>
+          <span>حقوق النشر © {new Date().getFullYear()} إبراهيم سعود. جميع الحقوق محفوظة.</span>
+          <span className="loc">الرياض، المملكة العربيّة السعوديّة</span>
         </div>
       </div>
     </footer>

@@ -1,0 +1,4 @@
+/* brand.css — هوية جمعية رسو لبناء الشخصية (خط Frutiger LT Arabic، الذهبي #CAB05F، الفيروزي #41747F) */
+@font-face{font-family:"Frutiger Ruso";src:url("fonts/frutiger-light.ttf") format("truetype");font-weight:300 500;font-display:swap}
+@font-face{font-family:"Frutiger Ruso";src:url("fonts/frutiger-bold.ttf") format("truetype");font-weight:600 900;font-display:swap}
+:root,:root[data-theme="light"]{--org-font:"Frutiger Ruso"; --gold:#CAB05F; --gold2:#A88E3E; --teal:#41747F; --deep:#1C3F46}

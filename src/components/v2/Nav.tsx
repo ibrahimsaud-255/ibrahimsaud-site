@@ -1,23 +1,54 @@
-import { bookHref } from "@/lib/v2";
-import FaceOn from "./FaceOn";
+"use client";
 
-export default function Nav() {
+// الشريط العلويّ بأسلوب apple.com: روابط صغيرة، وقائمة منسدلة لكلّ منتج على الكمبيوتر،
+// وقائمة بعرض الشاشة بخطّ كبير على الجوال.
+import { useEffect, useState } from "react";
+import { bookHref, navItems } from "@/lib/v2";
+
+export default function Nav({ sticky = true }: { sticky?: boolean }) {
+  const [open, setOpen] = useState(false);
+  useEffect(() => {
+    document.documentElement.classList.toggle("v2-menu-open", open);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    addEventListener("keydown", esc);
+    return () => removeEventListener("keydown", esc);
+  }, [open]);
+
   return (
-    <header className="v2-nav">
-      <div className="v2-wrap v2-nav-in">
-        <a href="/" aria-label="إبراهيم سعود — الرئيسيّة">
+    <header className={`v2-gnav ${sticky ? "sticky" : ""} ${open ? "open" : ""}`}>
+      <div className="v2-gnav-in">
+        <a href="/" className="logo" aria-label="إبراهيم سعود — الرئيسيّة">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/v2/ibrahim-saud-logo-black-tight.png" alt="إبراهيم سعود" style={{ height: 30, width: "auto", display: "block" }} />
+          <img src="/v2/ibrahim-saud-logo-black-tight.png" alt="إبراهيم سعود" />
         </a>
-        <nav className="v2-nav-links" aria-label="الأقسام">
-          <a href="/brand/">البراند الشخصيّ</a>
-          <a href="/systems/">نظام منوال</a>
-          <a href="/video/">الفيديو</a>
-          <a href="/#works">الأعمال</a>
-          <a href="/#studio">الاستوديو</a>
-        </nav>
-        <FaceOn face="wink"><a className="v2-btn v2-btn-primary" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a></FaceOn>
+        <ul className="items">
+          {navItems.map((it) => (
+            <li key={it.label} className={it.menu ? "has-menu" : ""}>
+              <a href={it.href}>{it.label}</a>
+              {it.menu && (
+                <div className="fly">
+                  <div className="fly-in">
+                    {it.menu.map((col) => (
+                      <div key={col.title} className={col.big ? "col big" : "col"}>
+                        <span className="h">{col.title}</span>
+                        {col.links.map((l) => <a key={l.label + l.href} href={l.href}>{l.label}</a>)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+        <a className="book" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a>
+        <button type="button" className="burger" aria-label={open ? "إغلاق القائمة" : "القائمة"} aria-expanded={open} onClick={() => setOpen(!open)}>
+          <span /><span />
+        </button>
       </div>
+      <nav className="v2-mmenu" aria-label="القائمة" hidden={!open}>
+        {navItems.map((it) => <a key={it.label} href={it.href} onClick={() => setOpen(false)}>{it.label}</a>)}
+        <a href={bookHref} target="_blank" rel="noopener" className="small">احجز مكالمة ٢٠ دقيقة</a>
+      </nav>
     </header>
   );
 }
