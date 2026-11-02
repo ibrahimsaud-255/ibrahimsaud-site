@@ -71,10 +71,10 @@ export const builds = [
   {
     name: "حروف ودروس",
     role: "المؤسّس",
-    line: "منصّة تعليميّة كاملة بنيتها بنفسي: ألعاب صفّيّة ودروس ثلاثيّة الأبعاد للمنهج السعوديّ، على الويب و App Store.",
+    line: "منصّة تعليميّة كاملة بنيتها بنفسي: ألعاب صفّيّة ودروس ثلاثيّة الأبعاد للمنهج السعوديّ، على الويب وفي متجر آبل.",
     href: "https://huroofduroos.com",
     cta: "زُر المنصّة",
-    imgs: ["/v2/shots/huroof-home.jpg", "/v2/shots/huroof-stage.jpg", "/v2/shots/huroof-tools.jpg"],
+    imgs: ["/v2/shots/huroof-home.jpg", "/v2/shots/huroof-moon3d.jpg", "/v2/shots/huroof-millionaire.jpg"],
     kind: "phones" as const,
   },
   {
@@ -106,6 +106,15 @@ export type Pkg = {
   items: string[];
   featured?: boolean;
   href?: string; // رابط بدل واتساب
+  // رابط دفع (Paylink من لوحة تلر). لو موجود يصير الزرّ الأساسيّ «ادفع الآن» وواتساب ثانويّ.
+  pay?: { href: string; label?: string };
+};
+
+// ===== روابط الدفع =====
+// أنشئ رابط دفع لكلّ باقة من لوحة تلر (Paylinks) والصقه هنا باسم الباقة.
+// الدفع عندنا ٥٠٪ مقدّم: لو الرابط للعربون اكتب label: "ادفع العربون ٥٠٪".
+export const payLinks: Record<string, { href: string; label?: string }> = {
+  // "حلقة بودكاست": { href: "https://secure.telr.com/..." },
 };
 
 export const packages: Pkg[] = [

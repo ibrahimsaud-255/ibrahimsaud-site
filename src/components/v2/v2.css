@@ -239,3 +239,9 @@ html:has(.v2), html:has(.v2) body { overflow-x: clip; overflow-y: visible; }
 @media (max-width: 900px) { .v2-journey, .v2-needs { grid-template-columns: 1fr; } }
 
 @media (min-width: 980px) { .v2-hero.landing h1 { font-size: clamp(52px, 5.4vw, 80px); line-height: 1.1; } }
+
+.v2-pkg .act { margin-top: auto; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.v2-pkg .act .v2-btn { width: 100%; }
+.v2-pkg .act .v2-link { font-size: 15px; }
+.v2-pkg.featured .act .v2-link { color: #8FB0FF !important; }
+.v2-build .phone { width: 31%; max-width: 220px; }
