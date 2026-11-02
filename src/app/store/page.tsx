@@ -5,13 +5,13 @@ import Nav from "@/components/v2/Nav";
 import Footer from "@/components/v2/Footer";
 import PackageCards from "@/components/v2/PackageCards";
 import WhyCards from "@/components/v2/WhyCards";
-import { bookHref, pkgs, studio, waHref } from "@/lib/v2";
+import { bookHref, pkgs } from "@/lib/v2";
 
 // «الباقات» — كلّ ما يُطلب في صفحة وحدة، مثل متجر آبل: صفّ المنتجات فوق، ثمّ باقات كلّ منتج.
 
 export const metadata: Metadata = {
   title: "الباقات والأسعار — حضور ونَسَق والاستوديو | إبراهيم سعود",
-  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، نَسَق لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة، تأجير الاستوديو في الرياض، وهويّة في Claude.",
+  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، نَسَق لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة في الرياض، وهويّة في Claude.",
   alternates: { canonical: "https://ibrahimsaud.com/store/" },
 };
 
@@ -65,18 +65,6 @@ export default function Store() {
                 {g.more && <a className="v2-link" href={g.more}>اعرف أكثر <span className="chev">‹</span></a>}
               </div>
               <PackageCards items={g.items} compact={g.items.length < 3} />
-              {g.id === "studio" && (
-                <div className="v2-rent" data-rise>
-                  <div>
-                    <h3>تأجير الاستوديو</h3>
-                    <p>{studio.sub}</p>
-                  </div>
-                  <div className="v2-rates">
-                    {studio.rates.map((r) => <div key={r.label}><b>{r.price}</b><span>{r.label} · ريال</span></div>)}
-                  </div>
-                  <a className="v2-btn v2-btn-primary sm" href={waHref("السلام عليكم، أبي أحجز الاستوديو")} target="_blank" rel="noopener">احجز</a>
-                </div>
-              )}
             </div>
           </section>
         ))}

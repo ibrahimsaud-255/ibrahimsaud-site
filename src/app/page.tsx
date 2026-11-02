@@ -10,7 +10,7 @@ import Manifesto from "@/components/v2/Manifesto";
 import WorksRail from "@/components/v2/WorksRail";
 import Devices from "@/components/v2/Devices";
 import { brands } from "@/lib/site";
-import { bookHref, hero, manifesto, products, studio, tools, waHref } from "@/lib/v2";
+import { bookHref, hero, manifesto, pkgs, products, tools, waHref } from "@/lib/v2";
 
 // الرئيسيّة بهندسة apple.com: واجهة إبراهيم، ثمّ لوحة كاملة العرض لكلّ منتج، ثمّ شبكة لوحات أصغر.
 // القديمة محفوظة في /classic. المحتوى كلّه في src/lib/v2.ts.
@@ -121,15 +121,13 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="v2-tile half dark" id="studio" data-rise>
-              <h2>{studio.title}</h2>
-              <p className="line">استوديو بودكاست في الرياض، بالساعة أو باليوم.</p>
+            <section className="v2-tile half dark" data-rise>
+              <h2>{pkgs.podcast.name}</h2>
+              <p className="line">حلقة كاملة وعشرة مقاطع، من استوديو بثلاث كاميرات.</p>
               <div className="ctas">
-                <a className="v2-link" href={waHref("السلام عليكم، أبي أحجز الاستوديو")} target="_blank" rel="noopener">احجز الاستوديو <span className="chev">‹</span></a>
+                <a className="v2-link" href="/video/#buy">اطلبها <span className="chev">‹</span></a>
               </div>
-              <div className="v2-rates">
-                {studio.rates.map((r) => <div key={r.label}><b>{r.price}</b><span>{r.label} · ريال</span></div>)}
-              </div>
+              <div className="big-price">{pkgs.podcast.price} <small>ريال</small></div>
             </section>
           </div>
         </div>

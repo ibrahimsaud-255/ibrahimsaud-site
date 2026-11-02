@@ -164,7 +164,8 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-tile.half .line { font-size: clamp(18px, 1.8vw, 21px); }
 .v2-tile.half .ctas { gap: 24px; }
 .v2-tile.half .art.memoji img { height: clamp(220px, 24vw, 320px); }
-.v2-tile.half .v2-rates { margin: auto 0 56px; }
+.v2-tile .big-price { margin: auto 0 56px; font-size: clamp(56px, 7vw, 84px); font-weight: 900; font-variant-numeric: tabular-nums; }
+.v2-tile .big-price small { font-size: 20px; font-weight: 500; color: rgba(255, 255, 255, .62); }
 @media (max-width: 760px) { .v2-tile-grid { grid-template-columns: 1fr; } .v2-tile.half { min-height: 520px; } }
 
 /* ---------- البيان (يتلوّن مع التمرير) ---------- */
@@ -309,12 +310,6 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-pkgs.compact .v2-pkg .price { font-size: 32px; }
 @media (max-width: 900px) { .v2-pkgs { grid-template-columns: 1fr; } }
 
-/* أسعار الاستوديو */
-.v2-rates { display: flex; gap: 28px; justify-content: center; }
-.v2-rates div { display: flex; flex-direction: column; align-items: center; }
-.v2-rates b { font-size: 34px; font-weight: 900; font-variant-numeric: tabular-nums; }
-.v2-rates span { font-size: 14px; color: var(--fg-2); }
-.dark .v2-rates span, .v2-rent .v2-rates span { color: rgba(255, 255, 255, .62); }
 
 /* ---------- الأدوات ---------- */
 .v2-tools { display: flex; flex-wrap: wrap; gap: 34px 48px; justify-content: center; max-width: 820px; margin: 0 auto; }
@@ -380,9 +375,6 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-store-group .v2-head { flex-direction: row; justify-content: space-between; align-items: baseline; flex-wrap: wrap; }
 .v2-store-group .v2-head h2 { font-size: clamp(28px, 3.6vw, 40px); }
 .v2-store-group + .v2-store-group { padding-top: 0; }
-.v2-rent { margin-top: 20px; background: var(--ink); color: #fff; border-radius: 28px; padding: clamp(26px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 28px; align-items: center; justify-content: space-between; }
-.v2-rent h3 { font-size: 28px; }
-.v2-rent p { font-size: 16px; line-height: 1.6; color: rgba(255, 255, 255, .7); max-width: 440px; margin-top: 8px; }
 
 /* ---------- الفوتر (مثل apple.com) ---------- */
 .v2-foot { background: var(--alt); font-size: 12px; color: var(--fg-2); padding-block: 20px 26px; }
