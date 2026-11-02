@@ -36,7 +36,6 @@ const HR_TABS=[
   {id:'content',name:'المحتوى',icon:'book-open'},
   {id:'questions',name:'الأسئلة',icon:'help-circle',soon:true},
   {id:'pdflib',name:'مكتبة PDF',icon:'folder',soon:true},
-  {id:'banners',name:'بانرات الموقع',icon:'panels-top-left'},
   {id:'settings',name:'الإعدادات',icon:'settings'},
 ];
 function renderHuroof(){
@@ -77,8 +76,6 @@ function hrChip(txt,color){return `<span class="pill" style="font-size:11px;back
 
 /* ═══ الإدارة (التفعيل/الأكواد) — نلفّ الموجود ═══ */
 function hrViewManage(){const b=document.getElementById('hrBody');if(!b)return;b.innerHTML=hrManageHTML();refreshIcons();hrLoadStats();hrLoadCodes();}
-/* ═══ البانرات — نلفّ الموجود ═══ */
-function hrViewBanners(){const b=document.getElementById('hrBody');if(!b)return;b.innerHTML=bannersBodyHTML();refreshIcons();bannersLoad();}
 
 /* ═══════════ هدف الاستقلال والحرية المالية — حروف ودروس ═══════════
    يظهر في الصفحة الرئيسية للنظام الداخلي (04-home.js) وفي تبويب نظرة عامة (03-huroof.js).
