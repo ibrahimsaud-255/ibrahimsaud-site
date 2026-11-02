@@ -5,6 +5,7 @@ import Nav from "@/components/v2/Nav";
 import Footer from "@/components/v2/Footer";
 import PackageCards from "@/components/v2/PackageCards";
 import WhyCards from "@/components/v2/WhyCards";
+import GlassIcon from "@/components/v2/GlassIcon";
 import { bookHref, pkgs } from "@/lib/v2";
 
 // «الباقات» — كلّ ما يُطلب في صفحة وحدة، مثل متجر آبل: صفّ المنتجات فوق، ثمّ باقات كلّ منتج.
@@ -15,14 +16,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://ibrahimsaud.com/store/" },
 };
 
-// أيقونات المنتجات بنمط أيقونات «المكتب» في النظام: مربّع زجاجيّ بتدرّج من أزرق الهويّة ورمز أبيض.
-const row: { name: string; href: string; bg: string; glyph: React.ReactNode }[] = [
-  { name: "حضور", href: "#hudoor", bg: "linear-gradient(160deg,#6E97FF,#2F66FF)", glyph: <><circle cx="12" cy="8" r="4.5" /><path d="M20 21a8 8 0 0 0-16 0" /></> },
-  { name: "نَسَق", href: "#nasaq", bg: "linear-gradient(160deg,#3D74FF,#1636B8)", glyph: <><rect width="7" height="7" x="3" y="3" rx="1.5" /><rect width="7" height="7" x="14" y="3" rx="1.5" /><rect width="7" height="7" x="14" y="14" rx="1.5" /><rect width="7" height="7" x="3" y="14" rx="1.5" /></> },
-  { name: "الاستوديو", href: "#studio", bg: "linear-gradient(160deg,#3A3F52,#0B0E17)", glyph: <><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z" /><path d="M19 10v2a7 7 0 0 1-14 0v-2" /><path d="M12 19v3" /></> },
-  { name: "هويّة", href: "#addons", bg: "linear-gradient(160deg,#9DB8FF,#4F7BFF)", glyph: <><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.65-.75 1.65-1.69 0-.44-.18-.84-.44-1.13-.29-.29-.44-.65-.44-1.13a1.64 1.64 0 0 1 1.67-1.67h2c3.05 0 5.55-2.5 5.55-5.55C21.97 6.01 17.46 2 12 2Z" /><circle cx="13.5" cy="6.5" r=".8" fill="currentColor" /><circle cx="17.5" cy="10.5" r=".8" fill="currentColor" /><circle cx="8.5" cy="7.5" r=".8" fill="currentColor" /><circle cx="6.5" cy="12.5" r=".8" fill="currentColor" /></> },
-  { name: "حزمة النشر", href: "#addons", bg: "linear-gradient(160deg,#5E7BFF,#3B3FD8)", glyph: <><path d="m22 2-7 20-4-9-9-4Z" /><path d="M22 2 11 13" /></> },
-];
+// صفّ المنتجات مثل «تسوّق حسب المنتج» في متجر آبل، بأيقونات على نمط آبل (GlassIcon).
+const row = [
+  { name: "حضور", href: "#hudoor", icon: "hudoor" },
+  { name: "نَسَق", href: "#nasaq", icon: "nasaq" },
+  { name: "الاستوديو", href: "#studio", icon: "studio" },
+  { name: "هويّة", href: "#addons", icon: "hawiya" },
+  { name: "حزمة النشر", href: "#addons", icon: "publish" },
+] as const;
 
 const groups = [
   { id: "hudoor", title: "حضور.", sub: "البراند الشخصيّ للخبراء.", more: "/brand/", items: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus] },
@@ -49,9 +50,7 @@ export default function Store() {
             <nav className="v2-store-row" aria-label="المنتجات">
               {row.map((r) => (
                 <a key={r.name} href={r.href}>
-                  <span className="app" style={{ background: r.bg }}>
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{r.glyph}</svg>
-                  </span>
+                  <GlassIcon kind={r.icon} />
                   {r.name}
                 </a>
               ))}
