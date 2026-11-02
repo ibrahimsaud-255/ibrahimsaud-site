@@ -59,7 +59,7 @@ export const pkgs = {
   hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", approved: true, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
   hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", approved: true, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
   hudoorPlus: { id: "hudoor-plus", name: "حضور+", for: "محتوى كلّ شهر", price: "٦,٥٠٠", unit: "شهريّاً", approved: true, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على حساباتك"] },
-  hawiya: { id: "hawiya", name: "هويّة", for: "تصمّم بنفسك داخل Claude", price: "٥,٩٠٠", approved: true, items: ["جلسة تصوير", "الخطّ واللون والشعار", "دليل هويّة PDF", "مهارة Claude للأغلفة والمنشورات والموشن"] },
+  hawiya: { id: "hawiya", name: "هويّة", for: "هويّتك داخل Claude", price: "١,٤٩٠", approved: true, items: ["مهارة Claude بهويّتك: أغلفة ومنشورات وموشن", "دليل هويّة PDF تعرضه وتشاركه", "الخطّ واللون والشعار", "تشارك المهارة مع فريقك في Claude"] },
   publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", approved: true, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
   podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
   film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "٣,٤٠٠", approved: true, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
