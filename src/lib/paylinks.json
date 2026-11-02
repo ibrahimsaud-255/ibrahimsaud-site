@@ -1,1 +1,41 @@
-{}
+{
+  "session": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031265"
+  },
+  "podcast": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031282",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031285"
+  },
+  "film": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031290",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031297"
+  },
+  "hudoor": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031300",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031301"
+  },
+  "hudoor-pro": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031303",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031308"
+  },
+  "hudoor-plus": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031310"
+  },
+  "hawiya": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031311",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031314"
+  },
+  "publish": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031317",
+    "half": "https://secure.telr.com/gateway/ql/huroofduroos_5031324"
+  },
+  "ad-single": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031331"
+  },
+  "ad-review": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031337"
+  },
+  "ad-triple": {
+    "full": "https://secure.telr.com/gateway/ql/huroofduroos_5031345"
+  }
+}

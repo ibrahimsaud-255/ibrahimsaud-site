@@ -2,11 +2,11 @@
 """روابط الدفع (تلر) للباقات — جدول إكسل يعبّيه إبراهيم، ثمّ يُقرأ إلى src/lib/paylinks.json.
 
   make   <ملف.xlsx>   يصنع الجدول الفارغ (سطر لكلّ رابط)
-  import <ملف.xlsx>   يقرأ الروابط المعبّأة ويكتب src/lib/paylinks.json
+  import <ملف.xlsx|.numbers>   يقرأ الروابط المعبّأة ويكتب src/lib/paylinks.json
 
 الخدمات اللي تُدفع على دفعتين لها رابطان: «كامل» و«نصف». جلسة التشخيص وحضور+ والإعلانات رابط واحد.
 نَسَق ونَسَق Pro سعرهما «من …» فما لهما رابط ثابت (عرض سعر ثمّ رابط بمبلغه).
-يحتاج: pip install openpyxl
+يحتاج: pip install openpyxl (وnumbers-parser لو الملف محفوظ من Numbers)
 """
 import json, os, sys
 from openpyxl import Workbook, load_workbook
@@ -75,10 +75,16 @@ def make(path):
     wb.save(path); print(f'✓ {path} ({len(ROWS)} رابط)')
 
 
+def rows_of(path):
+    if path.endswith('.numbers'):
+        from numbers_parser import Document
+        return Document(path).sheets[0].tables[0].rows(values_only=True)[1:]
+    return load_workbook(path).active.iter_rows(min_row=2, values_only=True)
+
+
 def imp(path):
-    ws = load_workbook(path).active
     links = {}
-    for row in ws.iter_rows(min_row=2, values_only=True):
+    for row in rows_of(path):
         if not row or not row[5] or '/' not in str(row[5]): continue
         url = (row[4] or '').strip()
         if not url: continue
