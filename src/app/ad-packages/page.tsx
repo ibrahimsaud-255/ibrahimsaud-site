@@ -1,85 +1,135 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
-import WhatsAppFab from "@/components/WhatsAppFab";
-import Reveal from "@/components/Reveal";
-import AdPackages from "@/components/AdPackages";
-import AdReels from "@/components/AdReels";
-import { waLink } from "@/lib/site";
+import "@/components/v2/v2.css";
+import Shell from "@/components/v2/Shell";
+import Nav from "@/components/v2/Nav";
+import LocalNav from "@/components/v2/LocalNav";
+import Footer from "@/components/v2/Footer";
+import Memoji3D from "@/components/v2/Memoji3D";
+import WindowLight from "@/components/v2/WindowLight";
+import AdReelsRail from "@/components/v2/AdReelsRail";
+import CompareTable from "@/components/v2/CompareTable";
+import PackageCards from "@/components/v2/PackageCards";
+import WhyCards from "@/components/v2/WhyCards";
+import { reels, reelPoster } from "@/lib/reels";
+import { adCompare, adPkgs, adSteps, bookHref, faqs, waHref } from "@/lib/v2";
+
+// إعلانات المتاجر بهندسة صفحات المنتج: واجهة، الإعلانات تتشغّل، الخطوات، قارن، اطلب.
+// (الصفحة القديمة بصور الباقات الحمراء والزرقاء والصفراء تقاعدت — نوفمبر ٢٠٢٦)
 
 export const metadata: Metadata = {
-  title: "باقات الفيديوهات الإعلانية — أسعار واضحة | إبراهيم سعود",
+  title: "إعلانات المتاجر — فيديو إعلانيّ طوليّ بسعر واضح وتسليم خلال ٣ أيّام | إبراهيم سعود",
   description:
-    "باقات فيديو إعلاني بأسعار واضحة: الإعلان الواحد، المراجعة الكاملة، وباقة الـ٣ إعلانات. من الفكرة والسكربت حتى التصوير والمونتاج والتسليم جاهزاً للنشر.",
+    "فيديوهات إعلانيّة طوليّة للمتاجر الإلكترونيّة: الفكرة والسكربت والتصوير والمونتاج والنسخ الجاهزة للنشر. من ٧٥٠ ريال، وتستلم خلال ٣ أيّام مع جولتي تعديل.",
+  alternates: { canonical: "https://ibrahimsaud.com/ad-packages/" },
 };
+
+const heroReels = [0, 1, 2].map((i) => reelPoster(reels[i]).replace(/^https:\/\/drive\.google\.com\/thumbnail\?id=([\w-]+)&sz=\S+$/, "https://lh3.googleusercontent.com/d/$1=w720"));
+
+const adFaqs = [
+  { q: "هل فيه رسوم إضافيّة؟", a: "لا. السعر شامل الفكرة والسكربت والتصوير والمونتاج والنسخ الجاهزة للنشر، ومعه جولتا تعديل مجانيّة." },
+  { q: "متى أستلم؟", a: "خلال ٣ أيّام من اعتماد السكربت، على Google Drive بجودة كاملة." },
+  faqs[3],
+];
 
 export default function AdPackagesPage() {
   return (
-    <>
-      <Nav />
-      <main className="bg-glow">
-        <section className="px-5 pt-32 pb-12">
-          <div className="mx-auto max-w-6xl text-center">
-            <Reveal>
-              <p className="text-sm font-bold tracking-widest text-gold">
-                الفيديوهات الإعلانية
-              </p>
-              <h1 className="mx-auto mt-3 max-w-3xl text-4xl font-black leading-tight sm:text-5xl">
-                سعر واضح من البداية — وتستلم خلال ٣ أيام
-              </h1>
-              <p className="mx-auto mt-5 max-w-2xl text-cream/70">
-                السعر شامل كل شيء: الفكرة والسكربت والتصوير والمونتاج والنسخ
-                الجاهزة للنشر — بلا رسوم إضافية بعد الاتفاق، ومعه جولتا تعديل
-                مجانية.
-              </p>
-            </Reveal>
+    <Shell>
+      <Nav sticky={false} />
+      <LocalNav name="إعلانات المتاجر" links={[{ label: "نظرة عامة", href: "#top" }, { label: "الإعلانات", href: "#works" }, { label: "قارن", href: "#compare" }]} />
+      <main id="top">
+        <section className="v2-phero">
+          <WindowLight style={{ top: 40, left: "50%", width: 1000, height: 640, marginLeft: -500 }} />
+          <div className="v2-wrap" style={{ position: "relative" }}>
+            <p className="kicker">للمتاجر الإلكترونيّة</p>
+            <h1 className="smaller">إعلانات المتاجر</h1>
+            <p className="headline">سعر واضح. وتستلم خلال ٣ أيّام.</p>
+            <p className="sub">السعر شامل كلّ شي: الفكرة والسكربت والتصوير والمونتاج والنسخ الجاهزة للنشر. بلا رسوم إضافيّة بعد الاتفاق، ومعه جولتا تعديل مجانيّة.</p>
+            <div className="ctas">
+              <a className="v2-btn v2-btn-primary" href="#buy">اطلب</a>
+              <a className="v2-btn v2-btn-ghost" href="#works">شوف الإعلانات</a>
+            </div>
+            <p className="from">يبدأ من ٧٥٠ ريال</p>
+          </div>
+          <div className="v2-wrap media" style={{ position: "relative" }}>
+            <div className="phones">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              {heroReels.map((s) => <img key={s} src={s} alt="" referrerPolicy="no-referrer" />)}
+            </div>
           </div>
         </section>
 
-        {/* البطاقات الثلاث */}
-        <AdPackages />
+        <section className="v2-sec alt" id="works">
+          <div className="v2-wrap">
+            <div className="v2-head" data-rise>
+              <h2>شوف الإعلانات قبل ما تقرّر.</h2>
+              <p>عقار، قهوة، أقفال ذكيّة، زيوت سيّارات، متاجر وتطبيقات. قطاعات ما تشبه بعض، ونفس المعيار: هوك سريع، رسالة وحدة، ودعوة واضحة في النهاية.</p>
+            </div>
+            <AdReelsRail />
+          </div>
+        </section>
 
-        {/* نماذج من الإعلانات الطولية */}
-        <AdReels />
-
-        {/* دعوة للتواصل */}
-        <section className="px-5 pb-20">
-          <div className="mx-auto max-w-5xl">
-            <Reveal>
-              <div className="rounded-3xl border border-line bg-ink-soft p-8 text-center sm:p-10">
-                <h2 className="text-2xl font-black text-cream">
-                  مو متأكد أي باقة تناسبك؟
-                </h2>
-                <p className="mx-auto mt-3 max-w-2xl text-sm text-cream/70">
-                  احكِ لي عن منتجك وجمهورك، وأرشّح لك الأنسب بصراحة — حتى لو كانت
-                  الأرخص. وإن احتجت باقة مخصّصة نرتّبها على مقاسك.
-                </p>
-                <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-                  <a
-                    href={waLink(
-                      "السلام عليكم إبراهيم، أبي أستشيرك في الباقة المناسبة 🎬\nالمنتج: \nجمهوري: ",
-                    )}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-bold text-ink transition hover:bg-gold-soft"
-                  >
-                    استشرني في الباقة المناسبة
-                  </a>
-                  <Link
-                    href="/#works"
-                    className="inline-flex items-center gap-2 rounded-full border border-line px-7 py-3.5 text-sm font-bold text-cream transition hover:border-gold hover:text-gold"
-                  >
-                    🎬 شاهد أعمالي أولاً
-                  </Link>
+        <section className="v2-sec">
+          <div className="v2-wrap">
+            <h2 className="v2-title" data-rise>من الفكرة للتسليم. في ٣ أيّام.</h2>
+            <div className="v2-steps">
+              {adSteps.map((s, i) => (
+                <div key={s.name} data-rise>
+                  <span className="n">{["١", "٢", "٣", "٤"][i]}</span>
+                  <h3>{s.name}</h3>
+                  <p>{s.text}</p>
                 </div>
-              </div>
-            </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <section className="v2-sec alt" id="compare">
+          <div className="v2-wrap">
+            <div className="v2-head center" data-rise><h2>أيّ باقة تناسب متجرك؟</h2></div>
+            <CompareTable c={adCompare} />
+          </div>
+        </section>
+
+        <section className="v2-sec" id="buy">
+          <div className="v2-wrap">
+            <div className="v2-head center" data-rise>
+              <h2>اطلب إعلانك.</h2>
+              <p>ادفع مباشرة، أو كلّمني قبل وأقول لك أيّ باقة تناسب منتجك.</p>
+            </div>
+            <PackageCards items={adPkgs} />
+          </div>
+        </section>
+
+        <section className="v2-sec alt">
+          <div className="v2-wrap">
+            <h2 className="v2-title" data-rise>ليش تشتغل معي؟</h2>
+            <WhyCards />
+          </div>
+        </section>
+
+        <section className="v2-sec">
+          <div className="v2-wrap">
+            <div className="v2-head center" data-rise><h2>أسئلة تتكرّر.</h2></div>
+            <div className="v2-faq" data-rise>
+              {adFaqs.map((f) => <details key={f.q}><summary>{f.q}</summary><p>{f.a}</p></details>)}
+            </div>
+          </div>
+        </section>
+
+        <section className="v2-sec v2-final">
+          <WindowLight style={{ top: 0, left: "50%", width: 900, height: 600, marginLeft: -450 }} />
+          <div className="v2-wrap" style={{ position: "relative" }}>
+            <div style={{ display: "grid", placeItems: "center", marginBottom: 24 }}><Memoji3D base="wink" className="small" /></div>
+            <h2>إعلانك الجاي يبيع.</h2>
+            <p>كلّمني وأرسل لك فكرة لمنتجك قبل ما تدفع.</p>
+            <div className="ctas">
+              <a className="v2-btn v2-btn-primary" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a>
+              <a className="v2-link" href={waHref("السلام عليكم، أبي إعلان لمتجري")} target="_blank" rel="noopener">أو كلّمني واتساب <span className="chev">‹</span></a>
+            </div>
           </div>
         </section>
       </main>
       <Footer />
-      <WhatsAppFab />
-    </>
+    </Shell>
   );
 }

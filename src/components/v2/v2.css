@@ -420,3 +420,23 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-lockup .x { color: rgba(255, 255, 255, .45); font-size: 20px; margin-inline-end: 4px; }
 .v2-demo .logo { height: 34px; width: auto; max-width: 140px; object-fit: contain; object-position: right; margin-bottom: 4px; }
 .v2-tile .tile-logo { width: 44px; height: 44px; margin-bottom: 14px; }
+
+/* ---------- إعلانات المتاجر ---------- */
+.v2-phero h1.smaller { font-size: clamp(56px, 9vw, 112px); }
+.v2-reels { display: grid; grid-auto-flow: column; grid-auto-columns: min(220px, 56vw); gap: 18px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 6px 2px 12px; scrollbar-width: none; }
+.v2-reels::-webkit-scrollbar { display: none; }
+.v2-reel { scroll-snap-align: start; border: 0; background: none; padding: 0; cursor: pointer; text-align: right; font-family: inherit; color: inherit; display: flex; flex-direction: column; gap: 6px; }
+.v2-reel .ph { position: relative; aspect-ratio: 9 / 16; border-radius: 26px; overflow: hidden; border: 6px solid var(--bezel); box-shadow: 0 0 0 1.5px #3A3A3C, 0 24px 40px -22px rgba(30, 45, 90, .45); background: #111; transition: transform .5s var(--ease); }
+.v2-reel:hover .ph { transform: translateY(-6px); }
+.v2-reel .ph img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.v2-reel .play { position: absolute; inset: auto auto 14px 14px; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; background: rgba(255, 255, 255, .22); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .4); }
+.v2-reel .play svg { width: 18px; height: 18px; margin-inline-start: 2px; }
+.v2-reel .cat { font-size: 13px; font-weight: 700; color: var(--blue); margin-top: 6px; }
+.v2-reel .cl { font-size: 16px; font-weight: 700; }
+.v2-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.v2-steps > div { border-top: 1px solid var(--line); padding-top: 22px; }
+.v2-steps .n { font-size: 15px; font-weight: 800; color: var(--blue); }
+.v2-steps h3 { font-size: 26px; margin-top: 6px; }
+.v2-steps p { font-size: 17px; line-height: 1.6; color: var(--fg-2); margin-top: 8px; }
+@media (max-width: 900px) { .v2-steps { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 520px) { .v2-steps { grid-template-columns: 1fr; } }
