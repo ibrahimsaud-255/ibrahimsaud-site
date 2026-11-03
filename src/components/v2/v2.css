@@ -477,8 +477,10 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-tile .art.frame.wide img { width: min(92%, 880px); }
 
 /* ---------- ورش قدّمتها ---------- */
-.v2 .v2-past { border-radius: 28px; overflow: hidden; background: var(--card); }
-.v2 .v2-past .photo { width: 100%; aspect-ratio: 3 / 1; object-fit: cover; display: block; }
+.v2 .v2-past { border-radius: 28px; overflow: hidden; background: var(--card); margin-bottom: 28px; }
+.v2 .v2-past .photos { display: grid; grid-template-columns: 2fr 1fr 1fr; grid-template-rows: 380px; gap: 4px; overflow: hidden; }
+.v2 .v2-past .photos img { min-height: 0; }
+.v2 .v2-past .photos img { width: 100%; height: 100%; object-fit: cover; object-position: center 30%; display: block; }
 .v2 .v2-past .body { padding: 36px 40px 40px; }
 .v2 .v2-past h3 { font-size: 32px; margin: 8px 0 12px; }
 .v2 .v2-past p { color: var(--fg-2); max-width: 720px; line-height: 1.8; margin: 0; }
@@ -486,9 +488,24 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2 .v2-past .stats li { display: flex; flex-direction: column; color: var(--fg-2); font-size: 15px; }
 .v2 .v2-past .stats b { font-size: 44px; line-height: 1.1; color: var(--fg); font-weight: 800; }
 @media (max-width: 734px) {
-  .v2 .v2-past .photo { aspect-ratio: 16 / 10; }
+  .v2 .v2-past .photos { grid-template-columns: 1fr 1fr; grid-template-rows: 220px 150px; height: auto; }
+  .v2 .v2-past .photos img:first-child { grid-column: 1 / -1; }
+  .v2 .v2-works { grid-template-columns: 1fr; }
   .v2 .v2-past .body { padding: 24px 22px 28px; }
   .v2 .v2-past h3 { font-size: 24px; }
   .v2 .v2-past .stats { gap: 28px; }
   .v2 .v2-past .stats b { font-size: 34px; }
 }
+
+/* ---------- شغل مع الجهات ---------- */
+.v2 .v2-works { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.v2 .v2-works .item { border-radius: 24px; overflow: hidden; background: var(--card); display: flex; flex-direction: column; }
+.v2 .v2-works img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: center 30%; display: block; }
+.v2 .v2-works .body { padding: 24px 26px 28px; }
+.v2 .v2-works h3 { font-size: 22px; margin: 8px 0 10px; }
+.v2 .v2-works p { color: var(--fg-2); line-height: 1.75; margin: 0; font-size: 15px; }
+.v2 .v2-works .stats { list-style: none; display: flex; gap: 26px; padding: 0; margin: 20px 0 0; }
+.v2 .v2-works .stats li { display: flex; flex-direction: column; color: var(--fg-2); font-size: 13px; }
+.v2 .v2-works .stats b { font-size: 28px; line-height: 1.1; color: var(--fg); font-weight: 800; }
+
+@media (max-width: 734px) { .v2 .v2-works { grid-template-columns: 1fr; } }

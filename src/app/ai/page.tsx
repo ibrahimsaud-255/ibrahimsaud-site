@@ -75,16 +75,34 @@ export default function AiPage() {
             <h2 className="v2-title" data-rise>ورش قدّمتها.</h2>
             {a.past.map((w) => (
               <div key={w.title} className="v2-past" data-rise>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img className="photo" src={w.img} alt={w.title} loading="lazy" />
+                <div className="photos">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {w.imgs.map((src, i) => <img key={src} src={src} alt={i === 0 ? w.title : ""} loading="lazy" />)}
+                </div>
                 <div className="body">
                   <span className="v2-eyebrow">{w.host}</span>
                   <h3>{w.title}</h3>
                   <p>{w.text}</p>
-                  <ul className="stats">{w.stats.map((s) => <li key={s.label}><b>{s.n}</b>{s.label}</li>)}</ul>
+                  {w.stats.length > 0 && <ul className="stats">{w.stats.map((s) => <li key={s.label}><b>{s.n}</b>{s.label}</li>)}</ul>}
                 </div>
               </div>
             ))}
+
+            <h2 className="v2-title" data-rise style={{ marginTop: 72 }}>وشغل مع الجهات.</h2>
+            <div className="v2-works">
+              {a.works.map((w) => (
+                <div key={w.title} className="item" data-rise>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={w.img} alt={w.title} loading="lazy" />
+                  <div className="body">
+                    <span className="v2-eyebrow">{w.host}</span>
+                    <h3>{w.title}</h3>
+                    <p>{w.text}</p>
+                    {w.stats.length > 0 && <ul className="stats">{w.stats.map((s) => <li key={s.label}><b>{s.n}</b>{s.label}</li>)}</ul>}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
