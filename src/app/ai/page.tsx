@@ -20,7 +20,7 @@ export default function AiPage() {
   return (
     <Shell>
       <Nav sticky={false} />
-      <LocalNav name={a.name} links={[{ label: "نظرة عامة", href: "#top" }, { label: "الخدمات", href: "#services" }, { label: "آخر ورشة", href: "#workshop" }]} />
+      <LocalNav name={a.name} links={[{ label: "نظرة عامة", href: "#top" }, { label: "الخدمات", href: "#services" }, { label: "الورش", href: "#workshop" }, { label: "ورش قدّمتها", href: "#past" }]} />
       <main id="top">
         <section className="v2-phero">
           <WindowLight style={{ top: 40, left: "50%", width: 1000, height: 640, marginLeft: -500 }} />
@@ -31,7 +31,7 @@ export default function AiPage() {
             <p className="sub">{a.sub}</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary" href="#request">اطلب ورشة لفريقك</a>
-              <a className="v2-btn v2-btn-ghost" href="#workshop">شوف آخر ورشة</a>
+              <a className="v2-btn v2-btn-ghost" href="#past">شوف ورش قدّمتها</a>
             </div>
           </div>
           <div className="v2-wrap media" style={{ position: "relative" }}>
@@ -70,7 +70,25 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="v2-sec alt">
+        <section className="v2-sec alt" id="past">
+          <div className="v2-wrap">
+            <h2 className="v2-title" data-rise>ورش قدّمتها.</h2>
+            {a.past.map((w) => (
+              <div key={w.title} className="v2-past" data-rise>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img className="photo" src={w.img} alt={w.title} loading="lazy" />
+                <div className="body">
+                  <span className="v2-eyebrow">{w.host}</span>
+                  <h3>{w.title}</h3>
+                  <p>{w.text}</p>
+                  <ul className="stats">{w.stats.map((s) => <li key={s.label}><b>{s.n}</b>{s.label}</li>)}</ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="v2-sec">
           <div className="v2-wrap">
             <h2 className="v2-title" data-rise>كيف تكون الورشة.</h2>
             <ol className="v2-process three">
@@ -79,7 +97,7 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="v2-sec" id="request">
+        <section className="v2-sec alt" id="request">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
               <h2>اطلب ورشة لفريقك.</h2>
@@ -89,7 +107,7 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="v2-sec alt" id="buy">
+        <section className="v2-sec" id="buy">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
               <h2>تبي تبدأ بجلسة؟</h2>
@@ -99,14 +117,14 @@ export default function AiPage() {
           </div>
         </section>
 
-        <section className="v2-sec">
+        <section className="v2-sec alt">
           <div className="v2-wrap">
             <h2 className="v2-title" data-rise>ليش تشتغل معي؟</h2>
             <WhyCards />
           </div>
         </section>
 
-        <section className="v2-sec alt">
+        <section className="v2-sec">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise><h2>أسئلة تتكرّر.</h2></div>
             <div className="v2-faq" data-rise>
