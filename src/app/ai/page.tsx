@@ -92,13 +92,18 @@ export default function AiPage() {
             <div className={`v2-works${a.works.length === 1 ? " single" : ""}`}>
               {a.works.map((w) => (
                 <div key={w.title} className="item" data-rise>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={w.img} alt={w.title} loading="lazy" />
+                  {w.embed ? (
+                    <iframe className="embed" src={w.embed} title={w.title} loading="lazy" allowFullScreen />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={w.img} alt={w.title} loading="lazy" />
+                  )}
                   <div className="body">
                     <span className="v2-eyebrow">{w.host}</span>
                     <h3>{w.title}</h3>
                     <p>{w.text}</p>
                     {w.stats.length > 0 && <ul className="stats">{w.stats.map((s) => <li key={s.label}><b>{s.n}</b>{s.label}</li>)}</ul>}
+                    {w.embedNote && <small className="note">{w.embedNote}</small>}
                   </div>
                 </div>
               ))}

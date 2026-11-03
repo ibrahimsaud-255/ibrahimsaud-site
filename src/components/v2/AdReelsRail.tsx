@@ -30,8 +30,8 @@ export default function AdReelsRail() {
         ))}
       </div>
       <div className="v2-rail-ctl">
-        <button type="button" aria-label="السابق" onClick={() => go(-1)}>›</button>
-        <button type="button" aria-label="التالي" onClick={() => go(1)}>‹</button>
+        <button type="button" aria-label="السابق" onClick={() => go(-1)}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
+        <button type="button" aria-label="التالي" onClick={() => go(1)}><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"/></svg></button>
       </div>
       {openAt !== null && <ReelsExperience key={openAt} openAt={openAt} onClose={() => setOpenAt(null)} />}
     </>

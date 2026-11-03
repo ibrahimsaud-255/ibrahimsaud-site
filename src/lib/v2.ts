@@ -166,6 +166,8 @@ export type Product = {
   process?: { name: string; text: string }[];
   ownership?: { title: string; sub: string; items: { title: string; text: string }[] };
   quote?: { subject: string; fields: QuoteField[] };
+  // مقاطع من قناة إبراهيم يشرح فيها المنتج
+  videos?: { title: string; sub?: string; items: { id: string; title: string }[] };
   compare: Compare;
   packages: Pkg[];
   addons?: Pkg[];
@@ -301,6 +303,11 @@ export const products: Record<Product["slug"], Product> = {
         { title: "تطوّره بنفسك", text: "مع Claude تضيف وتعدّل بكلام عاديّ، وأعلّمك الطريقة في جلسة التسليم." },
         { title: "ورق رسميّ", text: "عرض سعر وفاتورة رسميّة، والدفع على دفعتين: نصف عند البداية ونصف عند التسليم." },
       ],
+    },
+    videos: {
+      title: "اسمعها منّي.",
+      sub: "مقطعين أشرح فيهم فكرة النظام، وكيف تشتغل الخدمة، ووش تستلم بالضبط.",
+      items: [{ id: "lacRncAj4Ew", title: "النظام" }, { id: "v4cyM_r5T44", title: "ابني نظامك بنفسك" }],
     },
     quote: {
       subject: "عرض سعر للنظام",
@@ -470,6 +477,9 @@ export const aiPage = {
       text: "غطّيت من الكواليس هاكاثوناً افتراضيّاً بالكامل، بأكثر من ١٠٠ مشارك في قاعة ثلاثيّة الأبعاد.",
       stats: [{ n: "+١٠٠", label: "مشارك" }],
       img: "/v2/shots/ws-ejad-1.jpg",
+      // منشور إيجاد الرسميّ على لينكدإن: شاهد على التغطية
+      embed: "https://www.linkedin.com/embed/feed/update/urn:li:ugcPost:7508091699865223169?collapsed=1",
+      embedNote: "من حساب إيجاد التقنية الرسميّ على لينكدإن",
     },
   ],
   steps: [

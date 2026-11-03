@@ -15,6 +15,7 @@ import PackageCards from "./PackageCards";
 import WhyCards from "./WhyCards";
 import Devices from "./Devices";
 import QuoteForm from "./QuoteForm";
+import YtLite from "./YtLite";
 import { brands } from "@/lib/site";
 import { bookHref, waHref, type Product } from "@/lib/v2";
 
@@ -71,6 +72,26 @@ export default function ProductPage({ p }: { p: Product }) {
             <Highlights items={p.highlights} />
           </div>
         </section>
+
+        {/* ===== مقاطع يشرح فيها المنتج ===== */}
+        {p.videos && (
+          <section className="v2-sec" id="videos">
+            <div className="v2-wrap">
+              <div className="v2-head" data-rise>
+                <h2>{p.videos.title}</h2>
+                {p.videos.sub && <p>{p.videos.sub}</p>}
+              </div>
+              <div className="v2-yts" data-rise>
+                {p.videos.items.map((v) => (
+                  <div key={v.id}>
+                    <YtLite id={v.id} title={v.title} />
+                    <h3>{v.title}</h3>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         {p.journey && (
           <section className="v2-sec">

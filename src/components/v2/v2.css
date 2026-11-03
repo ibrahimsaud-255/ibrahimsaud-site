@@ -218,7 +218,7 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 
 /* أزرار التمرير الأفقيّ */
 .v2-rail-ctl { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; }
-.v2-rail-ctl button { width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .07); color: var(--fg); font-size: 20px; cursor: pointer; transition: background .2s; }
+.v2-rail-ctl button { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; border: 0; background: rgba(0, 0, 0, .07); color: var(--fg); font-size: 20px; cursor: pointer; transition: background .2s; }
 .v2-rail-ctl button:hover { background: rgba(0, 0, 0, .12); }
 
 /* ---------- نسخ العرض ---------- */
@@ -518,3 +518,20 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
   .v2 .v2-works.single img { width: 100%; height: auto; aspect-ratio: 16 / 10; }
   .v2 .v2-works.single .body { padding: 24px 26px 28px; }
 }
+
+/* ---------- مقاطع يوتيوب ---------- */
+.v2 .v2-yts { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.v2 .v2-yts h3 { font-size: 21px; margin: 14px 4px 0; }
+.v2 .v2-yt { position: relative; aspect-ratio: 16 / 9; border-radius: 22px; overflow: hidden; background: #000; }
+.v2 .v2-yt iframe, .v2 .v2-yt button { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; background: none; }
+.v2 .v2-yt img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--ease); }
+.v2 .v2-yt button:hover img { transform: scale(1.03); }
+.v2 .v2-yt .play { position: absolute; inset: 0; margin: auto; width: 72px; height: 72px; border-radius: 50%; background: rgba(255, 255, 255, .92); color: #1D1D1F; display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 30px rgba(0, 0, 0, .25); }
+.v2 .v2-yt .play svg { width: 30px; height: 30px; margin-inline-start: -4px; }
+@media (max-width: 734px) { .v2 .v2-yts { grid-template-columns: 1fr; } }
+
+/* منشور لينكدإن داخل كرت «شغل مع الجهات» */
+.v2 .v2-works .embed { width: 100%; height: 560px; border: 0; display: block; background: var(--alt); }
+.v2 .v2-works.single .embed { width: 504px; flex: none; }
+.v2 .v2-works .note { display: block; margin-top: 16px; color: var(--fg-3); font-size: 13px; }
+@media (max-width: 734px) { .v2 .v2-works.single .embed { width: 100%; } }
