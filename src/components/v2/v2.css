@@ -509,3 +509,12 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2 .v2-works .stats b { font-size: 28px; line-height: 1.1; color: var(--fg); font-weight: 800; }
 
 @media (max-width: 734px) { .v2 .v2-works { grid-template-columns: 1fr; } }
+.v2 .v2-works.single { grid-template-columns: 1fr; }
+.v2 .v2-works.single .item { flex-direction: row; }
+.v2 .v2-works.single img { width: 46%; height: 360px; aspect-ratio: auto; object-position: center 55%; }
+.v2 .v2-works.single .body { padding: 36px 40px; align-self: center; }
+@media (max-width: 734px) {
+  .v2 .v2-works.single .item { flex-direction: column; }
+  .v2 .v2-works.single img { width: 100%; height: auto; aspect-ratio: 16 / 10; }
+  .v2 .v2-works.single .body { padding: 24px 26px 28px; }
+}

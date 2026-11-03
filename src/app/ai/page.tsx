@@ -89,7 +89,7 @@ export default function AiPage() {
             ))}
 
             <h2 className="v2-title" data-rise style={{ marginTop: 72 }}>وشغل مع الجهات.</h2>
-            <div className="v2-works">
+            <div className={`v2-works${a.works.length === 1 ? " single" : ""}`}>
               {a.works.map((w) => (
                 <div key={w.title} className="item" data-rise>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
