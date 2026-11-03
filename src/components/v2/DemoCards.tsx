@@ -1,5 +1,5 @@
 // نسخ العرض الحيّة: صورة الجوال، زرّ يفتحها، وكود QR يفتحها على جوالك من الكمبيوتر.
-// clients=false: نظام إبراهيم نفسه (نَسَق)، clients=true: أعمال سوّاها لعملائه.
+// clients=false: نظام إبراهيم نفسه (النظام)، clients=true: أعمال سوّاها لعملائه.
 import { demos } from "@/lib/v2";
 
 export default function DemoCards({ clients = false }: { clients?: boolean }) {

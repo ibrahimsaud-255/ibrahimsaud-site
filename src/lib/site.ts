@@ -405,8 +405,15 @@ export const works: Work[] = [
 // أضف كل شعار: ارفع الصورة في مجلد public ثم اكتب مسارها هنا.
 // مثال: { name: "اسم الشركة", logo: "/logo-company.png" },
 export const brands: { name: string; logo: string }[] = [
-  { name: "ريناد المجد", logo: "/v2/logos/rmg.png" },
+  { name: "جامعة الملك سعود", logo: "/v2/logos/ksu.png" },
+  { name: "هاكاثون هيلثون — المدينة الطبّيّة الجامعيّة", logo: "/v2/logos/healthon.png" },
+  { name: "الأحوال المدنيّة", logo: "/v2/logos/ahwal.png" },
   { name: "الهيئة العامة للنقل", logo: "/v2/logos/tga.png" },
+  { name: "ريناد المجد", logo: "/v2/logos/rmg.png" },
+  { name: "لمات", logo: "/v2/logos/lamat.png" },
+  { name: "بوكيستا", logo: "/v2/logos/bookista.svg" },
+  { name: "مدينة القيم", logo: "/v2/logos/qiyam.png" },
+  { name: "جمعيّة تكوين الأسرة", logo: "/v2/logos/takween.png" },
   { name: "إيجاد التقنية لتقنية المعلومات", logo: "/v2/logos/ejad.png" },
   { name: "التكامل المتّحدة", logo: "/v2/logos/takamul-t.png" },
   { name: "الإشعاع الرقميّ (RAD)", logo: "/v2/logos/radtech.png" },

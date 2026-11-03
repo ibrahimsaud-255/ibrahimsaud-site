@@ -11,15 +11,15 @@ import { bookHref, pkgs } from "@/lib/v2";
 // «الباقات» — كلّ ما يُطلب في صفحة وحدة، مثل متجر آبل: صفّ المنتجات فوق، ثمّ باقات كلّ منتج.
 
 export const metadata: Metadata = {
-  title: "الباقات والأسعار — حضور ونَسَق والاستوديو | إبراهيم سعود",
-  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، نَسَق لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة في الرياض، وهويّة في Claude.",
+  title: "الباقات والأسعار — حضور والنظام والاستوديو | إبراهيم سعود",
+  description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، النظام لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة في الرياض، وهويّة في Claude.",
   alternates: { canonical: "https://ibrahimsaud.com/store/" },
 };
 
 // صفّ المنتجات مثل «تسوّق حسب المنتج» في متجر آبل، بأيقونات على نمط آبل (GlassIcon).
 const row = [
   { name: "حضور", href: "#hudoor", icon: "hudoor" },
-  { name: "نَسَق", href: "#nasaq", icon: "nasaq" },
+  { name: "النظام", href: "#nasaq", icon: "nasaq" },
   { name: "الاستوديو", href: "#studio", icon: "studio" },
   { name: "هويّة", href: "#addons", icon: "hawiya" },
   { name: "حزمة النشر", href: "#addons", icon: "publish" },
@@ -27,7 +27,7 @@ const row = [
 
 const groups = [
   { id: "hudoor", title: "حضور.", sub: "البراند الشخصيّ للخبراء.", more: "/brand/", items: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus] },
-  { id: "nasaq", title: "نَسَق.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.session, pkgs.nasaq, pkgs.nasaqPro] },
+  { id: "nasaq", title: "النظام.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.session, pkgs.nasaq, pkgs.nasaqPro] },
   { id: "studio", title: "الاستوديو.", sub: "بودكاست وأفلام وإعلانات.", more: "/video/", items: [pkgs.podcast, pkgs.film, pkgs.storeAds] },
   { id: "addons", title: "إضافات.", sub: "تشتغل وحدها أو مع أيّ باقة.", more: "", items: [pkgs.hawiya, pkgs.publish] },
 ];

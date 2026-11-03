@@ -32,7 +32,7 @@
   function build() {
     if (document.getElementById('isbar')) return;
     var bar = document.createElement('div'); bar.id = 'isbar';
-    bar.innerHTML = '<a class="b" href="' + back + '" aria-label="رجوع لصفحة نَسَق">‹ نَسَق</a>' + mid +
+    bar.innerHTML = '<a class="b" href="' + back + '" aria-label="رجوع لصفحة النظام">‹ النظام</a>' + mid +
       '<a class="cta" href="https://wa.me/966504895213?text=' + encodeURIComponent('السلام عليكم، جرّبت نسخة العرض (' + name + ') وأبي نظام مثلها') + '">أبي مثله<span> لجهتي</span></a>';
     document.body.appendChild(bar);
     document.body.style.paddingBottom = '78px';

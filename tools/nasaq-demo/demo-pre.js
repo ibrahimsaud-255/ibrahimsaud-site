@@ -1,4 +1,4 @@
-/* نسخة عرض «نَسَق» من نظام إبراهيم (/app) — تُحمَّل قبل 99-boot.js.
+/* نسخة عرض «النظام» من نظام إبراهيم (/app) — تُحمَّل قبل 99-boot.js.
    تستبدل البيانات الافتراضيّة الخاصّة ببيانات عامّة، وتخفي التطبيقات اللي تعتمد على خوادم إبراهيم. */
 (function () {
   // لوحة حروف ودروس وموقع إبراهيم ومدوّنته وقائمته البريديّة مربوطة بخوادمه — ما تظهر في العرض
@@ -10,7 +10,7 @@
   var st = def.settings;
   Object.assign(st, { brand: 'شركتك', owner: 'مدير النظام', email: 'demo@ibrahimsaud.com', phone: '966500000000', salesperson: 'فريق المبيعات', bankName: 'البنك', iban: 'SA0000000000000000000000', accName: 'شركتك' });
   st.official = { brand: 'شركتك', owner: 'مدير النظام', email: 'demo@ibrahimsaud.com', phone: '966500000000', vat: '', cr: '', iban: '', address: 'الرياض' };
-  st.brandProfiles = [Object.assign({}, st.brandProfiles[0], { id: 'brand', name: 'شركتك', tagline: 'نسخة عرض من نَسَق', logo: '' })];
+  st.brandProfiles = [Object.assign({}, st.brandProfiles[0], { id: 'brand', name: 'شركتك', tagline: 'نسخة عرض من النظام', logo: '' })];
   st.defaultBrandId = 'brand';
   def.products = [
     { id: 'p1', name: 'تصميم هويّة بصريّة', price: 4500, unit: 'مشروع', desc: 'شعار وألوان وخطوط ودليل استخدام' },

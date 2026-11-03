@@ -6,7 +6,7 @@
 //
 // التسميات على طريقة آبل: كلّ منتج اسمه كلمة وحدة، والفئة لاحقة ثابتة:
 //   بلا لاحقة = الأساس · Pro = الكامل · + = اشتراك شهريّ.
-// «نَسَق» حلّ محلّ «منوال» اسماً لنظام الإدارة.
+// نظام الإدارة اسمه «النظام» بس — اسم ما يحتاج شرح (أسلوب آبل)، والصفحة تشرح وش يسوّي.
 
 import { waLink } from "./site";
 import paylinks from "./paylinks.json";
@@ -60,8 +60,8 @@ export const pkgs = {
   podcast: { id: "podcast", name: "حلقة بودكاست", for: "تبدأ بها محتواك", price: "٢,٧٥٠", half: "١,٣٧٥", approved: true, items: ["تصوير في الاستوديو بثلاث كاميرات", "الحلقة كاملة جاهزة ليوتيوب", "١٠ مقاطع قصيرة", "تصاميم الحلقة والغلاف"] },
   film: { id: "film", name: "فيلم الخدمة", for: "فيلم تعريفيّ واحد", price: "٣,٤٠٠", half: "١,٧٠٠", approved: true, featured: true, items: ["فكرة واسكربت", "تصوير أو موشن", "نسخة ٦٠–٩٠ ثانية", "٣ نسخ قصيرة"] },
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
-  nasaq: { id: "nasaq", name: "نَسَق", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
-  nasaqPro: { id: "nasaq-pro", name: "نَسَق Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في نَسَق", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
+  nasaq: { id: "nasaq", name: "النظام", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
+  nasaqPro: { id: "nasaq-pro", name: "النظام Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في النظام", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
 } satisfies Record<string, Pkg>;
 
 
@@ -127,7 +127,7 @@ export const why = [
 // client: عمل سوّاه إبراهيم لعميل (يُعرض تحت «أعمال لعملائي» لا كمنتج له)
 export type Demo = { id: string; name: string; kind: string; text: string; img: string; href: string; dash?: string; qr: string; client?: boolean; logo?: string };
 export const demos: Demo[] = [
-  { id: "nasaq", name: "نَسَق", kind: "نظامي · نسخة عرض", text: "نسخة من نظامي ببيانات تجريبيّة: المكتب، والمبيعات، والفوترة، وعروض الأسعار، والعملاء، والتقويم.", img: "/v2/shots/demo-nasaq.jpg", href: "/demo/nasaq/index.html", qr: "/v2/qr/nasaq.svg" },
+  { id: "nasaq", name: "النظام", kind: "نظامي · نسخة عرض", text: "نسخة من نظامي ببيانات تجريبيّة: المكتب، والمبيعات، والفوترة، وعروض الأسعار، والعملاء، والتقويم.", img: "/v2/shots/demo-nasaq.jpg", href: "/demo/nasaq/index.html", qr: "/v2/qr/nasaq.svg" },
   { id: "ruso", name: "جمعيّة رسو لبناء الشخصيّة", kind: "جمعيّة أهليّة · موقع ونظام داخليّ", client: true, logo: "/v2/logos/ruso.svg", text: "موقع الجمعيّة ولوحة تحكّمها: سندات صرف، وحوكمة، ومستفيدون، وتطوّع.", img: "/v2/shots/demo-ruso-site.jpg", href: "/demo/ruso/website/index.html", dash: "/demo/ruso/system/index.html", qr: "/v2/qr/ruso.svg" },
   { id: "manabir", name: "منابر", kind: "منصّة دعويّة · خمس صلاحيّات", client: true, logo: "/v2/logos/manabir.png", text: "تنظيم الأنشطة الدعويّة في المساجد: ادخل كمدير النظام، أو ممثّل الوزارة، أو مشرف المسجد.", img: "/v2/shots/demo-manabir.jpg", href: "/demo/manabir/index.html?login=1", dash: "/demo/manabir/index.html?dash=1", qr: "/v2/qr/manabir.svg" },
   { id: "takamul", name: "التكامل المتّحدة", kind: "شركة استشارات · موقع ولوحة محتوى", client: true, logo: "/v2/logos/takamul.png", text: "موقع شركة استشارات بالعربيّ والإنجليزيّ، ومحتواه كلّه يتعدّل من لوحة تحكّم.", img: "/v2/shots/demo-takamul.jpg", href: "/demo/takamul/index.html", dash: "/demo/takamul/dashboard/index.html", qr: "/v2/qr/takamul.svg" },
@@ -214,7 +214,7 @@ export const products: Record<Product["slug"], Product> = {
       title: "نظام الخبير.",
       text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، باسمك وشعارك. هذا نظامي أنا اللي أدير فيه شغلي، وتقدر تجرّبه الحين.",
       src: "/v2/shots/desk-office.jpg",
-      url: "نَسَق — نسخة عرض",
+      url: "النظام — نسخة عرض",
       phone: "/v2/shots/phone-office.jpg",
       href: "/demo/nasaq/index.html",
     },
@@ -253,18 +253,18 @@ export const products: Record<Product["slug"], Product> = {
   systems: {
     slug: "systems",
     href: "/systems/",
-    name: "نَسَق",
-    kicker: "نظام الإدارة",
+    name: "النظام",
+    kicker: "إدارة الشغل · للمنشآت والجمعيّات",
     meta: {
-      title: "نَسَق — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
-      description: "نَسَق نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
+      title: "النظام — نظام إدارة أعمال وجمعيّات عربيّ تملكه | إبراهيم سعود",
+      description: "نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
     },
     headline: "ادفع مرّة. امتلك نظامك.",
     sub: "نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك، بدل إكسل وواتساب والاشتراكات. الكود باسمك، وأدرّبك تطوّره بنفسك مع Claude.",
     from: "يبدأ من ٥,٠٠٠ ريال",
     memoji: "proud",
     heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-nasaq.jpg", "/v2/shots/demo-manabir-dash.jpg"],
-    heroScreen: { src: "/v2/shots/desk-office.jpg", url: "نَسَق — نسخة عرض", phone: "/v2/shots/phone-office.jpg" },
+    heroScreen: { src: "/v2/shots/desk-office.jpg", url: "النظام — نسخة عرض", phone: "/v2/shots/phone-office.jpg" },
     highlights: [
       { title: "المكتب.", text: "كلّ تطبيقات شغلك في شاشة وحدة: المبيعات والفوترة والعملاء والمحاسبة والتقويم.", img: "/v2/shots/hl-office.jpg", kind: "phone" },
       { title: "كلّ موظّف يشوف شغله.", text: "صلاحيّات لكلّ قسم، و«عرض كـ» تجرّب فيه النظام بعين أيّ موظّف.", img: "/v2/shots/demo-manabir.jpg", kind: "phone" },
@@ -278,7 +278,7 @@ export const products: Record<Product["slug"], Product> = {
       items: [
         "نظام إدارة على مقاس شغلكم: العملاء، عروض الأسعار والفواتير، الماليّة، المهامّ والتقويم",
         "حسابات للفريق بصلاحيّات لكلّ قسم",
-        "موقع الجهة يُدار من النظام (في نَسَق Pro)",
+        "موقع الجهة يُدار من لوحة التحكّم (في النظام Pro)",
         "الكود في حساب GitHub باسمكم",
         "قاعدة بيانات باسمكم",
         "جلسة تدريب: كيف يطوّر المدير النظام بنفسه مع Claude",
@@ -294,7 +294,7 @@ export const products: Record<Product["slug"], Product> = {
     ],
     ownership: {
       title: "نظامك ملكك. مو إيجار.",
-      sub: "أغلب الأنظمة اشتراك شهريّ، وبياناتك عند غيرك. نَسَق تدفع عليه مرّة، ويصير ملكك.",
+      sub: "أغلب الأنظمة اشتراك شهريّ، وبياناتك عند غيرك. النظام تدفع عليه مرّة، ويصير ملكك.",
       items: [
         { title: "الكود باسمك", text: "في حساب GitHub تملكه الجهة. ما يضيع لو تغيّر المطوّر، ولا تحتاجني عشان تشغّله." },
         { title: "البيانات عندك", text: "قاعدة بيانات باسم الجهة، بصلاحيّات تحدّد مين يشوف وش." },
@@ -303,7 +303,7 @@ export const products: Record<Product["slug"], Product> = {
       ],
     },
     quote: {
-      subject: "عرض سعر لنظام نَسَق",
+      subject: "عرض سعر للنظام",
       fields: [
         { id: "name", label: "الاسم" },
         { id: "org", label: "اسم الجهة" },
@@ -334,8 +334,8 @@ export const products: Record<Product["slug"], Product> = {
     ],
     compare: {
       models: [
-        { name: "نَسَق", price: "من ٥,٠٠٠" },
-        { name: "نَسَق Pro", price: "من ٧,٠٠٠" },
+        { name: "النظام", price: "من ٥,٠٠٠" },
+        { name: "النظام Pro", price: "من ٧,٠٠٠" },
       ],
       rows: [
         { label: "المستخدمون", v: ["أنت وفريق صغير", "فريق بأقسام وصلاحيّات"] },
@@ -429,7 +429,7 @@ export const aiPage = {
   sub: "ورش وتدريب واستشارات للشركات والجهات والمدارس: كيف يفكّر فريقك ويبني ويتعلّم مع الذكاء الاصطناعي، بأمثلة من شغلكم أنتم.",
   services: [
     { title: "ورشة لفريقك", text: "ورشة حضوريّة أو عن بعد، مبنيّة على شغل جهتكم: الأساسيّات، وكيف تكلّمه صحّ، والأدوات اللي تفرق، وتطبيق حيّ.", memoji: "big_happy" as Memoji },
-    { title: "تدريب المدير على نظامه", text: "لو عندكم نظام نَسَق أو موقع: جلسة يتعلّم فيها المدير يطوّر نظامه بنفسه مع Claude، بكلام عاديّ.", memoji: "proud" as Memoji },
+    { title: "تدريب المدير على نظامه", text: "لو سوّيت لكم نظام أو موقع: جلسة يتعلّم فيها المدير يطوّر نظامه بنفسه مع Claude، بكلام عاديّ.", memoji: "proud" as Memoji },
     { title: "استشارة: وين يدخل؟", text: "جلسة نمرّ فيها على شغلكم ونحدّد وين يوفّر الذكاء الاصطناعي وقتاً فعلاً، ووين ما يستاهل.", memoji: "head_tilt" as Memoji },
   ],
   workshop: {
@@ -474,10 +474,10 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    label: "نَسَق", href: "/systems/",
+    label: "النظام", href: "/systems/",
     menu: [
-      { title: "استكشف نَسَق", big: true, links: [{ label: "نَسَق", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
-      { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "نَسَق", href: "/systems/#buy" }, { label: "نَسَق Pro", href: "/systems/#buy" }] },
+      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
+      { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "النظام", href: "/systems/#buy" }, { label: "النظام Pro", href: "/systems/#buy" }] },
     ],
   },
   {
