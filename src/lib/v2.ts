@@ -23,8 +23,8 @@ export type Memoji =
 
 export const hero = {
   eyebrow: "إبراهيم سعود",
-  title: ["خلّ خبرتك", "تشتغل لك."],
-  sub: "أبني لك الحضور والمحتوى والنظام: موقع يبيع، استوديو يصوّر، ونظام يدير شغلك. وطبّقته على نفسي أوّل.",
+  title: ["بين التقنية", "والأعمال."],
+  sub: "أدخّل الذكاء الاصطناعي في شغلك: نظام يدير الشغل، ومحتوى يوصل، وفريق يتعلّم يطوّرها بنفسه. فرد واحد، بتسليم بمستوى الشركات.",
 };
 
 // يتلوّن كلمة كلمة مع التمرير
@@ -137,6 +137,8 @@ export const demos: Demo[] = [
 export type Highlight = { title: string; text: string; img: string; kind: "phone" | "cover" | "memoji" | "frame"; dark?: boolean };
 export type Compare = { models: { name: string; price: string; unit?: string }[]; rows: { label: string; v: (string | boolean)[] }[] };
 
+export type QuoteField = { id: string; label: string; type?: "select" | "text" | "textarea"; options?: string[]; placeholder?: string };
+
 export type Product = {
   slug: "brand" | "systems" | "video";
   href: string;
@@ -159,6 +161,11 @@ export type Product = {
   showcase?: { id?: string; eyebrow: string; title: string; text: string; imgs: string[]; logos?: { src: string; alt: string; label?: string }[] };
   demos?: boolean;
   showWorks?: boolean;
+  // صفحة بيع مؤسّسيّة: وش تستلم، كيف نشتغل، الملكيّة، ونموذج طلب عرض سعر
+  deliverables?: { title: string; items: string[] };
+  process?: { name: string; text: string }[];
+  ownership?: { title: string; sub: string; items: { title: string; text: string }[] };
+  quote?: { subject: string; fields: QuoteField[] };
   compare: Compare;
   packages: Pkg[];
   addons?: Pkg[];
@@ -252,8 +259,8 @@ export const products: Record<Product["slug"], Product> = {
       title: "نَسَق — نظام إدارة أعمال وجمعيّات عربيّ على المقاس | إبراهيم سعود",
       description: "نَسَق نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك: عروض أسعار وفواتير ومحاسبة ومشاريع، وللجمعيّات سندات صرف وحوكمة ومستفيدون وتطوّع. جرّبه من جوالك.",
     },
-    headline: "شغلك كلّه. في مكان واحد.",
-    sub: "نظام إدارة عربيّ على مقاسك، بدل إكسل وواتساب وبرنامج فواتير. ملكك أنت، وتعدّل عليه بالذكاء الاصطناعيّ بكلام عاديّ.",
+    headline: "ادفع مرّة. امتلك نظامك.",
+    sub: "نظام إدارة عربيّ على مقاس منشأتك أو جمعيّتك، بدل إكسل وواتساب والاشتراكات. الكود باسمك، وأدرّبك تطوّره بنفسك مع Claude.",
     from: "يبدأ من ٥,٠٠٠ ريال",
     memoji: "proud",
     heroPhones: ["/v2/shots/demo-ruso-sys.jpg", "/v2/shots/demo-nasaq.jpg", "/v2/shots/demo-manabir-dash.jpg"],
@@ -266,6 +273,45 @@ export const products: Record<Product["slug"], Product> = {
       { title: "الأرقام قدّامك.", text: "طلبات تنتظرك، ومهامّ متأخّرة، وصافي حركة السنة، من أوّل شاشة.", img: "/v2/shots/demo-ruso-sys.jpg", kind: "phone" },
     ],
     demos: true,
+    deliverables: {
+      title: "وش تستلم.",
+      items: [
+        "نظام إدارة على مقاس شغلكم: العملاء، عروض الأسعار والفواتير، الماليّة، المهامّ والتقويم",
+        "حسابات للفريق بصلاحيّات لكلّ قسم",
+        "موقع الجهة يُدار من النظام (في نَسَق Pro)",
+        "الكود في حساب GitHub باسمكم",
+        "قاعدة بيانات باسمكم",
+        "جلسة تدريب: كيف يطوّر المدير النظام بنفسه مع Claude",
+        "٣٠ يوم دعم فنيّ بعد التسليم",
+      ],
+    },
+    process: [
+      { name: "مكالمة تعارف", text: "٢٠ دقيقة مجّانيّة: نفهم جهتكم ووش اللي يضايقكم في الشغل اليوم." },
+      { name: "جلسة التشخيص", text: "نرسم خريطة النظام: الأقسام والصلاحيّات والتقارير، ونطلع بعرض سعر رسميّ بمدّة واضحة. سعرها يُخصم من المشروع." },
+      { name: "البناء", text: "نصف المبلغ ونبدأ. تشوف التقدّم على نسخة تجريبيّة أوّل بأوّل، وتعدّل قبل التسليم." },
+      { name: "التسليم والتدريب", text: "الكود والقاعدة باسمكم، وجلسة يتعلّم فيها المدير يطوّر النظام مع Claude." },
+      { name: "بعد التسليم", text: "٣٠ يوم دعم فنيّ. وبعدها النظام نظامكم: تطوّرونه بأنفسكم، أو تطلبونني بعرض سعر." },
+    ],
+    ownership: {
+      title: "نظامك ملكك. مو إيجار.",
+      sub: "أغلب الأنظمة اشتراك شهريّ، وبياناتك عند غيرك. نَسَق تدفع عليه مرّة، ويصير ملكك.",
+      items: [
+        { title: "الكود باسمك", text: "في حساب GitHub تملكه الجهة. ما يضيع لو تغيّر المطوّر، ولا تحتاجني عشان تشغّله." },
+        { title: "البيانات عندك", text: "قاعدة بيانات باسم الجهة، بصلاحيّات تحدّد مين يشوف وش." },
+        { title: "تطوّره بنفسك", text: "مع Claude تضيف وتعدّل بكلام عاديّ، وأعلّمك الطريقة في جلسة التسليم." },
+        { title: "ورق رسميّ", text: "عرض سعر وفاتورة رسميّة، والدفع على دفعتين: نصف عند البداية ونصف عند التسليم." },
+      ],
+    },
+    quote: {
+      subject: "عرض سعر لنظام نَسَق",
+      fields: [
+        { id: "name", label: "الاسم" },
+        { id: "org", label: "اسم الجهة" },
+        { id: "type", label: "نوع الجهة", type: "select", options: ["شركة أو مؤسّسة", "جمعيّة أو جهة غير ربحيّة", "جهة حكوميّة", "مدرسة أو جهة تعليميّة", "غير ذلك"] },
+        { id: "size", label: "عدد الموظّفين", type: "select", options: ["١–٥", "٦–٢٠", "٢١–٥٠", "أكثر من ٥٠"] },
+        { id: "need", label: "وش تبون النظام يسوي؟", type: "textarea", placeholder: "مثلاً: عروض الأسعار والفواتير، متابعة المتبرّعين، سندات الصرف..." },
+      ],
+    },
     features: [
       {
         title: "للمنشآت والشركات.",
@@ -371,22 +417,75 @@ export const products: Record<Product["slug"], Product> = {
   },
 };
 
+// ===== الذكاء الاصطناعي (/ai): ورش وتدريب واستشارات — الخدمة الأكثر طلباً =====
+export const aiPage = {
+  meta: {
+    title: "ورش وتدريب الذكاء الاصطناعي للشركات والجهات والمدارس | إبراهيم سعود",
+    description: "ورش عمل وتدريب واستشارات في الذكاء الاصطناعي بالرياض: كيف يفكّر فريقك ويبني ويتعلّم مع الذكاء الاصطناعي، وكيف يطوّر المدير نظامه بنفسه مع Claude.",
+  },
+  kicker: "ورش · تدريب · استشارات",
+  name: "الذكاء الاصطناعي",
+  headline: "في شغلك. مو في العناوين.",
+  sub: "ورش وتدريب واستشارات للشركات والجهات والمدارس: كيف يفكّر فريقك ويبني ويتعلّم مع الذكاء الاصطناعي، بأمثلة من شغلكم أنتم.",
+  services: [
+    { title: "ورشة لفريقك", text: "ورشة حضوريّة أو عن بعد، مبنيّة على شغل جهتكم: الأساسيّات، وكيف تكلّمه صحّ، والأدوات اللي تفرق، وتطبيق حيّ.", memoji: "big_happy" as Memoji },
+    { title: "تدريب المدير على نظامه", text: "لو عندكم نظام نَسَق أو موقع: جلسة يتعلّم فيها المدير يطوّر نظامه بنفسه مع Claude، بكلام عاديّ.", memoji: "proud" as Memoji },
+    { title: "استشارة: وين يدخل؟", text: "جلسة نمرّ فيها على شغلكم ونحدّد وين يوفّر الذكاء الاصطناعي وقتاً فعلاً، ووين ما يستاهل.", memoji: "head_tilt" as Memoji },
+  ],
+  workshop: {
+    eyebrow: "آخر ورشة قدّمتها",
+    title: "لا تدرسه… جرّبه.",
+    text: "ورشة لطلاب المرحلة المتوسطة والثانويّة: كيف تفكّر وتبني وتتعلّم مع الذكاء الاصطناعي. فيها قصّة من شغلي: كيف دخل المصحف الشريف منصّة حروف ودروس بالهندسة العكسيّة، وكيف تكلّمه صحّ، والأدوات اللي تستاهل.",
+    imgs: ["/v2/shots/workshop-cover.jpg", "/v2/shots/workshop-story.jpg", "/v2/shots/workshop-method.jpg", "/v2/shots/workshop-tools.jpg"],
+  },
+  steps: [
+    { name: "نفهم جمهوركم", text: "مين بيحضر، ووش يعرفون، ووش تبون يطلعون فيه." },
+    { name: "نبنيها على شغلكم", text: "أمثلة من واقعكم، مو أمثلة عامّة من الإنترنت." },
+    { name: "تطبيق حيّ", text: "كلّ واحد يطلع وقد سوّى شي بيده، مو بس سمع." },
+  ],
+  quote: {
+    subject: "ورشة ذكاء اصطناعي",
+    fields: [
+      { id: "name", label: "الاسم" },
+      { id: "org", label: "الجهة" },
+      { id: "audience", label: "الحضور", type: "select", options: ["موظّفون", "مدراء وقياديّون", "طلاب", "معلّمون", "جمهور عامّ"] },
+      { id: "count", label: "عدد الحضور التقريبيّ" },
+      { id: "mode", label: "حضوريّ أو عن بعد", type: "select", options: ["حضوريّ في الرياض", "حضوريّ خارج الرياض", "عن بعد"] },
+      { id: "date", label: "الموعد المقترح", placeholder: "مثلاً: الأسبوع الجاي، مساءً" },
+      { id: "notes", label: "وش تبون تركّز عليه الورشة؟", type: "textarea" },
+    ] as QuoteField[],
+  },
+  faqs: [
+    { q: "الورشة لمين تناسب؟", a: "للموظّفين والمدراء والمعلّمين والطلاب. نبنيها على مستوى الحضور ونوع شغلهم." },
+    { q: "تحتاج خبرة تقنيّة؟", a: "لا. نبدأ من الأساس، وكلّ واحد يطبّق بيده خلال الورشة." },
+    { q: "كم سعرها؟", a: "حسب عدد الحضور والمدّة والمكان. أرسل الطلب من النموذج وأرد عليك بعرض سعر رسميّ." },
+    { q: "تقدّم ورش عن بعد؟", a: "نعم، عن بعد أو حضوريّاً في الرياض، وخارجها حسب الموعد." },
+  ],
+};
+
 // ===== التنقّل (الشريط العلويّ وقوائمه المنسدلة، مثل apple.com) =====
 export type NavItem = { label: string; href: string; menu?: { title: string; big?: boolean; links: { label: string; href: string }[] }[] };
 export const navItems: NavItem[] = [
   {
-    label: "حضور", href: "/brand/",
+    label: "الذكاء الاصطناعي", href: "/ai/",
     menu: [
-      { title: "استكشف حضور", big: true, links: [{ label: "حضور", href: "/brand/" }, { label: "قارن الباقات", href: "/brand/#compare" }, { label: "هويّة", href: "/brand/#identity" }] },
-      { title: "اطلب", links: [{ label: "حضور", href: "/brand/#buy" }, { label: "حضور Pro", href: "/brand/#buy" }, { label: "حضور+", href: "/brand/#buy" }] },
-      { title: "المزيد", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "حزمة النشر", href: "/store/#addons" }] },
+      { title: "استكشف", big: true, links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "آخر ورشة", href: "/ai/#workshop" }, { label: "اطلب ورشة", href: "/ai/#request" }] },
+      { title: "الخدمات", links: [{ label: "ورشة لفريقك", href: "/ai/#services" }, { label: "تدريب المدير على نظامه", href: "/ai/#services" }, { label: "استشارة", href: "/ai/#services" }] },
     ],
   },
   {
     label: "نَسَق", href: "/systems/",
     menu: [
       { title: "استكشف نَسَق", big: true, links: [{ label: "نَسَق", href: "/systems/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
-      { title: "اطلب", links: [{ label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "نَسَق", href: "/systems/#buy" }, { label: "نَسَق Pro", href: "/systems/#buy" }] },
+      { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "نَسَق", href: "/systems/#buy" }, { label: "نَسَق Pro", href: "/systems/#buy" }] },
+    ],
+  },
+  {
+    label: "حضور", href: "/brand/",
+    menu: [
+      { title: "استكشف حضور", big: true, links: [{ label: "حضور", href: "/brand/" }, { label: "قارن الباقات", href: "/brand/#compare" }, { label: "هويّة", href: "/brand/#identity" }] },
+      { title: "اطلب", links: [{ label: "حضور", href: "/brand/#buy" }, { label: "حضور Pro", href: "/brand/#buy" }, { label: "حضور+", href: "/brand/#buy" }] },
+      { title: "المزيد", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "حزمة النشر", href: "/store/#addons" }] },
     ],
   },
   {

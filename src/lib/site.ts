@@ -183,7 +183,7 @@ export type Work = {
   videoUrl?: string; // رابط فيديو واحد (اختياري — للتوافق القديم)
   videos?: string[]; // عدة روابط فيديو لنفس العمل
   bts?: string; // رابط فيديو الكواليس (اختياري)
-  logo?: string; // مسار شعار العميل داخل public مثل "/LOGO_kwentra.png" (اختياري)
+  logo?: string; // مسار شعار العميل داخل public مثل "/v2/logos/kwentra.png" (اختياري)
   thumb?: string; // صورة مصغّرة مخصّصة للعمل (اختياري) — وإلا تُستخدم صورة يوتيوب
   featured?: boolean;
 };
@@ -233,7 +233,7 @@ export const works: Work[] = [
     roles: ["إخراج", "تصوير", "مونتاج"],
     desc: "فيلم تعريفي بمختبر الابتكار في شركة ريناد المجد لتقنية المعلومات — يبرز البيئة والأدوات والفرق.",
     videoUrl: "https://drive.google.com/file/d/1b_ERZ-GHL-oQbmby4gsm9wFBzIjIheyo/view",
-    logo: "/LOGO_RMG.png",
+    logo: "/v2/logos/rmg.png",
   },
   {
     id: "zayadat-podcast",
@@ -280,7 +280,7 @@ export const works: Work[] = [
     roles: ["كتابة النص", "تصوير درون", "تمثيل", "تعليق صوتي", "مونتاج"],
     desc: "فيلم سينمائي ليوم التأسيس بلقطات درون وتعليق صوتي ونص كامل — صنعته من الفكرة حتى التسليم، وكنت فيه الممثل والمعلّق والكاتب والمنتج.",
     videoUrl: "https://www.youtube.com/watch?v=EOOlRJgeT6Y",
-    logo: "/LOGO_RMG.png",
+    logo: "/v2/logos/rmg.png",
     thumb: "https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/يوم%20التأسيس.jpg",
     featured: true,
   },
@@ -405,13 +405,17 @@ export const works: Work[] = [
 // أضف كل شعار: ارفع الصورة في مجلد public ثم اكتب مسارها هنا.
 // مثال: { name: "اسم الشركة", logo: "/logo-company.png" },
 export const brands: { name: string; logo: string }[] = [
-  { name: "ريناد المجد", logo: "/LOGO_RMG.png" },
-  { name: "الهيئة العامة للنقل", logo: "/tga.png" },
-  { name: "إجادة التقنية", logo: "/ejada.png" },
-  { name: "فيه ستور", logo: "/feeh-store.webp" },
-  { name: "وكونترا", logo: "/LOGO_kwentra.png" },
-  { name: "جمعية خير لتحفيظ القرآن", logo: "/khair-quran.png" },
-  { name: "درفت تايم", logo: "/LOGO_3_drift_time.png" },
+  { name: "ريناد المجد", logo: "/v2/logos/rmg.png" },
+  { name: "الهيئة العامة للنقل", logo: "/v2/logos/tga.png" },
+  { name: "إيجاد التقنية لتقنية المعلومات", logo: "/v2/logos/ejad.png" },
+  { name: "التكامل المتّحدة", logo: "/v2/logos/takamul-t.png" },
+  { name: "الإشعاع الرقميّ (RAD)", logo: "/v2/logos/radtech.png" },
+  { name: "جمعيّة رسو لبناء الشخصيّة", logo: "/v2/logos/ruso.svg" },
+  { name: "جمعيّة الدعوة بالسلي — منابر", logo: "/v2/logos/manabir-org.png" },
+  { name: "JGB", logo: "/v2/logos/jgb.png" },
+  { name: "فيه ستور", logo: "/v2/logos/feeh.png" },
+  { name: "وكونترا", logo: "/v2/logos/kwentra.png" },
+  { name: "جمعية خير لتحفيظ القرآن", logo: "/v2/logos/khair.png" },
 ];
 
 // ===== بودكاست سَعي — البرامج التي أنتجناها وقدّمناها =====

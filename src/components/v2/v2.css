@@ -256,7 +256,7 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 /* ---------- العملاء ---------- */
 .v2-logos { display: flex; flex-wrap: wrap; gap: 28px 56px; justify-content: center; align-items: center; }
 /* الشعارات أصلاً للموقع الداكن (بيضاء) — نحوّلها صورة ظلّيّة داكنة موحّدة */
-.v2-logos img { height: 56px; max-width: 160px; width: auto; object-fit: contain; filter: brightness(0); opacity: .42; transition: opacity .3s; }
+.v2-logos img { height: 48px; max-width: 150px; width: auto; object-fit: contain; filter: brightness(0); opacity: .42; transition: opacity .3s; }
 .v2-logos img:hover { opacity: .8; }
 
 /* ---------- الأعمال ---------- */
@@ -440,3 +440,38 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-steps p { font-size: 17px; line-height: 1.6; color: var(--fg-2); margin-top: 8px; }
 @media (max-width: 900px) { .v2-steps { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 520px) { .v2-steps { grid-template-columns: 1fr; } }
+
+/* ---------- صفحة البيع المؤسّسيّة: وش تستلم، كيف نشتغل، الملكيّة، طلب عرض سعر ---------- */
+.v2-checks { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 0 48px; }
+.v2-checks li { display: flex; gap: 14px; align-items: baseline; padding: 18px 0; border-top: 1px solid var(--line); font-size: 19px; line-height: 1.5; }
+.v2-checks li::before { content: "✓"; color: var(--blue); font-weight: 800; flex: none; }
+.v2-process { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+.v2-process li { background: var(--card); border-radius: 22px; padding: 24px 22px 26px; }
+.v2-process .n { font-size: 15px; font-weight: 800; color: var(--blue); }
+.v2-process h3 { font-size: 21px; margin-top: 8px; }
+.v2-process p { font-size: 15.5px; line-height: 1.65; color: var(--fg-2); margin-top: 8px; }
+.v2-own { position: relative; overflow: hidden; border-radius: 32px; background: var(--ink); color: #fff; padding: clamp(32px, 5vw, 64px); }
+.v2-own .hd { position: relative; max-width: 640px; }
+.v2-own h2 { font-size: clamp(32px, 4.6vw, 52px); line-height: 1.2; }
+.v2-own .hd p { font-size: 19px; line-height: 1.6; color: rgba(255, 255, 255, .7); margin-top: 12px; }
+.v2-own .grid { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; margin-top: 40px; }
+.v2-own .grid > div { border-top: 1px solid rgba(255, 255, 255, .18); padding-top: 18px; }
+.v2-own h3 { font-size: 21px; }
+.v2-own .grid p { font-size: 15.5px; line-height: 1.65; color: rgba(255, 255, 255, .7); margin-top: 8px; }
+.v2-quote { max-width: 760px; margin: 0 auto; background: var(--card); border-radius: 28px; padding: clamp(22px, 4vw, 36px); display: grid; grid-template-columns: 1fr 1fr; gap: 16px 18px; }
+.v2-quote label { display: flex; flex-direction: column; gap: 6px; font-size: 14px; font-weight: 700; }
+.v2-quote .full { grid-column: 1 / -1; }
+.v2-quote input, .v2-quote select, .v2-quote textarea { font: inherit; font-size: 16px; font-weight: 400; border: 1px solid var(--line); border-radius: 12px; padding: 11px 13px; background: #fff; color: var(--fg); }
+.v2-quote input:focus, .v2-quote select:focus, .v2-quote textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: transparent; }
+.v2-quote .act { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.v2-quote .act small { color: var(--fg-2); font-size: 13px; }
+@media (max-width: 980px) { .v2-process { grid-template-columns: 1fr 1fr; } .v2-own .grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px) { .v2-checks, .v2-process, .v2-own .grid, .v2-quote { grid-template-columns: 1fr; } }
+
+/* ---------- صفحة الذكاء الاصطناعي ---------- */
+.v2-why.three { grid-template-columns: repeat(3, 1fr); }
+.v2-process.three { grid-template-columns: repeat(3, 1fr); }
+.v2-slides { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.v2-slides img { width: 100%; border-radius: 16px; box-shadow: 0 0 0 1px var(--line), 0 24px 40px -28px rgba(30, 45, 90, .35); }
+@media (max-width: 900px) { .v2-why.three, .v2-process.three, .v2-slides { grid-template-columns: 1fr; } }
+.v2-tile .art.frame.wide img { width: min(92%, 880px); }

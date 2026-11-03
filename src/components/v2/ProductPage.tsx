@@ -14,6 +14,7 @@ import WorksRail from "./WorksRail";
 import PackageCards from "./PackageCards";
 import WhyCards from "./WhyCards";
 import Devices from "./Devices";
+import QuoteForm from "./QuoteForm";
 import { brands } from "@/lib/site";
 import { bookHref, waHref, type Product } from "@/lib/v2";
 
@@ -23,6 +24,7 @@ export default function ProductPage({ p }: { p: Product }) {
     ...(p.demos ? [{ label: "جرّبه", href: "#try" }] : []),
     ...(p.showWorks ? [{ label: "الأعمال", href: "#works" }] : []),
     { label: "قارن", href: "#compare" },
+    ...(p.quote ? [{ label: "عرض سعر", href: "#request" }] : []),
   ];
   return (
     <Shell>
@@ -86,6 +88,16 @@ export default function ProductPage({ p }: { p: Product }) {
           </section>
         )}
 
+        {/* ===== وش تستلم ===== */}
+        {p.deliverables && (
+          <section className="v2-sec">
+            <div className="v2-wrap">
+              <h2 className="v2-title" data-rise>{p.deliverables.title}</h2>
+              <ul className="v2-checks" data-rise>{p.deliverables.items.map((it) => <li key={it}>{it}</li>)}</ul>
+            </div>
+          </section>
+        )}
+
         {/* ===== التفاصيل ===== */}
         {p.features.map((f, i) => (
           <section key={f.title} className="v2-sec" style={i > 0 || p.journey ? { paddingTop: 0 } : undefined}>
@@ -97,6 +109,33 @@ export default function ProductPage({ p }: { p: Product }) {
             </div>
           </section>
         ))}
+
+        {/* ===== كيف نشتغل ===== */}
+        {p.process && (
+          <section className="v2-sec alt">
+            <div className="v2-wrap">
+              <h2 className="v2-title" data-rise>كيف نشتغل.</h2>
+              <ol className="v2-process">
+                {p.process.map((st, i) => (
+                  <li key={st.name} data-rise><span className="n">{["١", "٢", "٣", "٤", "٥", "٦"][i]}</span><h3>{st.name}</h3><p>{st.text}</p></li>
+                ))}
+              </ol>
+            </div>
+          </section>
+        )}
+
+        {/* ===== الملكيّة ===== */}
+        {p.ownership && (
+          <section className="v2-sec">
+            <div className="v2-wrap">
+              <div className="v2-own dark" data-rise>
+                <WindowLight style={{ top: -60, left: -80, width: 760, height: 500 }} />
+                <div className="hd"><h2>{p.ownership.title}</h2><p>{p.ownership.sub}</p></div>
+                <div className="grid">{p.ownership.items.map((o) => <div key={o.title}><h3>{o.title}</h3><p>{o.text}</p></div>)}</div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ===== النظام على الكمبيوتر ===== */}
         {p.screen && (
@@ -197,6 +236,19 @@ export default function ProductPage({ p }: { p: Product }) {
             )}
           </div>
         </section>
+
+        {/* ===== اطلب عرض سعر ===== */}
+        {p.quote && (
+          <section className="v2-sec alt" id="request">
+            <div className="v2-wrap">
+              <div className="v2-head center" data-rise>
+                <h2>اطلب عرض سعر.</h2>
+                <p>خمس خانات، وأرد عليك بعرض سعر رسميّ تقدر ترفعه لإدارتك.</p>
+              </div>
+              <div data-rise><QuoteForm subject={p.quote.subject} fields={p.quote.fields} cta="اطلب عرض السعر" /></div>
+            </div>
+          </section>
+        )}
 
         {/* ===== لماذا ===== */}
         <section className="v2-sec alt">

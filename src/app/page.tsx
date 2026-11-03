@@ -10,19 +10,19 @@ import Manifesto from "@/components/v2/Manifesto";
 import WorksRail from "@/components/v2/WorksRail";
 import Devices from "@/components/v2/Devices";
 import { brands } from "@/lib/site";
-import { bookHref, hero, manifesto, pkgs, products, tools, waHref } from "@/lib/v2";
+import { aiPage, bookHref, hero, manifesto, products, tools, waHref } from "@/lib/v2";
 
 // الرئيسيّة بهندسة apple.com: واجهة إبراهيم، ثمّ لوحة كاملة العرض لكلّ منتج، ثمّ شبكة لوحات أصغر.
 // القديمة محفوظة في /classic. المحتوى كلّه في src/lib/v2.ts.
 
 export const metadata: Metadata = {
-  title: "إبراهيم سعود — أبني لك الحضور والمحتوى والنظام",
+  title: "إبراهيم سعود — بين التقنية والأعمال",
   description:
-    "إبراهيم سعود يبني للخبراء والمنشآت والجمعيّات ما يحتاجونه لينموا: حضور شخصيّ وموقع يبيع، نَسَق لإدارة الشغل، واستوديو بودكاست وفيديو في الرياض.",
+    "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها مع نَسَق، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض.",
   alternates: { canonical: "https://ibrahimsaud.com" },
 };
 
-const { brand, systems, video } = products;
+const { brand, systems } = products;
 
 export default function Home() {
   return (
@@ -39,7 +39,7 @@ export default function Home() {
               <p className="sub">{hero.sub}</p>
               <div className="ctas">
                 <FaceOn face="wink"><a className="v2-btn v2-btn-primary" href={bookHref} target="_blank" rel="noopener">احجز مكالمة ٢٠ دقيقة</a></FaceOn>
-                <FaceOn face="big_happy"><a className="v2-btn v2-btn-ghost" href="/store/">شوف الباقات</a></FaceOn>
+                <FaceOn face="big_happy"><a className="v2-btn v2-btn-ghost" href="/ai/">الذكاء الاصطناعي</a></FaceOn>
               </div>
             </div>
             <div className="v2-stage"><Memoji3D base="happy" /></div>
@@ -49,15 +49,15 @@ export default function Home() {
         {/* ===== لوحات المنتجات ===== */}
         <div className="v2-tiles">
           <section className="v2-tile" data-rise>
-            <h2>{brand.name}</h2>
-            <p className="line">{brand.headline}</p>
+            <h2>{aiPage.name}</h2>
+            <p className="line">{aiPage.headline}</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary sm" href={brand.href}>اعرف أكثر</a>
-              <a className="v2-btn v2-btn-ghost sm" href={`${brand.href}#buy`}>اطلب</a>
+              <a className="v2-btn v2-btn-primary sm" href="/ai/">اعرف أكثر</a>
+              <a className="v2-btn v2-btn-ghost sm" href="/ai/#request">اطلب ورشة</a>
             </div>
-            <div className="art memoji">
+            <div className="art frame wide">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/v2/memoji/hands_on_hips.png" alt="" loading="lazy" />
+              <img src="/v2/shots/workshop-cover.jpg" alt="ورشة «لا تدرسه… جرّبه» للذكاء الاصطناعي" loading="lazy" />
             </div>
           </section>
 
@@ -72,16 +72,19 @@ export default function Home() {
             <div className="art screen"><Devices s={systems.heroScreen!} /></div>
           </section>
 
-          <section className="v2-tile photo" data-rise>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="bg" src="/v2/shots/studio.jpg" alt="استوديو إبراهيم سعود في الرياض" loading="lazy" />
-            <h2>{video.name}</h2>
-            <p className="line">{video.headline}</p>
+          <section className="v2-tile" data-rise>
+            <h2>{brand.name}</h2>
+            <p className="line">{brand.headline}</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary sm" href={video.href}>اعرف أكثر</a>
-              <a className="v2-btn v2-btn-ghost sm" href={`${video.href}#buy`}>اطلب</a>
+              <a className="v2-btn v2-btn-primary sm" href={brand.href}>اعرف أكثر</a>
+              <a className="v2-btn v2-btn-ghost sm" href={`${brand.href}#buy`}>اطلب</a>
+            </div>
+            <div className="art memoji">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/v2/memoji/hands_on_hips.png" alt="" loading="lazy" />
             </div>
           </section>
+
 
           <div className="v2-tile-grid">
             <section className="v2-tile half dark" data-rise>
@@ -124,12 +127,15 @@ export default function Home() {
             </section>
 
             <section className="v2-tile half dark" data-rise>
-              <h2>{pkgs.podcast.name}</h2>
-              <p className="line">حلقة كاملة وعشرة مقاطع، من استوديو بثلاث كاميرات.</p>
+              <h2>سَعي</h2>
+              <p className="line">حوارات مع ناس عندهم معلومة تفيد.</p>
               <div className="ctas">
-                <a className="v2-link" href="/video/#buy">اطلبها <span className="chev">‹</span></a>
+                <a className="v2-link" href="https://youtu.be/vH3_CC1GsiM" target="_blank" rel="noopener">شاهد الحلقة <span className="chev">‹</span></a>
               </div>
-              <div className="big-price">{pkgs.podcast.price} <small>ريال</small></div>
+              <div className="art frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/v2/shots/podcast-sa3y.jpg" alt="بودكاست سَعي: حلقة منصّة لمات للفعاليّات" loading="lazy" />
+              </div>
             </section>
           </div>
         </div>
