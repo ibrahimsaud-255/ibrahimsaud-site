@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import "@/components/v2/v2.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
@@ -20,6 +21,7 @@ export const metadata: Metadata = {
   description:
     "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض.",
   alternates: { canonical: "https://ibrahimsaud.com" },
+  ...share({ title: "إبراهيم سعود — بين التقنية والأعمال", description: "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض." }, "/")
 };
 
 const { brand, systems } = products;

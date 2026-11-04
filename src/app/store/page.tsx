@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import "@/components/v2/v2.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
   title: "الباقات والأسعار — حضور والنظام والاستوديو | إبراهيم سعود",
   description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، النظام لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة في الرياض، وهويّة في Claude.",
   alternates: { canonical: "https://ibrahimsaud.com/store/" },
+  ...share({ title: "الباقات والأسعار — حضور والنظام والاستوديو | إبراهيم سعود", description: "كلّ الباقات بأسعار واضحة: حضور للبراند الشخصيّ، النظام لإدارة الشغل، حلقات بودكاست وأفلام تعريفيّة في الرياض، وهويّة في Claude." }, "/store/")
 };
 
 // صفّ المنتجات مثل «تسوّق حسب المنتج» في متجر آبل، بأيقونات على نمط آبل (GlassIcon).

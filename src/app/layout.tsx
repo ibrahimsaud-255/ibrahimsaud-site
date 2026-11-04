@@ -3,6 +3,7 @@ import { Tajawal } from "next/font/google";
 import "./globals.css";
 import Analytics from "@/components/Analytics";
 import PreviewBanner from "@/components/PreviewBanner";
+import { share, SITE_URL } from "@/lib/share";
 
 const tajawal = Tajawal({
   subsets: ["arabic", "latin"],
@@ -11,25 +12,26 @@ const tajawal = Tajawal({
   display: "swap",
 });
 
-const SITE_URL = "https://ibrahimsaud.com";
 const PORTRAIT = `${SITE_URL}/ibrahim-portrait.jpg`;
+
+const HOME_TITLE = "إبراهيم سعود — بين التقنية والأعمال";
+const HOME_DESC =
+  "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "إبراهيم سعود — مخرج ومنتج ومدير إبداعي | من الفكرة إلى التسليم",
-  description:
-    "إبراهيم سعود مخرج ومنتج ومدير إبداعي سعودي. أقود العمل المرئي من الفكرة حتى التسليم — كتابةً وإخراجاً وتصويراً ومونتاجاً: أفلام، حملات، بودكاست، وتغطيات لعلامات وجهات في السعودية والخليج، بأكثر من ٣٠ عملاً مرئياً.",
+  title: HOME_TITLE,
+  description: HOME_DESC,
   keywords: [
     "إبراهيم سعود",
-    "مخرج",
-    "منتج",
-    "مدير إبداعي",
-    "مخرج سعودي",
-    "صناعة الأفلام",
-    "إنتاج مرئي",
+    "بين التقنية والأعمال",
+    "ورش الذكاء الاصطناعي",
+    "تدريب الذكاء الاصطناعي للشركات",
+    "نظام إدارة أعمال",
+    "نظام إدارة جمعيات",
+    "صناعة المحتوى بالذكاء الاصطناعي",
     "بودكاست سَعي",
-    "حملات إعلانية",
-    "تصوير وإخراج الرياض",
+    "الرياض",
     "السعودية",
   ],
   alternates: { canonical: SITE_URL },
@@ -40,27 +42,11 @@ export const metadata: Metadata = {
     apple:
       "https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/logo_ibrahimsaud.png",
   },
-  openGraph: {
-    title: "إبراهيم سعود — مخرج ومنتج ومدير إبداعي",
-    description:
-      "مخرج ومنتج ومدير إبداعي سعودي. من الفكرة إلى التسليم: أفلام وحملات وبودكاست وتغطيات لعلامات وجهات في السعودية والخليج.",
-    url: SITE_URL,
-    siteName: "إبراهيم سعود",
-    locale: "ar_SA",
-    type: "profile",
-    images: [PORTRAIT],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "إبراهيم سعود — مخرج ومنتج ومدير إبداعي",
-    description:
-      "من الفكرة إلى التسليم: أفلام وحملات وبودكاست وتغطيات لعلامات وجهات في السعودية والخليج.",
-    images: [PORTRAIT],
-  },
+  ...share({ title: HOME_TITLE, description: HOME_DESC }),
 };
 
 // ===== البيانات المنظّمة (JSON-LD) =====
-// تُعرّف جوجل بمن هو إبراهيم سعود (شخص حقيقي: مخرج/منتج/مدير إبداعي) وتفصله
+// تُعرّف جوجل بمن هو إبراهيم سعود (بين التقنية والأعمال) وتفصله
 // عن الشخصيات التاريخية المتشابهة في الاسم، وتفتح الباب للوحة المعرفة.
 const PERSON_ID = `${SITE_URL}/#ibrahim`;
 const structuredData = {
@@ -73,28 +59,28 @@ const structuredData = {
       alternateName: "Ibrahim Saud",
       url: SITE_URL,
       image: PORTRAIT,
-      jobTitle: ["مدير إبداعي", "مخرج", "منتج"],
+      jobTitle: ["مطوّر أعمال بالذكاء الاصطناعي", "مدرّب ذكاء اصطناعي", "صانع محتوى"],
       description:
-        "مخرج ومنتج ومدير إبداعي سعودي يقود العمل المرئي من الفكرة حتى التسليم — كتابةً وإخراجاً وتصويراً ومونتاجاً — لأفلام وحملات وبودكاست وتغطيات لعلامات وجهات في السعودية والخليج.",
+        "إبراهيم سعود، بين التقنية والأعمال: يدخّل الذكاء الاصطناعي في شغل المنشآت والجمعيّات بورش وتدريب، وأنظمة إدارة يملكها العميل، ومحتوى بالذكاء الاصطناعي.",
       nationality: { "@type": "Country", name: "السعودية" },
       knowsAbout: [
-        "الإخراج",
+        "الذكاء الاصطناعي",
+        "تدريب الذكاء الاصطناعي",
+        "أنظمة إدارة الأعمال",
+        "تطوير الأعمال",
+        "صناعة المحتوى",
         "الإنتاج المرئي",
-        "صناعة الأفلام",
-        "المونتاج",
-        "التصوير السينمائي",
-        "الإعلانات",
         "البودكاست",
-        "الإدارة الإبداعية",
       ],
       knowsLanguage: ["ar", "en"],
       sameAs: [
         "https://www.tiktok.com/@ibrahimsaud",
+        "https://www.youtube.com/@ibrahimsaud",
         "https://www.youtube.com/@Sa3Podcast",
       ],
       worksFor: {
         "@type": "Organization",
-        name: "إبراهيم سعود للإنتاج المرئي",
+        name: "إبراهيم سعود",
         url: SITE_URL,
       },
     },
@@ -105,7 +91,7 @@ const structuredData = {
       name: "إبراهيم سعود",
       inLanguage: "ar",
       description:
-        "الموقع الرسمي لإبراهيم سعود — مخرج ومنتج ومدير إبداعي سعودي.",
+        "الموقع الرسمي لإبراهيم سعود — بين التقنية والأعمال.",
       about: { "@id": PERSON_ID },
       publisher: { "@id": PERSON_ID },
     },

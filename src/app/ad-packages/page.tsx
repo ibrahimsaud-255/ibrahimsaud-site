@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import "@/components/v2/v2.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
@@ -21,6 +22,7 @@ export const metadata: Metadata = {
   description:
     "فيديوهات إعلانيّة طوليّة للمتاجر الإلكترونيّة: الفكرة والسكربت والتصوير والمونتاج والنسخ الجاهزة للنشر. من ٧٥٠ ريال، وتستلم خلال ٣ أيّام مع جولتي تعديل.",
   alternates: { canonical: "https://ibrahimsaud.com/ad-packages/" },
+  ...share({ title: "إعلانات المتاجر — فيديو إعلانيّ طوليّ بسعر واضح وتسليم خلال ٣ أيّام | إبراهيم سعود", description: "فيديوهات إعلانيّة طوليّة للمتاجر الإلكترونيّة: الفكرة والسكربت والتصوير والمونتاج والنسخ الجاهزة للنشر. من ٧٥٠ ريال، وتستلم خلال ٣ أيّام مع جولتي تعديل." }, "/ad-packages/")
 };
 
 const heroReels = [0, 1, 2].map((i) => reelPoster(reels[i]).replace(/^https:\/\/drive\.google\.com\/thumbnail\?id=([\w-]+)&sz=\S+$/, "https://lh3.googleusercontent.com/d/$1=w720"));

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { share } from "@/lib/share";
 import "@/components/v2/v2.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
@@ -14,7 +15,7 @@ import { aiPage as a, bookHref, pkgs, waHref } from "@/lib/v2";
 // الذكاء الاصطناعي: ورش وتدريب واستشارات — الخدمة الأكثر طلباً، وأوّل باب في الموقع.
 // «اطلب» هنا يودّي لنموذج طلب الورشة (#buy في الشريط اللاصق).
 
-export const metadata: Metadata = { ...a.meta, alternates: { canonical: "https://ibrahimsaud.com/ai/" } };
+export const metadata: Metadata = { ...a.meta, ...share(a.meta, "/ai/"), alternates: { canonical: "https://ibrahimsaud.com/ai/" } };
 
 export default function AiPage() {
   return (
