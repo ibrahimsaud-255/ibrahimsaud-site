@@ -44,7 +44,7 @@ function renderDocs(type){
   }).join('');
 
   document.getElementById('main').innerHTML=`
-    <div class="page-head"><h1>${title}</h1><button class="btn btn-gold" onclick="docModal('${type}')">+ ${isInv?'فاتورة':'عرض سعر'}</button></div>
+    <div class="page-head"><h1>${title}</h1><div style="display:flex;gap:8px;flex-wrap:wrap">${isInv?'':`<button class="btn btn-ghost" onclick="go('pricing')"><i data-lucide="scale"></i> مستشار التسعير</button>`}<button class="btn btn-gold" onclick="docModal('${type}')">+ ${isInv?'فاتورة':'عرض سعر'}</button></div></div>
     ${isInv&&taxOn()?`<div class="badge-note"><i data-lucide="badge-percent"></i> <div>الفاتورة الضريبيّة مفعّلة: الفاتورة الجديدة مسودّة حتى تضغط «إصدار»، وبعدها تُقفل وتُطبع بمواصفات الهيئة.</div></div>`:''}
     ${!list.length?emptyBox(isInv?'receipt-text':'trending-up',`لا توجد ${title} بعد.`):groupHTML}`;
   refreshIcons();

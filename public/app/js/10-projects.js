@@ -67,7 +67,7 @@ function pjHomeGrid(){
   const q=PJX.q.trim().toLowerCase();const all=S.projects||[];
   const vis=all.filter(p=>!!p.closed===PJX.closed&&(PJX.closed||!PJX.stg||p.stageKey===PJX.stg)&&(!q||(p.title+' '+resolveClientName(p)+' '+(p.podcast||'')).toLowerCase().includes(q)));
   const grid=(arr,add)=>`<div class="pj-grid">${arr.map(pjTile).join('')}${add?`<div class="pj-tile pj-new" onclick="projModal()"><span><i class="inl" data-lucide="plus"></i> لوحة جديدة</span></div>`:''}</div>`;
-  if(!all.length){el.innerHTML=emptyBox('clapperboard','لا توجد مشاريع بعد. أنشئ أوّل لوحة.')+grid([],1);refreshIcons();return}
+  if(!all.length){el.innerHTML=emptyBox('square-kanban','لا توجد مشاريع بعد. أنشئ أوّل لوحة.')+grid([],1);refreshIcons();return}
   let h='';
   if(PJX.closed)h=`<div class="pj-sh"><i data-lucide="archive"></i> اللوحات المغلقة</div>`+(vis.length?grid(vis):'<p style="color:var(--muted)">لا شيء هنا.</p>');
   else{
