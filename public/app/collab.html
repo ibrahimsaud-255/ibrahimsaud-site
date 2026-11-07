@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<!--
+  بوابة المتعاون — /app/collab.html#<رمز>
+  المتعاون (من خارج المملكة) يجهّز عروض الأسعار وطلبات روابط الدفع باسم المؤسسة،
+  يرى توزيع كلّ مبلغ (المؤسسة/بوابة الدفع/الحوالة/صافيه بعملته)، يرفق شواهد عمله،
+  ويتابع كشف حسابه. كلّ القراءة والكتابة عبر دوالّ collab_* (supabase/collab.sql)
+  بالرمز + PIN — لا يرى إلا صفقاته. الحساب المشترك في collab-calc.js.
+  لوحة إبراهيم المقابلة: js/24-collab.js (تطبيق «المتعاونون»).
+-->
+<style id="thmanyah-font">
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Regular.woff2") format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Medium.woff2") format("woff2");font-weight:500;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Bold.woff2") format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Thmanyah Sans";src:url("/fonts/thmanyah/thmanyahsans-Black.woff2") format("woff2");font-weight:800 900;font-display:swap}
+</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<title>بوابة المتعاون — مؤسسة حروف ودروس</title>
+<meta name="theme-color" content="#0a0a0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="بوابة المتعاون">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="./collab-calc.js?v=1"></script>
+<style>
+  :root{--gold:#f5a623;--gold2:#ffc24d;--line:#2c2c31;--panel:#141416;--panel2:#1d1d20;--ink:#0a0a0b;--mut:#9b9ba3;--good:#22c55e;--bad:#ef4444;--warn:#f59e0b;--info:#60a5fa}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ink);color:#f4f4f5;font-family:'Thmanyah Sans',system-ui,sans-serif;min-height:100vh;-webkit-text-size-adjust:100%}
+  a{color:var(--gold2)}
+  button{font-family:inherit;cursor:pointer}
+  .wrap{max-width:860px;margin:0 auto;padding:18px 16px 90px}
+  .top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px}
+  .top h1{margin:0;font-size:20px;font-weight:900}
+  .top h1 .g{color:var(--gold)}
+  .top .sub{color:var(--mut);font-size:13px;margin-top:2px}
+  .tabs{display:flex;gap:6px;overflow-x:auto;margin-bottom:14px;padding-bottom:2px}
+  .tab{flex:none;background:var(--panel);border:1px solid var(--line);color:#d4d4d8;border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700}
+  .tab.on{background:var(--gold);border-color:var(--gold);color:#111}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+  .row>*{flex:1 1 180px;min-width:0}
+  label{display:block;font-size:13px;color:var(--mut);font-weight:700;margin-bottom:4px}
+  input,textarea,select{width:100%;background:#000;border:1px solid var(--line);border-radius:11px;color:#fff;font-family:inherit;font-size:15px;padding:10px 11px}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--gold)}
+  .field{margin-bottom:10px}
+  .btn{border:0;border-radius:11px;padding:10px 16px;font-size:15px;font-weight:800;display:inline-flex;align-items:center;gap:6px;justify-content:center}
+  .btn-gold{background:var(--gold);color:#111}
+  .btn-ghost{background:var(--panel2);color:#e4e4e7;border:1px solid var(--line)}
+  .btn-bad{background:transparent;color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+  .btn-sm{padding:6px 11px;font-size:13px;border-radius:9px}
+  .btn:disabled{opacity:.5}
+  .muted{color:var(--mut)}
+  .small{font-size:12.5px}
+  .pill{display:inline-block;font-size:11.5px;font-weight:800;border-radius:20px;padding:3px 10px;white-space:nowrap}
+  .t-mut{background:#27272a;color:#a1a1aa}.t-warn{background:rgba(245,158,11,.16);color:#fcd34d}.t-bad{background:rgba(239,68,68,.16);color:#fca5a5}
+  .t-info{background:rgba(96,165,250,.16);color:#93c5fd}.t-good{background:rgba(34,197,94,.16);color:#86efac}
+  .deal{display:flex;justify-content:space-between;gap:10px;align-items:center;cursor:pointer}
+  .deal:hover{border-color:#3f3f46}
+  .deal .nm{font-weight:900;font-size:16px}
+  .num{font-variant-numeric:tabular-nums;direction:ltr;unicode-bidi:isolate}
+  .split{display:grid;gap:6px;font-size:14px}
+  .split .ln{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed #2a2a2e}
+  .split .ln:last-child{border-bottom:0}
+  .split .neg{color:#fca5a5}.split .pos{color:#86efac}
+  .split .big{font-size:18px;font-weight:900;color:var(--gold2)}
+  .bar{display:flex;height:12px;border-radius:99px;overflow:hidden;margin:10px 0 4px;background:#222}
+  .bar span{display:block;height:100%}
+  .legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--mut)}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-left:4px;vertical-align:middle}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:right;padding:7px 6px;border-bottom:1px solid #26262a;vertical-align:top}
+  th{color:var(--mut);font-size:12.5px;font-weight:700}
+  .items td input{padding:7px 8px;font-size:14px}
+  .sheet{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+  .sheet .in{background:#101012;border:1px solid var(--line);border-radius:18px 18px 0 0;width:100%;max-width:860px;max-height:92vh;overflow:auto;padding:18px 16px 28px}
+  @media(min-width:760px){.sheet{align-items:center}.sheet .in{border-radius:18px}}
+  .sheet h2{margin:0 0 12px;font-size:19px;display:flex;justify-content:space-between;align-items:center}
+  .x{background:none;border:0;color:#a1a1aa;font-size:26px;line-height:1}
+  .ev{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px}
+  .ev .it{background:#000;border:1px solid var(--line);border-radius:10px;padding:6px;font-size:12px;position:relative;overflow:hidden}
+  .ev img{width:100%;height:90px;object-fit:cover;border-radius:7px;display:block;cursor:pointer}
+  .ev .del{position:absolute;top:4px;left:4px;background:rgba(0,0,0,.7);border:0;color:#fca5a5;border-radius:6px;font-size:12px;padding:1px 6px}
+  .tl{font-size:12.5px;color:var(--mut);display:grid;gap:3px}
+  .note{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:12px;padding:10px 12px;font-size:14px;line-height:1.7}
+  .note.bad{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.3)}
+  .login{max-width:380px;margin:12vh auto 0;text-align:center}
+  .login input{text-align:center;font-size:24px;letter-spacing:8px;margin:14px 0}
+  .err{color:#fca5a5;font-size:14px;min-height:20px}
+  .stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .stat .card{margin:0;padding:12px}
+  .stat b{display:block;font-size:20px;margin-top:4px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#fff;color:#111;font-weight:800;border-radius:12px;padding:10px 16px;z-index:99;font-size:14px}
+  .steps{counter-reset:s;display:grid;gap:8px;padding:0;margin:0;list-style:none}
+  .steps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;font-size:14px;line-height:1.7}
+  .steps li::before{content:counter(s);flex:none;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#111;font-weight:900;display:grid;place-items:center;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="login"><p class="muted">…جارٍ التحميل</p></div></div>
+<div id="sheetRoot"></div>
+<script>
+const SUPA_URL='https://rrerwhhxrjyzmnnjsfev.supabase.co';
+const SUPA_KEY='sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13';
+const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY,{auth:{persistSession:false}});
+const TOKEN=(location.hash||'').replace(/^#/,'').trim();
+const PIN_KEY='collab_pin_'+TOKEN.slice(0,8);
+let PIN='';try{PIN=sessionStorage.getItem(PIN_KEY)||localStorage.getItem(PIN_KEY)||''}catch(e){}
+let D=null, TAB='deals', MONTH='';
+
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=(n,c)=>Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})+' '+(c||'ر.س');
+const fmtL=n=>fmt(n,D&&collabFees(D.settings.fees).fxCur==='MAD'?'درهم':collabFees(D&&D.settings.fees).fxCur);
+const day=s=>s?new Date(s).toLocaleDateString('ar-SA-u-ca-gregory-nu-latn',{year:'numeric',month:'short',day:'numeric'}):'';
+function toast(t){const e=document.createElement('div');e.className='toast';e.textContent=t;document.body.appendChild(e);setTimeout(()=>e.remove(),2200)}
+async function rpc(fn,args){const {data,error}=await sb.rpc(fn,Object.assign({p_token:TOKEN,p_pin:PIN},args||{}));
+  if(error)throw new Error(error.message);if(data&&data.error)throw new Error(data.error);return data}
+function fees(){return collabFees(D&&D.settings&&D.settings.fees)}
+function vatOn(){return !!(D&&D.settings&&D.settings.vat&&D.settings.vat.enabled)}
+function pill(st){const s=COLLAB_STATUS[st]||{label:st,tone:'mut'};return `<span class="pill t-${s.tone}">${esc(s.label)}</span>`}
+
+/* ===== الدخول ===== */
+function loginView(msg){
+  document.getElementById('app').innerHTML=`<div class="login">
+    <div style="font-size:44px">🤝</div>
+    <h1 style="margin:8px 0 4px;font-size:22px">بوابة المتعاون</h1>
+    <div class="muted">مؤسسة حروف ودروس</div>
+    ${TOKEN.length<40?`<p class="err" style="margin-top:20px">افتح البوابة من الرابط الخاصّ الذي أرسله لك إبراهيم.</p>`:`
+    <input id="pin" type="password" inputmode="numeric" autocomplete="current-password" placeholder="••••••" maxlength="12" onkeydown="if(event.key==='Enter')doLogin()">
+    <label style="display:flex;align-items:center;justify-content:center;gap:6px;margin-bottom:12px;color:var(--mut);font-weight:500"><input type="checkbox" id="remember" style="width:auto"> تذكّرني على هذا الجهاز</label>
+    <button class="btn btn-gold" style="width:100%" id="btnIn" onclick="doLogin()">دخول</button>
+    <p class="err" id="lerr">${esc(msg||'')}</p>`}
+  </div>`;
+  const p=document.getElementById('pin');if(p)p.focus();
+}
+async function doLogin(){const v=(document.getElementById('pin').value||'').trim();if(!v)return;
+  const b=document.getElementById('btnIn');b.disabled=true;PIN=v;
+  try{D=await rpc('collab_portal');try{sessionStorage.setItem(PIN_KEY,PIN);if(document.getElementById('remember').checked)localStorage.setItem(PIN_KEY,PIN)}catch(e){}render()}
+  catch(e){PIN='';b.disabled=false;document.getElementById('lerr').textContent=e.message}}
+function logout(){try{sessionStorage.removeItem(PIN_KEY);localStorage.removeItem(PIN_KEY)}catch(e){}PIN='';D=null;loginView()}
+async function reload(){try{D=await rpc('collab_portal');render()}catch(e){toast(e.message);if(/رمز|موقوف|الرابط/.test(e.message))logout()}}
+
+/* ===== الهيكل ===== */
+function render(){
+  const m=D.member;const p=m.perms||{};
+  const tabs=[['deals','صفقاتي'],['calc','الحاسبة'],p.statement!==false?['statement','كشف الحساب']:null,['account','حسابي']].filter(Boolean);
+  document.getElementById('app').innerHTML=`
+    <div class="top"><div><h1>أهلاً ${esc(m.name)} <span class="g">·</span> بوابة المتعاون</h1>
+      <div class="sub">مؤسسة حروف ودروس · نسبة المؤسسة ${esc(m.rate)}٪</div></div>
+      <button class="btn btn-ghost btn-sm" onclick="logout()">خروج</button></div>
+    <div class="tabs">${tabs.map(([k,l])=>`<button class="tab ${TAB===k?'on':''}" onclick="TAB='${k}';render()">${l}</button>`).join('')}</div>
+    <div id="view"></div>`;
+  ({deals:viewDeals,calc:viewCalc,statement:viewStatement,account:viewAccount}[TAB]||viewDeals)();
+}
+
+/* ===== الصفقات ===== */
+function viewDeals(){
+  const ds=D.deals;const p=D.member.perms||{};
+  const open=ds.filter(d=>['draft','changes','submitted','approved'].includes(d.status));
+  const pend=ds.filter(d=>d.status==='paid').reduce((a,d)=>a+collabCalc(d,fees(),{noTransfer:true}).share,0);
+  const done=ds.filter(d=>d.status==='settled').reduce((a,d)=>a+collabCalc(d,fees(),{noTransfer:true}).share,0);
+  document.getElementById('view').innerHTML=`
+    <div class="stat">
+      <div class="card"><span class="muted small">صفقات مفتوحة</span><b>${open.length}</b></div>
+      <div class="card"><span class="muted small">مدفوع وبانتظار الحوالة</span><b class="num">${fmt(pend)}</b></div>
+      <div class="card"><span class="muted small">حُوِّل لك (إجمالي الحصص)</span><b class="num">${fmt(done)}</b></div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      ${p.quote!==false?`<button class="btn btn-gold" onclick="editDeal(null,'quote')">+ عرض سعر جديد</button>`:''}
+      ${p.paylink!==false?`<button class="btn btn-ghost" onclick="editDeal(null,'paylink')">⚡ رابط دفع سريع</button>`:''}
+    </div>
+    ${ds.length?ds.map(d=>{const c=collabCalc(d,fees());return `<div class="card deal" onclick="openDeal('${d.id}')">
+      <div style="min-width:0"><div class="nm">${esc(d.client.name||'—')} ${d.title?`<span class="muted" style="font-weight:500;font-size:14px">· ${esc(d.title)}</span>`:''}</div>
+        <div class="muted small" style="margin-top:4px">${d.kind==='paylink'?'رابط دفع سريع':'عرض سعر'}${d.doc_no?' · رقم '+esc(d.doc_no):''} · ${day(d.created_at)}</div></div>
+      <div style="text-align:left;flex:none"><div class="num" style="font-weight:900">${fmt(d.total)}</div>
+        <div class="small muted num">صافيك ≈ ${fmtL(c.local)}</div><div style="margin-top:4px">${pill(d.status)}</div></div></div>`}).join('')
+    :`<div class="card" style="text-align:center;padding:28px"><div style="font-size:38px">📄</div><p>ابدأ بأوّل عرض سعر لعميلك — يصلك التوزيع كاملاً قبل الإرسال.</p></div>`}
+    <div class="card"><b>كيف تمشي الصفقة؟</b><ol class="steps" style="margin-top:10px">
+      <li>تجهّز عرض السعر (أو طلب رابط دفع سريع) لعميلك وتشوف توزيع المبلغ كاملاً.</li>
+      <li>«إرسال لإبراهيم» — يراجعه ويعتمده من نظام المؤسسة ويُرفق رابط الدفع (Telr).</li>
+      <li>تحمّل عرض السعر الرسميّ وترسله لعميلك مع رابط الدفع (مدى / بطاقة / Apple Pay).</li>
+      <li>بعد الدفع تصدر الفاتورة باسم المؤسسة، وترفق شواهد عملك (روابط وصور المخرجات).</li>
+      <li>يُحوَّل لك صافي حصّتك عبر STC Pay ← Western Union، ويظهر رقم الحوالة وإيصالها هنا.</li>
+    </ol></div>`;
+}
+
+function breakdownHTML(d){
+  const c=collabCalc(d,fees());const f=fees();const t=c.total||1;
+  const seg=(v,col)=>v>0?`<span style="width:${Math.max(0,v/t*100)}%;background:${col}"></span>`:'';
+  return `<div class="split">
+    <div class="ln"><span>يدفع العميل</span><b class="num">${fmt(c.total)}</b></div>
+    ${c.vat?`<div class="ln"><span class="muted">منها ضريبة القيمة المضافة (للهيئة)</span><span class="num neg">− ${fmt(c.vat)}</span></div>`:''}
+    <div class="ln"><span>نسبة المؤسسة (${c.rate}٪)</span><span class="num neg">− ${fmt(c.commission)}</span></div>
+    <div class="ln"><span>رسوم Telr — ${collabMethodLabel(c.method)}${c.gwActual?' (فعليّة)':''}${c.onFoundation?' <span class="muted small">على المؤسسة</span>':''}</span><span class="num ${c.onFoundation?'muted':'neg'}">${c.onFoundation?'':'− '}${fmt(c.gw)}</span></div>
+    <div class="ln"><span>حصّتك قبل الحوالة</span><b class="num">${fmt(c.share)}</b></div>
+    <div class="ln"><span>رسوم الحوالة STC Pay ← Western Union <span class="muted small">(مرّة لكلّ حوالة — تقلّ لو جُمعت صفقات)</span></span><span class="num neg">− ${fmt(c.wu)}</span></div>
+    <div class="ln"><span>يصلك بالريال</span><b class="num">${fmt(c.net)}</b></div>
+    <div class="ln"><span>يصلك تقريباً بعملتك <span class="muted small">(سعر ${c.fx} لكلّ ريال)</span></span><span class="num big">${fmtL(c.local)}</span></div>
+  </div>
+  <div class="bar">${seg(c.vat,'#52525b')}${seg(c.commission,'#f5a623')}${seg(c.gw,'#60a5fa')}${seg(c.wu,'#a78bfa')}${seg(Math.max(0,c.net),'#22c55e')}</div>
+  <div class="legend">${c.vat?'<span><i style="background:#52525b"></i>ضريبة</span>':''}<span><i style="background:#f5a623"></i>المؤسسة</span><span><i style="background:#60a5fa"></i>Telr</span><span><i style="background:#a78bfa"></i>الحوالة</span><span><i style="background:#22c55e"></i>صافيك</span></div>
+  <p class="muted small" style="margin:8px 0 0">سعر الصرف تقريبيّ (آخر تحديث ${esc(f.fxAt||'—')}) — الفعليّ يظهر في إيصال الحوالة.</p>`;
+}
+
+/* محرّر الصفقة */
+let ED=null;
+function editDeal(id,kind,preset){
+  const src=id?D.deals.find(x=>x.id===id):null;
+  ED=preset?preset:src?JSON.parse(JSON.stringify(src)):{id:'',kind:kind||'quote',title:'',client:{name:'',phone:'',email:'',city:'',vat:''},items:[{desc:'',qty:1,price:''}],pay_method:'mada',partner_note:'',rate:D.member.rate,fee_bearer:D.member.fee_bearer};
+  sheet(`${ED.id?'تعديل':'جديد'}: ${ED.kind==='paylink'?'رابط دفع سريع':'عرض سعر'}`,`
+    ${(D.member.perms||{}).quote!==false&&(D.member.perms||{}).paylink!==false?`<div class="row" style="margin-bottom:10px">
+      <button class="btn btn-sm ${ED.kind==='quote'?'btn-gold':'btn-ghost'}" onclick="edSet('kind','quote')">عرض سعر رسميّ</button>
+      <button class="btn btn-sm ${ED.kind==='paylink'?'btn-gold':'btn-ghost'}" onclick="edSet('kind','paylink')">رابط دفع سريع فقط</button></div>`:''}
+    <div class="row"><div class="field"><label>اسم العميل / الجهة *</label><input id="c_name" value="${esc(ED.client.name)}"></div>
+      <div class="field"><label>عنوان المشروع</label><input id="d_title" value="${esc(ED.title||'')}" placeholder="مثلاً: تصميم هويّة بصريّة"></div></div>
+    <div class="row"><div class="field"><label>جوال العميل</label><input id="c_phone" dir="ltr" value="${esc(ED.client.phone||'')}"></div>
+      <div class="field"><label>بريد العميل</label><input id="c_email" dir="ltr" value="${esc(ED.client.email||'')}"></div>
+      <div class="field"><label>المدينة</label><input id="c_city" value="${esc(ED.client.city||'')}"></div></div>
+    ${vatOn()?`<div class="field"><label>الرقم الضريبيّ للعميل (إن كان منشأة)</label><input id="c_vat" dir="ltr" value="${esc(ED.client.vat||'')}"></div>`:''}
+    <label>البنود</label>
+    <table class="items"><thead><tr><th>الوصف</th><th style="width:70px">الكمية</th><th style="width:110px">السعر (ر.س)</th><th style="width:30px"></th></tr></thead>
+      <tbody id="itRows"></tbody></table>
+    <button class="btn btn-ghost btn-sm" style="margin:8px 0 12px" onclick="edAddItem()">+ بند</button>
+    <div class="field"><label>طريقة الدفع المتوقّعة للعميل (تؤثّر على رسوم Telr)</label>
+      <select id="d_pm" onchange="edSet('pay_method',this.value)"><option value="mada" ${ED.pay_method==='mada'?'selected':''}>مدى أو Apple Pay بمدى — ${fees().madaPct}٪</option><option value="card" ${ED.pay_method!=='mada'?'selected':''}>بطاقة ائتمانيّة أو Apple Pay بها — ${fees().cardPct}٪ + ${fees().cardFixed} ر.س</option></select></div>
+    <div class="field"><label>ملاحظة لإبراهيم (اختياريّ)</label><textarea id="d_note" rows="2">${esc(ED.partner_note||'')}</textarea></div>
+    <div class="card" style="background:#0c0c0e"><b>توزيع المبلغ</b><div id="edSplit" style="margin-top:8px"></div></div>
+    <div class="row"><button class="btn btn-gold" onclick="edSave(true)">حفظ وإرسال لإبراهيم</button><button class="btn btn-ghost" onclick="edSave(false)">حفظ مسودّة</button></div>
+    <p class="err" id="edErr"></p>`);
+  edRows();
+}
+function edRead(){const g=id=>{const e=document.getElementById(id);return e?e.value.trim():''};
+  ED.client={name:g('c_name'),phone:g('c_phone'),email:g('c_email'),city:g('c_city'),vat:g('c_vat')};ED.title=g('d_title');ED.partner_note=g('d_note');
+  ED.items=[...document.querySelectorAll('#itRows tr')].map(tr=>({desc:tr.querySelector('.i-d').value.trim(),qty:Number(tr.querySelector('.i-q').value)||0,price:tr.querySelector('.i-p').value}))}
+function edSet(k,v){edRead();ED[k]=v;if(k==='pay_method'){edCalc();return}editDeal(null,null,ED)}
+function edRows(){document.getElementById('itRows').innerHTML=ED.items.map((it,i)=>`<tr>
+  <td><input class="i-d" value="${esc(it.desc)}" oninput="edCalc()" placeholder="وصف الخدمة"></td>
+  <td><input class="i-q num" type="number" min="0" step="any" value="${esc(it.qty)}" oninput="edCalc()"></td>
+  <td><input class="i-p num" type="number" min="0" step="any" value="${esc(it.price)}" oninput="edCalc()"></td>
+  <td>${ED.items.length>1?`<button class="x" style="font-size:20px" onclick="edRead();ED.items.splice(${i},1);edRows()">×</button>`:''}</td></tr>`).join('');edCalc()}
+function edAddItem(){edRead();ED.items.push({desc:'',qty:1,price:''});edRows()}
+function edCalc(){edRead();const sub=ED.items.reduce((a,it)=>a+collabR((Number(it.qty)||0)*(Number(it.price)||0)),0);
+  const vat=vatOn()?collabR(sub*0.15):0;const d=Object.assign({},ED,{subtotal:sub,vat,total:collabR(sub+vat)});
+  document.getElementById('edSplit').innerHTML=sub>0?breakdownHTML(d):'<span class="muted">اكتب السعر لترى التوزيع.</span>'}
+async function edSave(send){edRead();const err=document.getElementById('edErr');err.textContent='';
+  try{const r=await rpc('collab_save_deal',{p_deal:{id:ED.id||null,kind:ED.kind,title:ED.title,client:ED.client,items:ED.items,pay_method:ED.pay_method,partner_note:ED.partner_note}});
+    if(send)await rpc('collab_submit',{p_id:r.id});
+    closeSheet();toast(send?'أُرسلت لإبراهيم ✓':'حُفظت المسودّة');await reload();openDeal(r.id)}
+  catch(e){err.textContent=e.message}}
+
+/* عرض الصفقة */
+function openDeal(id){
+  const d=D.deals.find(x=>x.id===id);if(!d)return;const editable=['draft','changes'].includes(d.status);
+  const payable=d.pay_url&&['approved','paid','settled'].includes(d.status);
+  const msg=`السلام عليكم ${d.client.name||''}،\n${d.kind==='quote'&&d.doc_no?'مرفق عرض السعر رقم '+d.doc_no+' من مؤسسة حروف ودروس':'طلب الدفع من مؤسسة حروف ودروس'}${d.title?' — '+d.title:''}.\nالمبلغ: ${fmt(d.total)}\nرابط الدفع الآمن (مدى / بطاقة / Apple Pay):\n${d.pay_url||''}`;
+  const ph=(d.client.phone||'').replace(/[^\d]/g,'').replace(/^0/,'966');
+  const payout=d.payout_id&&D.payouts.find(p=>p.id===d.payout_id);
+  sheet(`${esc(d.client.name)} ${pill(d.status)}`,`
+    ${d.owner_note?`<div class="note ${d.status==='changes'?'bad':''}" style="margin-bottom:12px"><b>ملاحظة إبراهيم:</b> ${esc(d.owner_note)}</div>`:''}
+    ${d.status==='submitted'?`<div class="note" style="margin-bottom:12px">وصلت لإبراهيم — سيعتمدها ويُرفق رابط الدفع، وتصلك هنا.</div>`:''}
+    ${payable?`<div class="card" style="border-color:rgba(34,197,94,.4)"><b>رابط الدفع للعميل</b>
+      <div class="num small" style="margin:8px 0;word-break:break-all;color:#86efac">${esc(d.pay_url)}</div>
+      <div class="row"><button class="btn btn-gold btn-sm" onclick="copyTxt(${esc(JSON.stringify(d.pay_url))})">نسخ الرابط</button>
+      <a class="btn btn-ghost btn-sm" style="text-decoration:none" target="_blank" rel="noopener" href="https://wa.me/${ph.length>8?ph:''}?text=${encodeURIComponent(msg)}">إرسال واتساب للعميل</a></div></div>`:''}
+    ${(d.has_quote||d.has_invoice)?`<div class="row" style="margin-bottom:12px">
+      ${d.has_quote?`<button class="btn btn-ghost" onclick="openDoc('quote','${d.id}')">📄 عرض السعر الرسميّ ${d.doc_no?'#'+esc(d.doc_no):''}</button>`:''}
+      ${d.has_invoice&&(D.member.perms||{}).invoice!==false?`<button class="btn btn-ghost" onclick="openDoc('invoice','${d.id}')">🧾 الفاتورة ${d.invoice_no?'#'+esc(d.invoice_no):''}</button>`:''}</div>`:''}
+    <div class="card"><b>${d.kind==='paylink'?'رابط دفع سريع':'عرض سعر'}${d.title?' — '+esc(d.title):''}</b>
+      <table style="margin-top:8px"><thead><tr><th>البند</th><th>الكمية</th><th>السعر</th><th>المجموع</th></tr></thead><tbody>
+      ${d.items.map(it=>`<tr><td>${esc(it.desc)}</td><td class="num">${it.qty}</td><td class="num">${fmt(it.price)}</td><td class="num">${fmt(it.qty*it.price)}</td></tr>`).join('')}</tbody></table>
+      <div class="muted small" style="margin-top:6px">${[d.client.phone,d.client.email,d.client.city].filter(Boolean).map(esc).join(' · ')}</div></div>
+    <div class="card"><b>توزيع المبلغ</b><div style="margin-top:8px">${breakdownHTML(d)}</div>
+      ${payout?`<div class="note" style="margin-top:10px">حُوّلت ضمن حوالة ${day(payout.sent_at)}${payout.ref?' — رقم MTCN <b class="num">'+esc(payout.ref)+'</b>':''}${payout.received?' — استلمت '+fmtL(payout.received):''}</div>`:''}</div>
+    <div class="card"><b>شواهد العمل</b> <span class="muted small">— روابط وصور المخرجات (تُحفظ في سجلّ المؤسسة)</span>
+      <div class="ev" style="margin-top:10px" id="evGrid">${(d.evidence||[]).map(e=>e.kind==='link'
+        ?`<div class="it"><a href="${esc(e.url)}" target="_blank" rel="noopener noreferrer" style="word-break:break-all">🔗 ${esc(e.caption||e.url)}</a>${d.status!=='settled'?`<button class="del" onclick="delEv('${e.id}','${d.id}')">×</button>`:''}</div>`
+        :`<div class="it"><img data-ev="${e.id}" alt="" onclick="viewEv('${e.id}')"><div style="margin-top:4px">${esc(e.caption||'')}</div>${d.status!=='settled'?`<button class="del" onclick="delEv('${e.id}','${d.id}')">×</button>`:''}</div>`).join('')||'<span class="muted small">لا شواهد بعد.</span>'}</div>
+      ${d.status!=='cancelled'?`<div class="row" style="margin-top:10px">
+        <input id="evUrl" dir="ltr" placeholder="https://… (رابط العمل: درايف، بيهانس، يوتيوب…)">
+        <input id="evCap" placeholder="وصف قصير (اختياريّ)">
+      </div><div class="row" style="margin-top:8px"><button class="btn btn-ghost btn-sm" onclick="addLink('${d.id}')">+ إضافة الرابط</button>
+        <label class="btn btn-ghost btn-sm" style="margin:0;color:#e4e4e7">📷 رفع صور<input type="file" accept="image/*" multiple hidden onchange="addImgs('${d.id}',this.files)"></label></div>
+        <p class="muted small" id="evMsg"></p>`:''}</div>
+    <div class="card"><b>السجلّ</b><div class="tl" style="margin-top:8px">${(d.events||[]).map(x=>`<div>• ${day(x.at)} — ${esc(COLLAB_ACTIONS[x.action]||x.action)}${x.actor==='owner'?' (إبراهيم)':''}</div>`).join('')}</div></div>
+    <div class="row">${editable?`<button class="btn btn-gold" onclick="closeSheet();editDeal('${d.id}')">تعديل</button><button class="btn btn-ghost" onclick="submitDeal('${d.id}')">إرسال لإبراهيم</button>`:''}
+      ${['draft','changes','submitted'].includes(d.status)?`<button class="btn btn-bad" onclick="cancelDeal('${d.id}')">إلغاء</button>`:''}</div>`);
+  loadThumbs(d);
+}
+async function loadThumbs(d){for(const e of (d.evidence||[]).filter(x=>x.kind==='image')){try{const r=await rpc('collab_blob',{p_what:'evidence',p_id:e.id});const img=document.querySelector(`img[data-ev="${e.id}"]`);if(img)img.src=r.data}catch(_){}}}
+async function viewEv(id){const img=document.querySelector(`img[data-ev="${id}"]`);if(!img||!img.src)return;const w=window.open('');if(w){w.document.write(`<body style="margin:0;background:#000;display:grid;place-items:center;min-height:100vh"><img src="${img.src}" style="max-width:100%;max-height:100vh">`)}}
+async function submitDeal(id){try{await rpc('collab_submit',{p_id:id});toast('أُرسلت لإبراهيم ✓');await reload();openDeal(id)}catch(e){toast(e.message)}}
+async function cancelDeal(id){if(!confirm('إلغاء هذه الصفقة؟'))return;try{await rpc('collab_cancel',{p_id:id});closeSheet();await reload()}catch(e){toast(e.message)}}
+async function addLink(id){const u=document.getElementById('evUrl').value.trim(),c=document.getElementById('evCap').value.trim();if(!u)return;
+  try{await rpc('collab_add_evidence',{p_deal:id,p_kind:'link',p_url:u,p_caption:c,p_data:null});await reload();openDeal(id)}catch(e){toast(e.message)}}
+/* الصور تُعاد رسمها على canvas: تُصغَّر وتُحذف منها بيانات EXIF/الموقع تلقائياً */
+function shrink(file){return new Promise((res,rej)=>{const fr=new FileReader();fr.onerror=rej;fr.onload=()=>{const im=new Image();im.onerror=()=>rej(new Error('صورة غير مقروءة'));im.onload=()=>{
+  let max=1600,q=.82,out='';for(let i=0;i<6;i++){const s=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height);out=c.toDataURL('image/jpeg',q);if(out.length<850000)break;max*=.8;q-=.08}
+  res(out)};im.src=fr.result};fr.readAsDataURL(file)})}
+async function addImgs(id,files){const msg=document.getElementById('evMsg');const cap=document.getElementById('evCap').value.trim();let n=0;
+  for(const f of files){msg.textContent=`…رفع ${++n} من ${files.length}`;try{const data=await shrink(f);await rpc('collab_add_evidence',{p_deal:id,p_kind:'image',p_url:null,p_caption:cap||f.name.replace(/\.[^.]+$/,''),p_data:data})}catch(e){toast(e.message)}}
+  await reload();openDeal(id)}
+async function delEv(eid,did){if(!confirm('حذف هذا الشاهد؟'))return;try{await rpc('collab_del_evidence',{p_id:eid});await reload();openDeal(did)}catch(e){toast(e.message)}}
+async function openDoc(which,id){const w=window.open('','_blank');try{const r=await rpc('collab_blob',{p_what:which,p_id:id});
+  if(w){w.document.open();w.document.write(r.data);w.document.close()}}catch(e){if(w)w.close();toast(e.message)}}
+function copyTxt(t){navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast('نُسخ ✓'))}
+
+/* ===== الحاسبة ===== */
+function viewCalc(){const m=D.member;
+  document.getElementById('view').innerHTML=`
+    <div class="card"><b>كم يصلني من مبلغ؟</b>
+      <div class="row" style="margin-top:10px"><div class="field"><label>سعر الخدمة (ر.س، قبل الضريبة)</label><input id="k_amt" type="number" class="num" value="1000" oninput="calcFwd()"></div>
+      <div class="field"><label>طريقة الدفع</label><select id="k_pm" onchange="calcFwd();calcRev()"><option value="mada">مدى / Apple Pay بمدى</option><option value="card">بطاقة ائتمانيّة / Apple Pay بها</option></select></div></div>
+      <div id="k_out"></div></div>
+    <div class="card"><b>العكس: أبغى يوصلني مبلغ معيّن، كم أطلب؟</b>
+      <div class="field" style="margin-top:10px"><label>المبلغ الذي تريده في جيبك (${esc(fees().fxCur)})</label><input id="k_tgt" type="number" class="num" value="2000" oninput="calcRev()"></div>
+      <div id="k_rev" class="note"></div></div>
+    <div class="card small muted" style="line-height:1.9"><b style="color:#e4e4e7">مصادر الرسوم</b><br>
+      • Telr (السعوديّة): مدى ${fees().madaPct}٪ · البطاقات الائتمانيّة ${fees().cardPct}٪ + ${fees().cardFixed} ر.س · عليها ضريبة ${fees().feeVat}٪.<br>
+      • Apple Pay لا يضيف رسوماً — تُحسب بسعر البطاقة التي بداخله (مدى أو ائتمانيّة).<br>
+      • STC Pay ← Western Union (المغرب): ${fees().wuFee} ر.س + ضريبة ${fees().wuVat}٪ = ${fmt(collabWu(fees()))} لكلّ حوالة.<br>
+      • سعر الصرف التقريبيّ ${fees().fx} ${esc(fees().fxCur)} لكلّ ريال (يحدّثه إبراهيم؛ الفعليّ في الإيصال).</div>`;
+  calcFwd();calcRev();
+}
+function calcFwd(){const m=D.member;const sub=Number(document.getElementById('k_amt').value)||0;const vat=vatOn()?collabR(sub*.15):0;
+  document.getElementById('k_out').innerHTML=breakdownHTML({subtotal:sub,vat,total:sub+vat,rate:m.rate,fee_bearer:m.fee_bearer,pay_method:document.getElementById('k_pm').value})}
+function calcRev(){const m=D.member;const t=Number(document.getElementById('k_tgt').value)||0;const pm=document.getElementById('k_pm').value;
+  const base=collabReverse(t,m.rate,pm,m.fee_bearer,vatOn(),fees());
+  document.getElementById('k_rev').innerHTML=`اكتب في عرض السعر <b class="num" style="font-size:18px">${fmt(base)}</b>${vatOn()?` (يدفع العميل ${fmt(collabR(base*1.15))} شاملة الضريبة)`:''} حتى يصلك تقريباً <b class="num">${fmtL(t)}</b> بعد كلّ الرسوم.`}
+
+/* ===== كشف الحساب ===== */
+function viewStatement(){
+  const months=[...new Set(D.deals.filter(d=>d.paid&&d.paid.at).map(d=>d.paid.at.slice(0,7)))].sort().reverse();
+  if(!MONTH)MONTH=months[0]||new Date().toISOString().slice(0,7);
+  const rows=D.deals.filter(d=>d.paid&&d.paid.at&&d.paid.at.slice(0,7)===MONTH);
+  const sum=k=>rows.reduce((a,d)=>a+collabCalc(d,fees(),{noTransfer:true})[k],0);
+  const pays=D.payouts.filter(p=>(p.sent_at||'').slice(0,7)===MONTH);
+  document.getElementById('view').innerHTML=`
+    <div class="row" style="margin-bottom:12px;align-items:end"><div class="field" style="margin:0"><label>الشهر</label>
+      <select onchange="MONTH=this.value;viewStatement()">${(months.includes(MONTH)?months:[MONTH,...months]).map(m=>`<option ${m===MONTH?'selected':''}>${m}</option>`).join('')}</select></div>
+      <button class="btn btn-ghost" style="flex:0 0 auto" onclick="window.print()">طباعة الكشف</button></div>
+    <div class="stat">
+      <div class="card"><span class="muted small">دفعه العملاء</span><b class="num">${fmt(sum('total'))}</b></div>
+      <div class="card"><span class="muted small">نسبة المؤسسة</span><b class="num">${fmt(sum('commission'))}</b></div>
+      <div class="card"><span class="muted small">رسوم Telr</span><b class="num">${fmt(sum('gwPartner'))}</b></div>
+      <div class="card"><span class="muted small">حصّتك</span><b class="num" style="color:var(--gold2)">${fmt(sum('share'))}</b></div>
+    </div>
+    <div class="card"><b>الصفقات المدفوعة</b>${rows.length?`<table style="margin-top:8px"><thead><tr><th>التاريخ</th><th>العميل</th><th>الفاتورة</th><th>المبلغ</th><th>المؤسسة</th><th>حصّتك</th><th>الحالة</th></tr></thead><tbody>
+      ${rows.map(d=>{const c=collabCalc(d,fees(),{noTransfer:true});return `<tr><td>${day(d.paid.at)}</td><td>${esc(d.client.name)}</td><td class="num">${esc(d.invoice_no||'—')}</td><td class="num">${fmt(c.total)}</td><td class="num">${fmt(c.commission)}</td><td class="num">${fmt(c.share)}</td><td>${pill(d.status)}</td></tr>`}).join('')}</tbody></table>`:'<p class="muted">لا مدفوعات في هذا الشهر.</p>'}</div>
+    <div class="card"><b>الحوالات المرسلة لك</b>${pays.length?`<table style="margin-top:8px"><thead><tr><th>التاريخ</th><th>MTCN</th><th>أُرسل (ر.س)</th><th>الرسوم</th><th>الصرف</th><th>استلمت</th><th></th></tr></thead><tbody>
+      ${pays.map(p=>`<tr><td>${day(p.sent_at)}</td><td class="num">${esc(p.ref||'—')}</td><td class="num">${fmt(p.sar_sent)}</td><td class="num">${fmt(p.fee)}</td><td class="num">${p.fx||'—'}</td><td class="num">${p.received?fmtL(p.received):'—'}</td><td>${p.has_receipt?`<button class="btn btn-ghost btn-sm" onclick="viewReceipt('${p.id}')">الإيصال</button>`:''}</td></tr>`).join('')}</tbody></table>`:'<p class="muted">لا حوالات في هذا الشهر.</p>'}</div>`;
+}
+async function viewReceipt(id){const w=window.open('');try{const r=await rpc('collab_blob',{p_what:'receipt',p_id:id});if(w)w.document.write(`<body style="margin:0;background:#000;display:grid;place-items:center;min-height:100vh"><img src="${r.data}" style="max-width:100%">`)}catch(e){if(w)w.close();toast(e.message)}}
+
+/* ===== حسابي ===== */
+function viewAccount(){const m=D.member;const p=m.perms||{};const po=m.payout||{};
+  const yes=v=>v!==false?'✓':'—';
+  document.getElementById('view').innerHTML=`
+    <div class="card"><b>بياناتك</b><div class="split" style="margin-top:8px">
+      <div class="ln"><span>الاسم</span><span>${esc(m.name)}</span></div>
+      <div class="ln"><span>البريد</span><span class="num">${esc(m.email||'—')}</span></div>
+      <div class="ln"><span>الدولة</span><span>${esc([m.country,m.city].filter(Boolean).join(' — ')||'—')}</span></div>
+      <div class="ln"><span>نسبة المؤسسة</span><span>${esc(m.rate)}٪ من قيمة الخدمة</span></div>
+      <div class="ln"><span>رسوم بوابة الدفع</span><span>${m.fee_bearer==='foundation'?'على المؤسسة':'تُخصم من حصّتك'}</span></div>
+      <div class="ln"><span>مستلم الحوالة</span><span>${esc(po.receiver||m.name)}${po.city?' — '+esc(po.city):''}</span></div></div></div>
+    <div class="card"><b>صلاحيّاتك</b><div class="split" style="margin-top:8px">
+      <div class="ln"><span>عروض الأسعار الرسميّة</span><span>${yes(p.quote)}</span></div>
+      <div class="ln"><span>روابط الدفع السريعة</span><span>${yes(p.paylink)}</span></div>
+      <div class="ln"><span>تحميل الفواتير</span><span>${yes(p.invoice)}</span></div>
+      <div class="ln"><span>كشف الحساب</span><span>${yes(p.statement)}</span></div></div></div>
+    <div class="card"><b>تغيير رمز الدخول</b><div class="row" style="margin-top:8px">
+      <input id="np1" type="password" inputmode="numeric" placeholder="الرمز الجديد (٦ أرقام+)"><input id="np2" type="password" inputmode="numeric" placeholder="تأكيده">
+      <button class="btn btn-gold" style="flex:0 0 auto" onclick="changePin()">حفظ</button></div></div>
+    <p class="muted small">هذه البوابة خاصّة بك. لا تشارك الرابط ولا الرمز. كلّ عمليّة تُسجَّل بتاريخها.</p>`;
+}
+async function changePin(){const a=document.getElementById('np1').value.trim(),b=document.getElementById('np2').value.trim();if(a!==b){toast('الرمزان غير متطابقين');return}
+  try{await rpc('collab_change_pin',{p_new:a});PIN=a;try{sessionStorage.setItem(PIN_KEY,a);if(localStorage.getItem(PIN_KEY))localStorage.setItem(PIN_KEY,a)}catch(e){}toast('تغيّر الرمز ✓');viewAccount()}catch(e){toast(e.message)}}
+
+/* ===== النافذة ===== */
+function sheet(title,body){document.getElementById('sheetRoot').innerHTML=`<div class="sheet" onclick="if(event.target===this)closeSheet()"><div class="in"><h2><span>${title}</span><button class="x" onclick="closeSheet()">×</button></h2>${body}</div></div>`}
+function closeSheet(){document.getElementById('sheetRoot').innerHTML=''}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+
+(async()=>{if(TOKEN.length>=40&&PIN){try{D=await rpc('collab_portal');render();return}catch(e){PIN='';loginView(e.message);return}}loginView()})();
+</script>
+</body>
+</html>

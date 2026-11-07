@@ -15,6 +15,7 @@ const APPS=[
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard'},
   {id:'sales',name:'المبيعات',icon:'trending-up'},
   {id:'partners',name:'الشركات',icon:'building-2'},  // كان «الشركاء والعمولات» — صار قسماً داخل «الشركات» (المعرّف partners باقٍ للبيانات)
+  {id:'collab',name:'المتعاونون',icon:'handshake'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette'},
   {id:'pricing',name:'مستشار التسعير',icon:'scale'},
@@ -41,6 +42,7 @@ const LAUNCH=[
   {id:'dashboards',name:'لوحات البيانات',icon:'layout-dashboard',c:'#3b82f6,#2563eb'},
   {id:'sales',name:'المبيعات',icon:'trending-up',c:'#22c55e,#16a34a'},
   {id:'partners',name:'الشركات',icon:'building-2',c:'#0ea5e9,#1e3a8a'},
+  {id:'collab',name:'المتعاونون',icon:'handshake',c:'#22c55e,#15803d'},
   {id:'invoicing',name:'الفوترة',icon:'receipt-text',c:'#f5a623,#d97706'},
   {id:'quotedesign',name:'تصميم عروض الأسعار',icon:'palette',c:'#d946ef,#a21caf'},
   {id:'pricing',name:'مستشار التسعير',icon:'scale',c:'#eab308,#a16207'},
