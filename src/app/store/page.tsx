@@ -29,7 +29,7 @@ const row = [
 
 const groups = [
   { id: "hudoor", title: "حضور.", sub: "البراند الشخصيّ للخبراء.", more: "/brand/", items: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus] },
-  { id: "nasaq", title: "النظام.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.session, pkgs.nasaq, pkgs.nasaqPro] },
+  { id: "nasaq", title: "النظام.", sub: "نظام إدارة على مقاسك.", more: "/systems/", items: [pkgs.call, pkgs.nasaq, pkgs.nasaqPro] },
   { id: "studio", title: "الاستوديو.", sub: "بودكاست وأفلام وإعلانات.", more: "/video/", items: [pkgs.podcast, pkgs.film, pkgs.storeAds] },
   { id: "addons", title: "إضافات.", sub: "تشتغل وحدها أو مع أيّ باقة.", more: "", items: [pkgs.hawiya, pkgs.publish] },
 ];

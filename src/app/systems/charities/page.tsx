@@ -24,7 +24,7 @@ export default function CharitiesPage() {
   const quote = products.systems.quote!;
   return (
     <Shell>
-      <ServiceSchema path={c.path} name="نظام إدارة الجمعيّات الخيريّة والأهليّة" description={c.meta.description} serviceType="نظام إدارة جمعيّات خيريّة وأهليّة (ERP)" packages={[pkgs.session, pkgs.nasaqPro]} faqs={c.faqs} />
+      <ServiceSchema path={c.path} name="نظام إدارة الجمعيّات الخيريّة والأهليّة" description={c.meta.description} serviceType="نظام إدارة جمعيّات خيريّة وأهليّة (ERP)" packages={[pkgs.nasaqPro]} faqs={c.faqs} />
       <Nav sticky={false} />
       <LocalNav name="نظام الجمعيّات" links={[{ label: "شوفه", href: "#see" }, { label: "تملك أو تستأجر", href: "#own" }, { label: "التسليم", href: "#handover" }, { label: "السعر", href: "#buy" }]} />
       <main id="top">
@@ -144,9 +144,9 @@ export default function CharitiesPage() {
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
               <h2>سعر واضح، من أوّل يوم.</h2>
-              <p>جلسة التشخيص تحدّد السعر النهائيّ، وسعرها يُخصم من المشروع.</p>
+              <p>ابدأوا بمكالمة مجّانيّة تاخذون فيها المعلومة كاملة، وبعدها عرض سعر رسميّ. ما فيه أيّ مبلغ قبل ما تقرّرون.</p>
             </div>
-            <PackageCards items={[pkgs.session, pkgs.nasaqPro]} />
+            <PackageCards items={[pkgs.call, pkgs.nasaqPro]} />
             <div className="ch-costs" data-rise>
               <h3>{c.costs.title}</h3>
               <ul className="v2-checks">{c.costs.items.map((i) => <li key={i}>{i}</li>)}</ul>

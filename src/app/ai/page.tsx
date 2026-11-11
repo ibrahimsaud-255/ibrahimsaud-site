@@ -21,7 +21,7 @@ export const metadata: Metadata = { ...a.meta, ...share(a.meta, "/ai/"), alterna
 export default function AiPage() {
   return (
     <Shell>
-      <ServiceSchema path="/ai/" name="ورش وتدريب الذكاء الاصطناعي" description={a.meta.description} serviceType="تدريب الذكاء الاصطناعي للشركات والجهات" packages={[pkgs.session]} faqs={a.faqs} />
+      <ServiceSchema path="/ai/" name="ورش وتدريب الذكاء الاصطناعي" description={a.meta.description} serviceType="تدريب الذكاء الاصطناعي للشركات والجهات" packages={[]} faqs={a.faqs} />
       <Nav sticky={false} />
       <LocalNav name={a.name} links={[{ label: "نظرة عامة", href: "#top" }, { label: "الخدمات", href: "#services" }, { label: "الورش", href: "#workshop" }, { label: "ورش قدّمتها", href: "#past" }]} />
       <main id="top">
@@ -136,10 +136,10 @@ export default function AiPage() {
         <section className="v2-sec" id="buy">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
-              <h2>تبي تبدأ بجلسة؟</h2>
-              <p>جلسة نمرّ فيها على شغلكم ونحدّد وين يدخل الذكاء الاصطناعي، وسعرها يُخصم من أيّ مشروع بعدها.</p>
+              <h2>تبي تبدأ بمكالمة؟</h2>
+              <p>مكالمة مجّانيّة نمرّ فيها على شغلكم ونشوف وين يدخل الذكاء الاصطناعي، بدون أيّ رسوم ولا التزام.</p>
             </div>
-            <PackageCards items={[pkgs.session]} compact />
+            <PackageCards items={[pkgs.call]} compact />
           </div>
         </section>
 
