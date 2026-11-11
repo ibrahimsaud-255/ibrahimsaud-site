@@ -31,6 +31,8 @@ export const ITEMS={
   tube:{name:'إضاءة أنبوبيّة Amaran PT2c',en:'Aputure Amaran PT2c',cat:'light',q:'Aputure Amaran PT2c',note:'إضاءة خلفيّة ملوّنة تعطي عمقاً للّقطة.'},
   // ── المخزن ──
   case:{name:'حقيبة معدات صلبة',en:'Hard equipment case',cat:'storage',q:'hard case camera equipment waterproof',note:'لنقل الكاميرات والمايكات.'},
+  rack:{url:'https://qhs-ksa.com/ar',shop:'الهفوف للرفوف',name:'رفّ تخزين حديد ١٥٠×٦٠×٢٠٠ سم',en:'Heavy-duty steel storage rack 150x60x200, blue & orange',cat:'storage',q:'heavy duty steel storage rack 150x60x200',note:'رفوف المستودعات المعروفة: قوائم زرقاء وأرفف برتقاليّة، ٤ أدوار.'},
+  rack100:{url:'https://qhs-ksa.com/ar',shop:'الهفوف للرفوف',name:'رفّ تخزين حديد ١٠٠×٦٠×٢٠٠ سم',en:'Heavy-duty steel storage rack 100x60x200, blue & orange',cat:'storage',q:'heavy duty steel storage rack 100x60x200'},
   greenscreen:{name:'شاشة خضراء Elgato (قابلة للطيّ)',en:'Elgato Green Screen',cat:'storage',q:'Elgato Green Screen',note:'اختياريّة — تُفرد عند الحاجة وتُطوى في المخزن.'},
   // ── الأثاث (نماذج أمازون ثلاثيّة الأبعاد — ABO) ──
   B07B7DL32P:{name:'طاولة البودكاست (خشب جوز)',en:'Rivet Anne Mid-Century Modern Wood Desk, 62"W, Walnut',cat:'furniture',img:'81DV+dV0+5L',model:1},
@@ -103,10 +105,9 @@ export const LAYOUT=[
   ['fx30',16.61,4.4,P],['zve10',15.4,4.0,P-.4],['zve10',17.8,4.0,P+.4],
   ['panels',13.35,2.4,H,1.2],['panels',19.87,2.4,-H,1.2],
   // ═══ المخزن ═══
-  ['B0754K96NJ',4.25,1.6,H],['B0754K96NJ',4.25,2.45,H],
-  ['B072ZNMKGM',5.35,1.25,0],
-  ['case',5.6,2.4,.3],['case',6.0,2.0,-.2],
-  ['greenscreen',6.25,1.35,0],
+  ['rack',4.37,1.88,H],['rack',5.45,1.36,0],['rack100',6.2,2.35,-H],
+  ['case',5.0,3.25,.1],['case',5.05,2.8,-.15],
+  ['greenscreen',4.3,3.3,0],
 ];
 
 /* ═══ باقي المكان — تصوّر مبدئيّ يتبع أثاث المخطط (المواقع مقروءة من ملفّ PDF) ═══ */

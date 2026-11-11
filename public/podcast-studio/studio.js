@@ -9,7 +9,8 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {AMAZON,ITEMS,CATS,ROOMS,LAYOUT,EXTRA} from './products.js?v=2';
+import {MapControls} from 'three/addons/controls/MapControls.js';
+import {AMAZON,ITEMS,CATS,ROOMS,LAYOUT,EXTRA} from './products.js?v=4';
 
 const FONT='"Thmanyah Sans","Tajawal",system-ui,sans-serif';
 const GOLD='#E8C766';
@@ -89,8 +90,9 @@ for(const d of PLAN.doors){
   else if(d.name==='المخزن')sign('المخزن','معدّات التصوير',mx,d.c+.1);
 }
 // ألواح إضاءة السقف
+const CEIL=new THREE.Group();scene.add(CEIL);CEIL.add(ceil);
 {const geo=new THREE.PlaneGeometry(.6,.6),m=new THREE.MeshBasicMaterial({color:0xfff6e6,toneMapped:false});
-  for(let x=BX0+1.2;x<BX1-.6;x+=2.4)for(let z=BZ0+1.2;z<BZ1-.6;z+=2.4){const p=new THREE.Mesh(geo,m);p.rotation.x=Math.PI/2;p.position.set(x,WH-.005,z);scene.add(p)}}
+  for(let x=BX0+1.2;x<BX1-.6;x+=2.4)for(let z=BZ0+1.2;z<BZ1-.6;z+=2.4){const p=new THREE.Mesh(geo,m);p.rotation.x=Math.PI/2;p.position.set(x,WH-.005,z);CEIL.add(p)}}
 
 /* ── الإضاءة ── */
 scene.add(new THREE.HemisphereLight(0xfff0dc,0x3b352f,1.25));
@@ -137,6 +139,15 @@ const BUILD={
   panels(g){const C=[0x2f3237,0x3a3d42,0x2f3237];for(let i=0;i<3;i++)box(.6,1.2,.05,C[i],(i-1)*.65,-.6,.025,g)},
   case(g){box(.6,.26,.42,0x1d1e20,0,0,0,g);for(const x of[-.2,.2])box(.06,.27,.43,0x2a2b2e,x,0,0,g);box(.16,.03,.03,0x111,0,.27,0,g)},
   greenscreen(g){cyl(.11,.11,1.25,0x1f1f1f,0,0,0,g,12);cyl(.115,.115,.04,0x2ee66d,0,1.2,0,g,12)},
+  // رفّ مستودع: قوائم زرقاء مثقّبة، عوارض وأرفف برتقاليّة، تقاطع جانبيّ — وعليه صناديق المعدّات
+  rack(g,L=1.5){const BL=mat(0x1f5fbf,{metalness:.35,roughness:.5}),OR=mat(0xff5a1f,{metalness:.3,roughness:.5}),D=.6,Hh=2.0;
+    for(const x of[-L/2,L/2])for(const z of[-D/2,D/2])box(.055,Hh,.04,BL,x,0,z,g);
+    for(const x of[-L/2,L/2]){for(const y of[.12,1.0,1.85])box(.03,.03,D,BL,x,y,0,g,false);
+      for(const [y0,s] of[[.15,1],[1.0,-1]]){const b=new THREE.Mesh(new THREE.BoxGeometry(.025,.92,.025),BL);b.position.set(x,y0+.43,0);b.rotation.x=s*.55;put(b,g,false)}}
+    for(const y of[.1,.68,1.26,1.86]){for(const z of[-D/2,D/2])box(L+.03,.08,.05,OR,0,y,z,g);box(L-.04,.015,D-.04,OR,0,y+.065,0,g)}
+    const r=rnd(Math.round(L*10)+g.id),C=[0xc9a77c,0x1d1e20,0xb8946a,0x2a2b2e];
+    for(const y of[.18,.76,1.34,1.94])for(let x=-L/2+.12;x<L/2-.2;){const w=.18+r()*.28,h=.15+r()*.3;if(r()<.8)box(w,h,.3+r()*.2,C[Math.floor(r()*4)],x+w/2,y,0,g);x+=w+.05}},
+  rack100(g){BUILD.rack(g,1.0)},
   // ── المكاتب والقاعة ──
   trainingtable(g){box(1.48,.03,.68,0xf1efea,0,.71,0,g);box(1.3,.3,.02,0xd9d6cf,0,.38,-.3,g,false);
     for(const x of[-.68,.68])for(const z of[-.28,.28])box(.035,.71,.035,STEEL,x,0,z,g,false)},
@@ -235,7 +246,7 @@ function pause(title,mini){
   $('sysTitle').textContent=title;sys.classList.remove('hidden');$('start').classList.add('hidden');$('hint').classList.add('hidden');sys.classList.toggle('mini',!!mini);
 }
 function openPanel(title,html,onClick,mini){pause(title,mini);const b=$('panelBody');b.innerHTML=html;b.scrollTop=0;b.onclick=onClick||null}
-function closeSys(){sys.classList.add('hidden');sysOpen=false;$('panelBody').onclick=null;if(isTouch||dragLook)playing=true;else lock()}
+function closeSys(){sys.classList.add('hidden');sysOpen=false;$('panelBody').onclick=null;if(TOP)return;if(isTouch||dragLook)playing=true;else lock()}
 $('sysClose').onclick=closeSys;
 
 /* ── بطاقة المنتج ── */
@@ -244,8 +255,8 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 function media(it){const u=imgURL(it);return u?`<img src="${esc(u)}" alt="" loading="lazy">`:`<div class="noimg">${ICON[it.cat]||'🛒'}</div>`}
 function openCard(p){const it=p.it,n=qty()[p.key]||1;
   openPanel(it.name,`<div class="mp">${media(it)}<div><b>${esc(it.name)}</b><small>${CATS[it.cat]} · ${esc(roomOf(p.obj.position.x,p.obj.position.z))} · ×${n}</small></div><button class="mx" data-a="x">✕</button></div>
-    <div class="btns"><a class="buy" href="${esc(link(it))}" target="_blank" rel="sponsored noopener">أمازون ↗</a><button data-a="move">انقل <kbd>Q</kbd></button><button data-a="home">مكانها الأصليّ</button></div>`,
-    e=>{const a=e.target.closest('[data-a]')?.dataset.a;if(a==='x')closeSys();if(a==='move'){startMove(p);closeSys()}if(a==='home'){Object.assign(p.obj.position,{x:p.home[0],z:p.home[1]});p.obj.rotation.y=p.home[2];colFor(p);persist();closeSys()}},true)}
+    <div class="btns"><a class="buy" href="${esc(link(it))}" target="_blank" rel="sponsored noopener">${esc(it.shop||'أمازون')} ↗</a><button data-a="move">انقل <kbd>Q</kbd></button><button data-a="rot">دوّر</button><button data-a="home">مكانها الأصليّ</button></div>`,
+    e=>{const a=e.target.closest('[data-a]')?.dataset.a;if(a==='x')closeSys();if(a==='rot'){p.obj.rotation.y+=Math.PI/4;colFor(p);persist()}if(a==='move'){if(TOP){closeSys();toast(isTouch?'اسحب القطعة بإصبعك لمكانها الجديد':'اسحب القطعة بالماوس لمكانها الجديد')}else{startMove(p);closeSys()}}if(a==='home'){Object.assign(p.obj.position,{x:p.home[0],z:p.home[1]});p.obj.rotation.y=p.home[2];colFor(p);persist();closeSys()}},true)}
 
 /* ── قائمة المشتريات ── */
 function qty(){const q={};for(const [k] of LAYOUT)q[k]=(q[k]||0)+1;for(const k in EXTRA)q[k]=(q[k]||0)+EXTRA[k];return q}
@@ -276,7 +287,7 @@ $('rotBtn').addEventListener('click',rotate);
 
 /* ── الخريطة ── */
 const SPOTS=[{name:'الاستقبال',desc:'المدخل ومكتب الاستقبال',x:2.6,z:7.6,yaw:-1.9},{name:'القاعة الكبرى',desc:'طاولات التدريب على شكل U',x:10.1,z:9.6,yaw:-1.6},{name:'غرفة الاجتماعات',desc:'طاولة لـ١٤ شخصاً',x:12.35,z:17.6,yaw:Math.PI},{name:'القاعة',desc:'أمام بابَي الاستوديوهين',x:7.6,z:6.4,yaw:-.45},{name:ROOMS.A.name,desc:'ثلاثة متحدّثين، ٣ كاميرات',x:9.93,z:4.2,yaw:0},{name:ROOMS.B.name,desc:'كنبة وكرسيّان، ٤ مايكات',x:16.61,z:4.1,yaw:0},{name:ROOMS.S.name,desc:'رفوف وخزانة وحقائب',x:5.6,z:3.2,yaw:.6}];
-function teleport(d){Object.assign(P,{x:d.x,z:d.z,y:0,vx:0,vz:0,vy:0,yaw:d.yaw,pitch:-.05});closeSys()}
+function teleport(d){Object.assign(P,{x:d.x,z:d.z,y:0,vx:0,vz:0,vy:0,yaw:d.yaw,pitch:-.05});if(TOP){closeSys();setTop(false)}else closeSys()}
 function openMap(){openPanel('الخريطة',`<div class="map">${SPOTS.map((d,i)=>`<button data-i="${i}"><b>${d.name}</b><span>${d.desc}</span></button>`).join('')}</div>`,e=>{const b=e.target.closest('button[data-i]');if(b)teleport(SPOTS[+b.dataset.i])})}
 $('mapBtn').onclick=()=>{if(!sysOpen)openMap()};
 
@@ -284,6 +295,9 @@ $('mapBtn').onclick=()=>{if(!sysOpen)openMap()};
 addEventListener('keydown',e=>{
   if(sysOpen){if(e.key==='Escape')closeSys();return}
   if(MOVE&&e.key==='Escape'){cancelMove();return}
+  if(e.code==='KeyV'){keys.clear();setTop(!TOP);return}
+  if(e.code==='KeyM'){keys.clear();openMap();return}
+  if(e.code==='KeyL'){keys.clear();openList();return}
   if(!playing)return;
   if(dragLook&&e.key==='Escape'){playing=false;keys.clear();$('start').classList.remove('hidden');return}
   keys.add(e.code);
@@ -291,19 +305,17 @@ addEventListener('keydown',e=>{
   if(e.code==='KeyE'||e.code==='Enter')interact();
   if(e.code==='KeyR')rotate();
   if(e.code==='KeyQ'&&!MOVE&&target>=0&&ACTS[target].p)startMove(ACTS[target].p);
-  if(e.code==='KeyM'){keys.clear();openMap()}
-  if(e.code==='KeyL'){keys.clear();openList()}
 });
 addEventListener('keyup',e=>keys.delete(e.code));
 addEventListener('blur',()=>keys.clear());
 addEventListener('wheel',e=>{if(MOVE){MOVE.p.obj.rotation.y+=Math.sign(e.deltaY)*Math.PI/16}},{passive:true});
 $('enter').onclick=()=>{if(isTouch){$('start').classList.add('hidden');playing=true}else lock()};
 document.addEventListener('pointerlockchange',()=>{const on=document.pointerLockElement===canvas;if(on)dragLook=false;if(dragLook)return;playing=on;if(!on)keys.clear();$('start').classList.toggle('hidden',on||sysOpen)});
-canvas.addEventListener('mousedown',()=>{if(isTouch||sysOpen)return;dragMoved=0;if(!playing)lock();else if(!dragLook)interact()});
-addEventListener('mouseup',()=>{if(isTouch)return;if(dragLook&&playing&&dragMoved<5)interact()});
+canvas.addEventListener('mousedown',()=>{if(TOP||isTouch||sysOpen)return;dragMoved=0;if(!playing)lock();else if(!dragLook)interact()});
+addEventListener('mouseup',()=>{if(TOP||isTouch)return;if(dragLook&&playing&&dragMoved<5)interact()});
 document.addEventListener('mousemove',e=>{if(!playing||isTouch)return;if(dragLook){if(!(e.buttons&1))return;dragMoved+=Math.abs(e.movementX)+Math.abs(e.movementY)}P.yaw-=e.movementX*.0022;P.pitch=Math.max(-1.45,Math.min(1.45,P.pitch-e.movementY*.0022))});
 const knob=$('joy').firstElementChild;
-canvas.addEventListener('touchstart',e=>{e.preventDefault();if(!playing)return;for(const t of e.changedTouches){
+canvas.addEventListener('touchstart',e=>{if(TOP)return;e.preventDefault();if(!playing)return;for(const t of e.changedTouches){
   if(t.clientX<innerWidth*.45&&joy.id===null){joy.id=t.identifier;joy.x0=t.clientX;joy.y0=t.clientY;joy.dx=joy.dy=0}
   else if(look.id===null){look.id=t.identifier;look.x=t.clientX;look.y=t.clientY}}},{passive:false});
 canvas.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches){
@@ -315,12 +327,31 @@ $('jumpBtn').addEventListener('touchstart',e=>{e.preventDefault();jump()},{passi
 $('actBtn').addEventListener('click',interact);
 let toastT;function toast(m){const t=$('toast');t.textContent=m;t.classList.remove('hidden');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.add('hidden'),3600)}
 
+/* ── المنظور العلويّ: ثلاثيّ الأبعاد بلا سقف، سحب/قرص/تدوير بالإصبعين أو الماوس ── */
+let TOP=false;
+const ctl=new MapControls(camera,canvas);ctl.enabled=false;ctl.enableDamping=true;ctl.dampingFactor=.12;ctl.screenSpacePanning=false;
+ctl.minDistance=3;ctl.maxDistance=40;ctl.maxPolarAngle=1.3;
+function setTop(on){TOP=on;if(MOVE)cancelMove();document.documentElement.classList.toggle('top',on);CEIL.visible=!on;$('viewBtn').classList.toggle('on',on);$('viewLbl').textContent=on?'امشِ':'من فوق';
+  if(on){playing=false;keys.clear();joy.id=look.id=null;if(document.pointerLockElement)document.exitPointerLock();$('start').classList.add('hidden');$('hint').classList.add('hidden');
+    camera.fov=50;camera.updateProjectionMatrix();ctl.target.set(BX0+PW/2,0,BZ0+PD/2);camera.position.set(BX0+PW/2,25,BZ0+PD/2+15);ctl.enabled=true;ctl.update()}
+  else{ctl.enabled=false;camera.fov=FOV0;camera.updateProjectionMatrix();camera.rotation.order='YXZ';if(isTouch)playing=true;else $('start').classList.remove('hidden')}}
+$('viewBtn').onclick=()=>{if(!sysOpen)setTop(!TOP)};$('enterTop').onclick=()=>setTop(true);
+// من فوق: انقر/المس القطعة لبطاقتها، واسحبها لتنقلها
+const ptr=new THREE.Vector2();let drag=null;
+function pick(e){const r=canvas.getBoundingClientRect();ptr.set((e.clientX-r.left)/r.width*2-1,-(e.clientY-r.top)/r.height*2+1);ray.setFromCamera(ptr,camera);ray.far=200;const h=ray.intersectObjects(actObjs(),true)[0];ray.far=2.6;return h}
+canvas.addEventListener('pointerdown',e=>{if(!TOP||sysOpen||!e.isPrimary)return;const h=pick(e),a=h&&ACTS[h.object.userData.act];if(!a||!a.p)return;
+  e.stopImmediatePropagation();drag={p:a.p,x:e.clientX,y:e.clientY,moved:false};ctl.enabled=false},{capture:true});
+addEventListener('pointermove',e=>{if(!drag)return;if(!drag.moved&&Math.hypot(e.clientX-drag.x,e.clientY-drag.y)<7)return;
+  if(!drag.moved){drag.moved=true;if(drag.p.col)drag.p.col.top=-1}
+  pick(e);FLOOR.constant=-drag.p.y;if(ray.ray.intersectPlane(FLOOR,hitP)){drag.p.obj.position.x=Math.round(hitP.x*20)/20;drag.p.obj.position.z=Math.round(hitP.z*20)/20}});
+addEventListener('pointerup',()=>{if(!drag)return;const d=drag;drag=null;ctl.enabled=TOP;if(d.moved){colFor(d.p);persist();toast('ثُبّتت القطعة')}else openCard(d.p)});
+
 /* ── الحلقة ── */
 addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
 const clk=new THREE.Clock();
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05);
-  if(playing)step(dt);else camera.position.set(P.x,P.y+EYE,P.z),camera.rotation.set(P.pitch,P.yaw,0);
-  if(playing){if(MOVE)moveTick();else aim()}
+  if(TOP)ctl.update();else if(playing)step(dt);else camera.position.set(P.x,P.y+EYE,P.z),camera.rotation.set(P.pitch,P.yaw,0);
+  if(playing&&!TOP){if(MOVE)moveTick();else aim()}
   for(const d of DOORS){const near=Math.hypot(P.x-d.x,P.z-d.z)<1.9;d.a+=((near?d.open:0)-d.a)*Math.min(1,dt*5);d.g.rotation.y=d.ry0+d.a}
   renderer.render(scene,camera)}
 
