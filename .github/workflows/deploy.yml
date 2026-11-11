@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   workflow_dispatch:
+  # المدونة صفحات ثابتة تُبنى من Supabase: كل نصف ساعة نفحص هل تغيّرت المقالات
+  # (نشر/تعديل/حذف من لوحة النظام)، ونعيد النشر فقط لو تغيّرت.
+  schedule:
+    - cron: "*/30 * * * *"
 
 permissions:
   contents: read
@@ -22,7 +26,25 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # يقارن بصمة المقالات في Supabase بالبصمة المنشورة (/blog/version.txt).
+  # الصيغة لازم تطابق blogVersion() في src/lib/blog.ts.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    outputs:
+      changed: ${{ steps.cmp.outputs.changed }}
+    steps:
+      - id: cmp
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then echo "changed=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+          KEY="sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13"
+          NOW=$(curl -fsS "https://rrerwhhxrjyzmnnjsfev.supabase.co/rest/v1/posts?select=*&status=eq.published&order=published_at.desc" -H "apikey: $KEY" -H "Authorization: Bearer $KEY" | jq -r 'map(.id + "@" + .published_at + "@" + (.slug // "")) | join(",")') || { echo "changed=false" >> "$GITHUB_OUTPUT"; exit 0; }
+          LIVE=$(curl -fsS "https://ibrahimsaud.com/blog/version.txt?t=$(date +%s)" || true)
+          if [ "$NOW" != "$LIVE" ]; then echo "المقالات تغيّرت — إعادة نشر"; echo "changed=true" >> "$GITHUB_OUTPUT"; else echo "changed=false" >> "$GITHUB_OUTPUT"; fi
+
   build:
+    needs: check
+    if: needs.check.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

@@ -9,7 +9,10 @@
  *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== المدونة (داخل النظام) — كتابة + تنسيق بالذكاء + نشر ===== */
-let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'مخرج ومنتج ومدير إبداعي',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:''}};
+let BLOG={settings:{author_name:'إبراهيم سعود',author_title:'مخرج ومنتج ومدير إبداعي',author_avatar_url:''},posts:[],cover:'',formatted:null,form:{id:null,title:'',body:'',status:'',slug:''},hasSlug:false};
+// رابط المقال في الموقع: /blog/<slug>/ — صفحة ثابتة يقرؤها جوجل (src/app/blog). بدون slug يحوّل ?id= للرابط الصحيح.
+function blogSlugify(s){return String(s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,80)}
+function blogPostHref(p){return p&&p.slug?'../blog/'+p.slug+'/':'../blog/?id='+encodeURIComponent(p.id)}
 const BLOG_AV_FALLBACK='https://raw.githubusercontent.com/ibrahimsaud-255/ibrahimsaud-site/main/my_photo.jpg';
 function blogAvatar(){return BLOG.settings.author_avatar_url||S.settings.authorPhoto||BLOG_AV_FALLBACK}
 function blogDates(){const now=new Date();let greg='',hijri='';try{greg=now.toLocaleDateString('ar',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}catch(_){greg=now.toISOString().slice(0,10)}try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic-umalqura',{day:'numeric',month:'long',year:'numeric'})}catch(_){try{hijri=now.toLocaleDateString('ar-SA-u-ca-islamic',{day:'numeric',month:'long',year:'numeric'})}catch(__){hijri=''}}hijri=hijri.replace(/\s*هـ\s*$/,'').trim();return {greg,hijri}}
@@ -20,10 +23,11 @@ async function renderBlog(){
   document.getElementById('main').innerHTML='<div class="page-head"><h1>المدونة</h1></div><p style="color:var(--muted)">جارٍ التحميل…</p>';
   try{const{data}=await sb.from('blog_settings').select('*').eq('id',1).single();if(data)BLOG.settings=data}catch(_){}
   try{const{data}=await sb.from('posts').select('*').order('published_at',{ascending:false});BLOG.posts=data||[]}catch(_){BLOG.posts=[]}
+  try{const{error}=await sb.from('posts').select('slug').limit(1);BLOG.hasSlug=!error}catch(_){BLOG.hasSlug=false}
   blogRender();
 }
 function blogPostsList(){if(!BLOG.posts.length)return '<p style="color:var(--muted)">لا مقالات بعد.</p>';
-  return '<table><thead><tr><th>العنوان</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead><tbody>'+BLOG.posts.map(p=>{const draft=p.status==='draft';const badge=draft?'<span class="pill scheduled">مسودة</span>':'<span class="pill done">منشور</span>';return `<tr><td><b>${esc(p.title||'بدون عنوان')}</b></td><td>${badge}</td><td style="color:var(--muted)">${esc(p.greg_date||'—')}</td><td style="white-space:nowrap"><button class="link-btn" onclick="blogEditPost('${p.id}')">تعديل</button>${draft?`<button class="link-btn" onclick="blogPublishDraft('${p.id}')">نشر</button>`:`<a class="link-btn" href="../blog/" target="_blank">فتح</a>`}<button class="link-btn del" onclick="blogDeletePost('${p.id}')">حذف</button></td></tr>`}).join('')+'</tbody></table>';}
+  return '<table><thead><tr><th>العنوان</th><th>الحالة</th><th>التاريخ</th><th></th></tr></thead><tbody>'+BLOG.posts.map(p=>{const draft=p.status==='draft';const badge=draft?'<span class="pill scheduled">مسودة</span>':'<span class="pill done">منشور</span>';return `<tr><td><b>${esc(p.title||'بدون عنوان')}</b></td><td>${badge}</td><td style="color:var(--muted)">${esc(p.greg_date||'—')}</td><td style="white-space:nowrap"><button class="link-btn" onclick="blogEditPost('${p.id}')">تعديل</button>${draft?`<button class="link-btn" onclick="blogPublishDraft('${p.id}')">نشر</button>`:`<a class="link-btn" href="${blogPostHref(p)}" target="_blank">فتح</a>`}<button class="link-btn del" onclick="blogDeletePost('${p.id}')">حذف</button></td></tr>`}).join('')+'</tbody></table>';}
 async function blogPublishDraft(id){const p=BLOG.posts.find(x=>x.id===id);if(!p)return;if(!confirm('نشر هذه المسودة الآن؟'))return;
   const d=blogDates();const{data:saved,error}=await sb.from('posts').update({status:'published',greg_date:d.greg,hijri_date:d.hijri,published_at:new Date().toISOString()}).eq('id',id).select().single();
   if(error){alert('تعذّر النشر: '+error.message);return}
@@ -40,6 +44,7 @@ function blogRender(){
         <h3 style="margin-top:0"><i data-lucide="pen-line"></i> ${BLOG.form.id?('تعديل مقال'+(BLOG.form.status==='draft'?' (مسودة)':'')):'مقال جديد'}
           ${BLOG.form.id?`<button class="btn btn-ghost btn-sm" style="float:left" onclick="blogResetEditor()"><i data-lucide="x"></i> إلغاء التعديل / مقال جديد</button>`:''}</h3>
         <div class="field"><label>عنوان المقال</label><input id="b_title" value="${esc(BLOG.form.title)}" oninput="blogPreview()" placeholder="عنوان واضح وجذّاب"></div>
+        ${BLOG.hasSlug?`<div class="field"><label>رابط المقال بالإنجليزي (يظهر في قوقل)</label><input id="b_slug" dir="ltr" value="${esc(BLOG.form.slug||'')}" placeholder="erp-system-for-small-business" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'-')"><div style="color:var(--muted);font-size:12px;margin-top:4px">كلمات إنجليزيّة بينها شَرطة تصف موضوع المقال. لا تغيّره بعد النشر — الرابط القديم ينكسر.</div></div>`:''}
         <div class="field"><label>صورة المقال (الغلاف)</label>
           <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" onclick="document.getElementById('b_cover').click()"><i data-lucide="image-plus"></i> رفع صورة الغلاف</button><span id="b_coverStatus" style="color:var(--muted);font-size:12px"></span></div>
           <input type="file" id="b_cover" accept="image/*" class="hidden" onchange="blogUploadCover(event)">
@@ -87,9 +92,9 @@ async function blogFormat(){
   BLOG.formatted=res;const ti=document.getElementById('b_title');if(ti&&!ti.value.trim()&&res.title)ti.value=res.title;
   if(btn)btn.disabled=false;blogPreview();
 }
-function blogResetEditor(){BLOG.form={id:null,title:'',body:'',status:''};BLOG.cover='';BLOG.formatted=null;blogRender();}
+function blogResetEditor(){BLOG.form={id:null,title:'',body:'',status:'',slug:''};BLOG.cover='';BLOG.formatted=null;blogRender();}
 function blogEditPost(id){const p=BLOG.posts.find(x=>x.id===id);if(!p)return;
-  BLOG.form={id:p.id,title:p.title||'',body:blogStripHtml(p.body_html||''),status:p.status||'published'};
+  BLOG.form={id:p.id,title:p.title||'',body:blogStripHtml(p.body_html||''),status:p.status||'published',slug:p.slug||''};
   BLOG.cover=p.cover_url||'';BLOG.formatted={html:p.body_html||'',title:p.title||'',excerpt:p.excerpt||''};
   blogRender();document.getElementById('main').scrollIntoView({behavior:'smooth',block:'start'});}
 function blogStripHtml(html){const t=document.createElement('div');t.innerHTML=html||'';t.querySelectorAll('h2,h3,p,li,blockquote,br').forEach(el=>{if(el.tagName==='BR')el.replaceWith('\n');else el.append('\n')});return (t.textContent||'').replace(/\n{3,}/g,'\n\n').trim();}
@@ -101,14 +106,15 @@ async function blogSave(status){
   const btns=['b_publish','b_draft'].map(i=>document.getElementById(i));btns.forEach(b=>b&&(b.disabled=true));
   if(msg){msg.className='msg';msg.innerHTML=isPub?'جارٍ النشر…':'جارٍ حفظ المسودة…'}
   const row={title:finalTitle,excerpt:fm.excerpt||'',body_html:fm.html,cover_url:BLOG.cover||'',reading_min:blogReadingMin(fm.html),status};
+  if(BLOG.hasSlug){const sl=blogSlugify((document.getElementById('b_slug')||{}).value);row.slug=sl||null;}
   if(isPub){const d=blogDates();row.greg_date=d.greg;row.hijri_date=d.hijri;row.published_at=new Date().toISOString();}
   let res;
   if(BLOG.form.id){res=await sb.from('posts').update(row).eq('id',BLOG.form.id).select().single();}
   else{res=await sb.from('posts').insert(row).select().single();}
   const{data:saved,error}=res;
   if(error){btns.forEach(b=>b&&(b.disabled=false));if(msg){msg.className='msg err';msg.textContent='تعذّر الحفظ: '+error.message}return}
-  if(msg){msg.className='msg ok';msg.textContent=isPub?'تم نشر المقال':'تم حفظ المسودة — تقدر ترجع تعدّلها لاحقاً'}
-  BLOG.form={id:null,title:'',body:'',status:''};BLOG.cover='';BLOG.formatted=null;
+  if(msg){msg.className='msg ok';msg.textContent=isPub?'تم نشر المقال — يظهر في الموقع خلال نصف ساعة تقريباً (يُعاد بناء الموقع تلقائياً)':'تم حفظ المسودة — تقدر ترجع تعدّلها لاحقاً'}
+  BLOG.form={id:null,title:'',body:'',status:'',slug:''};BLOG.cover='';BLOG.formatted=null;
   try{const{data}=await sb.from('posts').select('*').order('published_at',{ascending:false});BLOG.posts=data||[]}catch(_){}
   if(isPub&&saved&&(wasNew||wasDraft)&&confirm('تم نشر المقال. هل ترسله الآن لكل المشتركين في القائمة البريدية؟')){nlSendPostRow(saved);}
   setTimeout(()=>blogRender(),700);

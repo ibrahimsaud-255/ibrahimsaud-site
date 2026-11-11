@@ -29,7 +29,7 @@ function nlToHtml(txt){if(/<[a-z][\s\S]*>/i.test(txt))return txt;const e=s=>s.re
 async function nlSendPostRow(post){
   // ينشئ حملة من المقال ثم يرسلها الآن (لتُسجَّل في سجلّ الحملات)
   try{
-    const row={subject:post.title||'مقال جديد',content_html:post.body_html||'',cover_url:post.cover_url||null,cta_url:post.slug?('https://ibrahimsaud.com/blog/'+post.slug):'https://ibrahimsaud.com/blog/',status:'scheduled',scheduled_at:new Date().toISOString()};
+    const row={subject:post.title||'مقال جديد',content_html:post.body_html||'',cover_url:post.cover_url||null,cta_url:post.slug?('https://ibrahimsaud.com/blog/'+post.slug+'/'):('https://ibrahimsaud.com/blog/?id='+post.id),status:'scheduled',scheduled_at:new Date().toISOString()};
     const {data,error}=await sb.from('newsletter_campaigns').insert(row).select('id').single();
     if(error)throw error;
     const res=await nlSend({campaignId:data.id});
@@ -123,7 +123,7 @@ async function nlPickPost(){
   NL._posts=posts;
   openModal('اختر تدوينة',posts.map((p,i)=>`<button type="button" class="btn btn-ghost" style="display:block;width:100%;text-align:right;margin-bottom:6px" onclick="nlUsePost(${i})"><i data-lucide="file-text"></i> ${esc(p.title||'بدون عنوان')}</button>`).join(''),()=>closeModal());
 }
-function nlUsePost(i){const p=(NL._posts||[])[i];if(!p)return;const g=id=>document.getElementById(id);if(g('nl_subject'))g('nl_subject').value=p.title||'';if(g('nl_html'))g('nl_html').value=p.body_html||'';if(g('nl_cover'))g('nl_cover').value=p.cover_url||'';if(g('nl_url'))g('nl_url').value='https://ibrahimsaud.com/blog/';closeModal();}
+function nlUsePost(i){const p=(NL._posts||[])[i];if(!p)return;const g=id=>document.getElementById(id);if(g('nl_subject'))g('nl_subject').value=p.title||'';if(g('nl_html'))g('nl_html').value=p.body_html||'';if(g('nl_cover'))g('nl_cover').value=p.cover_url||'';if(g('nl_url'))g('nl_url').value=p.slug?('https://ibrahimsaud.com/blog/'+p.slug+'/'):('https://ibrahimsaud.com/blog/?id='+p.id);closeModal();}
 async function nlDoSend(testOnly){
   const g=id=>(document.getElementById(id)||{}).value||'';
   const subject=g('nl_subject').trim();const raw=g('nl_html').trim();const cover=g('nl_cover').trim();const url=g('nl_url').trim();

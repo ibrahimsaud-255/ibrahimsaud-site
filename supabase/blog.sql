@@ -90,3 +90,20 @@ create policy blog_images_write on storage.objects
 -- ============================================================
 select tablename, rowsecurity from pg_tables
  where schemaname = 'public' and tablename in ('posts','blog_settings');
+
+-- ── رابط المقال (slug) — للصفحات الثابتة /blog/<slug>/ (نوفمبر ٢٠٢٦) ──
+-- كلمات إنجليزيّة صغيرة بينها شَرطة. بدونه يستعمل الموقع LEGACY_SLUGS في
+-- src/lib/blog.ts أو أوّل ٨ خانات من المعرّف. حقل «رابط المقال» في اللوحة يظهر بعد تشغيل هذا.
+alter table public.posts add column if not exists slug text;
+create unique index if not exists posts_slug_key on public.posts(slug) where slug is not null and slug <> '';
+alter table public.posts drop constraint if exists posts_slug_format;
+alter table public.posts add constraint posts_slug_format check (slug is null or slug = '' or slug ~ '^[a-z0-9]+(-[a-z0-9]+)*$');
+update public.posts set slug = v.slug from (values
+  ('e9bdb90c-3bac-4c73-b4ae-5ee037ea9519'::uuid, 'creative-director-one-vision'),
+  ('2a67f5c6-468d-4453-aec2-e06e95200f2c'::uuid, 'who-is-ibrahim-saud'),
+  ('db28fb2a-0909-45a4-9a93-1e5cbd1de00e'::uuid, 'from-idea-to-screen'),
+  ('ba254b8c-69e5-41f1-95f0-bb190e353fda'::uuid, 'riyadh-or-alahsa-next-step'),
+  ('d790f74b-563c-4844-a3c1-496d9a8f135b'::uuid, 'experience-meets-vision'),
+  ('1a660506-426d-49c6-8774-2d7084214113'::uuid, 'reading-and-writing-in-the-ai-era'),
+  ('b1ee1924-d172-42e7-8aed-a3072aeb2114'::uuid, 'nahnu-narzuquk')
+) as v(id, slug) where posts.id = v.id and (posts.slug is null or posts.slug = '');
