@@ -26,6 +26,7 @@ let HR_TAB='overview';
    المدوّنة (تتمّ عبر كلود). دوالّ عرضها باقية فإعادة أيّ قسمٍ سطرٌ هنا. */
 const HR_TABS=[
   {id:'overview',name:'نظرة عامة',icon:'layout-dashboard'},
+  {id:'funnel',name:'رحلة العميل',icon:'route'},
   {id:'usage',name:'الاستخدام',icon:'activity'},
   {id:'marketing',name:'التسويق والوكيل',icon:'target'},
   {id:'users',name:'المستخدمون',icon:'users'},
