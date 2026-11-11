@@ -15,6 +15,7 @@ import PackageCards from "./PackageCards";
 import WhyCards from "./WhyCards";
 import Devices from "./Devices";
 import QuoteForm from "./QuoteForm";
+import BlogLinks from "./BlogLinks";
 import YtLite from "./YtLite";
 import { brands } from "@/lib/site";
 import ServiceSchema from "./ServiceSchema";
@@ -292,6 +293,12 @@ export default function ProductPage({ p }: { p: Product }) {
             <WhyCards />
           </div>
         </section>
+
+        {p.slug === "systems" ? (
+          <BlogLinks topic="systems" first={["erp-system-cost-small-business", "saas-vs-owned-system-cost", "ready-made-vs-custom-system", "own-your-system-source-code", "replace-excel-whatsapp-system", "erp-system-guide-saudi"]} />
+        ) : (
+          <BlogLinks topic="media" first={p.slug === "video" ? ["company-profile-video", "business-podcast-guide", "video-ad-production-cost-saudi"] : ["personal-branding-linkedin", "company-website-design-saudi", "business-podcast-guide"]} />
+        )}
 
         <section className="v2-sec">
           <div className="v2-wrap">

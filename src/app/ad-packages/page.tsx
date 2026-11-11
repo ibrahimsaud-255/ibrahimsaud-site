@@ -5,6 +5,7 @@ import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
 import LocalNav from "@/components/v2/LocalNav";
 import Footer from "@/components/v2/Footer";
+import BlogLinks from "@/components/v2/BlogLinks";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
 import AdReelsRail from "@/components/v2/AdReelsRail";
@@ -108,6 +109,8 @@ export default function AdPackagesPage() {
             <WhyCards />
           </div>
         </section>
+
+        <BlogLinks topic="media" first={["store-video-ads-guide", "ad-script-hook-guide", "video-ad-production-cost-saudi"]} max={3} />
 
         <section className="v2-sec">
           <div className="v2-wrap">

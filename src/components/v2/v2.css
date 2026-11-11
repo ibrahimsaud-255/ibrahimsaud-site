@@ -545,3 +545,13 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2 .v2-pick p { color: var(--fg-2); line-height: 1.8; margin: 0 0 8px; flex: 1; }
 @media (max-width: 734px) { .v2 .v2-pick { grid-template-columns: 1fr; } .v2 .v2-pick > div { padding: 26px 24px; } }
 .v2 .v2-phero .media .v2-yt { margin: 0 auto; box-shadow: 0 30px 70px rgba(30,45,90,.16); }
+
+/* «اقرأ قبل لا تقرّر»: مقالات القسم في صفحات الخدمات (BlogLinks) */
+.v2 .v2-reads { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+.v2 .v2-reads a { display: flex; flex-direction: column; gap: 8px; height: 100%; padding: 20px 22px; background: var(--card); border: 1px solid var(--line); border-radius: 22px; color: inherit; text-decoration: none; transition: border-color .3s var(--ease), transform .3s var(--ease); }
+.v2 .v2-reads a:hover { border-color: var(--blue); transform: translateY(-2px); }
+.v2 .v2-reads b { font-size: 18px; line-height: 1.5; font-weight: 800; }
+.v2 .v2-reads span { color: var(--fg-2); font-size: 15px; line-height: 1.7; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.v2 .v2-reads-all { margin-top: 20px; }
+.v2 .v2-reads-all a { color: var(--blue); font-weight: 700; text-decoration: none; }
+@media (max-width: 900px) { .v2 .v2-reads { grid-template-columns: 1fr; } }

@@ -8,6 +8,7 @@ import Footer from "@/components/v2/Footer";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
 import QuoteForm from "@/components/v2/QuoteForm";
+import BlogLinks from "@/components/v2/BlogLinks";
 import WhyCards from "@/components/v2/WhyCards";
 import PackageCards from "@/components/v2/PackageCards";
 import ServiceSchema from "@/components/v2/ServiceSchema";
@@ -149,6 +150,8 @@ export default function AiPage() {
             <WhyCards />
           </div>
         </section>
+
+        <BlogLinks topic="ai" first={["ai-workshop-for-companies", "ai-use-cases-small-business", "ai-usage-policy-template", "claude-vs-chatgpt-vs-gemini", "prompt-writing-guide-arabic", "ai-workshop-for-schools-students"]} />
 
         <section className="v2-sec">
           <div className="v2-wrap">

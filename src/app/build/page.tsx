@@ -7,6 +7,7 @@ import Footer from "@/components/v2/Footer";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
 import QuoteForm from "@/components/v2/QuoteForm";
+import BlogLinks from "@/components/v2/BlogLinks";
 import YtLite from "@/components/v2/YtLite";
 import PackageCards from "@/components/v2/PackageCards";
 import ServiceSchema from "@/components/v2/ServiceSchema";
@@ -92,6 +93,8 @@ export default function BuildPage() {
             <div data-rise><QuoteForm subject={b.quote.subject} fields={b.quote.fields} cta="أرسل الطلب" /></div>
           </div>
         </section>
+
+        <BlogLinks topic="ai" first={["build-with-ai-without-coding", "prompt-writing-guide-arabic", "claude-vs-chatgpt-vs-gemini"]} max={3} />
 
         <section className="v2-sec">
           <div className="v2-wrap">

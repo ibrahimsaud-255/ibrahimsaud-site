@@ -7,7 +7,8 @@ import "../blog.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
 import Footer from "@/components/v2/Footer";
-import { getPost, getPosts, getSettings, plain, postUrl, sanitize, slugFor } from "@/lib/blog";
+import { bookHref } from "@/lib/v2";
+import { dateLabel, faqsOf, getPost, getPosts, getSettings, plain, postUrl, related, sanitize, slugFor, topicOf, TOPICS } from "@/lib/blog";
 
 // كلّ مقال منشور = صفحة ثابتة؛ أيّ رابط غيرها يطلع 404.
 export const dynamicParams = false;
@@ -42,7 +43,9 @@ export default async function PostPage({ params }: Props) {
 
   const url = postUrl(p);
   const body = sanitize(p.body_html);
-  const more = all.filter((x) => x.id !== p.id).slice(0, 3);
+  const more = related(p, all, 4);
+  const topic = TOPICS[topicOf(p)];
+  const faqs = faqsOf(p.body_html);
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -71,6 +74,9 @@ export default async function PostPage({ params }: Props) {
           { "@type": "ListItem", position: 3, name: p.title, item: url },
         ],
       },
+      ...(faqs.length
+        ? [{ "@type": "FAQPage", "@id": `${url}#faq`, mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })) }]
+        : []),
     ],
   };
 
@@ -79,7 +85,7 @@ export default async function PostPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <Nav />
       <main className="bl-wrap">
-        <nav className="bl-crumbs" aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link> <span>›</span> <Link href="/blog/">المدونة</Link></nav>
+        <nav className="bl-crumbs" aria-label="مسار الصفحة"><Link href="/">الرئيسية</Link> <span>›</span> <Link href="/blog/">المدونة</Link> <span>›</span> <Link href={`/blog/#${topicOf(p)}`}>{topic.name}</Link></nav>
         <article className="bl-article">
           <h1>{p.title}</h1>
           <div className="bl-meta">
@@ -88,7 +94,7 @@ export default async function PostPage({ params }: Props) {
             <div>
               <div className="who">{s.author_name}</div>
               <div className="when">
-                <time dateTime={p.published_at}>{p.greg_date}</time>
+                <time dateTime={p.published_at}>{dateLabel(p)}</time>
                 {p.hijri_date ? ` · ${p.hijri_date} هـ` : ""} · {p.reading_min || 1} د قراءة
               </div>
             </div>
@@ -102,24 +108,24 @@ export default async function PostPage({ params }: Props) {
 
         {/* ربط داخليّ: كلّ مقال يودّي للخدمات — يفيد القارئ وجوجل معاً */}
         <aside className="bl-cta">
-          <h2>تبغى نظام لمنشأتك أو ورشة لفريقك؟</h2>
-          <p>أبني أنظمة إدارة عربيّة تملكها بدل الاشتراكات، وأدرّب الفرق على الذكاء الاصطناعي في شغلهم اليوميّ.</p>
+          <h2>{topic.cta.title}</h2>
+          <p>{topic.cta.text}</p>
           <div className="bl-cta-links">
-            <Link className="v2-btn v2-btn-primary" href="/systems/">النظام</Link>
-            <Link className="v2-btn v2-btn-ghost" href="/ai/">ورش الذكاء الاصطناعي</Link>
+            <Link className="v2-btn v2-btn-primary" href={topic.cta.href}>{topic.cta.label}</Link>
+            <a className="v2-btn v2-btn-ghost" href={bookHref} target="_blank" rel="noopener">مكالمة تعارف مجّانيّة</a>
           </div>
         </aside>
 
         {more.length ? (
           <section className="bl-more">
-            <h2>مقالات أخرى</h2>
+            <h2>اقرأ أيضاً</h2>
             <ul className="bl-list">
               {more.map((m) => (
                 <li key={m.id}>
                   <Link className="bl-card" href={`/blog/${slugFor(m)}/`}>
                     <div className="bl-card-body">
                       <h3>{m.title}</h3>
-                      <p className="bl-date"><time dateTime={m.published_at}>{m.greg_date}</time></p>
+                      {m.excerpt ? <p className="bl-ex">{m.excerpt}</p> : null}
                     </div>
                   </Link>
                 </li>

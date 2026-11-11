@@ -11,6 +11,7 @@ import WindowLight from "@/components/v2/WindowLight";
 import Devices from "@/components/v2/Devices";
 import PackageCards from "@/components/v2/PackageCards";
 import QuoteForm from "@/components/v2/QuoteForm";
+import BlogLinks from "@/components/v2/BlogLinks";
 import ServiceSchema from "@/components/v2/ServiceSchema";
 import { charitiesPage as c } from "@/lib/charities";
 import { bookHref, demos, pkgs, products, waHref } from "@/lib/v2";
@@ -163,6 +164,8 @@ export default function CharitiesPage() {
             <div data-rise><QuoteForm subject="عرض سعر لنظام جمعيّة" fields={quote.fields} cta="اطلب عرض السعر" /></div>
           </div>
         </section>
+
+        <BlogLinks topic="charities" max={9} first={["charity-management-system-own-or-subscribe", "charity-management-system-features", "charity-payment-voucher-approval-workflow", "nonprofit-accounting-guide", "beneficiary-management-system", "volunteer-management-system"]} />
 
         {/* ===== أسئلة ===== */}
         <section className="v2-sec alt">
