@@ -32,8 +32,7 @@ export default function CharitiesPage() {
         <section className="v2-phero ch-hero">
           <WindowLight style={{ top: 40, left: "50%", width: 1000, height: 640, marginLeft: -500 }} />
           <div className="v2-wrap" style={{ position: "relative" }}>
-            <p className="kicker">{c.kicker}</p>
-            <h1>{c.h1}</h1>
+            <h1><span className="kicker ch-kw">{c.kicker}</span>{c.h1}</h1>
             <p className="sub">{c.sub}</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary" href="#see">شوف نظام جمعيّة حقيقيّ</a>
@@ -91,7 +90,7 @@ export default function CharitiesPage() {
         {/* ===== وش فيه ===== */}
         <section className="v2-sec">
           <div className="v2-wrap">
-            <h2 className="v2-title" data-rise>كلّ شغل الجمعيّة، في مكان واحد.</h2>
+            <h2 className="v2-title" data-rise>وش في نظام إدارة الجمعيّات؟</h2>
             <div className="v2-needs">
               {c.features.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p></div>)}
             </div>

@@ -109,5 +109,10 @@ update public.posts set slug = v.slug from (values
   ('e9b5ef13-47fb-425f-b038-c5366e2bcd52'::uuid, 'charity-management-system-own-or-subscribe'),
   ('b94b1062-042a-4b8e-856b-dda12f0b8b32'::uuid, 'erp-system-cost-small-business'),
   ('b2328098-9a51-46c3-9a42-ce6a8b04bdc3'::uuid, 'own-your-system-source-code'),
-  ('63259447-f988-4b22-8180-cc39dd89b288'::uuid, 'develop-your-system-with-claude')
+  ('63259447-f988-4b22-8180-cc39dd89b288'::uuid, 'develop-your-system-with-claude'),
+  ('6dd518ab-6d95-4d7b-8773-8cca6a09e8ae'::uuid, 'charity-management-system-features'),
+  ('a2ecb181-c9ca-4ba1-8118-0bb80856825d'::uuid, 'charity-payment-voucher-approval-workflow'),
+  ('4ff6906f-5832-4cf6-b99f-649908110368'::uuid, 'nonprofit-governance-digital'),
+  ('ac7e2afe-fbdd-48fd-befe-7268042d9373'::uuid, 'charity-website-essentials'),
+  ('d4b36062-e434-4100-aebe-3062d331e951'::uuid, 'volunteer-management-system')
 ) as v(id, slug) where posts.id = v.id and (posts.slug is null or posts.slug = '');

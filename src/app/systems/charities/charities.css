@@ -2,6 +2,8 @@
 
 /* الواجهة: عنوان وصفيّ طويل (يقرؤه جوجل) بدل كلمة وحدة ضخمة */
 .ch-hero h1 { font-size: clamp(40px, 7vw, 84px); line-height: 1.12; max-width: 900px; margin-inline: auto; }
+/* الكلمة المفتاحيّة داخل H1 (لجوجل) بشكل السطر الأزرق الصغير فوق العنوان */
+.ch-hero h1 .ch-kw { display: block; font-size: clamp(17px, 1.8vw, 21px); font-weight: 700; line-height: 1.4; margin-bottom: 10px; }
 
 /* بطاقة العميل فوق النماذج */
 .ch-client { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
