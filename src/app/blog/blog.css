@@ -37,6 +37,7 @@
 .bl-content li { margin-bottom: 8px; }
 .bl-content blockquote { margin: 22px 0; padding: 14px 20px; border-inline-start: 4px solid var(--blue); background: var(--alt); border-radius: 0 14px 14px 0; }
 .bl-content strong { font-weight: 800; }
+.bl-content a { color: var(--blue); text-decoration: underline; text-underline-offset: 3px; }
 
 .bl-cta { margin-top: 48px; background: var(--alt); border-radius: 24px; padding: 28px 26px; }
 .bl-cta h2 { font-size: 24px; line-height: 1.4; }

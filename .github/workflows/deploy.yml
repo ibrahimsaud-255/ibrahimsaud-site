@@ -93,3 +93,12 @@ jobs:
           # الموقع كبير نسبياً (‏٥٣م.ب‏ و‏٧٠٠+‏ ملف) فنمنح النشر مهلة أوسع
           # من الافتراضية (عشر دقائق) بدل أن يُجهَض وهو على وشك الاكتمال.
           timeout: 900000
+
+      # IndexNow: نبلّغ بينق (ومنه ChatGPT وCopilot) وياندكس بكلّ روابط خريطة الموقع فور النشر،
+      # بدل ما ننتظر الزحف. المفتاح ملفّ علنيّ في public/8091959edd5bfbb4511640246ed90be8.txt. فشله لا يُفشل النشر.
+      - name: Ping IndexNow
+        continue-on-error: true
+        run: |
+          URLS=$(curl -fsS https://ibrahimsaud.com/sitemap.xml | grep -o '<loc>[^<]*</loc>' | sed 's/<[^>]*>//g' | jq -R . | jq -s .)
+          jq -n --argjson urls "$URLS" '{host:"ibrahimsaud.com",key:"8091959edd5bfbb4511640246ed90be8",keyLocation:"https://ibrahimsaud.com/8091959edd5bfbb4511640246ed90be8.txt",urlList:$urls}' \
+            | curl -sS -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST https://api.indexnow.org/indexnow -H "Content-Type: application/json; charset=utf-8" --data-binary @-

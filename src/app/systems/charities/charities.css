@@ -1,0 +1,65 @@
+/* صفحة نظام الجمعيّات — مبنيّة على قطع .v2، وهذي إضافاتها فقط. */
+
+/* الواجهة: عنوان وصفيّ طويل (يقرؤه جوجل) بدل كلمة وحدة ضخمة */
+.ch-hero h1 { font-size: clamp(40px, 7vw, 84px); line-height: 1.12; max-width: 900px; margin-inline: auto; }
+
+/* بطاقة العميل فوق النماذج */
+.ch-client { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+.ch-client img { width: 64px; height: 64px; object-fit: contain; background: #fff; border-radius: 16px; padding: 8px; border: 1px solid var(--line); }
+.ch-client b { display: block; font-size: 20px; }
+.ch-client span { color: var(--fg-2); font-size: 15px; }
+
+/* كلّ نموذج: شرح قصير + لقطة كبيرة بإطار متصفّح */
+.ch-show { display: grid; grid-template-columns: minmax(220px, 300px) 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; margin-bottom: clamp(48px, 6vw, 80px); }
+.ch-show .tx h3 { font-size: clamp(28px, 3.4vw, 40px); }
+.ch-show .tx p { color: var(--fg-2); font-size: 18px; line-height: 1.65; margin: 12px 0 22px; }
+.ch-show > a { display: block; color: inherit; transition: transform .4s var(--ease); }
+.ch-show > a:hover { transform: translateY(-4px); }
+.ch-note { color: var(--fg-3); font-size: 15px; text-align: center; }
+
+.ch-others { display: grid; grid-template-columns: repeat(2, 1fr); gap: 18px; }
+.ch-other { display: grid; grid-template-columns: 120px 1fr; gap: 18px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 18px; color: inherit; text-decoration: none; transition: border-color .3s var(--ease), transform .3s var(--ease); }
+.ch-other:hover { border-color: var(--blue); transform: translateY(-2px); }
+.ch-other img { width: 120px; aspect-ratio: 9 / 19; object-fit: cover; object-position: top; border-radius: 18px; border: 4px solid var(--bezel); background: var(--alt); }
+.ch-other .kind { color: var(--fg-3); font-size: 13px; }
+.ch-other h4 { font-size: 20px; font-weight: 800; margin: 4px 0 6px; }
+.ch-other p { color: var(--fg-2); font-size: 15px; line-height: 1.6; margin-bottom: 10px !important; }
+
+/* تملك أو تستأجر */
+.ch-vs { max-width: 860px; margin: 0 auto; background: var(--card); border-radius: 24px; overflow: hidden; border: 1px solid var(--line); }
+.ch-vs .row { display: grid; grid-template-columns: 1fr 1.3fr 1.3fr; gap: 16px; padding: 18px 24px; border-top: 1px solid var(--line); align-items: center; }
+.ch-vs .row.head { border-top: 0; font-weight: 800; font-size: 17px; background: var(--alt); }
+.ch-vs .l { font-weight: 800; }
+.ch-vs .them { color: var(--fg-2); }
+.ch-vs .us { color: var(--fg); font-weight: 700; }
+.ch-vs .row.head .us { color: var(--blue); }
+.ch-vs .row:not(.head) .us::before { content: "✓ "; color: var(--blue); }
+
+/* خطوات التسليم داخل اللوحة الداكنة */
+.ch-steps { position: relative; list-style: none; margin: 36px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px 32px; }
+.ch-steps .n { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: var(--blue); color: #fff; font-weight: 800; }
+.ch-steps h3 { font-size: 20px; margin: 12px 0 6px !important; }
+.ch-steps p { color: rgba(255, 255, 255, .72); font-size: 16px; line-height: 1.6; }
+
+/* ليش */
+.ch-why { display: grid; grid-template-columns: 200px 1fr; gap: clamp(24px, 5vw, 64px); align-items: center; max-width: 900px; }
+.ch-why h2 { font-size: clamp(30px, 4vw, 44px); margin-bottom: 16px; }
+.ch-why p { font-size: 19px; line-height: 1.8; color: var(--fg-2); margin-bottom: 14px !important; }
+
+.ch-costs { max-width: 720px; margin: clamp(40px, 5vw, 64px) auto 0; }
+.ch-costs h3 { font-size: 24px; margin-bottom: 14px; }
+
+@media (max-width: 860px) {
+  .ch-show { grid-template-columns: 1fr; }
+  .ch-others { grid-template-columns: 1fr; }
+  .ch-steps { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .ch-vs .row { grid-template-columns: 1fr 1fr; gap: 6px 12px; padding: 14px 16px; }
+  .ch-vs .row .l { grid-column: 1 / -1; }
+  .ch-vs .row.head span:first-child { display: none; }
+  .ch-steps { grid-template-columns: 1fr; }
+  .ch-why { grid-template-columns: 1fr; text-align: center; justify-items: center; }
+  .ch-other { grid-template-columns: 90px 1fr; }
+  .ch-other img { width: 90px; }
+}

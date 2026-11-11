@@ -105,5 +105,9 @@ update public.posts set slug = v.slug from (values
   ('ba254b8c-69e5-41f1-95f0-bb190e353fda'::uuid, 'riyadh-or-alahsa-next-step'),
   ('d790f74b-563c-4844-a3c1-496d9a8f135b'::uuid, 'experience-meets-vision'),
   ('1a660506-426d-49c6-8774-2d7084214113'::uuid, 'reading-and-writing-in-the-ai-era'),
-  ('b1ee1924-d172-42e7-8aed-a3072aeb2114'::uuid, 'nahnu-narzuquk')
+  ('b1ee1924-d172-42e7-8aed-a3072aeb2114'::uuid, 'nahnu-narzuquk'),
+  ('e9b5ef13-47fb-425f-b038-c5366e2bcd52'::uuid, 'charity-management-system-own-or-subscribe'),
+  ('b94b1062-042a-4b8e-856b-dda12f0b8b32'::uuid, 'erp-system-cost-small-business'),
+  ('b2328098-9a51-46c3-9a42-ce6a8b04bdc3'::uuid, 'own-your-system-source-code'),
+  ('63259447-f988-4b22-8180-cc39dd89b288'::uuid, 'develop-your-system-with-claude')
 ) as v(id, slug) where posts.id = v.id and (posts.slug is null or posts.slug = '');

@@ -17,7 +17,15 @@ import Devices from "./Devices";
 import QuoteForm from "./QuoteForm";
 import YtLite from "./YtLite";
 import { brands } from "@/lib/site";
+import ServiceSchema from "./ServiceSchema";
 import { bookHref, waHref, type Product } from "@/lib/v2";
+
+// نوع الخدمة كما يبحث عنه الناس — يدخل في البيانات المنظّمة (Service.serviceType).
+const SERVICE_TYPE: Record<Product["slug"], string> = {
+  systems: "نظام إدارة أعمال (ERP) للمنشآت الصغيرة والجمعيّات",
+  brand: "بناء البراند الشخصيّ للخبراء",
+  video: "إنتاج فيديو وبودكاست وأفلام تعريفيّة",
+};
 
 export default function ProductPage({ p }: { p: Product }) {
   const links = [
@@ -29,6 +37,7 @@ export default function ProductPage({ p }: { p: Product }) {
   ];
   return (
     <Shell>
+      <ServiceSchema path={p.href} name={p.name} description={p.meta.description} serviceType={SERVICE_TYPE[p.slug]} packages={p.packages} faqs={p.faqs} />
       <Nav sticky={false} />
       <LocalNav name={p.name} links={links} />
       <main id="top">
@@ -64,6 +73,29 @@ export default function ProductPage({ p }: { p: Product }) {
             )}
           </div>
         </section>
+
+        {/* ===== جرّبه (نسخ العرض الحيّة) ===== */}
+        {p.demos && (
+          <section className="v2-sec alt" id="try">
+            <div className="v2-wrap">
+              <div className="v2-head" data-rise>
+                <h2>جرّبه بنفسك.</h2>
+                <p>نسخة عرض من نظامي اللي أدير فيه شغلي، ببيانات تجريبيّة. افتحها من جوالك وتنقّل بين تطبيقاتها.</p>
+              </div>
+              <DemoCards />
+              <div className="v2-head" data-rise style={{ marginTop: "clamp(64px, 8vw, 100px)" }}>
+                <h2>أعمال لعملائي.</h2>
+                <p>أنظمة ومواقع بنيتها لجهات اشتغلت معها. هذي نسخ عرض ببيانات تجريبيّة، مو بياناتهم الحقيقيّة: ادخل بأكثر من صلاحيّة وشوف لوحة التحكّم من جوّا.</p>
+              </div>
+              <DemoCards clients />
+              {p.slug === "systems" && (
+                <p className="v2-head center" data-rise style={{ marginTop: 40, marginBottom: 0 }}>
+                  <a className="v2-link" href="/systems/charities/">عندك جمعيّة؟ شوف نظام الجمعيّات بالتفصيل <span className="chev">‹</span></a>
+                </p>
+              )}
+            </div>
+          </section>
+        )}
 
         {/* ===== أبرز المزايا ===== */}
         <section className="v2-sec alt" id="highlights">
@@ -168,24 +200,6 @@ export default function ProductPage({ p }: { p: Product }) {
                 {p.screen.href && <a className="v2-link" href={p.screen.href} target="_blank" rel="noopener">جرّبه الحين <span className="chev">‹</span></a>}
               </div>
               <div data-rise><Devices s={p.screen} /></div>
-            </div>
-          </section>
-        )}
-
-        {/* ===== جرّبه (نسخ العرض الحيّة) ===== */}
-        {p.demos && (
-          <section className="v2-sec alt" id="try">
-            <div className="v2-wrap">
-              <div className="v2-head" data-rise>
-                <h2>جرّبه بنفسك.</h2>
-                <p>نسخة عرض من نظامي اللي أدير فيه شغلي، ببيانات تجريبيّة. افتحها من جوالك وتنقّل بين تطبيقاتها.</p>
-              </div>
-              <DemoCards />
-              <div className="v2-head" data-rise style={{ marginTop: "clamp(64px, 8vw, 100px)" }}>
-                <h2>أعمال لعملائي.</h2>
-                <p>أنظمة ومواقع بنيتها لجهات اشتغلت معها. هذي نسخ عرض ببيانات تجريبيّة، مو بياناتهم الحقيقيّة: ادخل بأكثر من صلاحيّة وشوف لوحة التحكّم من جوّا.</p>
-              </div>
-              <DemoCards clients />
             </div>
           </section>
         )}

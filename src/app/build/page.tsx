@@ -9,6 +9,7 @@ import WindowLight from "@/components/v2/WindowLight";
 import QuoteForm from "@/components/v2/QuoteForm";
 import YtLite from "@/components/v2/YtLite";
 import PackageCards from "@/components/v2/PackageCards";
+import ServiceSchema from "@/components/v2/ServiceSchema";
 import { buildPage as b, bookHref, pkgs, waHref } from "@/lib/v2";
 import { share } from "@/lib/share";
 
@@ -19,6 +20,7 @@ export const metadata: Metadata = { ...b.meta, ...share(b.meta, "/build/"), alte
 export default function BuildPage() {
   return (
     <Shell>
+      <ServiceSchema path="/build/" name={b.name} description={b.meta.description} serviceType="تدريب عمليّ على بناء نظام بالذكاء الاصطناعي" packages={[pkgs.build]} faqs={b.faqs} />
       <Nav sticky={false} />
       <LocalNav name={b.name} links={[{ label: "نظرة عامة", href: "#top" }, { label: "وش تطلع فيه", href: "#outcomes" }, { label: "الجلسات", href: "#journey" }, { label: "السعر", href: "#buy" }]} />
       <main id="top">

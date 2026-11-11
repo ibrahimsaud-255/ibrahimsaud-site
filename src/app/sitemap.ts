@@ -10,6 +10,7 @@ const pages: { path: string; priority: number }[] = [
   { path: "/ai/", priority: 0.9 },
   { path: "/build/", priority: 0.9 },
   { path: "/systems/", priority: 0.9 },
+  { path: "/systems/charities/", priority: 0.9 },
   { path: "/brand/", priority: 0.7 },
   { path: "/video/", priority: 0.6 },
   { path: "/store/", priority: 0.6 },

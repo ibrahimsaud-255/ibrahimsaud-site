@@ -10,6 +10,7 @@ import WindowLight from "@/components/v2/WindowLight";
 import QuoteForm from "@/components/v2/QuoteForm";
 import WhyCards from "@/components/v2/WhyCards";
 import PackageCards from "@/components/v2/PackageCards";
+import ServiceSchema from "@/components/v2/ServiceSchema";
 import { aiPage as a, bookHref, pkgs, waHref } from "@/lib/v2";
 
 // الذكاء الاصطناعي: ورش وتدريب واستشارات — الخدمة الأكثر طلباً، وأوّل باب في الموقع.
@@ -20,6 +21,7 @@ export const metadata: Metadata = { ...a.meta, ...share(a.meta, "/ai/"), alterna
 export default function AiPage() {
   return (
     <Shell>
+      <ServiceSchema path="/ai/" name="ورش وتدريب الذكاء الاصطناعي" description={a.meta.description} serviceType="تدريب الذكاء الاصطناعي للشركات والجهات" packages={[pkgs.session]} faqs={a.faqs} />
       <Nav sticky={false} />
       <LocalNav name={a.name} links={[{ label: "نظرة عامة", href: "#top" }, { label: "الخدمات", href: "#services" }, { label: "الورش", href: "#workshop" }, { label: "ورش قدّمتها", href: "#past" }]} />
       <main id="top">

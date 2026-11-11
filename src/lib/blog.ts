@@ -33,6 +33,11 @@ const LEGACY_SLUGS: Record<string, string> = {
   "d790f74b-563c-4844-a3c1-496d9a8f135b": "experience-meets-vision",
   "1a660506-426d-49c6-8774-2d7084214113": "reading-and-writing-in-the-ai-era",
   "b1ee1924-d172-42e7-8aed-a3072aeb2114": "nahnu-narzuquk",
+  // مقالات «تملك نظامك» (نوفمبر ٢٠٢٦ — مسوّدات تُنشر من اللوحة)
+  "e9b5ef13-47fb-425f-b038-c5366e2bcd52": "charity-management-system-own-or-subscribe",
+  "b94b1062-042a-4b8e-856b-dda12f0b8b32": "erp-system-cost-small-business",
+  "b2328098-9a51-46c3-9a42-ce6a8b04bdc3": "own-your-system-source-code",
+  "63259447-f988-4b22-8180-cc39dd89b288": "develop-your-system-with-claude",
 };
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -79,7 +84,13 @@ export async function blogVersion(): Promise<string> {
 }
 
 // تنظيف HTML المقال: نفس القائمة البيضاء في الصفحة القديمة — وسوم التنسيق بلا خصائص.
-const ALLOWED = new Set(["h2", "h3", "p", "ul", "ol", "li", "blockquote", "strong", "em", "br"]);
+// والروابط: <a href> فقط، لصفحات الموقع (/...) أو https — للربط الداخليّ بين المقالات وصفحات الخدمات.
+const ALLOWED = new Set(["h2", "h3", "p", "ul", "ol", "li", "blockquote", "strong", "em", "br", "a"]);
+function safeHref(tag: string): string | null {
+  const m = tag.match(/\shref\s*=\s*"([^"]*)"/i) || tag.match(/\shref\s*=\s*'([^']*)'/i);
+  const href = m?.[1].trim() || "";
+  return /^(\/(?!\/)|https:\/\/)/.test(href) ? href.replace(/"/g, "&quot;") : null;
+}
 export function sanitize(html: string): string {
   return (html || "")
     .replace(/<(script|style|iframe|object)[\s\S]*?<\/\1>/gi, "")
@@ -88,7 +99,13 @@ export function sanitize(html: string): string {
       const t = tag.toLowerCase();
       if (!ALLOWED.has(t)) return "";
       if (t === "br") return "<br>";
-      return m.startsWith("</") ? `</${t}>` : `<${t}>`;
+      if (m.startsWith("</")) return `</${t}>`;
+      if (t === "a") {
+        const href = safeHref(m);
+        if (!href) return "<a>";
+        return href.startsWith("/") || href.startsWith("https://ibrahimsaud.com") ? `<a href="${href}">` : `<a href="${href}" rel="noopener" target="_blank">`;
+      }
+      return `<${t}>`;
     });
 }
 

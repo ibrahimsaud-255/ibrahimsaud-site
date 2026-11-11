@@ -573,7 +573,7 @@ export const navItems: NavItem[] = [
   {
     label: "النظام", href: "/systems/",
     menu: [
-      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
+      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "نظام الجمعيّات", href: "/systems/charities/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
       { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "جلسة التشخيص", href: "/systems/#buy" }, { label: "النظام", href: "/systems/#buy" }, { label: "النظام Pro", href: "/systems/#buy" }] },
     ],
   },

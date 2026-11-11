@@ -289,7 +289,7 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-pkgs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; align-items: stretch; }
 .v2-pkgs.compact { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
 .v2-pkg { background: var(--alt); border-radius: 28px; padding: 34px 30px; display: flex; flex-direction: column; gap: 6px; }
-.v2-sec.alt .v2-pkg { background: var(--card); }
+.v2-sec.alt .v2-pkg:not(.featured) { background: var(--card); }
 .v2-pkg.featured { background: var(--ink); color: #fff; }
 .v2-pkg .for { font-size: 15px; color: var(--fg-2); font-weight: 700; }
 .v2-pkg.featured .for { color: var(--blue-on-dark); }
