@@ -50,7 +50,9 @@
    بـ`r2`. الربط مع الهيئة (المرحلة الثانية) غير مفعّل: محرّكه المُختبَر في تاريخ ريبو حروف (24b48cc).
 4. **`public/` يحوي أيضاً ~٨ مواقع مصغّرة مستقلّة** تتجاوز Next كلّياً
    (`ilogistics/`، `nama-demo/`، `takween/`، `blog/`، `register/`، `gate/`…) —
-   تُنشر كما هي.
+   تُنشر كما هي. منها `podcast-studio/` (noindex): تأثيث استوديو بودكاست 3D على
+   مخطط عميل، محرّكه منسوخ من `app/3d/world.js`؛ المنتجات وروابط أمازون والتوزيع في `products.js`
+   (`AMAZON.tag` = معرّف المسوّق)، والأثاث نماذج ABO مضغوطة بـgltf-transform (meshopt+webp).
 5. **جسر حروف**: تبويب «حروف» في اللوحة (والأدمن React في
    `src/app/admin/huroof-schools/`) ينادي `https://huroofduroos.com/api/admin/*`
    بترويسة `x-system-token` = **جلسة Supabase هذا المشروع** (لا سرّ ثابت)؛
