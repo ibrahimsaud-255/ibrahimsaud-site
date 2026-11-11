@@ -51,9 +51,15 @@ export const ITEMS={
   B0831PH1MB:{name:'أصيص نبات صغير',en:'Rivet Global Stoneware Planter, Black Glaze',cat:'decor',img:'61o23JO2vVL',model:1},
   B0754K96NJ:{name:'رفّ مكعّبات للمعدات',en:'Furniture 247 4-Cube Shelving Unit, Black Oak',cat:'storage',img:'713GZuV53qL',model:1},
   B072ZNMKGM:{name:'خزانة معدات صناعيّة',en:'Rivet King Street Industrial Cabinet',cat:'storage',img:'81cmXGpwJ8L',model:1},
+  // ── المكاتب والقاعة والاستقبال (تصوّر مبدئيّ على أثاث المخطط) ──
+  B07MNYTYR4:{name:'كرسي اجتماعات دوّار',en:'AmazonBasics Low-Back Swivel Task Chair',cat:'office',img:'71ognFgoRAL',model:1},
+  trainingtable:{name:'طاولة تدريب ١٥٠×٧٠',en:'Training / conference table 150x70',cat:'office',q:'training table 150x70 office'},
+  ovaltable:{name:'طاولة اجتماعات بيضاويّة',en:'Oval conference table 8-12 seats',cat:'office',q:'oval conference table'},
+  receptiondesk:{name:'مكتب استقبال',en:'Modern reception desk',cat:'office',q:'reception desk modern'},
+  plant:{name:'نبتة صناعيّة كبيرة',en:'Large artificial indoor plant',cat:'office',q:'artificial plant large indoor'},
 };
 
-export const CATS={audio:'الصوت',video:'التصوير',light:'الإضاءة',furniture:'الأثاث',decor:'الديكور',storage:'المخزن'};
+export const CATS={audio:'الصوت',video:'التصوير',light:'الإضاءة',furniture:'الأثاث',decor:'الديكور',storage:'المخزن',office:'المكاتب والقاعة'};
 
 // الغرف (من المخطط EX.OF.KSA.5024 — بالمتر)
 export const ROOMS={
@@ -102,6 +108,36 @@ export const LAYOUT=[
   ['case',5.6,2.4,.3],['case',6.0,2.0,-.2],
   ['greenscreen',6.25,1.35,0],
 ];
+
+/* ═══ باقي المكان — تصوّر مبدئيّ يتبع أثاث المخطط (المواقع مقروءة من ملفّ PDF) ═══ */
+const CH='B07MNYTYR4',DESK='B07B7DL32P',BOSS='B075Z8769G',GUEST='B072PZVYC2',SOFA='B07P5LMFPN',COFFEE='B072ZMVR53',SIDE='B072ZLCB3M';
+const add=(...r)=>LAYOUT.push(r);
+// الاستقبال
+add('receptiondesk',4.1,7.3,-H);add(BOSS,4.8,7.3,-H);
+add(GUEST,1.7,5.65,0);add(GUEST,2.5,5.65,0);add(SIDE,1.05,5.6,0);add(SIDE,3.15,5.6,0);add('plant',.6,8.2,0);
+// القاعة الكبرى: طاولات على شكل U وطاولة وسطى، ومنصّة المقدّم
+for(let i=0;i<5;i++){const x=10.25+i*1.5;add('trainingtable',x,6.15,0);add(CH,x-.38,5.45,0);add(CH,x+.38,5.45,0);
+  add('trainingtable',x,12.7,0);add(CH,x-.38,13.4,P);add(CH,x+.38,13.4,P)}
+for(let i=0;i<4;i++){const z=7.4+i*1.5;add('trainingtable',9.15,z,H);add(CH,8.45,z-.38,H);add(CH,8.45,z+.38,H)}
+for(const [x,z] of[[12.0,8.95],[13.5,8.95],[12.0,9.65],[13.5,9.65]])add('trainingtable',x,z,0);
+for(const x of[11.6,12.4,13.1,13.9]){add(CH,x,8.2,0);add(CH,x,10.4,P)}
+add(DESK,16.6,9.3,H);add(BOSS,17.35,9.3,-H);add('plant',18.2,5.4,0);add('plant',18.2,13.3,0);
+// مكتب المدير (يسار القاعة)
+add(SOFA,2.05,11.3,H);add(COFFEE,3.0,11.3,H);add(GUEST,4.35,10.75,-H);add(GUEST,4.35,11.85,-H);
+add(DESK,3.55,12.7,0);add(BOSS,3.55,13.45,P);add('plant',4.9,9.4,0);
+// المكاتب الزجاجيّة الثلاثة
+add(DESK,8.0,15.0,-H);add(BOSS,7.2,15.0,H);add(GUEST,8.95,14.6,-H);
+add(DESK,11.9,15.0,H);add(BOSS,12.6,15.0,-H);add(GUEST,11.0,14.6,H);
+add(DESK,15.5,15.0,H);add(BOSS,16.2,15.0,-H);add(GUEST,14.6,14.6,H);
+// المكتب الأيمن
+add(DESK,18.25,15.3,P);add(BOSS,18.25,14.55,0);add(SOFA,19.35,16.6,-H);add(GUEST,17.4,16.2,H);add(SIDE,18.4,16.3,0);
+// الصفّ السفليّ: مكتبان + غرفة الاجتماعات + مكتبان
+for(const x of[7.8,16.5,18.7]){add(DESK,x,19.4,0);add(BOSS,x,20.15,P);add(GUEST,x-.5,18.55,0);add(GUEST,x+.5,18.55,0)}
+add('ovaltable',12.35,19.45,0);
+for(let i=0;i<6;i++){const x=10.75+i*.64;add(CH,x,18.65,0);add(CH,x,20.25,P)}
+add(CH,10.0,19.45,H);add(CH,14.7,19.45,-H);
+// المكتب السفليّ الأيسر
+add(DESK,3.2,17.85,P);add(BOSS,3.2,17.1,0);add(SOFA,2.05,19.1,H);add(GUEST,4.1,18.6,-H);add('plant',1.9,20.3,0);
 
 // كمّيّات قائمة المشتريات لما لا يظهر مجسّماً (يُضاف لعدّ القطع في LAYOUT)
 export const EXTRA={sm7b:7,xlr:7,headphones:4,lens:6,tripod:6,softbox:4,cstand:4};

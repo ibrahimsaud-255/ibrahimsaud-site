@@ -9,7 +9,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
-import {AMAZON,ITEMS,CATS,ROOMS,LAYOUT,EXTRA} from './products.js?v=1';
+import {AMAZON,ITEMS,CATS,ROOMS,LAYOUT,EXTRA} from './products.js?v=2';
 
 const FONT='"Thmanyah Sans","Tajawal",system-ui,sans-serif';
 const GOLD='#E8C766';
@@ -50,21 +50,47 @@ function paint(t){const c=t.image,g=c.getContext('2d');g.setTransform(1,0,0,1,0,
 function tmat(t,o={}){return new THREE.MeshStandardMaterial({map:t,roughness:.9,...o})}
 
 /* ══════════════════ المخطط ══════════════════ */
-const PLAN=await fetch('plan.json?v=1').then(r=>r.json());
+const PLAN=await fetch('plan.json?v=2').then(r=>r.json());
 const WH=3.0,[BX0,BZ0,BX1,BZ1]=PLAN.bounds,PW=BX1-BX0,PD=BZ1-BZ0;
 const floorTex=ctex(512,512,(g,w,h)=>{g.fillStyle='#c2bfb9';g.fillRect(0,0,w,h);const r=rnd(7);for(let i=0;i<900;i++){g.fillStyle=`rgba(0,0,0,${r()*.035})`;g.fillRect(r()*w,r()*h,3,3)}g.strokeStyle='rgba(60,55,50,.18)';g.lineWidth=2;for(let i=0;i<=4;i++){const p=i*w/4;g.beginPath();g.moveTo(p,0);g.lineTo(p,h);g.moveTo(0,p);g.lineTo(w,p);g.stroke()}},{repeat:[PW/2.4,PD/2.4]});
 const floor=new THREE.Mesh(new THREE.PlaneGeometry(PW,PD),tmat(floorTex,{roughness:.75}));floor.rotation.x=-Math.PI/2;floor.position.set(BX0+PW/2,0,BZ0+PD/2);floor.receiveShadow=true;scene.add(floor);
 // أرضيّة الاستوديوهات: موكيت غامق يمتصّ الصوت
 for(const k of['A','B']){const R=ROOMS[k];const f=plane(R.x1-R.x0,R.z1-R.z0,mat(0x2c2d30,{roughness:1}));f.rotation.x=-Math.PI/2;f.position.set((R.x0+R.x1)/2,.003,(R.z0+R.z1)/2);f.receiveShadow=true}
 const ceil=plane(PW,PD,0x232427);ceil.rotation.x=Math.PI/2;ceil.position.set(BX0+PW/2,WH,BZ0+PD/2);
-const WALLM=mat(0xe7e3db),GLASS=new THREE.MeshStandardMaterial({color:0x9fc3d6,transparent:true,opacity:.22,roughness:.1,metalness:.2});
-for(const [x0,z0,x1,z1] of PLAN.walls){box(x1-x0,WH,z1-z0,WALLM,(x0+x1)/2,0,(z0+z1)/2);block((x0+x1)/2,(z0+z1)/2,(x1-x0)/2,(z1-z0)/2,WH)}
-for(const [x0,z0,x1,z1] of PLAN.glass){const w=Math.max(x1-x0,.03),d=Math.max(z1-z0,.03);box(w,WH,d,GLASS,(x0+x1)/2,0,(z0+z1)/2,scene,false);block((x0+x1)/2,(z0+z1)/2,w/2,d/2,WH)}
-// لافتات فوق أبواب الاستوديوهات
-function sign(text,sub,x,z){const t=ctex(512,128,(g,w,h)=>{g.fillStyle='#0e0e0e';g.fillRect(0,0,w,h);g.fillStyle=GOLD;g.fillRect(w-14,18,4,h-36);g.textAlign='right';g.fillStyle='#fafafa';g.font='700 46px '+FONT;g.fillText(text,w-36,62);g.fillStyle='#a1a1aa';g.font='400 26px '+FONT;g.fillText(sub,w-36,102)});
-  const m=new THREE.Mesh(new THREE.PlaneGeometry(.9,.225),new THREE.MeshBasicMaterial({map:t,toneMapped:false}));m.position.set(x,2.45,z);scene.add(m)}
-sign('استوديو A','طاولة البودكاست',(PLAN.doors[0][0]+PLAN.doors[0][1])/2,4.95);
-sign('استوديو B','جلسة الضيوف',(PLAN.doors[1][0]+PLAN.doors[1][1])/2,4.95);
+const WALLM=mat(0xe7e3db),SKIRT=mat(0x3a3936),ALU=mat(0x8d9196,{metalness:.6,roughness:.4}),GLASS=new THREE.MeshStandardMaterial({color:0x9fc3d6,transparent:true,opacity:.22,roughness:.1,metalness:.2});
+// الجدران موصولة الأطراف (plan.json)، ووزرة غامقة أسفل كلّ جدار
+for(const [x0,z0,x1,z1] of PLAN.walls){const w=x1-x0,d=z1-z0,cx=(x0+x1)/2,cz=(z0+z1)/2;box(w,WH,d,WALLM,cx,0,cz);box(w+.02,.1,d+.02,SKIRT,cx,0,cz,scene,false);block(cx,cz,w/2,d/2,WH)}
+// الزجاج بإطار ألمنيوم سفليّ وعلويّ
+for(const [x0,z0,x1,z1] of PLAN.glass){const w=Math.max(x1-x0,.03),d=Math.max(z1-z0,.03),cx=(x0+x1)/2,cz=(z0+z1)/2;box(w,WH,d,GLASS,cx,0,cz,scene,false);
+  box(w+.01,.08,d+.03,ALU,cx,0,cz,scene,false);box(w+.01,.06,d+.03,ALU,cx,2.2,cz,scene,false);block(cx,cz,w/2,d/2,WH)}
+// لافتة فوق باب
+function sign(text,sub,x,z,ry=0){const t=ctex(512,128,(g,w,h)=>{g.fillStyle='#0e0e0e';g.fillRect(0,0,w,h);g.fillStyle=GOLD;g.fillRect(w-14,18,4,h-36);g.textAlign='right';g.fillStyle='#fafafa';g.font='700 46px '+FONT;g.fillText(text,w-36,62);g.fillStyle='#a1a1aa';g.font='400 26px '+FONT;g.fillText(sub,w-36,102)});
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(.9,.225),new THREE.MeshBasicMaterial({map:t,toneMapped:false}));m.position.set(x,2.45,z);m.rotation.y=ry;scene.add(m)}
+// الأبواب: مفصّلة على حافّتها، تُفتح تلقائيّاً حين تقترب (من world.js)، بإطار وعتبة علويّة
+const DH=2.1,DOORS=[];
+const SUB={'استوديو A':'طاولة البودكاست','استوديو B':'جلسة الضيوف','المخزن':'معدّات التصوير','المطبخ':'','المدخل':''};
+for(const d of PLAN.doors){
+  const X=d.axis==='x',len=d.b-d.a,mid=(d.a+d.b)/2,at=(u,v)=>X?[u,v]:[v,u];
+  const [mx,mz]=at(mid,d.c);
+  box(X?len+.02:.14,WH-DH,X?.14:len+.02,WALLM,mx,DH,mz);                                   // العتبة فوق الباب
+  for(const e of[d.a,d.b]){const [jx,jz]=at(e,d.c);box(X?.06:.16,DH,X?.16:.06,0x2b2b2b,jx,0,jz,scene,false)}
+  box(X?len:.16,.06,X?.16:len,0x2b2b2b,mx,DH-.06,mz,scene,false);
+  const studio=/استوديو/.test(d.name),col=studio?0x2b2d31:0x8a6a4c;
+  const sw=X?[0,d.swing]:[d.swing,0];
+  const leaves=d.hinge==='ab'?[[d.a,1,len/2],[d.b,-1,len/2]]:[[d.hinge==='a'?d.a:d.b,d.hinge==='a'?1:-1,len]];
+  for(const [h,dir,w] of leaves){
+    const [hx,hz]=at(h,d.c),dv=X?[dir,0]:[0,dir];                                          // اتّجاه الضلفة وهي مغلقة
+    const ry0=Math.atan2(-dv[1],dv[0]);                                                      // يجعل x المحلّيّ على اتّجاه الضلفة
+    const sg=(dv[1]===sw[0]&&-dv[0]===sw[1])?1:-1;                                       // تدوير +٩٠° يوجّهها نحو جهة الفتح؟
+    const g=grp(hx,0,hz,ry0);box(w-.04,DH-.08,.045,col,w/2,0,0,g);
+    for(const s of[-1,1])ball(.022,ALU,w-.1,1.0,.04*s,g,1);
+    DOORS.push({g,ry0,open:sg*Math.PI*.48,a:0,x:mx,z:mz})}
+  if(d.name&&studio)sign(d.name,SUB[d.name],mx,d.c+.1);
+  else if(d.name==='المخزن')sign('المخزن','معدّات التصوير',mx,d.c+.1);
+}
+// ألواح إضاءة السقف
+{const geo=new THREE.PlaneGeometry(.6,.6),m=new THREE.MeshBasicMaterial({color:0xfff6e6,toneMapped:false});
+  for(let x=BX0+1.2;x<BX1-.6;x+=2.4)for(let z=BZ0+1.2;z<BZ1-.6;z+=2.4){const p=new THREE.Mesh(geo,m);p.rotation.x=Math.PI/2;p.position.set(x,WH-.005,z);scene.add(p)}}
 
 /* ── الإضاءة ── */
 scene.add(new THREE.HemisphereLight(0xfff0dc,0x3b352f,1.25));
@@ -111,15 +137,31 @@ const BUILD={
   panels(g){const C=[0x2f3237,0x3a3d42,0x2f3237];for(let i=0;i<3;i++)box(.6,1.2,.05,C[i],(i-1)*.65,-.6,.025,g)},
   case(g){box(.6,.26,.42,0x1d1e20,0,0,0,g);for(const x of[-.2,.2])box(.06,.27,.43,0x2a2b2e,x,0,0,g);box(.16,.03,.03,0x111,0,.27,0,g)},
   greenscreen(g){cyl(.11,.11,1.25,0x1f1f1f,0,0,0,g,12);cyl(.115,.115,.04,0x2ee66d,0,1.2,0,g,12)},
+  // ── المكاتب والقاعة ──
+  trainingtable(g){box(1.48,.03,.68,0xf1efea,0,.71,0,g);box(1.3,.3,.02,0xd9d6cf,0,.38,-.3,g,false);
+    for(const x of[-.68,.68])for(const z of[-.28,.28])box(.035,.71,.035,STEEL,x,0,z,g,false)},
+  ovaltable(g){const t=cyl(.5,.5,.045,0xf1efea,0,.7,0,g,32);t.scale.set(4.3,1,1.35);
+    for(const x of[-1.1,1.1]){cyl(.06,.06,.7,STEEL,x,0,0,g,8);box(.7,.03,.5,0x2b2b2b,x,0,0,g,false)}},
+  receptiondesk(g){box(1.6,.74,.6,0xe9e6e0,0,0,0,g);box(1.72,1.08,.06,0x6b4a33,0,0,.33,g);box(1.76,.035,.3,0xf1efea,0,1.08,.28,g);
+    const l=new THREE.Mesh(new THREE.BoxGeometry(1.6,.015,.02),glow(0xffe9c4));l.position.set(0,.06,.37);g.add(l)},
+  plant(g){cyl(.2,.15,.42,0x2a2a2a,0,0,0,g,10);const r=rnd(5);
+    for(let i=0;i<9;i++){const a=r()*7,d=r()*.18;ball(.13+r()*.1,i%2?0x2f6b3a:0x3d7f45,Math.cos(a)*d,.6+r()*.9,Math.sin(a)*d,g,0)}
+    cyl(.015,.02,1.2,0x4a3a28,0,.4,0,g,5)},
 };
+// تجهيزات ثابتة (بلا روابط): دورات المياه والمغاسل والمطبخ
+const WHITE=mat(0xf4f4f2,{roughness:.35});
+for(const x of[.59,1.56,2.54,3.51]){const g=grp(x,0,.42);box(.38,.4,.5,WHITE,0,0,0,g);box(.4,.06,.52,WHITE,0,.4,0,g);box(.36,.4,.16,WHITE,0,.4,-.2,g)}
+for(const [x,z,ry] of[[.42,2.75,Math.PI/2],[3.62,2.75,-Math.PI/2]]){const g=grp(x,0,z,ry);box(.5,.82,.45,0x8a6a4c,0,0,0,g);box(.54,.04,.48,WHITE,0,.82,0,g);cyl(.16,.12,.06,WHITE,0,.8,0,g,14)}
+{const g=grp(2.62,0,15.5,Math.PI/2);box(1.1,.88,.6,0x8a6a4c,-.3,0,0,g);box(1.14,.04,.64,0x2b2b2b,-.3,.88,0,g);box(1.1,.7,.35,0x8a6a4c,-.3,1.5,-.12,g);
+  box(.65,1.85,.62,0xd9d9d6,.55,0,0,g);block(2.62,15.5,.32,.9,1.9)}
 
 /* ══════════════════ المنتجات ══════════════════ */
 const link=it=>it.url||`https://${AMAZON.store}/s?k=${encodeURIComponent(it.q||it.en)}${AMAZON.tag?'&tag='+encodeURIComponent(AMAZON.tag):''}`;
 const imgURL=it=>!it.img?'':/^https?:/.test(it.img)?it.img:`https://m.media-amazon.com/images/I/${encodeURIComponent(it.img)}._AC_SL500_.jpg`;
-const roomOf=(x,z)=>{for(const k in ROOMS){const R=ROOMS[k];if(x>=R.x0&&x<=R.x1&&z>=R.z0&&z<=R.z1)return R.name}return 'القاعة'};
+const roomOf=(x,z)=>{for(const k in ROOMS){const R=ROOMS[k];if(x>=R.x0&&x<=R.x1&&z>=R.z0&&z<=R.z1)return R.name}return 'المكاتب والقاعة'};
 const loader=new GLTFLoader();loader.setMeshoptDecoder(MeshoptDecoder);
 const GLB={};
-const loadGLB=id=>GLB[id]||(GLB[id]=loader.loadAsync(`models/${id}.glb?v=1`).then(g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=!ITEMS[id].flat;o.receiveShadow=true}});return g.scene}));
+const loadGLB=id=>GLB[id]||(GLB[id]=loader.loadAsync(`models/${id}.glb?v=2`).then(g=>{g.scene.traverse(o=>{if(o.isMesh){o.castShadow=!ITEMS[id].flat;o.receiveShadow=true}});return g.scene}));
 const SAVE='podStudioLayout:v1';
 let saved=null;try{saved=JSON.parse(localStorage.getItem(SAVE)||'null')}catch(_){}
 const PLACED=[];
@@ -130,7 +172,7 @@ async function place(row,i){
   if(it.model)g.add((await loadGLB(key)).clone());else BUILD[key](g);
   if(it.flat)g.position.y=.006;
   colFor(p);PLACED.push(p);
-  act(g,it.name,()=>openCard(p),it.flat?[1.2,.08,1.2,0,.04,0]:key==='headphones'||key==='rodecaster'?[.4,.15,.3,0,.05,0]:null);
+  act(g,it.name,()=>openCard(p),it.flat?[1.2,.08,1.2,0,.04,0]:key==='headphones'||key==='rodecaster'?[.4,.15,.3,0,.05,0]:null);ACTS[ACTS.length-1].p=p;
 }
 
 /* ══════════════════ اللاعب (من world.js) ══════════════════ */
@@ -179,7 +221,7 @@ const actObjs=()=>ACTS.map(a=>a.obj);let target=-1;
 function aim(){if(MOVE)return;ray.setFromCamera(center,camera);const hit=ray.intersectObjects(actObjs(),true)[0];const t=hit?hit.object.userData.act:-1;
   if(t===target)return;target=t??-1;
   $('cross').classList.toggle('on',target>=0);
-  const h=$('hint');if(target>=0&&!isTouch){h.innerHTML='<kbd>E</kbd>'+ACTS[target].label;h.classList.remove('hidden')}else h.classList.add('hidden');
+  const h=$('hint');if(target>=0&&!isTouch){h.innerHTML='<kbd>E</kbd>'+ACTS[target].label+'<kbd class="q">Q</kbd>انقل';h.classList.remove('hidden')}else h.classList.add('hidden');
   const ab=$('actBtn');ab.textContent=target>=0?ACTS[target].label:'افتح';ab.classList.toggle('hidden',target<0)}
 function interact(){if(MOVE)return drop();if(target>=0)ACTS[target].run()}
 
@@ -188,11 +230,11 @@ let dragLook=false,dragMoved=0;
 function lock(){try{const p=canvas.requestPointerLock();if(p&&p.catch)p.catch(noLock)}catch(_){noLock()}}
 function noLock(){if(sysOpen)return;dragLook=true;playing=true;$('start').classList.add('hidden')}
 const sys=$('sys');
-function pause(title){
+function pause(title,mini){
   sysOpen=true;playing=false;keys.clear();joy.id=look.id=null;if(document.pointerLockElement)document.exitPointerLock();
-  $('sysTitle').textContent=title;sys.classList.remove('hidden');$('start').classList.add('hidden');$('hint').classList.add('hidden');
+  $('sysTitle').textContent=title;sys.classList.remove('hidden');$('start').classList.add('hidden');$('hint').classList.add('hidden');sys.classList.toggle('mini',!!mini);
 }
-function openPanel(title,html,onClick){pause(title);const b=$('panelBody');b.innerHTML=html;b.scrollTop=0;b.onclick=onClick||null}
+function openPanel(title,html,onClick,mini){pause(title,mini);const b=$('panelBody');b.innerHTML=html;b.scrollTop=0;b.onclick=onClick||null}
 function closeSys(){sys.classList.add('hidden');sysOpen=false;$('panelBody').onclick=null;if(isTouch||dragLook)playing=true;else lock()}
 $('sysClose').onclick=closeSys;
 
@@ -201,13 +243,9 @@ const ICON={audio:'🎙️',video:'🎥',light:'💡',furniture:'🛋️',decor:
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function media(it){const u=imgURL(it);return u?`<img src="${esc(u)}" alt="" loading="lazy">`:`<div class="noimg">${ICON[it.cat]||'🛒'}</div>`}
 function openCard(p){const it=p.it,n=qty()[p.key]||1;
-  openPanel(it.name,`<div class="prod">${media(it)}<div class="pi">
-    <span class="tag">${CATS[it.cat]} · ${esc(roomOf(p.obj.position.x,p.obj.position.z))}</span>
-    <h2>${esc(it.name)}</h2><p class="en">${esc(it.en)}</p>${it.note?`<p>${esc(it.note)}</p>`:''}
-    <p class="q">الكمّيّة في الاستوديو كاملاً: <b>${n}</b></p>
-    <div class="btns"><a class="buy" href="${esc(link(it))}" target="_blank" rel="sponsored noopener">افتح في أمازون ↗</a>
-    <button data-a="move">انقل القطعة</button><button data-a="home">مكانها الأصليّ</button></div></div></div>`,
-    e=>{const a=e.target.dataset.a;if(a==='move'){startMove(p);closeSys()}if(a==='home'){Object.assign(p.obj.position,{x:p.home[0],z:p.home[1]});p.obj.rotation.y=p.home[2];colFor(p);persist();closeSys()}})}
+  openPanel(it.name,`<div class="mp">${media(it)}<div><b>${esc(it.name)}</b><small>${CATS[it.cat]} · ${esc(roomOf(p.obj.position.x,p.obj.position.z))} · ×${n}</small></div><button class="mx" data-a="x">✕</button></div>
+    <div class="btns"><a class="buy" href="${esc(link(it))}" target="_blank" rel="sponsored noopener">أمازون ↗</a><button data-a="move">انقل <kbd>Q</kbd></button><button data-a="home">مكانها الأصليّ</button></div>`,
+    e=>{const a=e.target.closest('[data-a]')?.dataset.a;if(a==='x')closeSys();if(a==='move'){startMove(p);closeSys()}if(a==='home'){Object.assign(p.obj.position,{x:p.home[0],z:p.home[1]});p.obj.rotation.y=p.home[2];colFor(p);persist();closeSys()}},true)}
 
 /* ── قائمة المشتريات ── */
 function qty(){const q={};for(const [k] of LAYOUT)q[k]=(q[k]||0)+1;for(const k in EXTRA)q[k]=(q[k]||0)+EXTRA[k];return q}
@@ -237,7 +275,7 @@ function persist(){try{const a=[];for(const p of PLACED)a[p.i]=[p.obj.position.x
 $('rotBtn').addEventListener('click',rotate);
 
 /* ── الخريطة ── */
-const SPOTS=[{name:'القاعة',desc:'أمام بابَي الاستوديوهين',x:7.6,z:6.4,yaw:-.45},{name:ROOMS.A.name,desc:'ثلاثة متحدّثين، ٣ كاميرات',x:9.93,z:4.2,yaw:0},{name:ROOMS.B.name,desc:'كنبة وكرسيّان، ٤ مايكات',x:16.61,z:4.1,yaw:0},{name:ROOMS.S.name,desc:'رفوف وخزانة وحقائب',x:5.6,z:3.2,yaw:.6}];
+const SPOTS=[{name:'الاستقبال',desc:'المدخل ومكتب الاستقبال',x:2.6,z:7.6,yaw:-1.9},{name:'القاعة الكبرى',desc:'طاولات التدريب على شكل U',x:10.1,z:9.6,yaw:-1.6},{name:'غرفة الاجتماعات',desc:'طاولة لـ١٤ شخصاً',x:12.35,z:17.6,yaw:Math.PI},{name:'القاعة',desc:'أمام بابَي الاستوديوهين',x:7.6,z:6.4,yaw:-.45},{name:ROOMS.A.name,desc:'ثلاثة متحدّثين، ٣ كاميرات',x:9.93,z:4.2,yaw:0},{name:ROOMS.B.name,desc:'كنبة وكرسيّان، ٤ مايكات',x:16.61,z:4.1,yaw:0},{name:ROOMS.S.name,desc:'رفوف وخزانة وحقائب',x:5.6,z:3.2,yaw:.6}];
 function teleport(d){Object.assign(P,{x:d.x,z:d.z,y:0,vx:0,vz:0,vy:0,yaw:d.yaw,pitch:-.05});closeSys()}
 function openMap(){openPanel('الخريطة',`<div class="map">${SPOTS.map((d,i)=>`<button data-i="${i}"><b>${d.name}</b><span>${d.desc}</span></button>`).join('')}</div>`,e=>{const b=e.target.closest('button[data-i]');if(b)teleport(SPOTS[+b.dataset.i])})}
 $('mapBtn').onclick=()=>{if(!sysOpen)openMap()};
@@ -252,6 +290,7 @@ addEventListener('keydown',e=>{
   if(e.code==='Space'){jump();e.preventDefault()}
   if(e.code==='KeyE'||e.code==='Enter')interact();
   if(e.code==='KeyR')rotate();
+  if(e.code==='KeyQ'&&!MOVE&&target>=0&&ACTS[target].p)startMove(ACTS[target].p);
   if(e.code==='KeyM'){keys.clear();openMap()}
   if(e.code==='KeyL'){keys.clear();openList()}
 });
@@ -282,9 +321,10 @@ const clk=new THREE.Clock();
 function loop(){requestAnimationFrame(loop);const dt=Math.min(clk.getDelta(),.05);
   if(playing)step(dt);else camera.position.set(P.x,P.y+EYE,P.z),camera.rotation.set(P.pitch,P.yaw,0);
   if(playing){if(MOVE)moveTick();else aim()}
+  for(const d of DOORS){const near=Math.hypot(P.x-d.x,P.z-d.z)<1.9;d.a+=((near?d.open:0)-d.a)*Math.min(1,dt*5);d.g.rotation.y=d.ry0+d.a}
   renderer.render(scene,camera)}
 
-if(/[?&]debug/.test(location.search))window.PSDBG={P,camera,scene,ACTS,COL,PLACED,openCard,startMove,drop,setPlaying:v=>{playing=v;$('start').classList.add('hidden')},view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.8)}};
+if(/[?&]debug/.test(location.search))window.PSDBG={P,camera,scene,ACTS,COL,PLACED,openCard,startMove,drop,aim,DOORS,get target(){return target},get moving(){return MOVE},setPlaying:v=>{playing=v;$('start').classList.add('hidden')},view:(x,z,yaw,pitch=-.08,y=0)=>{Object.assign(P,{x,z,yaw,pitch,y});camera.position.set(x,y+EYE,z);camera.rotation.set(pitch,yaw,0);renderer.render(scene,camera);return renderer.domElement.toDataURL('image/jpeg',.8)}};
 
 /* ── الإقلاع ── */
 if(isTouch){$('keysDesk').classList.add('hidden');$('keysTouch').classList.remove('hidden')}

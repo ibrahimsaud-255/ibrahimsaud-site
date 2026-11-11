@@ -117,7 +117,18 @@
   .list span{display:flex;flex-direction:column;flex:1;min-width:0}.list small{color:var(--muted);direction:ltr;text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .list em{font-style:normal;color:var(--gold);font-weight:700}
   .credit{color:#71717a;font-size:12px;margin-top:20px}
-  @media (max-width:700px){.prod{grid-template-columns:1fr}.listbtn{left:116px}}
+  /* البطاقة المختصرة: على قدر محتواها */
+  #sys.mini{inset:auto;left:50%;top:50%;translate:-50% -50%;width:min(420px,calc(100vw - 32px));box-shadow:0 0 0 100vmax rgba(0,0,0,.25),0 20px 60px rgba(0,0,0,.6)}
+  #sys.mini header{display:none}#sys.mini #panelBody{padding:14px;flex:none}
+  .mp{display:flex;align-items:center;gap:12px}
+  .mp img,.mp .noimg{width:72px;height:72px;border-radius:12px;object-fit:contain;background:#fff;flex:none;font-size:34px}
+  .mp div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.mp b{font-size:16.5px;line-height:1.35}.mp small{color:var(--muted);font-size:12.5px}
+  .mx{background:none;border:0;color:var(--muted);font-size:16px;align-self:flex-start;padding:2px 4px}
+  #sys.mini .btns{margin-top:12px;gap:6px}#sys.mini .btns a,#sys.mini .btns button{padding:9px 12px;font-size:13.5px;flex:1;text-align:center}
+  .btns kbd{font-family:inherit;color:var(--gold);font-size:12px;margin-right:4px}
+  #hint kbd.q{margin:0 12px 0 8px;background:#262626;color:var(--gold);border:1px solid #444}
+  @media (max-width:700px){#sys.mini{inset:auto;left:50%;top:auto;bottom:calc(16px + env(safe-area-inset-bottom));translate:-50% 0}
+  .prod{grid-template-columns:1fr}.listbtn{left:116px}}
 </style>
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
@@ -146,6 +157,7 @@
     <kbd>الماوس</kbd><span>النظر</span>
     <kbd>Shift</kbd><span>الجري</span>
     <kbd>E · نقرة</kbd><span>تفاصيل القطعة ورابطها</span>
+    <kbd>Q</kbd><span>شِل القطعة وغيّر مكانها</span>
     <kbd>R · العجلة</kbd><span>تدوير القطعة أثناء نقلها</span>
     <kbd>L</kbd><span>قائمة المشتريات كاملة</span>
     <kbd>M</kbd><span>الخريطة والانتقال بين الغرف</span>
@@ -165,6 +177,6 @@
   <div id="panelBody"></div>
 </div>
 
-<script type="module" src="./studio.js?v=1"></script>
+<script type="module" src="./studio.js?v=2"></script>
 </body>
 </html>
