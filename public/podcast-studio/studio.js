@@ -363,4 +363,11 @@ step(0);loop();
 try{await document.fonts.load('700 40px "Thmanyah Sans"')}catch(_){}
 TEX.forEach(paint);
 await Promise.all(LAYOUT.map((r,i)=>place(r,i).catch(e=>console.warn('place',r[0],e))));
-$('loading').classList.add('hidden');$('start').classList.remove('hidden');
+$('loading').classList.add('hidden');
+// ?shot=x,z,yaw,pitch[,y] لقطة نظيفة من الداخل، أو ?shot=top,cx,cy,cz,tx,tz من فوق — للصور والعروض (مثل world.js)
+const SHOT=new URLSearchParams(location.search).get('shot');
+if(SHOT){document.documentElement.classList.add('shot');const v=SHOT.split(',');
+  if(v[0]==='top'){setTop(true);scene.background=new THREE.Color(0xf2f4f8);const [cx,cy,cz,tx,tz]=v.slice(1).map(Number);if(!isNaN(cx)){camera.position.set(cx,cy,cz);ctl.target.set(tx,0,tz)}ctl.enableDamping=false;ctl.update()}
+  else{const [x,z,yaw,pitch,y]=v.map(Number);Object.assign(P,{x,z,yaw,pitch:pitch||0,y:y||0});if(v[5])camera.fov=+v[5],camera.updateProjectionMatrix()}
+  window.SHOT_READY=true}
+else $('start').classList.remove('hidden');
