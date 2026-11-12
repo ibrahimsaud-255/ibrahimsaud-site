@@ -22,9 +22,9 @@ export type Memoji =
   | "pursed_lips" | "front_pucker" | "tongue_out";
 
 export const hero = {
-  eyebrow: "إبراهيم سعود",
-  title: ["بين التقنية", "والأعمال."],
-  sub: "أدخّل الذكاء الاصطناعي في شغلك: نظام يدير الشغل، ومحتوى يوصل، وفريق يتعلّم يطوّرها بنفسه. فرد واحد، بتسليم بمستوى الشركات.",
+  eyebrow: "إبراهيم سعود · مخرج ومنتج",
+  title: ["أصنع المحتوى.", "وأبني الأنظمة."],
+  sub: "أفلام وإعلانات وتغطيات فعاليّات وبودكاست، من الفكرة إلى آخر لقطة. ومواقع وأنظمة تدير شغلك. فرد واحد، بتسليم بمستوى الشركات.",
 };
 
 // يتلوّن كلمة كلمة مع التمرير
@@ -566,10 +566,10 @@ export const buildPage = {
 export type NavItem = { label: string; href: string; menu?: { title: string; big?: boolean; links: { label: string; href: string }[] }[] };
 export const navItems: NavItem[] = [
   {
-    label: "الذكاء الاصطناعي", href: "/ai/",
+    label: "صناعة المحتوى", href: "/content/",
     menu: [
-      { title: "استكشف", big: true, links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "آخر ورشة", href: "/ai/#workshop" }, { label: "اطلب ورشة", href: "/ai/#request" }] },
-      { title: "الخدمات", links: [{ label: "ورشة لفريقك", href: "/ai/#services" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "تدريب المدير على نظامه", href: "/ai/#services" }, { label: "استشارة", href: "/ai/#services" }] },
+      { title: "شاهد الأعمال", big: true, links: [{ label: "صناعة المحتوى", href: "/content/" }, { label: "أفلام رسميّة ومؤسّسيّة", href: "/content/#official" }, { label: "تغطية الفعاليّات", href: "/content/#events" }, { label: "إعلانات طوليّة", href: "/content/#reels" }, { label: "البودكاست", href: "/content/#podcast" }] },
+      { title: "اطلب", links: [{ label: "الاستوديو والباقات", href: "/video/" }, { label: "حلقة بودكاست", href: "/video/#buy" }, { label: "فيلم الخدمة", href: "/video/#buy" }, { label: "إعلانات المتاجر", href: "/ad-packages/" }] },
     ],
   },
   {
@@ -588,12 +588,11 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    label: "الاستوديو", href: "/video/",
+    label: "الذكاء الاصطناعي", href: "/ai/",
     menu: [
-      { title: "استكشف الاستوديو", big: true, links: [{ label: "الاستوديو", href: "/video/" }, { label: "الأعمال", href: "/video/#works" }, { label: "قارن", href: "/video/#compare" }] },
-      { title: "اطلب", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "فيلم الخدمة", href: "/video/#buy" }, { label: "إعلانات المتاجر", href: "/ad-packages/" }] },
+      { title: "استكشف", big: true, links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "آخر ورشة", href: "/ai/#workshop" }, { label: "اطلب ورشة", href: "/ai/#request" }] },
+      { title: "الخدمات", links: [{ label: "ورشة لفريقك", href: "/ai/#services" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "تدريب المدير على نظامه", href: "/ai/#services" }, { label: "استشارة", href: "/ai/#services" }] },
     ],
   },
-  { label: "الأعمال", href: "/#works" },
   { label: "الباقات", href: "/store/" },
 ];

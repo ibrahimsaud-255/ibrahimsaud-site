@@ -12,16 +12,20 @@ import WorksRail from "@/components/v2/WorksRail";
 import Devices from "@/components/v2/Devices";
 import { brands } from "@/lib/site";
 import { aiPage, bookHref, hero, manifesto, products, tools, waHref } from "@/lib/v2";
+import { featured, workThumb } from "@/lib/content";
 
 // الرئيسيّة بهندسة apple.com: واجهة إبراهيم، ثمّ لوحة كاملة العرض لكلّ منتج، ثمّ شبكة لوحات أصغر.
 // القديمة محفوظة في /classic. المحتوى كلّه في src/lib/v2.ts.
 
+const homeTitle = "إبراهيم سعود — صناعة المحتوى والأنظمة";
+const homeDesc =
+  "إبراهيم سعود، مخرج ومنتج: أفلام رسميّة وإعلانات وتغطية فعاليّات وبودكاست، ومواقع وأنظمة إدارة تملكها، للجهات والشركات والخبراء في الرياض وكلّ المملكة.";
+
 export const metadata: Metadata = {
-  title: "إبراهيم سعود — بين التقنية والأعمال",
-  description:
-    "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض.",
+  title: homeTitle,
+  description: homeDesc,
   alternates: { canonical: "https://ibrahimsaud.com" },
-  ...share({ title: "إبراهيم سعود — بين التقنية والأعمال", description: "إبراهيم سعود، بين التقنية والأعمال: ورش وتدريب الذكاء الاصطناعي، وأنظمة إدارة تملكها، والمحتوى بالذكاء الاصطناعي للخبراء والمنشآت في الرياض." }, "/")
+  ...share({ title: homeTitle, description: homeDesc }, "/")
 };
 
 const { brand, systems } = products;
@@ -40,8 +44,8 @@ export default function Home() {
               <h1><span>{hero.title[0]}</span><span className="blue">{hero.title[1]}</span></h1>
               <p className="sub">{hero.sub}</p>
               <div className="ctas">
-                <FaceOn face="wink"><a className="v2-btn v2-btn-primary" href={bookHref} target="_blank" rel="noopener">احجز مكالمة ٢٠ دقيقة</a></FaceOn>
-                <FaceOn face="big_happy"><a className="v2-btn v2-btn-ghost" href="/ai/">الذكاء الاصطناعي</a></FaceOn>
+                <FaceOn face="big_happy"><a className="v2-btn v2-btn-primary" href="/content/">شاهد أعمالي</a></FaceOn>
+                <FaceOn face="wink"><a className="v2-btn v2-btn-ghost" href={bookHref} target="_blank" rel="noopener">احجز مكالمة ٢٠ دقيقة</a></FaceOn>
               </div>
             </div>
             <div className="v2-stage"><Memoji3D base="happy" /></div>
@@ -51,16 +55,16 @@ export default function Home() {
         {/* ===== لوحات المنتجات ===== */}
         <div className="v2-tiles">
           <section className="v2-tile" data-rise>
-            <h2>{aiPage.name}</h2>
-            <p className="line">{aiPage.headline}</p>
+            <h2>صناعة المحتوى</h2>
+            <p className="line">أفلام. إعلانات. تغطيات. بودكاست.</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary sm" href="/ai/">اعرف أكثر</a>
-              <a className="v2-btn v2-btn-ghost sm" href="/ai/#request">اطلب ورشة</a>
+              <a className="v2-btn v2-btn-primary sm" href="/content/">شاهد الأعمال</a>
+              <a className="v2-btn v2-btn-ghost sm" href="/content/#buy">اطلب</a>
             </div>
-            <div className="art frame wide">
+            <a className="art mosaic" href="/content/" aria-label="شاهد أعمال صناعة المحتوى">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/v2/shots/workshop-cover.jpg" alt="ورشة «لا تدرسه… جرّبه» للذكاء الاصطناعي" loading="lazy" />
-            </div>
+              {featured.slice(0, 3).map((w) => <img key={w.id} src={workThumb(w)} alt="" loading="lazy" referrerPolicy="no-referrer" />)}
+            </a>
           </section>
 
           <section className="v2-tile dark" data-rise>
@@ -90,6 +94,44 @@ export default function Home() {
 
           <div className="v2-tile-grid">
             <section className="v2-tile half dark" data-rise>
+              <h2>سَعي</h2>
+              <p className="line">حوارات مع ناس عندهم معلومة تفيد.</p>
+              <div className="ctas">
+                <a className="v2-link" href="https://youtu.be/vH3_CC1GsiM" target="_blank" rel="noopener">شاهد الحلقة <span className="chev">‹</span></a>
+              </div>
+              <div className="art frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/v2/shots/podcast-sa3y.jpg" alt="بودكاست سَعي: حلقة منصّة لمات للفعاليّات" loading="lazy" />
+              </div>
+            </section>
+
+            <section className="v2-tile half" data-rise>
+              <h2>الاستوديو</h2>
+              <p className="line">ثلاث كاميرات في الرياض. حلقتك تصير عشرة مقاطع.</p>
+              <div className="ctas">
+                <a className="v2-link" href="/video/">اعرف أكثر <span className="chev">‹</span></a>
+                <a className="v2-link" href="/video/#buy">اطلب <span className="chev">‹</span></a>
+              </div>
+              <div className="art frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/v2/shots/studio.jpg" alt="استوديو البودكاست في الرياض" loading="lazy" />
+              </div>
+            </section>
+
+            <section className="v2-tile half" data-rise>
+              <h2>{aiPage.name}</h2>
+              <p className="line">ورش وتدريب لفريقك، بأمثلة من شغلكم.</p>
+              <div className="ctas">
+                <a className="v2-link" href="/ai/">اعرف أكثر <span className="chev">‹</span></a>
+                <a className="v2-link" href="/ai/#request">اطلب ورشة <span className="chev">‹</span></a>
+              </div>
+              <div className="art frame">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/v2/shots/workshop-cover.jpg" alt="ورشة «لا تدرسه… جرّبه» للذكاء الاصطناعي" loading="lazy" />
+              </div>
+            </section>
+
+            <section className="v2-tile half dark" data-rise>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="tile-logo" src="/tools/claude.svg" alt="Claude" />
               <h2>هويّة</h2>
@@ -104,19 +146,7 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="v2-tile half" data-rise>
-              <h2>حزمة النشر</h2>
-              <p className="line">فكرة وحدة. كلّ المنصّات.</p>
-              <div className="ctas">
-                <a className="v2-link" href="/store/#addons">اعرف أكثر <span className="chev">‹</span></a>
-              </div>
-              <div className="art memoji">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/v2/memoji/surprise.png" alt="" loading="lazy" />
-              </div>
-            </section>
-
-            <section className="v2-tile half" data-rise>
+            <section className="v2-tile half dark" data-rise>
               <h2>حروف ودروس</h2>
               <p className="line">منصّة بنيتها بنفسي. على الويب وفي متجر آبل.</p>
               <div className="ctas">
@@ -128,15 +158,15 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="v2-tile half dark" data-rise>
-              <h2>سَعي</h2>
-              <p className="line">حوارات مع ناس عندهم معلومة تفيد.</p>
+            <section className="v2-tile half" data-rise>
+              <h2>حزمة النشر</h2>
+              <p className="line">فكرة وحدة. كلّ المنصّات.</p>
               <div className="ctas">
-                <a className="v2-link" href="https://youtu.be/vH3_CC1GsiM" target="_blank" rel="noopener">شاهد الحلقة <span className="chev">‹</span></a>
+                <a className="v2-link" href="/store/#addons">اعرف أكثر <span className="chev">‹</span></a>
               </div>
-              <div className="art frame">
+              <div className="art memoji">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/v2/shots/podcast-sa3y.jpg" alt="بودكاست سَعي: حلقة منصّة لمات للفعاليّات" loading="lazy" />
+                <img src="/v2/memoji/surprise.png" alt="" loading="lazy" />
               </div>
             </section>
           </div>
@@ -148,10 +178,11 @@ export default function Home() {
         <section className="v2-sec" style={{ paddingTop: 0 }} id="works">
           <div className="v2-wrap">
             <div className="v2-head" data-rise>
-              <h2>الأعمال.</h2>
+              <h2>صناعة المحتوى.</h2>
               <p>أفلام رسميّة وحملات وبودكاست وتغطيات، من الفكرة إلى التسليم.</p>
             </div>
             <div data-rise><WorksRail /></div>
+            <p data-rise style={{ marginTop: 10 }}><a className="v2-link" href="/content/">كلّ الأعمال مرتّبة بالنوع <span className="chev">‹</span></a></p>
           </div>
         </section>
 

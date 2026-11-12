@@ -3,7 +3,7 @@ import { site } from "@/lib/site";
 import { bookHref, waHref } from "@/lib/v2";
 
 const cols: { title: string; links: { label: string; href: string; ext?: boolean }[] }[] = [
-  { title: "استكشف", links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "النظام", href: "/systems/" }, { label: "نظام الجمعيّات", href: "/systems/charities/" }, { label: "جرّب النظام", href: "/demo/nasaq/index.html" }, { label: "حضور", href: "/brand/" }, { label: "الاستوديو", href: "/video/" }, { label: "هويّة", href: "/brand/#identity" }, { label: "حزمة النشر", href: "/store/#addons" }] },
+  { title: "استكشف", links: [{ label: "صناعة المحتوى", href: "/content/" }, { label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "النظام", href: "/systems/" }, { label: "نظام الجمعيّات", href: "/systems/charities/" }, { label: "جرّب النظام", href: "/demo/nasaq/index.html" }, { label: "حضور", href: "/brand/" }, { label: "الاستوديو", href: "/video/" }, { label: "هويّة", href: "/brand/#identity" }, { label: "حزمة النشر", href: "/store/#addons" }] },
   { title: "الباقات", links: [{ label: "كلّ الباقات", href: "/store/" }, { label: "مكالمة تعارف مجّانيّة", href: bookHref, ext: true }, { label: "إعلانات المتاجر", href: "/ad-packages/" }] },
   { title: "عن إبراهيم", links: [{ label: "حروف ودروس", href: "https://huroofduroos.com", ext: true }, { label: "بودكاست سَعي", href: site.podcast.youtube, ext: true }, { label: "المدوّنة", href: "/blog/" }, { label: "تيك توك", href: site.social.tiktok, ext: true }] },
   { title: "تواصل", links: [{ label: "احجز مكالمة", href: bookHref, ext: true }, { label: "واتساب", href: waHref(), ext: true }, { label: "البريد", href: `mailto:${site.email}` }] },
