@@ -623,3 +623,12 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-tile .art.mosaic img:first-child { grid-row: span 2; border-radius: 20px; }
 .v2-tile:hover .art.mosaic img { transform: translateY(-4px); }
 @media (max-width: 640px) { .v2-tile .art.mosaic { grid-template-columns: 1fr; grid-template-rows: auto; aspect-ratio: auto; } .v2-tile .art.mosaic img { aspect-ratio: 16 / 9; } .v2-tile .art.mosaic img:first-child { grid-row: auto; } .v2-tile .art.mosaic img:nth-child(n+2) { display: none; } }
+/* بانر المنتج الجديد أعلى الرئيسيّة */
+.v2-launch-wrap { padding-bottom: 0; }
+.v2-launch { min-height: auto; padding-top: clamp(36px, 5vw, 56px); }
+.v2-launch .new { color: #BF4800; font-weight: 700; font-size: 17px; margin: 0 0 6px; }
+.v2-launch h2.logo { margin: 0; line-height: 0; }
+.v2-launch h2.logo img { width: clamp(240px, 34vw, 420px); height: auto; }
+.v2-launch .plats { font-size: 15px; color: var(--fg-2); margin-top: 10px; }
+.v2-launch .art.frame { margin-top: 28px; }
+.v2-launch .art.frame img { margin-bottom: clamp(24px, 4vw, 44px); }

@@ -35,6 +35,28 @@ export default function Home() {
     <Shell>
       <Nav />
       <main>
+        {/* ===== بانر المنتج الجديد (فترة الإطلاق) ===== */}
+        <div className="v2-tiles v2-launch-wrap">
+          <section className="v2-tile v2-launch">
+            <WindowLight style={{ top: -60, left: "50%", width: 1000, height: 600, marginLeft: -500 }} />
+            <p className="new">جديد</p>
+            <h2 className="logo">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/shop/lessons-broadcast/logo-black.png" alt="برنامج بث الدروس العلمية" width={900} height={418} />
+            </h2>
+            <p className="line">درسك على الهواء باحتراف. بضغطة زر.</p>
+            <p className="plats">ويندوز · ماك · أندرويد — والآيفون قريباً</p>
+            <div className="ctas">
+              <a className="v2-btn v2-btn-primary sm" href="/lessons-broadcast/">اعرف أكثر</a>
+              <a className="v2-btn v2-btn-ghost sm" href="/lessons-broadcast/#buy">اشترِ</a>
+            </div>
+            <a className="art frame wide" href="/lessons-broadcast/" aria-label="برنامج بث الدروس العلمية">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/shop/lessons-broadcast/shot-book.jpg" alt="بثّ درس علميّ: الشيخ والكتاب في الشاشة" />
+            </a>
+          </section>
+        </div>
+
         {/* ===== الواجهة ===== */}
         <section className="v2-hero">
           <WindowLight style={{ top: 20, left: "-6%", width: 980, height: 660 }} />

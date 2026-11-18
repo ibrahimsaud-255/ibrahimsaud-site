@@ -565,6 +565,14 @@ export const buildPage = {
 
 export type NavItem = { label: string; href: string; menu?: { title: string; big?: boolean; links: { label: string; href: string }[] }[] };
 export const navItems: NavItem[] = [
+  // المنتج الجديد أوّلاً (فترة الإطلاق) — صفحته العامّة /lessons-broadcast/
+  {
+    label: "بث الدروس", href: "/lessons-broadcast/",
+    menu: [
+      { title: "برنامج بث الدروس العلمية", big: true, links: [{ label: "نظرة عامّة", href: "/lessons-broadcast/" }, { label: "وش بالداخل؟", href: "/lessons-broadcast/#inside" }, { label: "المتطلّبات", href: "/lessons-broadcast/#specs" }, { label: "أسئلة", href: "/lessons-broadcast/#faq" }] },
+      { title: "احصل عليه", links: [{ label: "اشترِ الآن", href: "/lessons-broadcast/#buy" }, { label: "ويندوز · ماك · أندرويد", href: "/lessons-broadcast/#platforms" }] },
+    ],
+  },
   {
     label: "صناعة المحتوى", href: "/content/",
     menu: [
