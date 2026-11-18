@@ -9,8 +9,8 @@
  *    99-boot.js (بترتيبها الأصليّ) — وإلا نادت دالّةً في ملفّ لم يُحمَّل بعد.
  */
 /* ===== SALES & INVOICING ===== */
-function renderSales(){renderDocs('sale')}
-function renderInvoicing(){renderDocs('invoice')}
+function renderSales(){renderDocs('sale');try{extAutoSync()}catch(e){}}   // طلبات المتاجر المدفوعة تدخل المبيعات تلقائيّاً (26-dshop)
+function renderInvoicing(){renderDocs('invoice');try{extAutoSync()}catch(e){}}
 const AR_MONTHS=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
 function monthLabel(ym){const [y,m]=ym.split('-');const i=Math.max(0,Math.min(11,(+m||1)-1));return AR_MONTHS[i]+' '+y}
 function renderDocs(type){

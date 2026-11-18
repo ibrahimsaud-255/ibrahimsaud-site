@@ -1,0 +1,185 @@
+// المتجر الرقميّ (/shop/) — محتوى صفحات المنتجات.
+// ─────────────────────────────────────────────────────────────────────────
+// المحتوى (العناوين، ما بداخل الحزمة، الأسئلة) هنا في الكود مثل site.ts،
+// أمّا **السعر الحقيقيّ والملفّات والتفعيل** ففي جدول shop_products بـSupabase:
+// الصفحة تقرأ السعر حيّاً منه فيطابق ما يُخصم فعلاً، و`fallbackPrice` يظهر
+// فقط لو تعذّرت القراءة. منتج جديد = صفّ في الجدول + مدخل هنا بنفس الـsku.
+// الدليل: docs/المتجر-الرقمي.md
+
+export const SHOP_FN = "https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop";
+const SUPA_URL = "https://rrerwhhxrjyzmnnjsfev.supabase.co";
+const SUPA_KEY = "sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13";
+
+export type ShopItem = {
+  sku: string;
+  slug: string;
+  name: string;
+  kicker: string;          // سطر صغير أزرق فوق الاسم
+  tagline: string;         // العنوان الكبير
+  sub: string;             // الفقرة تحت العنوان
+  cover?: string;          // صورة الغلاف (اختياريّة)
+  icon: string;            // رمز بسيط يظهر في البطاقة والواجهة بدل الصورة
+  fallbackPrice: number;   // يظهر فقط لو تعذّرت قراءة السعر الحيّ
+  format: string;          // «ملفّات رقميّة — تنزيل فوريّ»…
+  inside: { title: string; text: string }[];
+  forWho: string[];
+  steps: string[];         // كيف يشتغل بعد الشراء
+  faqs: { q: string; a: string }[];
+  presale?: boolean;       // يُعرض «قريباً» بلا زرّ شراء ما لم يكن نشطاً في الجدول
+  iconImg?: string;        // أيقونة صورة بدل الرمز (للبرامج)
+  logo?: string;           // شعار كلمة (يظهر بدل الاسم المكتوب في رأس الصفحة)
+  shots?: { src: string; alt: string }[];   // لقطات حقيقيّة من البرنامج
+  platforms?: { key: "windows" | "mac" | "android" | "ios"; name: string; note: string; soon?: string }[];
+  specs?: { title: string; rows: [string, string][] }[];
+  promo?: { src: string; poster: string; title: string; text: string };   // مقطع قصير عموديّ
+};
+
+export const shopItems: ShopItem[] = [
+  {
+    sku: "lessons-broadcast",
+    slug: "lessons-broadcast",
+    name: "برنامج بث الدروس العلمية",
+    kicker: "للجمعيّات والمساجد وطلّاب العلم والمعلّمين",
+    tagline: "درسك على الهواء باحتراف. بضغطة زر.",
+    sub: "برنامج عربيّ سهل يبثّ الدرس ويسجّله: المتحدّث والكتاب في الشاشة، المكتبة الشاملة داخله، وشعارات جهتك — على يوتيوب وفيسبوك وتيليجرام في نفس الوقت.",
+    icon: "📡",
+    iconImg: "/shop/lessons-broadcast/icon.png",
+    logo: "/shop/lessons-broadcast/logo-black.png",
+    shots: [
+      { src: "/shop/lessons-broadcast/shot-book.jpg", alt: "مشهد الكتاب مع المتحدّث: الكتاب مفتوح وشريط القراءة الذهبيّ" },
+      { src: "/shop/lessons-broadcast/shot-page.jpg", alt: "مشهد الصفحة مع المتحدّث والاسم من اليمين" },
+      { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "مشهد المتحدّث: تغبيش ناعم وتدرّج خلف الاسم" },
+    ],
+    promo: {
+      src: "/shop/lessons-broadcast/promo.mp4",
+      poster: "/shop/lessons-broadcast/promo-poster.jpg",
+      title: "شوفه في درس حقيقيّ.",
+      text: "المقطع اللي بدأ كل شي: درس في الجامع، المتحدّث في المحراب، والكتاب يتقلّب قدّام المشاهد — مباشرة على يوتيوب بلا مونتاج.",
+    },
+    fallbackPrice: 399,
+    format: "برنامج للكمبيوتر — تنزيل فوريّ بعد الدفع",
+    platforms: [
+      { key: "windows", name: "ويندوز", note: "ويندوز ١٠ و١١" },
+      { key: "mac", name: "ماك", note: "macOS 12 فما فوق" },
+      { key: "android", name: "أندرويد", note: "جوّالات وتابلت أندرويد", soon: "قريباً على Google Play" },
+      { key: "ios", name: "آيفون وآيباد", note: "iPhone و iPad", soon: "قريباً على App Store" },
+    ],
+    inside: [
+      { title: "المكتبة الشاملة داخل البرنامج", text: "أكثر من ٨٥٠٠ كتاب تتصفّحها بسهولة وتعرضها بصفحات الطبعة المصوّرة، أو نصّاً مرتّباً بترقيم المطبوع — وأيّ كتاب PDF من جهازك." },
+      { title: "المتحدّث والكتاب في الشاشة", text: "ثمانية مشاهد جاهزة: المتحدّث، الكتاب مع المتحدّث، صفحة كاملة، كتاب مفتوح يتقلّب، القارئ، قبل البثّ، الاستراحة، والختام." },
+      { title: "شريط القراءة", text: "شريط ذهبيّ يمشي مع القارئ سطراً سطراً، والتكبير على الصفحة بضغطة." },
+      { title: "تصاميم عربيّة إسلاميّة", text: "ألوان ونقوش هندسيّة وإطار محراب، أو ألوان جهتك — والاسم يكتب نفسه من اليمين." },
+      { title: "كل المنصّات معاً", text: "يوتيوب وفيسبوك وتيليجرام في نفس الوقت، مع تسجيل الدرس كاملاً على جهازك بجودة Full HD أو 4K." },
+      { title: "صوت نقيّ تلقائيّاً", text: "تنقية الضوضاء وتسوية الصوت جاهزة بدون إعدادات، ومايك مستقلّ للقارئ." },
+      { title: "شعارات الجهة والرعاة", text: "حتى ستّة شعارات تظهر وتختفي بضغطة، بألوانها الأصليّة." },
+      { title: "فصول يوتيوب تلقائيّة", text: "أوقات الأبواب اللي مرّ عليها الشيخ تُكتب لك جاهزة للصقها في وصف المقطع." },
+    ],
+    forWho: [
+      "جمعيّة أو مسجد يبي ينشر الدروس بصورة تليق بها",
+      "طالب علم يصوّر دروس شيخه ويرفعها",
+      "معلّم يشرح كتاباً أو متناً لطلّابه عن بعد",
+      "مسؤول إعلام يبي بثّاً ثابت الجودة كلّ أسبوع",
+    ],
+    steps: [
+      "تدفع بالبطاقة أو مدى أو Apple Pay",
+      "تنزّل نسخة ويندوز أو ماك من صفحة طلبك",
+      "تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر»",
+    ],
+    specs: [
+      { title: "الكمبيوتر — Full HD", rows: [
+        ["النظام", "ويندوز ١٠ أو ١١ (٦٤ بت) — أو ماك macOS 12 فما فوق"],
+        ["المعالج", "Intel Core i5 الجيل الثامن، Ryzen 5، أو Apple M1 فما فوق"],
+        ["الذاكرة", "٨ جيجا (١٦ أفضل)"],
+        ["الإنترنت", "سرعة رفع ٦ ميغابت على الأقلّ (لكل منصّة إضافيّة نفس السرعة تقريباً)"],
+        ["المساحة", "٢ جيجا للبرنامج + نحو ٣ جيجا لكل ساعة تسجيل"],
+        ["الكاميرا والصوت", "أيّ كاميرا USB أو كاميرا عبر كرت التقاط، ومايك لاسلكيّ أو USB"],
+      ] },
+      { title: "الكمبيوتر — 4K", rows: [
+        ["المعالج", "Apple M1 Pro / M2 فما فوق، أو Intel Core i7 / Ryzen 7 مع كرت NVIDIA GTX 1660 فما فوق"],
+        ["الذاكرة", "١٦ جيجا"],
+        ["الإنترنت", "سرعة رفع ٢٠ ميغابت"],
+        ["الكاميرا", "كاميرا تدعم 4K"],
+      ] },
+      { title: "الجوّال (أندرويد — قريباً)", rows: [
+        ["النظام", "أندرويد ٨ فما فوق"],
+        ["الذاكرة", "٣ جيجا على الأقلّ (٤ جيجا مستحسن)"],
+        ["المعالج", "Snapdragon 665 أو Helio G85 أو Exynos 9611 فما فوق (أغلب جوّالات ٢٠٢٠ وما بعد)"],
+        ["الإنترنت", "سرعة رفع ٤ ميغابت (واي فاي أو 4G مستقرّ)"],
+        ["نصيحة", "شغّل الجوّال على الشاحن وعلى حامل ثابت في الدروس الطويلة"],
+      ] },
+    ],
+    faqs: [
+      { q: "هل أحتاج خبرة تقنيّة؟", a: "لا. البرنامج عربيّ وأزراره كبيرة وواضحة: تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر». وإذا احتجت أحد يضبطه معك راسلني." },
+      { q: "على أيّ جهاز يشتغل؟", a: "ويندوز وماك الآن. نسخة أندرويد قريباً على Google Play وملفّ APK من الموقع، ونسخة آيفون وآيباد قريباً على App Store. شوف «المتطلّبات» تحت." },
+      { q: "هل يحتاج برنامج OBS؟", a: "البرنامج يستخدم محرّك OBS المجّانيّ مفتوح المصدر في الخلفيّة — ما تحتاج تفتحه ولا تفهمه أبداً. على ويندوز المحرّك داخل ملفّ التثبيت نفسه، وعلى ماك تثبّته مرّة وحدة بزرّ من داخل البرنامج." },
+      { q: "تطلع رسالة تحذير أوّل ما أفتحه؟", a: "طبيعيّ في أوّل تشغيل: على ويندوز اضغط «مزيد من المعلومات» ثمّ «تشغيل على أيّ حال»، وعلى ماك اضغط على البرنامج بالزرّ الأيمن ثمّ «فتح». مرّة وحدة فقط." },
+      { q: "هل الطريقة مجّانيّة؟", a: "نعم، شرحت الطريقة كاملة مجّاناً على يوتيوب مع حقيبة أوامر لكلود لمن يحبّ يسوّيها بنفسه. البرنامج للي يبي الاختصار: كل شي جاهز من أوّل يوم." },
+      { q: "على كم جهاز أقدر أستخدمه؟", a: "رابط طلبك يفتح على أجهزتك (حتى ٣ أجهزة)، وتنزّل النسخ اللي تحتاجها منه. للجمعيّات بأكثر من مقرّ راسلني." },
+      { q: "ضيّعت رابط التحميل؟", a: "ولا يهمّك: افتح «استرجع طلبك» واكتب إيميلك، ويوصلك رابط طلبك من جديد. الطلب لك دائماً وتنزّل منه البرنامج وتحديثاته متى ما بغيت." },
+      { q: "إذا نزل تحديث؟", a: "التحديثات مجّانيّة لنسختك، وتنزّلها من نفس صفحة طلبك." },
+    ],
+  },
+  {
+    sku: "ai-idea-to-launch",
+    slug: "ai-idea-to-launch",
+    name: "من الفكرة للنشر",
+    kicker: "دورة مباشرة — دفعة التأسيس",
+    tagline: "اطلع بموقعك منشوراً باسمك. بالذكاء الاصطناعي.",
+    sub: "دورة عمليّة مباشرة: من فكرة في راسك إلى موقع شغّال على دومينك، بالأدوات اللي أشتغل فيها كلّ يوم.",
+    icon: "🚀",
+    fallbackPrice: 399,
+    format: "جلسات مباشرة + تسجيلاتها",
+    inside: [
+      { title: "جلسات مباشرة", text: "نبني مع بعض خطوة خطوة، وأجاوب أسئلتك على شغلك أنت." },
+      { title: "التسجيلات كاملة", text: "كلّ جلسة مسجّلة ترجع لها وقت ما تبي." },
+      { title: "قوالب وأوامر جاهزة", text: "البرومبتات والقوالب اللي أستخدمها فعلاً." },
+    ],
+    forWho: ["صاحب مشروع يبي موقعه بنفسه", "مستقلّ يبي يضيف خدمة جديدة", "أيّ أحد عنده فكرة ويبي يطلقها"],
+    steps: ["تحجز مقعدك", "يوصلك موعد الدفعة ورابط الجلسات", "تطلع بموقعك منشوراً"],
+    faqs: [{ q: "متى تبدأ؟", a: "يُعلن الموعد لمّا تكتمل مقاعد دفعة التأسيس." }],
+    presale: true,
+  },
+];
+
+export const itemBySlug = (slug: string) => shopItems.find((i) => i.slug === slug);
+
+export type LiveProduct = { sku: string; price_sar: number; active: boolean };
+
+let liveCache: Promise<Record<string, LiveProduct>> | null = null;
+
+/** السعر الحيّ والتفعيل من shop_products (قراءة علنيّة للنشط فقط). */
+export function fetchLive(): Promise<Record<string, LiveProduct>> {
+  if (!liveCache) {
+    liveCache = fetch(`${SUPA_URL}/rest/v1/shop_products?select=sku,price_sar,active`, {
+      headers: { apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+    })
+      .then((r) => (r.ok ? r.json() : []))
+      .then((rows: LiveProduct[]) => Object.fromEntries(rows.map((r) => [r.sku, { ...r, price_sar: Number(r.price_sar) }])))
+      .catch(() => ({}));
+  }
+  return liveCache;
+}
+
+export const sar = (n: number) => `${n.toLocaleString("ar-SA", { maximumFractionDigits: 2 })} ر.س`;
+
+export function fmtSize(bytes: number): string {
+  if (!bytes) return "";
+  if (bytes >= 1024 ** 3) return `${(bytes / 1024 ** 3).toFixed(1)} GB`;
+  if (bytes >= 1024 ** 2) return `${(bytes / 1024 ** 2).toFixed(1)} MB`;
+  return `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+/** نداء الدالّة الحافّة «shop». */
+export async function shopCall<T = Record<string, unknown>>(action: string, body: Record<string, unknown>): Promise<{ ok: boolean; status: number; data: T & { error?: string } }> {
+  try {
+    const r = await fetch(SHOP_FN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+      body: JSON.stringify({ action, ...body }),
+    });
+    const data = await r.json().catch(() => ({ error: "ردّ غير متوقّع" }));
+    return { ok: r.ok, status: r.status, data };
+  } catch {
+    return { ok: false, status: 0, data: { error: "تعذّر الاتصال — تأكّد من الإنترنت وجرّب مرّة ثانية" } as T & { error?: string } };
+  }
+}

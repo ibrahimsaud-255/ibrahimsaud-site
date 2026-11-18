@@ -17,7 +17,7 @@ let S=load();
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1001 */
-const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,partners:renderPartners,collab:renderCollab,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pricing:renderPricing,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,partners:renderPartners,collab:renderCollab,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,dshop:renderDShop,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pricing:renderPricing,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1002 */
@@ -33,7 +33,7 @@ const HR_VIEWS={
 ;
 
 /* ⤶ 03-huroof.js · سطر الأصل 1907 */
-Object.assign(HR_VIEWS,{funnel:hrViewFunnel,usage:hrViewUsage,marketing:hrViewMarketing,questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog});
+Object.assign(HR_VIEWS,{funnel:hrViewFunnel,usage:hrViewUsage,marketing:hrViewMarketing,questions:hrViewQuestions,pdflib:hrViewPdflib,extractor:hrViewExtractor,nafs:hrViewNafs,covers:hrViewCovers,blog:hrViewBlog,store:hrViewStore});
 ;
 
 /* ⤶ 04-home.js · سطر الأصل 2094 */

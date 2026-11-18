@@ -67,7 +67,7 @@ function accCompute(from,to){
     incomePeriod,expensePeriod,netPeriod:incomePeriod-expensePeriod,totalAssets,equity,
     byUnitIncome,byUnitExpense,byExpCat,byIncUnitP,byExpCatP,balanceOk:Math.abs(totalAssets-(liabilities+equity))<0.01};
 }
-function renderAccounting(){
+function renderAccounting(){try{extAutoSync()}catch(e){}
   if(accSyncPayments())save();
   const A=acc();const tab=A.tab||'overview';
   const tabs=[['overview','نظرة عامة','layout-dashboard'],['journal','دفتر اليومية','book-open'],['assets','الأصول الثابتة','package'],['statements','القوائم المالية','file-bar-chart'],['setup','الوحدات والإعداد','settings']];

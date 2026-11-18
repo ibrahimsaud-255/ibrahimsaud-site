@@ -32,6 +32,7 @@ const APPS=[
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe'},
   {id:'blog',name:'المدونة',icon:'newspaper'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail'},
+  {id:'dshop',name:'المتجر الرقميّ',icon:'shopping-bag'},
 ];
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDeskto */
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: const NAV=[{id:'home',name:'الرئيسية',icon:'home'},{id:'desktop',name: */
@@ -59,6 +60,7 @@ const LAUNCH=[
   {id:'sitework',name:'الموقع الإلكتروني',icon:'globe',c:'#e11d48,#9f1239'},
   {id:'blog',name:'المدونة',icon:'newspaper',c:'#0ea5e9,#0369a1'},
   {id:'newsletter',name:'القائمة البريدية',icon:'mail',c:'#f59e0b,#d97706'},
+  {id:'dshop',name:'المتجر الرقميّ',icon:'shopping-bag',c:'#16a34a,#14532d'},
 ];
 function hexA(h,al){h=String(h).trim().replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');const n=parseInt(h,16);return `rgba(${(n>>16)&255},${(n>>8)&255},${n&255},${al})`}
 function gGrad(c,al){return c.split(',').map(x=>hexA(x,al)).join(',')}

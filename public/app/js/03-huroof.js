@@ -31,6 +31,7 @@ const HR_TABS=[
   {id:'marketing',name:'التسويق والوكيل',icon:'target'},
   {id:'users',name:'المستخدمون',icon:'users'},
   {id:'subscribers',name:'المشتركون',icon:'credit-card'},
+  {id:'store',name:'المتجر',icon:'shopping-bag'},
   {id:'manage',name:'التفعيل والأكواد',icon:'user-check'},
   {id:'tquestions',name:'أسئلة المعلمين',icon:'inbox'},
   {id:'tickets',name:'التذاكر',icon:'life-buoy'},
