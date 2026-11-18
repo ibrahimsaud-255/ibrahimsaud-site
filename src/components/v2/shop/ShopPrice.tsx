@@ -4,37 +4,18 @@
 import { useEffect, useState } from "react";
 import { fetchLive, sar, shopCall } from "@/lib/shop";
 
-// سعر الزائر يحدّده الخادم حسب بلده (نفس ما يُخصم فعلاً) — أو حسب البلد الذي اختاره
-// (كثيرون يتصفّحون بـVPN فيظهرون من بلد آخر). بلد البطاقة يُطابَق بعد الدفع في الخادم.
-type PriceRes = { price?: number; country?: string; ip?: string };
+// سعر الزائر يحدّده الخادم تلقائيّاً حسب بلده (نفس ما يُخصم فعلاً) — بلا أيّ إشارة في الصفحة.
+// البلد من المنطقة الزمنيّة للجهاز (لا يغيّرها الـVPN) ثمّ الـIP. بلد البطاقة يُطابَق بعد الدفع في الخادم.
+type PriceRes = { price?: number; country?: string };
 const priceCache: Record<string, Promise<PriceRes | null>> = {};
-function fetchPrice(sku: string, cc: string) {
-  return (priceCache[sku + "|" + cc] ??= shopCall<PriceRes>("price", { sku, ...geo(cc) }).then((r) => (r.ok ? r.data : null)));
+function fetchPrice(sku: string) {
+  return (priceCache[sku] ??= shopCall<PriceRes>("price", { sku, ...geo() }).then((r) => (r.ok ? r.data : null)));
 }
-/** ما يرسله المتصفّح لتحديد البلد: اختياره اليدويّ (إن وُجد) + المنطقة الزمنيّة للجهاز (لا يغيّرها الـVPN). */
-export function geo(cc = chosenCountry()): { country?: string; tz?: string } {
+export function geo(): { tz?: string } {
+  try { localStorage.removeItem("shop-cc"); } catch { /* اختيار قديم من نسخة سابقة */ }
   let tz = "";
   try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch { /* متصفّح قديم */ }
-  return { ...(cc ? { country: cc } : {}), ...(tz ? { tz } : {}) };
-}
-
-const CC_KEY = "shop-cc";
-export function chosenCountry(): string {
-  try { return localStorage.getItem(CC_KEY) || ""; } catch { return ""; }
-}
-export function chooseCountry(cc: string) {
-  try { cc ? localStorage.setItem(CC_KEY, cc) : localStorage.removeItem(CC_KEY); } catch { /* المتصفّح يمنع التخزين — يكفي الحدث */ }
-  window.dispatchEvent(new CustomEvent(CC_KEY, { detail: cc }));
-}
-
-// الدول في قائمة «غيّر الدولة» — الأسماء من المتصفّح بالعربيّة. ZZ = «دولة أخرى» (السعر الأساسيّ).
-const CODES = "SA AE KW QA BH OM JO IQ PS LB SY YE EG SD LY TN DZ MA MR SO DJ KM TD SS ER NE ML SN GM GN GW SL CI GH BF BJ TG CM ET KE TZ UG MZ NG AF PK BD IN LK MM ID MY PH BN SG MV TR AZ KZ UZ KG TJ TM BA AL XK GB DE FR NL BE SE NO DK FI AT CH IT ES IE US CA AU NZ".split(" ");
-export function countryName(cc: string): string {
-  if (cc === "ZZ") return "دولة أخرى";
-  try { return new Intl.DisplayNames(["ar"], { type: "region" }).of(cc) || cc; } catch { return cc; }
-}
-export function countryList(): { code: string; name: string }[] {
-  return CODES.map((code) => ({ code, name: countryName(code) })).sort((a, b) => a.name.localeCompare(b.name, "ar")).concat([{ code: "ZZ", name: "دولة أخرى" }]);
+  return tz ? { tz } : {};
 }
 
 // تقريب بعملة الزائر (للعرض فقط — الدفع بالريال).
@@ -56,32 +37,25 @@ export function localApprox(price: number, country: string | null): string | nul
 }
 
 export function useLive(sku: string, fallback: number) {
-  const [state, setState] = useState<{ price: number; active: boolean | null; country: string | null; ip: string | null }>({ price: fallback, active: null, country: null, ip: null });
-  const [cc, setCc] = useState("");
-  useEffect(() => {
-    setCc(chosenCountry());
-    const on = (e: Event) => setCc(String((e as CustomEvent).detail || ""));
-    window.addEventListener(CC_KEY, on);
-    return () => window.removeEventListener(CC_KEY, on);
-  }, []);
+  const [state, setState] = useState<{ price: number; active: boolean | null; country: string | null }>({ price: fallback, active: null, country: null });
   useEffect(() => {
     let on = true;
     // ?demo=1 يعرض نموذج الشراء للمعاينة قبل تفعيل الجدول.
     const demo = new URLSearchParams(location.search).get("demo") === "1";
     (demo ? Promise.resolve(null) : fetchLive()).then((m) => {
       if (!on) return;
-      if (!m) return setState({ price: fallback, active: true, country: null, ip: null });
+      if (!m) return setState({ price: fallback, active: true, country: null });
       const row = m[sku];
       // الجدول يعرض النشط فقط للعموم: غيابه = غير متاح للشراء الآن.
-      if (!row) return setState({ price: fallback, active: false, country: null, ip: null });
-      fetchPrice(sku, cc).then((p) => {
+      if (!row) return setState({ price: fallback, active: false, country: null });
+      fetchPrice(sku).then((p) => {
         if (!on) return;
-        setState({ price: p?.price ?? row.price_sar, active: row.active, country: p?.country || null, ip: p?.ip || null });
+        setState({ price: p?.price ?? row.price_sar, active: row.active, country: p?.country || null });
       });
     });
     return () => { on = false; };
-  }, [sku, fallback, cc]);
-  return { ...state, chosen: cc };
+  }, [sku, fallback]);
+  return state;
 }
 
 export default function ShopPrice({ sku, fallback }: { sku: string; fallback: number }) {

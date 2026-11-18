@@ -4,11 +4,10 @@
 import { useState } from "react";
 import { sar, shopCall, type ShopItem } from "@/lib/shop";
 import { waHref } from "@/lib/v2";
-import { chooseCountry, countryList, countryName, geo, localApprox, useLive } from "./ShopPrice";
+import { geo, localApprox, useLive } from "./ShopPrice";
 
 export default function BuyPanel({ item }: { item: ShopItem }) {
-  const { price, active, country, chosen } = useLive(item.sku, item.fallbackPrice);
-  const [pick, setPick] = useState(false);
+  const { price, active, country } = useLive(item.sku, item.fallbackPrice);
   const approx = localApprox(price, country);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -45,18 +44,6 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
         <p className="fmt">{item.format}</p>
         <p className="price" aria-live="polite" style={{ visibility: active === null ? "hidden" : undefined }}>{sar(price)}</p>
         {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
-        {active && country && (
-          <p className="vat cc">
-            السعر لـ{countryName(country)}{" · "}
-            {pick ? (
-              <select autoFocus value={chosen || country} onChange={(e) => { chooseCountry(e.target.value); setPick(false); }} onBlur={() => setPick(false)} aria-label="بلدك">
-                {countryList().map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-              </select>
-            ) : (
-              <button type="button" onClick={() => setPick(true)}>مو بلدك؟ غيّره</button>
-            )}
-          </p>
-        )}
         <p className="vat">السعر نهائيّ — دفعة واحدة، بلا اشتراك.</p>
       </div>
 
