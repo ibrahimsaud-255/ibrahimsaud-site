@@ -20,7 +20,7 @@ export type ShopItem = {
   cover?: string;          // صورة الغلاف (اختياريّة)
   icon: string;            // رمز بسيط يظهر في البطاقة والواجهة بدل الصورة
   fallbackPrice: number;   // يظهر فقط لو تعذّرت قراءة السعر الحيّ
-  sale?: { label: string; was: Record<number, number> };   // خصم مؤقّت: السعر الحيّ ← السعر قبل الخصم (يُشطب)
+  sale?: { label: string; until: string; was: Record<number, number> };   // خصم مؤقّت: السعر الحيّ ← السعر قبل الخصم (يُشطب)، ويختفي بعد until
   format: string;          // «ملفّات رقميّة — تنزيل فوريّ»…
   inside: { title: string; text: string }[];
   forWho: string[];
@@ -62,6 +62,9 @@ export const shopItems: ShopItem[] = [
       text: "مقطع بثّ الدروس جاب أكثر من ١٠٠ تعليق بنفس الطلب — فبدل ما أعقّدكم في الربط والتقنية، سوّيت لكم برنامجاً جاهزاً: تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر». من الكمبيوتر أو الجوّال.",
     },
     fallbackPrice: 399,
+    // عرض الإطلاق: الأسعار الفعليّة في shop_products (١٤٩/٩٩/٧٩/٤٩)، وترجع ٣٩٩/١٩٩/١٢٩/٦٩ بمهمّة pg_cron
+    // «lb-launch-offer-end» فجر ٢ ديسمبر ٢٠٢٦ بتوقيت الرياض. العرض هنا يختفي وحده بعد until.
+    sale: { label: "عرض الإطلاق", until: "2026-12-01T21:00:00Z", was: { 149: 399, 99: 199, 79: 129, 49: 69 } },
     format: "ويندوز · ماك · أندرويد — تنزيل فوريّ بعد الدفع",
     platforms: [
       { key: "windows", name: "ويندوز", note: "ويندوز ١٠ و١١" },

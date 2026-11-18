@@ -9,7 +9,8 @@ import { geo, localApprox, useLive } from "./ShopPrice";
 export default function BuyPanel({ item }: { item: ShopItem }) {
   const { price, active, country } = useLive(item.sku, item.fallbackPrice);
   const approx = localApprox(price, country);
-  const was = item.sale?.was[price];
+  const saleOn = !!item.sale && Date.now() < Date.parse(item.sale.until);
+  const was = saleOn ? item.sale!.was[price] : undefined;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -46,6 +47,7 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
         <div style={{ visibility: active === null ? "hidden" : undefined }}>
           {was && was > price && <p className="sale"><span>{item.sale!.label}</span><s>{sar(was)}</s></p>}
           <p className="price" aria-live="polite">{sar(price)}</p>
+          {was && was > price && <p className="vat">العرض ينتهي نهاية يوم ١ ديسمبر، وبعده يرجع السعر {sar(was)}</p>}
         </div>
         {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
         <p className="vat">دفعة واحدة وتملكه — بلا اشتراك شهريّ ولا سنويّ.</p>
