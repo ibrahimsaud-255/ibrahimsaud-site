@@ -15,7 +15,7 @@ const IMG = { url: `${SITE_URL}/shop/lessons-broadcast/shot-book.jpg`, alt: "Ð¢Ñ
 export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
-  alternates: { canonical: URL, languages: { ar: `${SITE_URL}/lessons-broadcast/`, ru: URL } },
+  alternates: { canonical: URL, languages: { ar: `${SITE_URL}/lessons-broadcast/`, ru: URL, en: `${SITE_URL}/en/lessons-broadcast/` } },
   openGraph: { title: TITLE, description: DESC, url: URL, siteName: "Ibrahim Saud", locale: "ru_RU", type: "website", images: [IMG] },
   twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: [IMG.url] },
 };

@@ -44,10 +44,12 @@ function deviceId(): string {
 const dateFmt = (iso: string | null, T: ShopT) =>
   iso ? new Date(iso).toLocaleDateString(T.dateLocale, { day: "numeric", month: "long", year: "numeric" }) : "";
 
-/** لغة الصفحة قبل وصول الطلب: ‎?l=ru (رابط الإيميل) أو آخر شراء من الصفحة الروسيّة. */
+/** لغة الصفحة قبل وصول الطلب: ‎?l=ru|en (رابط الإيميل) أو آخر شراء من صفحة روسيّة/إنجليزيّة. */
+const asLang = (v: string | null): ShopLang | null => (v === "ru" || v === "en" ? v : null);
 function hintLang(search: string | null): ShopLang {
-  if (search && new URLSearchParams(search).get("l") === "ru") return "ru";
-  try { return localStorage.getItem("shop-lang") === "ru" ? "ru" : "ar"; } catch { return "ar"; }
+  const q = search ? asLang(new URLSearchParams(search).get("l")) : null;
+  if (q) return q;
+  try { return asLang(localStorage.getItem("shop-lang")) || "ar"; } catch { return "ar"; }
 }
 
 const noSub = () => () => {};
@@ -226,7 +228,7 @@ function Recover({ compact = false, T, lang }: { compact?: boolean; T: ShopT; la
     setBusy(true);
     const r = await shopCall<{ message?: string }>("recover", { email });
     setBusy(false);
-    setDone(lang === "ru" ? (r.ok ? T.recoverDone : T.sendFail) : (r.data.message || r.data.error || T.doneDefault));
+    setDone(lang !== "ar" ? (r.ok ? T.recoverDone : T.sendFail) : (r.data.message || r.data.error || T.doneDefault));
   }
   return (
     <section className="v2-shop-verify" style={compact ? { marginTop: 24 } : undefined}>

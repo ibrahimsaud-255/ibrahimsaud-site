@@ -20,7 +20,7 @@ export type ShopItem = {
   cover?: string;          // صورة الغلاف (اختياريّة)
   icon: string;            // رمز بسيط يظهر في البطاقة والواجهة بدل الصورة
   fallbackPrice: number;   // يظهر فقط لو تعذّرت قراءة السعر الحيّ
-  lang?: import("./shopUi").ShopLang;   // لغة الصفحة (الافتراضيّ عربيّ) — «ru» لنسخة روسيا
+  lang?: import("./shopUi").ShopLang;   // لغة الصفحة (الافتراضيّ عربيّ) — «ru» لنسخة روسيا و«en» للإنجليزيّة
   sale?: { label: string; until: string; was: Record<number, number> };   // خصم مؤقّت: السعر الحيّ ← السعر قبل الخصم (يُشطب)، ويختفي بعد until
   format: string;          // «ملفّات رقميّة — تنزيل فوريّ»…
   inside: { title: string; text: string }[];
@@ -220,6 +220,90 @@ export const shopItems: ShopItem[] = [
       { q: "На скольких устройствах можно использовать?", a: "Ссылка на заказ открывается на ваших устройствах (до 3). Для организаций с несколькими филиалами — напишите мне." },
       { q: "Потеряли ссылку на скачивание?", a: "Откройте ibrahimsaud.com/shop/thanks/, введите email — и ссылка на заказ придёт снова. Заказ ваш навсегда: программа и обновления скачиваются оттуда в любое время." },
       { q: "А обновления?", a: "Обновления для вашей версии бесплатны и скачиваются с той же страницы заказа." },
+    ],
+  },
+  // النسخة الإنجليزيّة: صفحة /en/lessons-broadcast/ وبرنامج إنجليزيّ مستقلّ (فيه العربيّة أيضاً) — لزائر خارج الدول العربيّة
+  // متصفّحه بلا عربيّة. السعر في shop_products (lessons-broadcast-en + فئات الدول @t2/@t3/@t4 بأسعار العربيّة نفسها).
+  {
+    hidden: true,
+    lang: "en",
+    sku: "lessons-broadcast-en",
+    slug: "lessons-broadcast-en",
+    name: "Islamic Lessons Broadcast",
+    kicker: "For mosques, Islamic centers, teachers and students of knowledge",
+    tagline: "Your lesson, live. Professional. One button.",
+    publicPath: "/en/lessons-broadcast/",
+    sub: "Simple software that streams and records the lesson: the teacher and the book on screen, the Shamela library built in, and your organization's logos — on YouTube, Facebook and Telegram at once. Interface in English and Arabic.",
+    icon: "📡",
+    iconImg: "/shop/lessons-broadcast/icon.png",
+    shots: [
+      { src: "/shop/lessons-broadcast/shot-book.jpg", alt: "\"Book and teacher\" scene: an open book with a golden reading line" },
+      { src: "/shop/lessons-broadcast/shot-page.jpg", alt: "\"Page and teacher\" scene with the teacher's name" },
+      { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "\"Teacher\" scene: soft blur and a gradient behind the name" },
+    ],
+    fallbackPrice: 149,
+    sale: { label: "Launch offer", until: "2026-12-01T21:00:00Z", was: { 149: 399, 99: 199, 79: 129, 49: 69 } },
+    format: "Windows · Mac · Android — download right after payment",
+    platforms: [
+      { key: "windows", name: "Windows", note: "Windows 10 and 11" },
+      { key: "mac", name: "Mac", note: "macOS 12 and later" },
+      { key: "android", name: "Android", note: "APK file for phones and tablets" },
+    ],
+    inside: [
+      { title: "The Shamela library built in", text: "More than 8,500 Arabic books: a clean reader, the printed edition's pages or neat text with the edition's page numbers — plus any PDF book from your computer, in any language." },
+      { title: "The teacher and the book on screen", text: "Eight ready scenes: teacher, book with teacher, full page, an open book that turns its pages, reciter, before the lesson, break, and closing." },
+      { title: "Reading line", text: "A golden bar follows the reader line by line, and zooms into the page with one tap." },
+      { title: "Islamic design", text: "Islamic colors and geometric patterns, a mihrab frame or your organization's colors; the teacher's name appears with a smooth animation." },
+      { title: "Every platform at once", text: "YouTube, Facebook and Telegram together, plus a full recording of the lesson on your computer in Full HD or 4K." },
+      { title: "Clean sound automatically", text: "Noise removal and level balancing with no settings, and a separate microphone for the reciter." },
+      { title: "Organization and sponsor logos", text: "Up to six logos in their original colors — shown and hidden with one tap." },
+      { title: "YouTube chapters automatically", text: "Timestamps for the sections the teacher covered, ready to paste into the video description." },
+    ],
+    forWho: [
+      "A mosque or Islamic center that wants to publish its lessons properly",
+      "A student who films his shaykh's lessons and shares them",
+      "A teacher explaining a book or a matn to students remotely",
+      "A media volunteer who needs a reliable stream every week",
+    ],
+    steps: [
+      "Pay by card or Apple Pay",
+      "Download the Windows, Mac or Android version from your order page",
+      "Choose the book, type the shaykh's name and press \"Go live\"",
+    ],
+    specs: [
+      { title: "Computer — Full HD", rows: [
+        ["System", "Windows 10 or 11 (64-bit) — or macOS 12 and later"],
+        ["Processor", "8th-gen Intel Core i5, Ryzen 5 or Apple M1 and above"],
+        ["Memory", "8 GB (16 is better)"],
+        ["Internet", "Upload speed of 6 Mbps or more (about the same again for each extra platform)"],
+        ["Storage", "2 GB for the program + about 3 GB per hour of recording"],
+        ["Camera & sound", "Any USB camera or a camera through a capture card, and a wireless or USB microphone"],
+      ] },
+      { title: "Computer — 4K", rows: [
+        ["Processor", "Apple M1 Pro / M2 and above, or Intel Core i7 / Ryzen 7 with an NVIDIA GTX 1660 or better"],
+        ["Memory", "16 GB"],
+        ["Internet", "Upload speed of 20 Mbps"],
+        ["Camera", "A 4K-capable camera"],
+      ] },
+      { title: "Phone — Android", rows: [
+        ["System", "Android 8 and later"],
+        ["Memory", "At least 3 GB (4 GB recommended)"],
+        ["Processor", "Snapdragon 665, Helio G85 or Exynos 9611 and above (most phones from 2020 onward)"],
+        ["Internet", "Upload speed of 4 Mbps (Wi-Fi or a stable 4G connection)"],
+        ["Tip", "For long lessons keep the phone charging and on a steady tripod"],
+      ] },
+    ],
+    faqs: [
+      { q: "Do I need technical experience?", a: "No. The buttons are large and clear: choose the book, type the shaykh's name and press \"Go live\". The interface is in English, with a switch to Arabic." },
+      { q: "Are there books in English?", a: "The Shamela library is Arabic books. Any PDF book, including English ones, can be opened from your computer and shown on the stream." },
+      { q: "Which devices does it run on?", a: "Windows, Mac and Android (an APK file from your order page). See \"Requirements\" above." },
+      { q: "How do I install the Android version?", a: "Download the APK from your order page on the phone and open it. The first time, the phone asks you to allow installs from the browser: tap \"Settings\", turn on \"Allow from this source\" and go back to \"Install\"." },
+      { q: "How do I stream a lesson live from the mosque?", a: "You need a computer or phone, a camera, a wireless microphone for the shaykh and a stable internet connection. In the program choose the book, enter the shaykh's name and the lesson title, paste your YouTube, Facebook or Telegram stream key once, and press \"Go live\"." },
+      { q: "Do I need OBS?", a: "The program uses the free, open-source OBS engine in the background — you never need to open it. On Windows the engine is inside the installer; on Mac it installs once with a button in the program." },
+      { q: "I get a warning the first time I open it?", a: "That's normal: on Windows click \"More info\" → \"Run anyway\"; on Mac right-click the program → \"Open\". Only once." },
+      { q: "On how many devices can I use it?", a: "Your order link opens on your own devices (up to 3). For organizations with several branches — message me." },
+      { q: "Lost your download link?", a: "Open ibrahimsaud.com/shop/thanks/, enter your email and the order link is sent again. The order is yours for good: the program and its updates download from there any time." },
+      { q: "Is it a subscription?", a: "No. One payment and it's yours — no monthly or yearly fees. Updates for your version are free from the same order page." },
     ],
   },
   {

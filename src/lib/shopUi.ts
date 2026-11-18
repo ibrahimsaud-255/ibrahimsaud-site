@@ -1,6 +1,6 @@
-// نصوص واجهة المتجر بلغتين — العربيّة هي الأصل (نفس النصوص الحيّة حرفيّاً)، والروسيّة لنسخة روسيا
-// (/ru/lessons-broadcast/). المنتج يحدّد لغته بـ`lang` في shop.ts، وصفحة الشكر تعرفها من sku الطلب.
-export type ShopLang = "ar" | "ru";
+// نصوص واجهة المتجر بثلاث لغات — العربيّة هي الأصل (نفس النصوص الحيّة حرفيّاً)، والروسيّة لنسخة روسيا
+// (/ru/lessons-broadcast/) والإنجليزيّة للنسخة الإنجليزيّة (/en/lessons-broadcast/). المنتج يحدّد لغته بـ`lang` في shop.ts، وصفحة الشكر تعرفها من sku الطلب.
+export type ShopLang = "ar" | "ru" | "en";
 
 const ar = {
   dir: "rtl" as "rtl" | "ltr",
@@ -102,16 +102,75 @@ const ru: ShopT = {
   dateLocale: "ru-RU",
 };
 
-export const shopT = (lang?: ShopLang): ShopT => (lang === "ru" ? ru : ar);
+const en: ShopT = {
+  dir: "ltr",
+  buyNow: "Buy now", reserve: "Reserve", whatsInside: "What's inside?",
+  onDevices: "On your devices.", inside: "Inside.", forWho: "Who is it for?", after: "After you buy",
+  specs: "Requirements.", faq: "Questions.",
+  navOverview: "Overview", navInside: "Inside", navSpecs: "Requirements", navFaq: "FAQ", navBuy: "Buy",
+  terms: "A digital product delivered right after payment, so it can't be refunded once the files are downloaded — unless a defect stops you from using them: message me and I'll fix it or refund you. The files are for you or your organization only and may not be resold or redistributed.",
+  obs: " The program runs on the free, open-source OBS Studio engine (GPL license).",
+  availableNow: "Available now — included",
+  errName: "Enter your name", errEmail: "Invalid email — your files are sent to it", errStart: "Couldn't start the payment, please try again",
+  oneTime: "One-time payment — it's yours. No monthly or yearly subscription.",
+  approxTail: "— charged to your card in Saudi riyals (SAR)",
+  saleEnds: (was: string) => `Offer ends at the end of December 1, then the price returns to ${was}`,
+  soonSeats: "Seats open soon.", soonNA: "Not available for purchase yet.", soonTail: " Message us and we'll let you know as soon as it opens.",
+  soonWa: () => "Assalamu alaikum! I want to buy the Islamic Lessons Broadcast program (English edition).",
+  soonBtn: "Message on WhatsApp",
+  name: "Name", email: "Email", emailNote: "— your files are sent here", phone: "Phone", optional: "(optional)", phonePh: "+1 555 000 0000",
+  paying: "Taking you to payment…", pay: (p: string) => `Pay ${p}`,
+  trust: ["Secure payment via Telr — Visa, Mastercard, Apple Pay", "Instant download after payment, and your order link arrives by email", "The link is yours and works on your devices only"],
+  missingLink: "The link is incomplete — open the link from your email.",
+  cantOpenTitle: "We couldn't open your order", cantOpen: "Couldn't open the order", contact: "Message me",
+  waProblem: "Assalamu alaikum! I can't open my order (English edition).",
+  opening: "Opening your order…",
+  notConfirmedTitle: "Payment not confirmed yet", notConfirmedText: "If your card was charged, your order activates automatically within minutes and the link arrives by email. You can refresh this page later.", refresh: "Refresh status",
+  checking: "Confirming payment…", checkingText: "A few seconds and your files will appear. Don't close the page.",
+  cancelled: "Payment cancelled", failed: "Payment didn't go through", notCharged: "Nothing was charged. You can go back and try again.", tryAgain: "Try again",
+  holdTitle: (n: string) => `Thank you ${n}, we received your payment`,
+  holdText: (ref: string) => `Your order (${ref}) is under a quick review before the files open — message me on WhatsApp and I'll open it within minutes.`,
+  holdWa: (ref: string) => `Assalamu alaikum! I paid my order (${ref}) — English edition. Please open it.`, holdCta: "Message on WhatsApp",
+  thanks: (n: string) => `Thank you ${n}.`, ready: (t: string) => `Your order is ready — ${t}.`,
+  orderDetails: "Order details", orderNo: "Order number", date: "Date", amount: "Amount", mailLbl: "Email",
+  soonFor: "Coming soon for your order", soonNote: "— we'll email you when it's out",
+  note: "Keep the email you received — it's your key back to your files. The link works on your devices only (up to 3), and a new device needs a code sent to your email. ",
+  productPage: "Product page", chev: "›",
+  demoMsg: "This is a preview — in a real order the download starts here.", dlFail: "Download failed",
+  preparing: "Your files are being prepared — they'll reach your email soon.", yourFiles: "Your files",
+  left: (l: number, m: number) => `${l} of ${m} downloads left`,
+  dlBusy: "Preparing…", dlOut: "Used up", dl: "Download",
+  recoverCompact: "Or recover your order link", recoverTitle: "Recover your order",
+  recoverText: "Enter the email you bought with and we'll resend your order link — download the program and its updates any time.",
+  recoverDone: "If there's an order with this email, the link has been sent. Check your inbox (and spam folder).",
+  sending: "Sending…", sendLink: "Send the link", doneDefault: "Done",
+  newDevice: "New device", maxDevices: "Your order is open on 3 devices (the maximum). ", maxDevicesLink: "Message me and I'll open it",
+  waDevice: "Assalamu alaikum! I need to open my order (English edition) on a new device.",
+  protect: "To protect your files, we'll confirm the order is yours: we'll send a code to ", sendCode: "Send code",
+  enterCode: "Enter the code sent to ", verifying: "Verifying…", verify: "Verify", newCode: "New code",
+  sendFail: "Couldn't send", badCode: "Incorrect code", codeLbl: "Verification code", mailAria: "Email",
+  dateLocale: "en-GB",
+};
 
-/** السعر بلغة الصفحة: «١٤٩ ر.س» للعربيّة، و«375 SAR» للروسيّة. */
+export const shopT = (lang?: ShopLang): ShopT => (lang === "ru" ? ru : lang === "en" ? en : ar);
+
+/** السعر بلغة الصفحة: «١٤٩ ر.س» للعربيّة، و«375 SAR» للروسيّة والإنجليزيّة. */
 export function money(n: number, lang?: ShopLang): string {
-  if (lang === "ru") return `${n.toLocaleString("ru-RU", { maximumFractionDigits: 2 })} SAR`;
+  if (lang && lang !== "ar") return `${n.toLocaleString(lang === "ru" ? "ru-RU" : "en-US", { maximumFractionDigits: 2 })} SAR`;
   return `${n.toLocaleString("ar-SA", { maximumFractionDigits: 2 })} ر.س`;
 }
 
-/** لغة طلب من sku المنتج (نسخة روسيا تنتهي بـ -ru). */
-export const langOfSku = (sku?: string | null): ShopLang => (sku && /-ru(@|$)/.test(sku) ? "ru" : "ar");
+/** تقريب بالدولار للنسخ غير العربيّة (الريال مربوط: ٣٫٧٥). */
+export const usdApprox = (n: number) => `≈ $${Math.round(n / 3.75)}`;
+
+/** لغة طلب من sku المنتج (نسخة روسيا تنتهي بـ -ru، والإنجليزيّة بـ -en). */
+export const langOfSku = (sku?: string | null): ShopLang => {
+  const m = sku && /-(ru|en)(@|$)/.exec(sku);
+  return m ? (m[1] as ShopLang) : "ar";
+};
+
+/** الدول العربيّة — زائرها يبقى على الصفحة العربيّة مهما كانت لغة متصفّحه. */
+export const ARAB_CC = new Set(["SA", "AE", "KW", "QA", "BH", "OM", "JO", "IQ", "PS", "LB", "SY", "YE", "EG", "SD", "LY", "TN", "DZ", "MA", "MR", "SO", "DJ", "KM"]);
 
 /** المناطق الزمنيّة لروسيا — يُحوَّل زائرها لصفحة روسيا تلقائيّاً. */
 export const RU_TZ = new Set([

@@ -109,23 +109,32 @@ async function sendEmail(to: string, subject: string, html: string) {
   if (!r.ok) throw new Error("resend " + r.status + ": " + (await r.text()).slice(0, 200));
 }
 
-// نسخة روسيا (sku ينتهي بـ -ru): الإيميلات وصفحة الطلب بالروسيّة.
-const isRu = (sku?: string | null) => !!sku && /-ru(@|$)/.test(sku);
+// نسختا روسيا والإنجليزيّة (sku ينتهي بـ -ru / -en): الإيميلات وصفحة الطلب بلغتها.
+type Lang = "ar" | "ru" | "en";
+const langOf = (sku?: string | null): Lang => {
+  const m = sku ? /-(ru|en)(@|$)/.exec(sku) : null;
+  return m ? (m[1] as Lang) : "ar";
+};
+const MAIL_UI = {
+  ru: { head: "Ibrahim Saud — Store", foot: "Эта ссылка личная — не делитесь ею. Скачивание работает только на ваших подтверждённых устройствах.<br>Вопросы: ответьте на это письмо или напишите мне через ibrahimsaud.com" },
+  en: { head: "Ibrahim Saud — Store", foot: "This link is yours — don't share it. Downloads work only on your verified devices.<br>Questions: reply to this email or message me from ibrahimsaud.com" },
+  ar: { head: "إبراهيم سعود — المتجر", foot: "هذا الرابط خاصّ بك — لا تشاركه. التنزيل يعمل على أجهزتك الموثّقة فقط.<br>أيّ استفسار: ردّ على هذا الإيميل أو راسلني من ibrahimsaud.com" },
+};
 
 // قالب إيميل بهويّة الموقع (أبيض بأسلوب آبل، أزرق ضوء الاستوديو)
-function mail(title: string, body: string, cta?: { href: string; label: string }, ru = false) {
+function mail(title: string, body: string, cta?: { href: string; label: string }, lang: Lang = "ar") {
+  const ui = MAIL_UI[lang], ltr = lang !== "ar";
   const btn = cta
     ? `<div style="margin:28px 0 8px"><a href="${esc(cta.href)}" style="background:#2F66FF;color:#fff;text-decoration:none;font-weight:bold;padding:13px 28px;border-radius:999px;display:inline-block">${esc(cta.label)}</a></div>`
     : "";
-  return `<div dir="${ru ? "ltr" : "rtl"}" style="font-family:-apple-system,Tahoma,Arial,sans-serif;background:#F5F5F7;padding:32px 16px">
-  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:34px 28px;color:#1D1D1F;text-align:${ru ? "left" : "right"}">
-    <div style="font-size:13px;color:#6E6E73;font-weight:bold;margin-bottom:18px">${ru ? "Ibrahim Saud — Store" : "إبراهيم سعود — المتجر"}</div>
+  return `<div dir="${ltr ? "ltr" : "rtl"}" style="font-family:-apple-system,Tahoma,Arial,sans-serif;background:#F5F5F7;padding:32px 16px">
+  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:34px 28px;color:#1D1D1F;text-align:${ltr ? "left" : "right"}">
+    <div style="font-size:13px;color:#6E6E73;font-weight:bold;margin-bottom:18px">${ui.head}</div>
     <h1 style="font-size:24px;line-height:1.4;margin:0 0 14px">${esc(title)}</h1>
     <div style="font-size:16px;line-height:1.9;color:#3A3A3C">${body}</div>
     ${btn}
     <p style="font-size:12px;color:#86868B;line-height:1.8;margin-top:26px;border-top:1px solid #E5E5EA;padding-top:16px">
-      ${ru ? "Эта ссылка личная — не делитесь ею. Скачивание работает только на ваших подтверждённых устройствах.<br>Вопросы: ответьте на это письмо или напишите мне через ibrahimsaud.com"
-        : "هذا الرابط خاصّ بك — لا تشاركه. التنزيل يعمل على أجهزتك الموثّقة فقط.<br>أيّ استفسار: ردّ على هذا الإيميل أو راسلني من ibrahimsaud.com"}
+      ${ui.foot}
     </p>
   </div></div>`;
 }
@@ -246,7 +255,7 @@ async function telrCheck(order: Order): Promise<Check> {
 }
 
 function thanksUrl(order: { id: string; sku?: string }, token: string) {
-  return `${SITE}/shop/thanks/?o=${order.id}&t=${encodeURIComponent(token)}${isRu(order.sku) ? "&l=ru" : ""}`;
+  return `${SITE}/shop/thanks/?o=${order.id}&t=${encodeURIComponent(token)}${langOf(order.sku) !== "ar" ? `&l=${langOf(order.sku)}` : ""}`;
 }
 
 /**
@@ -304,15 +313,20 @@ async function notifyPaid(order: Order) {
     const token = randomToken();
     await patchOrder(order.id, { email_token_hash: await sha256(token) });
     const link = thanksUrl(order, token);
-    const ru = isRu(order.sku);
+    const lang = langOf(order.sku);
     await sendEmail(
       order.buyer_email,
-      ru ? `Ваш заказ готов — ${order.title}` : `طلبك جاهز — ${order.title}`,
-      ru ? mail(
+      lang === "ru" ? `Ваш заказ готов — ${order.title}` : lang === "en" ? `Your order is ready — ${order.title}` : `طلبك جاهز — ${order.title}`,
+      lang === "ru" ? mail(
         `Здравствуйте, ${order.buyer_name}! Ваш заказ готов`,
         `Оплата получена (${Number(order.amount)} SAR) — <b>${esc(order.title)}</b>.<br>
          Файлы ждут вас на странице заказа. Сохраните это письмо — это ваш ключ для скачивания в будущем.`,
-        { href: link, label: "Открыть файлы" }, true,
+        { href: link, label: "Открыть файлы" }, "ru",
+      ) : lang === "en" ? mail(
+        `Hi ${order.buyer_name}, your order is ready`,
+        `We received your payment (${Number(order.amount)} SAR) for <b>${esc(order.title)}</b>.<br>
+         Your files are waiting on your order page. Keep this email — it's your key to download them later.`,
+        { href: link, label: "Open your files" }, "en",
       ) : mail(
         `أهلاً ${order.buyer_name}، طلبك جاهز`,
         `وصلنا دفعك (${Number(order.amount).toLocaleString("ar-SA")} ريال) لـ<b>${esc(order.title)}</b>.<br>
@@ -442,12 +456,17 @@ async function otpSend(b: Record<string, unknown>) {
     otp_sent_at: new Date().toISOString(),
   });
   try {
-    const ru = isRu(order.sku);
+    const lang = langOf(order.sku);
     const codeBox = `<div style="font-size:34px;font-weight:bold;letter-spacing:8px;margin:18px 0;direction:ltr;text-align:center">${code}</div>`;
-    if (ru) await sendEmail(order.buyer_email, `Код для доступа к файлам: ${code}`, mail(
+    if (lang === "ru") await sendEmail(order.buyer_email, `Код для доступа к файлам: ${code}`, mail(
       "Код подтверждения",
       `Используйте этот код, чтобы открыть файлы <b>${esc(order.title)}</b> на новом устройстве:<br>${codeBox}
-       Код действует ${OTP_TTL_MIN} минут. Если вы его не запрашивали, просто проигнорируйте это письмо.`, undefined, true,
+       Код действует ${OTP_TTL_MIN} минут. Если вы его не запрашивали, просто проигнорируйте это письмо.`, undefined, "ru",
+    ));
+    else if (lang === "en") await sendEmail(order.buyer_email, `Your code to open your files: ${code}`, mail(
+      "Verification code",
+      `Use this code to open the files of <b>${esc(order.title)}</b> on a new device:<br>${codeBox}
+       Valid for ${OTP_TTL_MIN} minutes. If you didn't request it, just ignore this email.`, undefined, "en",
     ));
     else await sendEmail(order.buyer_email, `رمز فتح ملفّاتك: ${code}`, mail(
       "رمز التحقّق",
@@ -536,11 +555,18 @@ async function recover(b: Record<string, unknown>) {
   }
   if (!fresh.length) return ok;
   try {
-    if (isRu(orders[0].sku)) await sendEmail(orders[0].buyer_email, "Ссылки на ваши заказы", mail(
+    const lang = langOf(orders[0].sku);
+    if (lang === "ru") await sendEmail(orders[0].buyer_email, "Ссылки на ваши заказы", mail(
       `Здравствуйте, ${orders[0].buyer_name}`,
       `Вот ссылки на ваши заказы — скачивайте файлы и обновления в любое время:<br><br>` +
       fresh.map(x => `• <a href="${x.link}">${esc(x.order.title)}</a>`).join("<br>"),
-      { href: fresh[0].link, label: "Открыть заказ" }, true,
+      { href: fresh[0].link, label: "Открыть заказ" }, "ru",
+    ));
+    else if (lang === "en") await sendEmail(orders[0].buyer_email, "Your order links", mail(
+      `Hi ${orders[0].buyer_name}`,
+      `Here are your order links — download your files and their updates any time:<br><br>` +
+      fresh.map(x => `• <a href="${x.link}">${esc(x.order.title)}</a>`).join("<br>"),
+      { href: fresh[0].link, label: "Open your order" }, "en",
     ));
     else await sendEmail(orders[0].buyer_email, "روابط طلباتك", mail(
       `أهلاً ${orders[0].buyer_name}`,

@@ -14,13 +14,13 @@ import { shopT } from "@/lib/shopUi";
 // صفحة المنتج كاملة — تُستخدم في /shop/<slug>/ وفي الصفحة العامّة /lessons-broadcast/.
 // أيقونات المتطلّبات بأسلوب آبل: خطّ رفيع بسيط لكل بند
 const SPEC_ICONS: [RegExp, string][] = [
-  [/النظام|Система/, '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>'],
-  [/المعالج|Процессор/, '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>'],
-  [/الذاكرة|Память/, '<rect x="2.5" y="7" width="19" height="10" rx="1.5"/><path d="M6 10.5v3M9.5 10.5v3M13 10.5v3M16.5 10.5v3M5 17v2.5M19 17v2.5"/>'],
-  [/الإنترنت|Интернет/, '<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.3a9.5 9.5 0 0 1 13 0M8.6 15.5a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor"/>'],
-  [/المساحة|Место/, '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 14h18"/><circle cx="17" cy="16.5" r=".9" fill="currentColor"/>'],
-  [/الكاميرا|Камера/, '<rect x="2.5" y="6.5" width="13" height="11" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5"/>'],
-  [/نصيحة|Совет/, '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>'],
+  [/النظام|Система|System/, '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>'],
+  [/المعالج|Процессор|Processor/, '<rect x="6" y="6" width="12" height="12" rx="2"/><rect x="9.5" y="9.5" width="5" height="5" rx="1"/><path d="M9 3v3M15 3v3M9 18v3M15 18v3M3 9h3M3 15h3M18 9h3M18 15h3"/>'],
+  [/الذاكرة|Память|Memory/, '<rect x="2.5" y="7" width="19" height="10" rx="1.5"/><path d="M6 10.5v3M9.5 10.5v3M13 10.5v3M16.5 10.5v3M5 17v2.5M19 17v2.5"/>'],
+  [/الإنترنت|Интернет|Internet/, '<path d="M2.5 9a14 14 0 0 1 19 0M5.5 12.3a9.5 9.5 0 0 1 13 0M8.6 15.5a5 5 0 0 1 6.8 0"/><circle cx="12" cy="19" r="1.2" fill="currentColor"/>'],
+  [/المساحة|Место|Storage/, '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3 14h18"/><circle cx="17" cy="16.5" r=".9" fill="currentColor"/>'],
+  [/الكاميرا|Камера|Camera/, '<rect x="2.5" y="6.5" width="13" height="11" rx="2.5"/><path d="M15.5 10.5l6-3.5v10l-6-3.5"/>'],
+  [/نصيحة|Совет|Tip/, '<path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/>'],
 ];
 function SpecIcon({ label }: { label: string }) {
   const d = (SPEC_ICONS.find(([r]) => r.test(label)) || SPEC_ICONS[0])[1];
@@ -28,10 +28,10 @@ function SpecIcon({ label }: { label: string }) {
 }
 export default function ShopItemView({ item: i }: { item: ShopItem }) {
   const T = shopT(i.lang);
-  const ru = i.lang === "ru";
+  const foreign = !!i.lang && i.lang !== "ar";
   return (
     <Shell dir={T.dir} lang={i.lang}>
-      {!ru && <Nav sticky={false} />}
+      {!foreign && <Nav sticky={false} />}
       <LocalNav name={i.name} buy={T.navBuy} links={[{ label: T.navOverview, href: "#top" }, { label: T.navInside, href: "#inside" }, ...(i.specs ? [{ label: T.navSpecs, href: "#specs" }] : []), { label: T.navFaq, href: "#faq" }]} />
       <main id="top">
         <section className="v2-phero v2-shop-hero">
@@ -154,7 +154,7 @@ export default function ShopItemView({ item: i }: { item: ShopItem }) {
           </div>
         </section>
       </main>
-      {ru ? (
+      {foreign ? (
         <footer className="v2-shop-ru-foot">
           <div className="v2-wrap">
             <span>© Ibrahim Saud · ibrahimsaud.com</span>

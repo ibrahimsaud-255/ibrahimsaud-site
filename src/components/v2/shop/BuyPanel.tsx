@@ -4,16 +4,16 @@
 // النصوص من shopUi حسب لغة المنتج (عربيّ افتراضيّاً، روسيّ لنسخة روسيا).
 import { useState } from "react";
 import { shopCall, type ShopItem } from "@/lib/shop";
-import { money, shopT } from "@/lib/shopUi";
+import { money, shopT, usdApprox } from "@/lib/shopUi";
 import { waHref } from "@/lib/v2";
 import { geo, localApprox, useLive } from "./ShopPrice";
 
 export default function BuyPanel({ item }: { item: ShopItem }) {
   const T = shopT(item.lang);
-  const ru = item.lang === "ru";
+  const foreign = !!item.lang && item.lang !== "ar";
   const fmt = (n: number) => money(n, item.lang);
   const { price, active, country } = useLive(item.sku, item.fallbackPrice);
-  const approx = ru ? `≈ $${Math.round(price / 3.75)}` : localApprox(price, country);
+  const approx = foreign ? usdApprox(price) : localApprox(price, country);
   const saleOn = !!item.sale && Date.now() < Date.parse(item.sale.until);
   const was = saleOn ? item.sale!.was[price] : undefined;
   const [name, setName] = useState("");
@@ -34,14 +34,14 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
     if (busy || !check()) return;
     setBusy(true);
     // صفحة الشكر (عودة تلر) تعرض لغة المشتري قبل ما يوصل الطلب
-    try { if (ru) localStorage.setItem("shop-lang", "ru"); else localStorage.removeItem("shop-lang"); } catch { /* تخزين مقفل */ }
+    try { if (foreign) localStorage.setItem("shop-lang", item.lang!); else localStorage.removeItem("shop-lang"); } catch { /* تخزين مقفل */ }
     const r = await shopCall<{ url?: string }>("checkout", { sku: item.sku, name: name.trim(), email: email.trim(), phone: phone.trim(), ...geo() });
     if (r.ok && r.data.url) {
       window.location.assign(r.data.url);
       return;
     }
-    // رسائل الخادم عربيّة — في النسخة الروسيّة نعرض رسالة عامّة بلغتها
-    setErr((!ru && r.data.error) || T.errStart);
+    // رسائل الخادم عربيّة — في النسخ الأخرى نعرض رسالة عامّة بلغتها
+    setErr((!foreign && r.data.error) || T.errStart);
     setBusy(false);
   }
 

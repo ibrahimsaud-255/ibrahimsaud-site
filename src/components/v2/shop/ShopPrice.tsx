@@ -3,7 +3,7 @@
 // السعر الحيّ من shop_products — يبدأ بالاحتياطيّ ثمّ يُستبدل بما يُخصم فعلاً.
 import { useEffect, useState } from "react";
 import { fetchLive, shopCall } from "@/lib/shop";
-import { money, type ShopLang } from "@/lib/shopUi";
+import { money, usdApprox, type ShopLang } from "@/lib/shopUi";
 
 // سعر الزائر يحدّده الخادم تلقائيّاً حسب بلده (نفس ما يُخصم فعلاً) — بلا أيّ إشارة في الصفحة.
 // البلد من المنطقة الزمنيّة للجهاز (لا يغيّرها الـVPN) ثمّ الـIP. بلد البطاقة يُطابَق بعد الدفع في الخادم.
@@ -62,7 +62,7 @@ export function useLive(sku: string, fallback: number) {
 export default function ShopPrice({ sku, fallback, lang }: { sku: string; fallback: number; lang?: ShopLang }) {
   const { price, active } = useLive(sku, fallback);
   // ما نعرض رقماً قبل ما يوصل سعر الزائر (عشان ما يشوف سعرين).
-  return <span style={{ visibility: active === null ? "hidden" : undefined }}>{money(price, lang)}{lang === "ru" ? ` (≈ $${Math.round(price / 3.75)})` : ""}</span>;
+  return <span style={{ visibility: active === null ? "hidden" : undefined }}>{money(price, lang)}{lang && lang !== "ar" ? ` (${usdApprox(price)})` : ""}</span>;
 }
 
 /** بلد الزائر كما يحدّده الخادم (المنطقة الزمنيّة ثمّ الـIP) — من نفس نداء السعر المخزَّن. */
