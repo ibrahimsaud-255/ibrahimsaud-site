@@ -48,7 +48,7 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
           <p className="price" aria-live="polite">{sar(price)}</p>
         </div>
         {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
-        <p className="vat">السعر نهائيّ — دفعة واحدة، بلا اشتراك.</p>
+        <p className="vat">دفعة واحدة وتملكه — بلا اشتراك شهريّ ولا سنويّ.</p>
       </div>
 
       {soon ? (
