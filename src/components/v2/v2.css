@@ -59,6 +59,8 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 /* ---------- الشريط العلويّ (زجاج) ---------- */
 .v2-gnav { position: relative; z-index: 60; background: var(--glass); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); }
 .v2-gnav.sticky { position: sticky; top: 0; }
+/* backdrop-filter يجعل الشريط حاوية لأبنائه الثابتين فتنقصّ قائمة الجوال تحته — نلغيه وهي مفتوحة */
+.v2-gnav.open { backdrop-filter: none; -webkit-backdrop-filter: none; background: #FBFBFD; }
 .v2-gnav-in { max-width: 1080px; margin: 0 auto; padding-inline: 20px; height: 48px; display: flex; align-items: center; gap: 24px; }
 .v2-gnav .logo img { height: 24px; width: auto; display: block; }
 .v2-gnav .items { list-style: none; margin: 0 auto; padding: 0; display: flex; align-items: center; gap: 30px; height: 100%; }
