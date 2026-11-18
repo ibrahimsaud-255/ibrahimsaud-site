@@ -123,6 +123,9 @@
 .v2-shop-shots img { width: 100%; height: auto; border-radius: 22px; box-shadow: 0 40px 80px -40px rgba(10, 20, 40, .5); display: block; }
 .v2-plat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
 .v2-plat { background: var(--alt); border-radius: 26px; padding: 28px 22px 24px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; }
+a.v2-plat { color: inherit; text-decoration: none; transition: transform .2s; }
+a.v2-plat:hover { transform: translateY(-2px); }
+a.v2-plat .tag { color: #2F66FF; }
 .v2-plat-logo { width: 56px; height: 56px; border-radius: 16px; display: grid; place-items: center; margin-bottom: 6px; }
 .v2 .v2-plat h3 { font-size: 21px; }
 .v2-plat p { font-size: 15px; color: var(--fg-2); }

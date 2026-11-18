@@ -27,12 +27,22 @@ export function PlatformCards({ item }: { item: ShopItem }) {
   return (
     <div className="v2-plat-grid">
       {item.platforms.map((p) => (
+        p.href ? (
+          // متوفّر من متجر خارجيّ (آيفون من App Store) — البطاقة كلّها رابط
+          <a key={p.key} className="v2-plat" href={p.href} target="_blank" rel="noopener">
+            <PlatformLogo k={p.key} size={26} />
+            <h3>{p.name}</h3>
+            <p>{p.note}</p>
+            <span className="tag">{p.hrefLabel} ↗</span>
+          </a>
+        ) : (
         <div key={p.key} className={"v2-plat" + (p.soon ? " soon" : "")}>
           <PlatformLogo k={p.key} size={26} />
           <h3>{p.name}</h3>
           <p>{p.note}</p>
           <span className="tag">{p.soon || shopT(item.lang).availableNow}</span>
         </div>
+        )
       ))}
     </div>
   );

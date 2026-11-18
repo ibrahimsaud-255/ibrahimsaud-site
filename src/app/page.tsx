@@ -45,7 +45,7 @@ export default function Home() {
               <img src="/shop/lessons-broadcast/logo-black.png" alt="برنامج بث الدروس العلمية" width={900} height={418} />
             </h2>
             <p className="line">درسك على الهواء باحتراف. بضغطة زر.</p>
-            <p className="plats">ويندوز · ماك · أندرويد — والآيفون قريباً</p>
+            <p className="plats">ويندوز · ماك · أندرويد · آيفون</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary sm" href="/lessons-broadcast/">اعرف أكثر</a>
               <a className="v2-btn v2-btn-ghost sm" href="/lessons-broadcast/#buy">اشترِ</a>
