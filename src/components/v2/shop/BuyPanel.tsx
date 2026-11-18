@@ -1,10 +1,13 @@
 "use client";
 
 // لوحة الشراء: الاسم والبريد والجوال ← الدالّة «shop» تنشئ الطلب بسعر الجدول ← صفحة دفع تلر.
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { sar, shopCall, type ShopItem } from "@/lib/shop";
 import { waHref } from "@/lib/v2";
 import { localApprox, useLive } from "./ShopPrice";
+
+// الخليج يدفع بالبطاقة/مدى/Apple Pay — خيار التحويل لغيره فقط.
+const GULF = new Set(["SA", "AE", "KW", "QA", "BH", "OM"]);
 
 export default function BuyPanel({ item }: { item: ShopItem }) {
   const { price, active, country } = useLive(item.sku, item.fallbackPrice);
@@ -14,13 +17,32 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
   const [phone, setPhone] = useState("");
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [tr, setTr] = useState<{ ref: string; amount: number } | null>(null);
+  // ?transfer=1 يُظهر خيار التحويل لأيّ بلد (رابط ترسله لمن طلبه من الخليج)
+  const [forceTr, setForceTr] = useState(false);
+  useEffect(() => { setForceTr(new URLSearchParams(location.search).get("transfer") === "1"); }, []);
+
+  function check(): boolean {
+    setErr(null);
+    if (name.trim().length < 2) { setErr("اكتب اسمك"); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setErr("البريد غير صحيح — عليه توصلك الملفّات"); return false; }
+    return true;
+  }
+
+  // الدفع بالتحويل: لمن لا بطاقة عنده أو بلده غير متاح في بوابة الدفع (اليمن والسودان مثلاً).
+  // يسجّل الطلب «بانتظار» ويرسله لواتساب برقم الطلب؛ بعد وصول التحويل يُعتمد من اللوحة ويصله الرابط.
+  async function transfer() {
+    if (busy || !check()) return;
+    setBusy(true);
+    const r = await shopCall<{ ref?: string; amount?: number }>("transfer", { sku: item.sku, name: name.trim(), email: email.trim(), phone: phone.trim() });
+    setBusy(false);
+    if (r.ok && r.data.ref) return setTr({ ref: r.data.ref, amount: Number(r.data.amount ?? price) });
+    setErr(r.data.error || "تعذّر تسجيل الطلب، جرّب مرّة ثانية");
+  }
 
   async function buy(e: React.FormEvent) {
     e.preventDefault();
-    if (busy) return;
-    setErr(null);
-    if (name.trim().length < 2) return setErr("اكتب اسمك");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) return setErr("البريد غير صحيح — عليه توصلك الملفّات");
+    if (busy || !check()) return;
     setBusy(true);
     const r = await shopCall<{ url?: string }>("checkout", { sku: item.sku, name: name.trim(), email: email.trim(), phone: phone.trim() });
     if (r.ok && r.data.url) {
@@ -48,6 +70,12 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
           <p>{item.presale ? "المقاعد تُفتح قريباً." : "غير متاح للشراء الآن."} سجّل اهتمامك وأبلغك أوّل ما يفتح.</p>
           <a className="v2-btn v2-btn-primary" href={waHref(`السلام عليكم، أبي أحجز في «${item.name}» أوّل ما يفتح`)} target="_blank" rel="noopener">بلّغني على واتساب</a>
         </div>
+      ) : tr ? (
+        <div className="soon transfer-done" role="status">
+          <p><b>سجّلنا طلبك ✓</b><br />رقم الطلب: <b dir="ltr">{tr.ref}</b> — المبلغ {sar(tr.amount)}{localApprox(tr.amount, country) ? ` (${localApprox(tr.amount, country)})` : ""}.</p>
+          <p>راسلني على واتساب برقم الطلب، وأعطيك طريقة التحويل المتاحة في بلدك. أوّل ما يوصل التحويل يجيك رابط التنزيل على إيميلك.</p>
+          <a className="v2-btn v2-btn-primary" href={waHref(`السلام عليكم، أبي أشتري «${item.name}» بالتحويل.\nرقم الطلب: ${tr.ref}\nالمبلغ: ${tr.amount} ريال`)} target="_blank" rel="noopener">أرسل على واتساب</a>
+        </div>
       ) : (
         <form onSubmit={buy} noValidate>
           <label>
@@ -66,6 +94,11 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
           <button className="v2-btn v2-btn-primary" type="submit" disabled={busy || active === null}>
             {busy ? "ننقلك للدفع…" : `ادفع ${sar(price)}`}
           </button>
+          {((country && !GULF.has(country)) || forceTr) && (
+            <button type="button" className="v2-shop-transfer" onClick={transfer} disabled={busy || active === null}>
+              ما عندك بطاقة، أو بلدك ما يظهر في صفحة الدفع؟ <u>ادفع بالتحويل</u>
+            </button>
+          )}
           <ul className="trust">
             <li>دفع آمن عبر Telr — مدى، فيزا، ماستركارد، Apple Pay</li>
             <li>تنزيل فوريّ بعد الدفع، ورابط طلبك يوصلك على بريدك</li>

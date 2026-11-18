@@ -8,6 +8,8 @@
 // ║   otp-send   {o,t,device}              → رمز ٦ أرقام لبريد المشتري       ║
 // ║   otp-verify {o,t,device,code}         → يوثّق جهازاً جديداً (٣ كحدّ)    ║
 // ║   download   {o,t,device,fileId}       → رابط موقّع مدّته ٦٠ ثانية       ║
+// ║   transfer   {sku,name,email,phone?}   → طلب «بالتحويل» بانتظار الاعتماد  ║
+// ║   transfer-notify {id}                 → بعد اعتماده من اللوحة: الرابط   ║
 // ║                                                                        ║
 // ║  تُنشر بلا تحقّق JWT (تلر وزوّار الصفحة ينادونها بلا جلسة):              ║
 // ║     supabase functions deploy shop --no-verify-jwt                     ║
@@ -134,7 +136,7 @@ type Order = {
   status: "pending" | "paid" | "failed" | "cancelled"; telr_cart: string; telr_order_ref: string | null; telr_tran_ref: string | null;
   access_token_hash: string; email_token_hash: string | null; trusted_devices: string[]; otp_hash: string | null; otp_expires: string | null; otp_attempts: number;
   otp_sent_at: string | null; email_sent_at: string | null; check_count: number; created_at: string; updated_at?: string; paid_at: string | null;
-  buyer_country?: string | null; card_country?: string | null; hold?: string | null;
+  buyer_country?: string | null; card_country?: string | null; hold?: string | null; pay_method?: "telr" | "transfer";
 };
 
 async function getProduct(sku: string, activeOnly = true): Promise<Product | null> {
@@ -351,7 +353,7 @@ async function filesView(order: Order, p: Product | null) {
 async function orderAction(b: Record<string, unknown>) {
   let order = await authOrder(b.o, b.t);
   if (!order) return j({ error: "رابط الطلب غير صالح" }, 404);
-  if (order.status === "pending") order = await verifyAndMark(order);
+  if (order.status === "pending" && order.pay_method !== "transfer") order = await verifyAndMark(order);
 
   const dev = isDevice(b.device) ? await sha256(String(b.device)) : null;
   let devices = Array.isArray(order.trusted_devices) ? order.trusted_devices : [];
@@ -499,6 +501,53 @@ async function recover(b: Record<string, unknown>) {
   return ok;
 }
 
+
+// ── الدفع بالتحويل (لمن لا بطاقة عنده أو بلده محجوب في تلر كاليمن والسودان) ──
+// الطلب يُسجَّل «بانتظار» بسعر بلد الزائر، والمشتري يراسل إبراهيم على واتساب برقم الطلب.
+// الاعتماد من لوحة «المتجر الرقميّ» بجلسة المالك (RLS تحمي التحديث)، ثمّ «transfer-notify»
+// يرسل رابط الطلب — ولا يفعل شيئاً إلا لطلب تحويل صار مدفوعاً ولم يُرسَل له بعد.
+const orderRef = (id: string) => id.slice(0, 8).toUpperCase();
+
+async function transfer(req: Request, b: Record<string, unknown>) {
+  const sku = String(b.sku ?? "").trim();
+  const name = String(b.name ?? "").trim();
+  const email = String(b.email ?? "").trim().toLowerCase();
+  const phone = String(b.phone ?? "").trim().replace(/[^\d+]/g, "");
+  if (!sku || name.length < 2 || name.length > 80) return j({ error: "اكتب اسمك" }, 400);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120) return j({ error: "البريد غير صحيح" }, 400);
+  if (phone && (phone.length < 9 || phone.length > 16)) return j({ error: "رقم الجوال غير صحيح" }, 400);
+  const pr = await priceFor(req, sku);
+  if (!pr) return j({ error: "المنتج غير متاح" }, 404);
+
+  // نفس الإيميل خلال ساعة = نفس الطلب (لا نكرّر الطلبات لو ضغط مرّتين)
+  const since = new Date(Date.now() - 3600_000).toISOString();
+  const dup = await rest("GET", `shop_orders?buyer_email=eq.${encodeURIComponent(email)}&pay_method=eq.transfer&status=eq.pending&sku=eq.${encodeURIComponent(pr.p.sku)}&created_at=gte.${since}&select=id,amount&limit=1`) as Order[];
+  if (dup?.length) return j({ ref: orderRef(dup[0].id), amount: Number(dup[0].amount), country: pr.country });
+
+  // سقف عامّ ضدّ الإغراق: ٢٠ طلب تحويل كل ١٠ دقائق
+  const recent = await rest("GET", `shop_orders?pay_method=eq.transfer&created_at=gte.${new Date(Date.now() - 600_000).toISOString()}&select=id&limit=21`) as Order[];
+  if ((recent?.length ?? 0) > 20) return j({ error: "ضغط على الطلبات الحين، جرّب بعد دقائق أو راسلني على واتساب" }, 429);
+
+  const id = crypto.randomUUID();
+  const amount = Number(pr.p.price_sar).toFixed(2);
+  await rest("POST", "shop_orders", {
+    id, sku: pr.p.sku, title: pr.base.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
+    telr_cart: `tr-${id}`, access_token_hash: await sha256(randomToken()), buyer_country: pr.country || null, pay_method: "transfer",
+  }, "return=minimal");
+  return j({ ref: orderRef(id), amount: Number(amount), country: pr.country });
+}
+
+/** بعد اعتماد المالك من اللوحة: يرسل «طلبك جاهز» مرّة واحدة. */
+async function transferNotify(b: Record<string, unknown>) {
+  if (!isUuid(b.id)) return j({ error: "طلب غير صالح" }, 400);
+  const order = await getOrder(String(b.id));
+  if (!order || order.pay_method !== "transfer" || order.status !== "paid") return j({ error: "الطلب غير معتمد" }, 404);
+  if (order.email_sent_at) return j({ ok: true, already: true });
+  await notifyPaid(order);
+  const after = await getOrder(order.id);
+  return after?.email_sent_at ? j({ ok: true }) : j({ error: "تعذّر إرسال الإيميل" }, 502);
+}
+
 // ── الموزّع ────────────────────────────────────────────────────────────────
 async function readBody(req: Request): Promise<Record<string, unknown>> {
   const ct = req.headers.get("content-type") || "";
@@ -522,6 +571,8 @@ Deno.serve(async (req) => {
   try {
     switch (action) {
       case "checkout": return await checkout(req, b);
+      case "transfer": return await transfer(req, b);
+      case "transfer-notify": return await transferNotify(b);
       case "price": {
         const pr = await priceFor(req, String(b.sku ?? ""));
         return pr ? j({ price: Number(pr.p.price_sar), country: pr.country }) : j({ error: "المنتج غير متاح" }, 404);

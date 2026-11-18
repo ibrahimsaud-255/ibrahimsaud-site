@@ -59,6 +59,11 @@
 .v2-shop-buy .trust li { display: flex; gap: 8px; }
 .v2-shop-buy .trust li::before { content: "✓"; color: #1E9E4A; font-weight: 900; }
 .v2-shop-buy .soon { text-align: center; display: flex; flex-direction: column; gap: 18px; align-items: center; font-size: 17px; color: var(--fg-2); line-height: 1.6; }
+.v2-shop-buy .v2-shop-transfer { font: inherit; font-size: 14px; color: var(--fg-2); background: none; border: 0; padding: 4px; cursor: pointer; line-height: 1.6; }
+.v2-shop-buy .v2-shop-transfer u { color: var(--blue); font-weight: 700; text-underline-offset: 3px; }
+.v2-shop-buy .v2-shop-transfer:disabled { opacity: .5; cursor: default; }
+.v2-shop-buy .transfer-done p { margin: 0; }
+.v2-shop-buy .transfer-done b { color: var(--fg); }
 
 .v2-shop-terms { max-width: 820px; margin: 40px auto 0; font-size: 14px; line-height: 1.8; color: var(--fg-3); }
 
