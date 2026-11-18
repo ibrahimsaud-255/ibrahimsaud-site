@@ -10,6 +10,8 @@ import { visitorCountry } from "./ShopPrice";
 
 export default function LangRedirect({ sku, ru, en }: { sku: string; ru: string; en: string }) {
   useEffect(() => {
+    // محرّكات البحث (Googlebot من أمريكا بلا عربيّة) تبقى على الصفحة العربيّة — وإلا تضيع فهرستها
+    if (/bot|crawl|spider|slurp|mediapartners|lighthouse|headless/i.test(navigator.userAgent)) return;
     const K = "shop-stay-ar";
     try {
       if (new URLSearchParams(location.search).get("lang") === "ar") { localStorage.setItem(K, "1"); return; }
