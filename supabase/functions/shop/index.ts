@@ -2,7 +2,7 @@
 // ║  shop — Supabase Edge Function للمتجر الرقميّ (ibrahimsaud.com/shop/)  ║
 // ║                                                                        ║
 // ║  دالّة واحدة، الإجراء في `action` (بدن JSON) أو `?action=` في الرابط:   ║
-// ║   checkout   {sku,name,email,phone?}   → ينشئ طلباً ورابط دفع تلر       ║
+// ║   checkout   {sku,name,email,phone?,country?} → طلب ورابط دفع تلر       ║
 // ║   webhook    (تلر تناديه بعد الدفع)    → يتحقّق لدى تلر ويعلّم «مدفوع»  ║
 // ║   order      {o,t,device}              → حالة الطلب وقائمة الملفّات      ║
 // ║   otp-send   {o,t,device}              → رمز ٦ أرقام لبريد المشتري       ║
@@ -136,7 +136,7 @@ type Order = {
   status: "pending" | "paid" | "failed" | "cancelled"; telr_cart: string; telr_order_ref: string | null; telr_tran_ref: string | null;
   access_token_hash: string; email_token_hash: string | null; trusted_devices: string[]; otp_hash: string | null; otp_expires: string | null; otp_attempts: number;
   otp_sent_at: string | null; email_sent_at: string | null; check_count: number; created_at: string; updated_at?: string; paid_at: string | null;
-  buyer_country?: string | null; card_country?: string | null; hold?: string | null; pay_method?: "telr" | "transfer";
+  buyer_country?: string | null; ip_country?: string | null; card_country?: string | null; hold?: string | null; pay_method?: "telr" | "transfer";
 };
 
 async function getProduct(sku: string, activeOnly = true): Promise<Product | null> {
@@ -182,13 +182,41 @@ async function visitorCountry(req: Request): Promise<string> {
   return "";
 }
 const baseSku = (s: string) => s.split("@")[0];
-async function priceFor(req: Request, sku: string): Promise<{ base: Product; p: Product; country: string } | null> {
+// البلد بالترتيب: ما اختاره المشتري يدويّاً ← المنطقة الزمنيّة لجهازه ← بلد الاتّصال (IP).
+// كثيرون يتصفّحون بـVPN (أفغانستان مثلاً تظهر قطر) — الـVPN يغيّر الـIP لا ساعة الجهاز.
+// ولا شيء من هذا يفتح شيئاً وحده: بلد البطاقة بعد الدفع يُطابَق (سعره أعلى ← «مراجعة»)، والتحويل يُعتمد يدويّاً.
+const claimedCountry = (v: unknown) => {
+  const c = String(v ?? "").trim().toUpperCase();
+  return /^[A-Z]{2}$/.test(c) ? c : "";
+};
+const TZ: Record<string, string> = {
+  "Asia/Riyadh": "SA", "Asia/Dubai": "AE", "Asia/Kuwait": "KW", "Asia/Qatar": "QA", "Asia/Bahrain": "BH", "Asia/Muscat": "OM",
+  "Asia/Amman": "JO", "Asia/Baghdad": "IQ", "Asia/Gaza": "PS", "Asia/Hebron": "PS", "Asia/Beirut": "LB", "Asia/Damascus": "SY", "Asia/Aden": "YE",
+  "Africa/Cairo": "EG", "Africa/Khartoum": "SD", "Africa/Tripoli": "LY", "Africa/Tunis": "TN", "Africa/Algiers": "DZ", "Africa/Casablanca": "MA",
+  "Africa/El_Aaiun": "MA", "Africa/Nouakchott": "MR", "Africa/Mogadishu": "SO", "Africa/Djibouti": "DJ", "Indian/Comoro": "KM",
+  "Africa/Ndjamena": "TD", "Africa/Juba": "SS", "Africa/Asmara": "ER", "Africa/Niamey": "NE", "Africa/Bamako": "ML", "Africa/Dakar": "SN",
+  "Africa/Banjul": "GM", "Africa/Conakry": "GN", "Africa/Ouagadougou": "BF", "Africa/Addis_Ababa": "ET", "Africa/Nairobi": "KE",
+  "Africa/Dar_es_Salaam": "TZ", "Africa/Lagos": "NG", "Asia/Kabul": "AF", "Asia/Karachi": "PK", "Asia/Dhaka": "BD", "Asia/Kolkata": "IN",
+  "Asia/Calcutta": "IN", "Asia/Jakarta": "ID", "Asia/Makassar": "ID", "Asia/Jayapura": "ID", "Asia/Pontianak": "ID", "Asia/Kuala_Lumpur": "MY",
+  "Asia/Kuching": "MY", "Indian/Maldives": "MV", "Europe/Istanbul": "TR", "Asia/Istanbul": "TR", "Asia/Almaty": "KZ", "Asia/Qostanay": "KZ",
+  "Asia/Tashkent": "UZ", "Asia/Samarkand": "UZ", "Asia/Bishkek": "KG", "Asia/Dushanbe": "TJ", "Asia/Ashgabat": "TM", "Asia/Baku": "AZ",
+  "Europe/Sarajevo": "BA", "Europe/Tirane": "AL", "Asia/Brunei": "BN", "Asia/Singapore": "SG",
+};
+const tzCountry = (v: unknown) => TZ[String(v ?? "").trim()] || "";
+async function priceFor(req: Request, sku: string, claimed?: unknown, tz?: unknown): Promise<{ base: Product; p: Product; country: string; ip: string } | null> {
   const base = await getProduct(baseSku(sku));
   if (!base) return null;
-  const country = await visitorCountry(req);
+  const ip = await visitorCountry(req);
+  const country = claimedCountry(claimed) || tzCountry(tz) || ip;
   const tier = base.regional?.[country];
   const p = (tier && await getProduct(tier)) || base;
-  return { base, p, country };
+  return { base, p, country, ip };
+}
+/** سعر بلدٍ ما لهذا المنتج (الأساسيّ إن لم يكن له سعر خاصّ). */
+async function countryPrice(base: Product, country: string): Promise<number> {
+  const tier = base.regional?.[country];
+  const p = tier ? await getProduct(tier, false) : null;
+  return Number((p ?? base).price_sar);
 }
 
 // ── تلر (عبر خادم حروف) ─────────────────────────────────────────────────
@@ -241,11 +269,11 @@ async function verifyAndMark(order: Order, force = false): Promise<Order> {
       return order;
     }
     const now = new Date().toISOString();
-    // سعر خاصّ (sku@…) دُفع ببطاقة من بلد سعره كامل ← مراجعة قبل التنزيل
+    // سعر خاصّ (sku@…) دُفع ببطاقة من بلد سعره أعلى ممّا دُفع ← مراجعة قبل التنزيل
     let hold: string | null = null;
     if (order.sku.includes("@") && c.cardCountry) {
       const base = await getProduct(baseSku(order.sku), false);
-      if (base && !base.regional?.[c.cardCountry]) hold = "card_country";
+      if (base && (await countryPrice(base, c.cardCountry.toUpperCase())) > Number(order.amount)) hold = "card_country";
     }
     const moved = await patchOrder(order.id, {
       status: "paid", paid_at: now, telr_tran_ref: c.tranRef, paid_amount: c.amount ?? order.amount,
@@ -298,7 +326,7 @@ async function checkout(req: Request, b: Record<string, unknown>) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120) return j({ error: "البريد غير صحيح" }, 400);
   if (phone && (phone.length < 9 || phone.length > 16)) return j({ error: "رقم الجوال غير صحيح" }, 400);
 
-  const pr = await priceFor(req, sku);
+  const pr = await priceFor(req, sku, b.country, b.tz);
   if (!pr) return j({ error: "المنتج غير متاح" }, 404);
   const p = pr.p;
 
@@ -309,7 +337,7 @@ async function checkout(req: Request, b: Record<string, unknown>) {
 
   await rest("POST", "shop_orders", {
     id, sku: p.sku, title: pr.base.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
-    telr_cart: cart, access_token_hash: await sha256(token), buyer_country: pr.country || null,
+    telr_cart: cart, access_token_hash: await sha256(token), buyer_country: pr.country || null, ip_country: pr.ip || null,
   }, "return=minimal");
 
   let d: { url?: string; ref?: string | null; amount?: string };
@@ -516,7 +544,7 @@ async function transfer(req: Request, b: Record<string, unknown>) {
   if (!sku || name.length < 2 || name.length > 80) return j({ error: "اكتب اسمك" }, 400);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120) return j({ error: "البريد غير صحيح" }, 400);
   if (phone && (phone.length < 9 || phone.length > 16)) return j({ error: "رقم الجوال غير صحيح" }, 400);
-  const pr = await priceFor(req, sku);
+  const pr = await priceFor(req, sku, b.country, b.tz);
   if (!pr) return j({ error: "المنتج غير متاح" }, 404);
 
   // نفس الإيميل خلال ساعة = نفس الطلب (لا نكرّر الطلبات لو ضغط مرّتين)
@@ -532,7 +560,7 @@ async function transfer(req: Request, b: Record<string, unknown>) {
   const amount = Number(pr.p.price_sar).toFixed(2);
   await rest("POST", "shop_orders", {
     id, sku: pr.p.sku, title: pr.base.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
-    telr_cart: `tr-${id}`, access_token_hash: await sha256(randomToken()), buyer_country: pr.country || null, pay_method: "transfer",
+    telr_cart: `tr-${id}`, access_token_hash: await sha256(randomToken()), buyer_country: pr.country || null, ip_country: pr.ip || null, pay_method: "transfer",
   }, "return=minimal");
   return j({ ref: orderRef(id), amount: Number(amount), country: pr.country });
 }
@@ -574,8 +602,8 @@ Deno.serve(async (req) => {
       case "transfer": return await transfer(req, b);
       case "transfer-notify": return await transferNotify(b);
       case "price": {
-        const pr = await priceFor(req, String(b.sku ?? ""));
-        return pr ? j({ price: Number(pr.p.price_sar), country: pr.country }) : j({ error: "المنتج غير متاح" }, 404);
+        const pr = await priceFor(req, String(b.sku ?? ""), b.country, b.tz);
+        return pr ? j({ price: Number(pr.p.price_sar), country: pr.country, ip: pr.ip }) : j({ error: "المنتج غير متاح" }, 404);
       }
       case "webhook": return await webhook(req, b);
       case "order": return await orderAction(b);

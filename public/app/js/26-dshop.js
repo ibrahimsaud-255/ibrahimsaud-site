@@ -13,7 +13,7 @@ async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
     const [o,p,d]=await Promise.all([
-      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,card_country,hold,pay_method').order('created_at',{ascending:false}).limit(500),
+      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method').order('created_at',{ascending:false}).limit(500),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
     ]);
@@ -70,7 +70,7 @@ function renderDShop(){
     const [l,c]=DSH_ST[o.status]||[o.status,'#888'];const wa=dshPhoneWa(o.buyer_phone);
     return `<tr>
       <td><b>${esc(o.buyer_name)}</b><div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_email)}</div>${o.buyer_phone?`<div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_phone)}</div>`:''}</td>
-      <td>${esc(o.title)}</td><td style="white-space:nowrap">${dshMoney(o.amount)}${o.buyer_country?`<div style="font-size:12px;color:var(--muted)" title="بلد الزائر${o.card_country?' · بلد البطاقة':''}">${dshFlag(o.buyer_country)}${o.card_country&&o.card_country!==o.buyer_country?' · بطاقة '+dshFlag(o.card_country):''}</div>`:''}</td>
+      <td>${esc(o.title)}</td><td style="white-space:nowrap">${dshMoney(o.amount)}${o.buyer_country?`<div style="font-size:12px;color:var(--muted)" title="بلد المشتري (من ساعة جهازه أو اختياره) · بلد الاتّصال (IP) لو اختلف · بلد البطاقة">${dshFlag(o.buyer_country)}${o.ip_country&&o.ip_country!==o.buyer_country?' · اتّصال '+dshFlag(o.ip_country):''}${o.card_country&&o.card_country!==o.buyer_country?' · بطاقة '+dshFlag(o.card_country):''}</div>`:''}</td>
       <td><span class="badge" style="background:${c}22;color:${c}">${l}</span>${o.pay_method==='transfer'?`<div style="margin-top:4px"><span class="badge" style="background:#2F66FF22;color:#2F66FF" title="رقم الطلب اللي يرسله المشتري على واتساب">تحويل · <span dir="ltr">${o.id.slice(0,8).toUpperCase()}</span></span>${o.status==='pending'?` <button class="btn btn-primary btn-sm" onclick="dshTransferPaid('${o.id}')" title="وصل المبلغ — يتحوّل مدفوعاً ويوصله رابط التنزيل على إيميله">وصل التحويل ✓</button>`:''}</div>`:''}${o.hold?`<div><span class="badge" style="background:#f59e0b22;color:#b45309;margin-top:4px" title="سعر خاصّ ببطاقة من بلد آخر — التنزيل موقوف">مراجعة</span> <button class="btn btn-ghost btn-sm" onclick="dshApprove('${o.id}')" title="افتح التنزيل لهذا الطلب">اعتمد</button></div>`:''}</td>
       <td style="white-space:nowrap;font-size:12px">${dshDate(o.paid_at||o.created_at)}</td>
       <td style="text-align:center">${dlBy[o.id]||0}</td><td style="text-align:center">${(o.trusted_devices||[]).length}/3</td>
