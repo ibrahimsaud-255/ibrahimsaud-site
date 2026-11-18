@@ -214,6 +214,16 @@ const TZ: Record<string, string> = {
   "Asia/Kuching": "MY", "Indian/Maldives": "MV", "Europe/Istanbul": "TR", "Asia/Istanbul": "TR", "Asia/Almaty": "KZ", "Asia/Qostanay": "KZ",
   "Asia/Tashkent": "UZ", "Asia/Samarkand": "UZ", "Asia/Bishkek": "KG", "Asia/Dushanbe": "TJ", "Asia/Ashgabat": "TM", "Asia/Baku": "AZ",
   "Europe/Sarajevo": "BA", "Europe/Tirane": "AL", "Asia/Brunei": "BN", "Asia/Singapore": "SG",
+  // الدول الغربيّة وروسيا (فئة ٣٩٩ بلا خصم) — ساعة الجهاز تكشفها حتى مع VPN
+  "America/New_York": "US", "America/Chicago": "US", "America/Denver": "US", "America/Los_Angeles": "US", "America/Phoenix": "US",
+  "America/Anchorage": "US", "Pacific/Honolulu": "US", "America/Detroit": "US", "America/Indiana/Indianapolis": "US",
+  "America/Toronto": "CA", "America/Vancouver": "CA", "America/Edmonton": "CA", "America/Winnipeg": "CA", "America/Halifax": "CA",
+  "Europe/London": "GB", "Europe/Dublin": "IE", "Australia/Sydney": "AU", "Australia/Melbourne": "AU", "Australia/Brisbane": "AU",
+  "Australia/Perth": "AU", "Australia/Adelaide": "AU", "Pacific/Auckland": "NZ", "Europe/Zurich": "CH", "Europe/Oslo": "NO",
+  "Atlantic/Reykjavik": "IS", "Europe/Paris": "FR", "Europe/Berlin": "DE", "Europe/Madrid": "ES", "Europe/Rome": "IT",
+  "Europe/Amsterdam": "NL", "Europe/Brussels": "BE", "Europe/Vienna": "AT", "Europe/Stockholm": "SE", "Europe/Copenhagen": "DK",
+  "Europe/Helsinki": "FI", "Europe/Warsaw": "PL", "Europe/Lisbon": "PT", "Europe/Prague": "CZ", "Europe/Athens": "GR",
+  "Europe/Budapest": "HU", "Europe/Bucharest": "RO", "Europe/Sofia": "BG", "Europe/Luxembourg": "LU", "Europe/Moscow": "RU",
 };
 const tzCountry = (v: unknown) => TZ[String(v ?? "").trim()] || "";
 async function priceFor(req: Request, sku: string, claimed?: unknown, tz?: unknown): Promise<{ base: Product; p: Product; country: string; ip: string } | null> {
@@ -282,9 +292,9 @@ async function verifyAndMark(order: Order, force = false): Promise<Order> {
       return order;
     }
     const now = new Date().toISOString();
-    // سعر خاصّ (sku@…) دُفع ببطاقة من بلد سعره أعلى ممّا دُفع ← مراجعة قبل التنزيل
+    // دُفع ببطاقة من بلد سعره أعلى ممّا دُفع (فئة رخيصة، أو السعر الأساسيّ ببطاقة من بلد الـ٣٩٩) ← مراجعة قبل التنزيل
     let hold: string | null = null;
-    if (order.sku.includes("@") && c.cardCountry) {
+    if (c.cardCountry) {
       const base = await getProduct(baseSku(order.sku), false);
       if (base && (await countryPrice(base, c.cardCountry.toUpperCase())) > Number(order.amount)) hold = "card_country";
     }

@@ -158,7 +158,7 @@ export const shopItems: ShopItem[] = [
       { src: "/shop/lessons-broadcast/shot-page.jpg", alt: "Сцена «страница и лектор» с именем лектора" },
       { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "Сцена «лектор»: мягкое размытие и градиент за именем" },
     ],
-    fallbackPrice: 375,
+    fallbackPrice: 399,
     format: "Windows · Mac · Android — скачивание сразу после оплаты",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 и 11" },
