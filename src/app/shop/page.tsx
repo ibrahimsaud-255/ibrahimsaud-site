@@ -28,7 +28,7 @@ export default function Shop() {
         <section className="v2-shop-grid-sec">
           <div className="v2-wrap">
             <div className="v2-shop-grid">
-              {shopItems.map((i) => (
+              {shopItems.filter((i) => !i.hidden).map((i) => (
                 <a key={i.sku} href={`/shop/${i.slug}/`} className="v2-shop-card">
                   {i.iconImg ? <img className="art-img" src={i.iconImg} alt="" width={72} height={72} /> : <span className="art" aria-hidden>{i.icon}</span>}
                   <span className="kicker">{i.kicker}</span>
