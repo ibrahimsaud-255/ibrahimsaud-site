@@ -12,7 +12,7 @@ type FileView = { id: string; name: string; size: number; used: number; max: num
 type OrderView = {
   id: string; status: "pending" | "paid" | "failed" | "cancelled"; title: string; sku: string; amount: number;
   name: string; email: string; createdAt: string; paidAt: string | null; trusted: boolean; needsVerify: boolean;
-  devicesLeft: number; files: FileView[]; error?: string;
+  devicesLeft: number; files: FileView[]; hold?: boolean; error?: string;
 };
 
 const DEMO: OrderView = {
@@ -103,6 +103,12 @@ export default function ThanksView() {
     const item = shopItems.find((i) => i.sku === order.sku);
     return <Card icon="✕" title={order.status === "cancelled" ? "أُلغي الدفع" : "ما تمّ الدفع"} text="ما خُصم شي. تقدر ترجع وتحاول مرّة ثانية."
       cta={<a className="v2-btn v2-btn-primary" href={item ? `/shop/${item.slug}/#buy` : "/shop/"}>جرّب مرّة ثانية</a>} />;
+  }
+
+  if (order.hold) {
+    const ref = order.id.slice(0, 8).toUpperCase();
+    return <Card icon="⏳" title={`شكراً ${order.name}، وصلنا دفعك`} text={`طلبك (${ref}) قيد مراجعة سريعة قبل فتح الملفّات — راسلني على واتساب وأفتحه لك خلال دقائق.`}
+      cta={<a className="v2-btn v2-btn-primary" href={waHref(`السلام عليكم، دفعت طلبي من المتجر (${ref}) وأبي أفتحه`)} target="_blank" rel="noopener">راسلني على واتساب</a>} />;
   }
 
   return (

@@ -128,12 +128,13 @@ function mail(title: string, body: string, cta?: { href: string; label: string }
 // url: ملفّ مستضاف خارج Supabase (مثل سيرفر حروف) — للملفّات الكبيرة فوق حدّ الخطّة المجّانيّة (٥٠ ميغا).
 // المسار فيه مجلّد عشوائيّ طويل لا يُخمَّن، ولا يُرسل إلا للمشتري بعد التحقّق، ويتغيّر مع كل إصدار.
 type FileRow = { id: string; name: string; path?: string; url?: string; size_bytes?: number };
-type Product = { sku: string; slug: string; title: string; price_sar: number; active: boolean; files: FileRow[]; max_downloads: number };
+type Product = { sku: string; slug: string; title: string; price_sar: number; active: boolean; files: FileRow[]; max_downloads: number; regional?: Record<string, string> };
 type Order = {
   id: string; sku: string; title: string; amount: number; buyer_name: string; buyer_email: string; buyer_phone: string | null;
   status: "pending" | "paid" | "failed" | "cancelled"; telr_cart: string; telr_order_ref: string | null; telr_tran_ref: string | null;
   access_token_hash: string; email_token_hash: string | null; trusted_devices: string[]; otp_hash: string | null; otp_expires: string | null; otp_attempts: number;
   otp_sent_at: string | null; email_sent_at: string | null; check_count: number; created_at: string; updated_at?: string; paid_at: string | null;
+  buyer_country?: string | null; card_country?: string | null; hold?: string | null;
 };
 
 async function getProduct(sku: string, activeOnly = true): Promise<Product | null> {
@@ -160,6 +161,34 @@ async function authOrder(o: unknown, t: unknown): Promise<Order | null> {
   return ok ? order : null;
 }
 
+// ── السعر حسب بلد الزائر (غير معلَن) ─────────────────────────────────────
+// المنتج الأساسيّ يحمل regional: { "EG": "sku@t3", … } وكل فئة صفّ بسعرها. البلد من الاتّصال؛
+// وبعد الدفع نطابق بلد البطاقة: سعر خاصّ ببطاقة من بلد بسعر كامل ← «مراجعة» (يوقف التنزيل).
+const GEO = new Map<string, string>();
+async function visitorCountry(req: Request): Promise<string> {
+  const h = (req.headers.get("cf-ipcountry") || "").toUpperCase();
+  if (/^[A-Z]{2}$/.test(h) && h !== "XX" && h !== "T1") return h;
+  const ip = (req.headers.get("x-forwarded-for") || "").split(",")[0].trim();
+  if (!ip) return "";
+  if (GEO.has(ip)) return GEO.get(ip)!;
+  try {
+    const r = await fetch(`https://api.country.is/${encodeURIComponent(ip)}`, { signal: AbortSignal.timeout(2500) });
+    const d = await r.json().catch(() => ({})) as { country?: string };
+    const c = String(d?.country || "").toUpperCase();
+    if (/^[A-Z]{2}$/.test(c)) { if (GEO.size > 5000) GEO.clear(); GEO.set(ip, c); return c; }
+  } catch { /* بلا بلد = السعر الأساسيّ */ }
+  return "";
+}
+const baseSku = (s: string) => s.split("@")[0];
+async function priceFor(req: Request, sku: string): Promise<{ base: Product; p: Product; country: string } | null> {
+  const base = await getProduct(baseSku(sku));
+  if (!base) return null;
+  const country = await visitorCountry(req);
+  const tier = base.regional?.[country];
+  const p = (tier && await getProduct(tier)) || base;
+  return { base, p, country };
+}
+
 // ── تلر (عبر خادم حروف) ─────────────────────────────────────────────────
 async function proxy(path: string, body: unknown) {
   const r = await fetch(`${PAY_PROXY}/${path}`, {
@@ -172,14 +201,14 @@ async function proxy(path: string, body: unknown) {
   return d;
 }
 
-type Check = { status: "paid" | "pending" | "failed" | "cancelled"; amount: string | null; tranRef: string | null };
+type Check = { status: "paid" | "pending" | "failed" | "cancelled"; amount: string | null; tranRef: string | null; cardCountry: string | null };
 
 /** فحص الطلب لدى تلر بمرجعها (order_ref) — مرجع السلّة وحده لا تعرفه واجهة الفحص. */
 async function telrCheck(order: Order): Promise<Check> {
   const d = await proxy("check", { cart: order.telr_cart, orderRef: order.telr_order_ref ?? undefined });
   const st = String(d?.status || "pending");
   const status: Check["status"] = st === "paid" || st === "failed" || st === "cancelled" ? st : "pending";
-  return { status, amount: d?.amount ?? null, tranRef: d?.tranRef ?? null };
+  return { status, amount: d?.amount ?? null, tranRef: d?.tranRef ?? null, cardCountry: d?.cardCountry ?? null };
 }
 
 function thanksUrl(order: { id: string }, token: string) {
@@ -210,8 +239,15 @@ async function verifyAndMark(order: Order, force = false): Promise<Order> {
       return order;
     }
     const now = new Date().toISOString();
+    // سعر خاصّ (sku@…) دُفع ببطاقة من بلد سعره كامل ← مراجعة قبل التنزيل
+    let hold: string | null = null;
+    if (order.sku.includes("@") && c.cardCountry) {
+      const base = await getProduct(baseSku(order.sku), false);
+      if (base && !base.regional?.[c.cardCountry]) hold = "card_country";
+    }
     const moved = await patchOrder(order.id, {
       status: "paid", paid_at: now, telr_tran_ref: c.tranRef, paid_amount: c.amount ?? order.amount,
+      card_country: c.cardCountry, hold,
     }, "&status=neq.paid");
     if (moved?.length) await notifyPaid(moved[0]);
     return (await getOrder(order.id)) ?? order;
@@ -251,7 +287,7 @@ async function notifyPaid(order: Order) {
 }
 
 // ── الإجراءات ──────────────────────────────────────────────────────────────
-async function checkout(b: Record<string, unknown>) {
+async function checkout(req: Request, b: Record<string, unknown>) {
   const sku = String(b.sku ?? "").trim();
   const name = String(b.name ?? "").trim();
   const email = String(b.email ?? "").trim().toLowerCase();
@@ -260,8 +296,9 @@ async function checkout(b: Record<string, unknown>) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email) || email.length > 120) return j({ error: "البريد غير صحيح" }, 400);
   if (phone && (phone.length < 9 || phone.length > 16)) return j({ error: "رقم الجوال غير صحيح" }, 400);
 
-  const p = await getProduct(sku);
-  if (!p) return j({ error: "المنتج غير متاح" }, 404);
+  const pr = await priceFor(req, sku);
+  if (!pr) return j({ error: "المنتج غير متاح" }, 404);
+  const p = pr.p;
 
   const id = crypto.randomUUID();
   const token = randomToken();
@@ -269,8 +306,8 @@ async function checkout(b: Record<string, unknown>) {
   const amount = Number(p.price_sar).toFixed(2);
 
   await rest("POST", "shop_orders", {
-    id, sku: p.sku, title: p.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
-    telr_cart: cart, access_token_hash: await sha256(token),
+    id, sku: p.sku, title: pr.base.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
+    telr_cart: cart, access_token_hash: await sha256(token), buyer_country: pr.country || null,
   }, "return=minimal");
 
   let d: { url?: string; ref?: string | null; amount?: string };
@@ -325,14 +362,16 @@ async function orderAction(b: Record<string, unknown>) {
     devices = (await getOrder(order.id))?.trusted_devices ?? devices;
   }
   const trusted = !!dev && devices.includes(dev);
-  const p = order.status === "paid" ? await getProduct(order.sku, false) : null;
+  const p = order.status === "paid" ? await getProduct(baseSku(order.sku), false) : null;
+  const hold = order.status === "paid" && !!order.hold;
 
   return j({
     id: order.id,
     status: order.status,
     title: order.title,
-    sku: order.sku,
+    sku: baseSku(order.sku),
     amount: Number(order.amount),
+    hold,
     name: order.buyer_name,
     email: maskEmail(order.buyer_email),
     createdAt: order.created_at,
@@ -340,7 +379,7 @@ async function orderAction(b: Record<string, unknown>) {
     trusted,
     needsVerify: order.status === "paid" && !trusted,
     devicesLeft: Math.max(0, MAX_DEVICES - devices.length),
-    files: order.status === "paid" && trusted ? await filesView(order, p) : [],
+    files: order.status === "paid" && trusted && !hold ? await filesView(order, p) : [],
   });
 }
 
@@ -400,7 +439,8 @@ async function download(req: Request, b: Record<string, unknown>) {
   if (!order || order.status !== "paid") return j({ error: "الطلب غير متاح" }, 404);
   if (!isDevice(b.device) || !order.trusted_devices.includes(await sha256(String(b.device))))
     return j({ error: "وثّق هذا الجهاز أوّلاً", needsVerify: true }, 403);
-  const p = await getProduct(order.sku, false);
+  if (order.hold) return j({ error: "طلبك قيد المراجعة — راسلني ونرتّبه لك" }, 403);
+  const p = await getProduct(baseSku(order.sku), false);
   const f = p?.files.find((x) => x.id === String(b.fileId ?? ""));
   if (!p || !f) return j({ error: "الملفّ غير موجود" }, 404);
 
@@ -481,7 +521,11 @@ Deno.serve(async (req) => {
   const action = String(url.searchParams.get("action") || b.action || "");
   try {
     switch (action) {
-      case "checkout": return await checkout(b);
+      case "checkout": return await checkout(req, b);
+      case "price": {
+        const pr = await priceFor(req, String(b.sku ?? ""));
+        return pr ? j({ price: Number(pr.p.price_sar), country: pr.country }) : j({ error: "المنتج غير متاح" }, 404);
+      }
       case "webhook": return await webhook(req, b);
       case "order": return await orderAction(b);
       case "otp-send": return await otpSend(b);

@@ -4,10 +4,11 @@
 import { useState } from "react";
 import { sar, shopCall, type ShopItem } from "@/lib/shop";
 import { waHref } from "@/lib/v2";
-import { useLive } from "./ShopPrice";
+import { localApprox, useLive } from "./ShopPrice";
 
 export default function BuyPanel({ item }: { item: ShopItem }) {
-  const { price, active } = useLive(item.sku, item.fallbackPrice);
+  const { price, active, country } = useLive(item.sku, item.fallbackPrice);
+  const approx = localApprox(price, country);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -37,7 +38,8 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
       <div className="head">
         <h2>{item.name}</h2>
         <p className="fmt">{item.format}</p>
-        <p className="price" aria-live="polite">{sar(price)}</p>
+        <p className="price" aria-live="polite" style={{ visibility: active === null ? "hidden" : undefined }}>{sar(price)}</p>
+        {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
         <p className="vat">السعر نهائيّ — دفعة واحدة، بلا اشتراك.</p>
       </div>
 

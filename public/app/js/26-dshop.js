@@ -13,7 +13,7 @@ async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
     const [o,p,d]=await Promise.all([
-      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at').order('created_at',{ascending:false}).limit(500),
+      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,card_country,hold').order('created_at',{ascending:false}).limit(500),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
     ]);
@@ -43,8 +43,16 @@ function renderDShop(){
   const list=O.filter(o=>(DSH.filter==='all'||o.status===DSH.filter)&&(!q||[o.buyer_name,o.buyer_email,o.buyer_phone,o.title].join(' ').toLowerCase().includes(q)));
   const pill=(k,l,n)=>`<button class="btn btn-sm ${DSH.filter===k?'btn-primary':'btn-ghost'}" onclick="DSH.filter='${k}';renderDShop()">${l} <span style="opacity:.7">${n}</span></button>`;
 
-  const prodCards=(DSH.products||[]).map(p=>{
-    const sold=paid.filter(o=>o.sku===p.sku);
+  const base=s=>String(s||'').split('@')[0];
+  const prodCards=(DSH.products||[]).filter(p=>!p.sku.includes('@')).map(p=>{
+    const sold=paid.filter(o=>base(o.sku)===p.sku);
+    // أسعار خاصّة غير معلنة: الموقع يعرضها تلقائيّاً لزوّار هذه الدول (حسب IP)، وبطاقة من بلد آخر ← «مراجعة».
+    const reg=p.regional||{};const tiers=(DSH.products||[]).filter(t=>t.sku.startsWith(p.sku+'@'));
+    const tierHtml=tiers.length?`<div style="margin:4px 0 10px;padding:10px 12px;border-radius:12px;background:var(--surface2,rgba(0,0,0,.04))">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:6px">أسعار خاصّة (غير معلنة — تظهر تلقائيّاً لزوّار هذه الدول)</div>
+      ${tiers.map(t=>{const cs=Object.keys(reg).filter(c=>reg[c]===t.sku);const n=sold.filter(o=>o.sku===t.sku).length;
+        return `<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:4px 0"><input type="number" min="1" value="${Number(t.price_sar)}" style="max-width:90px" onchange="dshProd('${esc(t.sku)}',{price_sar:Number(this.value)})"> ر.س
+          <span style="font-size:13px">${cs.map(dshFlag).join(' ')||'—'}</span><span style="font-size:12px;color:var(--muted)">${n} مبيع</span></div>`}).join('')}</div>`:'';
     const files=(p.files||[]).map(f=>`<div style="font-size:12px;color:var(--muted);display:flex;gap:6px;align-items:center"><i data-lucide="${f.url?'server':'hard-drive'}" style="width:14px"></i>${esc(f.name)} ${f.size_bytes?'· '+(f.size_bytes/1048576).toFixed(0)+' MB':''} ${f.url||f.path?'':'<b style="color:var(--bad)">— بلا ملفّ!</b>'}</div>`).join('');
     return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
         <h3 style="margin:0">${esc(p.title)}</h3>
@@ -54,15 +62,15 @@ function renderDShop(){
         <div><div style="font-size:22px;font-weight:800">${sold.length}</div><div style="font-size:12px;color:var(--muted)">مبيع</div></div>
         <div><div style="font-size:22px;font-weight:800">${dshMoney(sold.reduce((a,o)=>a+Number(o.amount||0),0))}</div><div style="font-size:12px;color:var(--muted)">الإيراد</div></div>
         <a class="btn btn-ghost btn-sm" href="https://ibrahimsaud.com/shop/${encodeURIComponent(p.slug)}/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> الصفحة</a>
-      </div>${files}</div>`;
+      </div>${tierHtml}${files}</div>`;
   }).join('');
 
   const rows=list.map(o=>{
     const [l,c]=DSH_ST[o.status]||[o.status,'#888'];const wa=dshPhoneWa(o.buyer_phone);
     return `<tr>
       <td><b>${esc(o.buyer_name)}</b><div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_email)}</div>${o.buyer_phone?`<div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_phone)}</div>`:''}</td>
-      <td>${esc(o.title)}</td><td style="white-space:nowrap">${dshMoney(o.amount)}</td>
-      <td><span class="badge" style="background:${c}22;color:${c}">${l}</span></td>
+      <td>${esc(o.title)}</td><td style="white-space:nowrap">${dshMoney(o.amount)}${o.buyer_country?`<div style="font-size:12px;color:var(--muted)" title="بلد الزائر${o.card_country?' · بلد البطاقة':''}">${dshFlag(o.buyer_country)}${o.card_country&&o.card_country!==o.buyer_country?' · بطاقة '+dshFlag(o.card_country):''}</div>`:''}</td>
+      <td><span class="badge" style="background:${c}22;color:${c}">${l}</span>${o.hold?`<div><span class="badge" style="background:#f59e0b22;color:#b45309;margin-top:4px" title="سعر خاصّ ببطاقة من بلد آخر — التنزيل موقوف">مراجعة</span> <button class="btn btn-ghost btn-sm" onclick="dshApprove('${o.id}')" title="افتح التنزيل لهذا الطلب">اعتمد</button></div>`:''}</td>
       <td style="white-space:nowrap;font-size:12px">${dshDate(o.paid_at||o.created_at)}</td>
       <td style="text-align:center">${dlBy[o.id]||0}</td><td style="text-align:center">${(o.trusted_devices||[]).length}/3</td>
       <td style="white-space:nowrap">
@@ -90,6 +98,14 @@ function renderDShop(){
       <tbody>${rows||'<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">ما فيه طلبات هنا بعد</td></tr>'}</tbody></table></div>
     <p style="color:var(--muted);font-size:12px;margin-top:10px">«إرسال الرابط» يرسل للمشتري رابط طلبه من جديد (نفس «استرجع طلبك» في الموقع). «الأجهزة» يمسحها فيقدر يفتح طلبه من جهاز جديد.</p>`;
   applyWallpaper();refreshIcons();
+}
+const DSH_CC={SA:'السعودية',AE:'الإمارات',KW:'الكويت',QA:'قطر',BH:'البحرين',OM:'عُمان',EG:'مصر',MA:'المغرب',DZ:'الجزائر',TN:'تونس',LY:'ليبيا',JO:'الأردن',LB:'لبنان',IQ:'العراق',PS:'فلسطين',SY:'سوريا',YE:'اليمن',SD:'السودان',MR:'موريتانيا',SO:'الصومال',DJ:'جيبوتي',KM:'جزر القمر'};
+function dshFlag(c){c=String(c||'').toUpperCase();if(!/^[A-Z]{2}$/.test(c))return '';return String.fromCodePoint(...[...c].map(x=>0x1F1A5+x.charCodeAt(0)))+' '+(DSH_CC[c]||c)}
+async function dshApprove(id){
+  if(!confirm('اعتماد الطلب وفتح التنزيل للمشتري؟'))return;
+  const {error}=await sb.from('shop_orders').update({hold:null,updated_at:new Date().toISOString()}).eq('id',id);
+  if(error){alert('تعذّر: '+error.message);return}
+  const o=DSH.orders.find(x=>x.id===id);if(o)o.hold=null;renderDShop();
 }
 async function dshProd(sku,patch){
   const {error}=await sb.from('shop_products').update({...patch,updated_at:new Date().toISOString()}).eq('sku',sku);
