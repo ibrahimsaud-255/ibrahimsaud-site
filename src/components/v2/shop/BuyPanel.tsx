@@ -1,14 +1,19 @@
 "use client";
 
 // لوحة الشراء: الاسم والبريد والجوال ← الدالّة «shop» تنشئ الطلب بسعر الجدول ← صفحة دفع تلر.
+// النصوص من shopUi حسب لغة المنتج (عربيّ افتراضيّاً، روسيّ لنسخة روسيا).
 import { useState } from "react";
-import { sar, shopCall, type ShopItem } from "@/lib/shop";
+import { shopCall, type ShopItem } from "@/lib/shop";
+import { money, shopT } from "@/lib/shopUi";
 import { waHref } from "@/lib/v2";
 import { geo, localApprox, useLive } from "./ShopPrice";
 
 export default function BuyPanel({ item }: { item: ShopItem }) {
+  const T = shopT(item.lang);
+  const ru = item.lang === "ru";
+  const fmt = (n: number) => money(n, item.lang);
   const { price, active, country } = useLive(item.sku, item.fallbackPrice);
-  const approx = localApprox(price, country);
+  const approx = ru ? `≈ $${Math.round(price / 3.75)}` : localApprox(price, country);
   const saleOn = !!item.sale && Date.now() < Date.parse(item.sale.until);
   const was = saleOn ? item.sale!.was[price] : undefined;
   const [name, setName] = useState("");
@@ -19,8 +24,8 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
 
   function check(): boolean {
     setErr(null);
-    if (name.trim().length < 2) { setErr("اكتب اسمك"); return false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setErr("البريد غير صحيح — عليه توصلك الملفّات"); return false; }
+    if (name.trim().length < 2) { setErr(T.errName); return false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email.trim())) { setErr(T.errEmail); return false; }
     return true;
   }
 
@@ -28,12 +33,15 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
     e.preventDefault();
     if (busy || !check()) return;
     setBusy(true);
+    // صفحة الشكر (عودة تلر) تعرض لغة المشتري قبل ما يوصل الطلب
+    try { if (ru) localStorage.setItem("shop-lang", "ru"); else localStorage.removeItem("shop-lang"); } catch { /* تخزين مقفل */ }
     const r = await shopCall<{ url?: string }>("checkout", { sku: item.sku, name: name.trim(), email: email.trim(), phone: phone.trim(), ...geo() });
     if (r.ok && r.data.url) {
       window.location.assign(r.data.url);
       return;
     }
-    setErr(r.data.error || "تعذّر بدء الدفع، جرّب مرّة ثانية");
+    // رسائل الخادم عربيّة — في النسخة الروسيّة نعرض رسالة عامّة بلغتها
+    setErr((!ru && r.data.error) || T.errStart);
     setBusy(false);
   }
 
@@ -45,41 +53,39 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
         <h2>{item.name}</h2>
         <p className="fmt">{item.format}</p>
         <div style={{ visibility: active === null ? "hidden" : undefined }}>
-          {was && was > price && <p className="sale"><span>{item.sale!.label}</span><s>{sar(was)}</s></p>}
-          <p className="price" aria-live="polite">{sar(price)}</p>
-          {was && was > price && <p className="vat">العرض ينتهي نهاية يوم ١ ديسمبر، وبعده يرجع السعر {sar(was)}</p>}
+          {was && was > price && <p className="sale"><span>{item.sale!.label}</span><s>{fmt(was)}</s></p>}
+          <p className="price" aria-live="polite">{fmt(price)}</p>
+          {was && was > price && <p className="vat">{T.saleEnds(fmt(was))}</p>}
         </div>
-        {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
-        <p className="vat">دفعة واحدة وتملكه — بلا اشتراك شهريّ ولا سنويّ.</p>
+        {approx && <p className="vat" dir={T.dir}>{approx} {T.approxTail}</p>}
+        <p className="vat">{T.oneTime}</p>
       </div>
 
       {soon ? (
         <div className="soon">
-          <p>{item.presale ? "المقاعد تُفتح قريباً." : "غير متاح للشراء الآن."} سجّل اهتمامك وأبلغك أوّل ما يفتح.</p>
-          <a className="v2-btn v2-btn-primary" href={waHref(`السلام عليكم، أبي أحجز في «${item.name}» أوّل ما يفتح`)} target="_blank" rel="noopener">بلّغني على واتساب</a>
+          <p>{item.presale ? T.soonSeats : T.soonNA}{T.soonTail}</p>
+          <a className="v2-btn v2-btn-primary" href={waHref(T.soonWa(item.name))} target="_blank" rel="noopener">{T.soonBtn}</a>
         </div>
       ) : (
         <form onSubmit={buy} noValidate>
           <label>
-            <span>الاسم</span>
+            <span>{T.name}</span>
             <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" required maxLength={80} />
           </label>
           <label>
-            <span>البريد الإلكترونيّ <small>— توصلك عليه الملفّات</small></span>
+            <span>{T.email} <small>{T.emailNote}</small></span>
             <input type="email" dir="ltr" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" inputMode="email" required maxLength={120} />
           </label>
           <label>
-            <span>الجوال <small>(اختياريّ)</small></span>
-            <input type="tel" dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" inputMode="tel" placeholder="05xxxxxxxx" maxLength={16} />
+            <span>{T.phone} <small>{T.optional}</small></span>
+            <input type="tel" dir="ltr" value={phone} onChange={(e) => setPhone(e.target.value)} autoComplete="tel" inputMode="tel" placeholder={T.phonePh} maxLength={16} />
           </label>
           {err && <p className="err" role="alert">{err}</p>}
           <button className="v2-btn v2-btn-primary" type="submit" disabled={busy || active === null}>
-            {busy ? "ننقلك للدفع…" : `ادفع ${sar(price)}`}
+            {busy ? T.paying : T.pay(fmt(price))}
           </button>
           <ul className="trust">
-            <li>دفع آمن عبر Telr — مدى، فيزا، ماستركارد، Apple Pay</li>
-            <li>تنزيل فوريّ بعد الدفع، ورابط طلبك يوصلك على بريدك</li>
-            <li>الرابط خاصّ بك ويعمل على أجهزتك فقط</li>
+            {T.trust.map((t) => <li key={t}>{t}</li>)}
           </ul>
         </form>
       )}

@@ -1,6 +1,7 @@
 // شعارات المنصّات وبطاقاتها لمنتجات البرامج في المتجر (ويندوز، ماك، أندرويد، آيفون).
 // الشعار يعرّف النظام بنظرة — نفس فكرة صفحة تحميل حروف ودروس.
 import type { ShopItem } from "@/lib/shop";
+import { shopT } from "@/lib/shopUi";
 
 type Key = "windows" | "mac" | "android" | "ios";
 
@@ -30,7 +31,7 @@ export function PlatformCards({ item }: { item: ShopItem }) {
           <PlatformLogo k={p.key} size={26} />
           <h3>{p.name}</h3>
           <p>{p.note}</p>
-          <span className="tag">{p.soon || "متوفّر الآن — مع الشراء"}</span>
+          <span className="tag">{p.soon || shopT(item.lang).availableNow}</span>
         </div>
       ))}
     </div>

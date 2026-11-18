@@ -4,7 +4,7 @@
 // ويُظهر كلّ [data-rise] عند دخوله الشاشة.
 import { useEffect, useRef } from "react";
 
-export default function Shell({ children }: { children: React.ReactNode }) {
+export default function Shell({ children, dir = "rtl", lang }: { children: React.ReactNode; dir?: "rtl" | "ltr"; lang?: string }) {
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const root = ref.current;
@@ -24,5 +24,5 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     });
     return () => obs.disconnect();
   }, []);
-  return <div ref={ref} className="v2" dir="rtl">{children}</div>;
+  return <div ref={ref} className="v2" dir={dir} lang={lang}>{children}</div>;
 }

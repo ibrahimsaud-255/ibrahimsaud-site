@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ShopItemView from "@/components/v2/shop/ShopItemView";
+import RuRedirect from "@/components/v2/shop/RuRedirect";
 import { itemBySlug } from "@/lib/shop";
 import { SITE_URL } from "@/lib/share";
 
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
   keywords: ["بث الدروس العلمية", "تصوير الدروس العلمية", "بثوث علمية", "بث مباشر للدروس", "برنامج بث مباشر عربي", "بث دروس المساجد", "تصوير المحاضرات", "المكتبة الشاملة"],
-  alternates: { canonical: URL },
+  alternates: { canonical: URL, languages: { ar: URL, ru: `${SITE_URL}/ru/lessons-broadcast/` } },
   openGraph: { title: TITLE, description: DESC, url: URL, siteName: "إبراهيم سعود", locale: "ar_SA", type: "website", images: [IMG] },
   twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: [IMG.url] },
 };
@@ -47,6 +48,7 @@ export default function LessonsBroadcast() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <RuRedirect sku={item.sku} to="/ru/lessons-broadcast/" />
       <ShopItemView item={item} />
     </>
   );
