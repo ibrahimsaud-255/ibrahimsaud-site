@@ -9,6 +9,7 @@ import { geo, localApprox, useLive } from "./ShopPrice";
 export default function BuyPanel({ item }: { item: ShopItem }) {
   const { price, active, country } = useLive(item.sku, item.fallbackPrice);
   const approx = localApprox(price, country);
+  const was = item.sale?.was[price];
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -42,7 +43,10 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
       <div className="head">
         <h2>{item.name}</h2>
         <p className="fmt">{item.format}</p>
-        <p className="price" aria-live="polite" style={{ visibility: active === null ? "hidden" : undefined }}>{sar(price)}</p>
+        <div style={{ visibility: active === null ? "hidden" : undefined }}>
+          {was && was > price && <p className="sale"><span>{item.sale!.label}</span><s>{sar(was)}</s></p>}
+          <p className="price" aria-live="polite">{sar(price)}</p>
+        </div>
         {approx && <p className="vat" dir="rtl">{approx} تقريباً — يُخصم بالريال من بطاقتك</p>}
         <p className="vat">السعر نهائيّ — دفعة واحدة، بلا اشتراك.</p>
       </div>

@@ -45,6 +45,10 @@
 .v2 .v2-shop-buy h2 { font-size: 26px; }
 .v2-shop-buy .fmt { font-size: 15px; color: var(--blue); font-weight: 700; margin-top: 6px; }
 .v2-shop-buy .price { font-size: clamp(40px, 6vw, 52px); font-weight: 900; margin-top: 14px; font-variant-numeric: tabular-nums; }
+.v2-shop-buy .sale { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 14px; font-size: 15px; font-weight: 800; }
+.v2-shop-buy .sale span { background: #C4291C; color: #fff; border-radius: 999px; padding: 3px 12px; font-size: 13px; }
+.v2-shop-buy .sale s { color: var(--fg-2); font-size: 20px; font-variant-numeric: tabular-nums; }
+.v2-shop-buy .sale + .price { margin-top: 2px; }
 .v2-shop-buy .vat { font-size: 14px; color: var(--fg-2); margin-top: 4px; }
 .v2-shop-buy form { display: flex; flex-direction: column; gap: 16px; }
 .v2-shop-buy label { display: flex; flex-direction: column; gap: 7px; font-size: 15px; font-weight: 700; }
