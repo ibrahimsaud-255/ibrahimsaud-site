@@ -34,6 +34,7 @@ export type ShopItem = {
   logo?: string;           // شعار كلمة (يظهر بدل الاسم المكتوب في رأس الصفحة)
   shots?: { src: string; alt: string }[];   // لقطات حقيقيّة من البرنامج
   platforms?: { key: "windows" | "mac" | "android" | "ios"; name: string; note: string; soon?: string; href?: string; hrefLabel?: string }[];
+  buyNote?: string;        // سطر تنبيه تحت «الصيغة» في لوحة الشراء (مثل: الآيفون شراء مستقلّ من App Store)
   specs?: { title: string; rows: [string, string][] }[];
   promo?: { src: string; poster: string; title: string; text: string };   // مقطع قصير عموديّ
   hidden?: boolean;        // لا يظهر في قائمة /shop/ (الصفحة تفتح برابطها فقط)
@@ -77,7 +78,7 @@ export const shopItems: ShopItem[] = [
       { key: "windows", name: "ويندوز", note: "ويندوز ١٠ و١١" },
       { key: "mac", name: "ماك", note: "macOS 12 فما فوق" },
       { key: "android", name: "أندرويد", note: "ملفّ APK للجوّال والتابلت — وقريباً على Google Play" },
-      { key: "ios", name: "آيفون وآيباد", note: "iPhone و iPad", href: "https://apps.apple.com/app/id6836200953", hrefLabel: "حمّله من App Store" },
+      IOS_CARD,
     ],
     inside: [
       { title: "المكتبة الشاملة داخل البرنامج", text: "أكثر من ٨٥٠٠ كتاب تتصفّحها بسهولة وتعرضها بصفحات الطبعة المصوّرة، أو نصّاً مرتّباً بترقيم المطبوع — وأيّ كتاب PDF من جهازك." },
@@ -125,7 +126,7 @@ export const shopItems: ShopItem[] = [
     ],
     faqs: [
       { q: "هل أحتاج خبرة تقنيّة؟", a: "لا. البرنامج عربيّ وأزراره كبيرة وواضحة: تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر». وإذا احتجت أحد يضبطه معك راسلني." },
-      { q: "على أيّ جهاز يشتغل؟", a: "ويندوز وماك وأندرويد الآن (ملفّ APK تنزّله من صفحة طلبك، وقريباً على Google Play)، ونسخة آيفون وآيباد على App Store. شوف «المتطلّبات» تحت." },
+      { q: "على أيّ جهاز يشتغل؟", a: "ويندوز وماك وأندرويد — تنزّلها من صفحة طلبك بعد الشراء من هنا (أندرويد ملفّ APK، وقريباً على Google Play). والآيفون والآيباد تطبيق مستقلّ يُشترى من App Store. شوف «المتطلّبات» تحت." },
       { q: "كيف أثبّت نسخة الأندرويد؟", a: "نزّل ملفّ APK من صفحة طلبك على الجوّال وافتحه. أوّل مرّة يطلب الجوّال السماح بالتثبيت من المتصفّح: اضغط «الإعدادات» ثمّ فعّل «السماح من هذا المصدر» وارجع اضغط «تثبيت»." },
       { q: "كيف أبثّ درساً علميّاً مباشراً من المسجد؟", a: "تحتاج كمبيوتر أو جوّال، وكاميرا (أو كاميرا الجوّال)، ومايك لاسلكيّ للشيخ، وإنترنت ثابت. في البرنامج تختار الكتاب، تكتب اسم الشيخ وعنوان الدرس، تلصق مفتاح البثّ من يوتيوب أو فيسبوك أو تيليجرام مرّة وحدة، وتضغط «بثّ مباشر»." },
       { q: "يصلح للمحاضرات والدورات العلميّة؟", a: "نعم: الدروس والمحاضرات والدورات العلميّة وحلقات التحفيظ والخطب — أيّ مجلس فيه متحدّث، مع كتاب أو بدونه." },
@@ -363,6 +364,29 @@ export const shopItems: ShopItem[] = [
       promo: { src: `/shop/lessons-broadcast/promo-${code}.mp4`, poster: `/shop/lessons-broadcast/promo-poster-${code}.jpg`, title: j.promo.title, text: j.promo.text },
     });
   }
+}
+
+// الآيفون شراء مستقلّ من App Store (بسعره هناك) — الشراء من الموقع يعطي ويندوز وماك وأندرويد فقط.
+// نوضّحه بلغة كل صفحة: ملاحظة بطاقة الآيفون، وسطر في لوحة الشراء، وسؤال في الأسئلة الشائعة.
+const IOS_SEP: Record<string, { name?: string; label?: string; note: string; buy: string; q: string; a: string }> = {
+  ar: { name: "آيفون وآيباد", label: "حمّله من App Store", note: "تطبيق مستقلّ — يُشترى من App Store", buy: "الآيفون والآيباد: تطبيق مستقلّ يُشترى من App Store — غير مشمول في الشراء من هنا.", q: "الشراء من هنا يشمل تطبيق الآيفون؟", a: "لا. الشراء من الموقع يعطيك نسخ ويندوز وماك وأندرويد. تطبيق الآيفون والآيباد شراء مستقلّ من App Store بسعره هناك." },
+  en: { note: "Separate app — sold on the App Store", buy: "iPhone & iPad: a separate app, bought on the App Store — not included here.", q: "Does this purchase include the iPhone app?", a: "No. Buying here gives you the Windows, Mac and Android versions. The iPhone and iPad app is a separate purchase on the App Store." },
+  ru: { note: "Отдельное приложение — продаётся в App Store", buy: "iPhone и iPad: отдельное приложение, покупается в App Store — в эту покупку не входит.", q: "Входит ли в покупку приложение для iPhone?", a: "Нет. Покупка здесь даёт версии для Windows, Mac и Android. Приложение для iPhone и iPad покупается отдельно в App Store." },
+  fr: { note: "Application séparée — vendue sur l’App Store", buy: "iPhone et iPad : application séparée, achetée sur l’App Store — non incluse ici.", q: "L’achat inclut-il l’application iPhone ?", a: "Non. L’achat ici vous donne les versions Windows, Mac et Android. L’application iPhone et iPad s’achète séparément sur l’App Store." },
+  de: { note: "Separate App – im App Store erhältlich", buy: "iPhone und iPad: separate App, Kauf im App Store – hier nicht enthalten.", q: "Ist die iPhone-App im Kauf enthalten?", a: "Nein. Mit dem Kauf hier erhalten Sie die Versionen für Windows, Mac und Android. Die App für iPhone und iPad wird separat im App Store gekauft." },
+  tr: { note: "Ayrı uygulama — App Store’dan satın alınır", buy: "iPhone ve iPad: ayrı bir uygulamadır, App Store’dan satın alınır — bu satın almaya dahil değildir.", q: "Satın alma iPhone uygulamasını da kapsıyor mu?", a: "Hayır. Buradan satın alma Windows, Mac ve Android sürümlerini kapsar. iPhone ve iPad uygulaması App Store’dan ayrıca satın alınır." },
+  id: { note: "Aplikasi terpisah — dibeli di App Store", buy: "iPhone & iPad: aplikasi terpisah, dibeli di App Store — tidak termasuk di sini.", q: "Apakah pembelian ini termasuk aplikasi iPhone?", a: "Tidak. Pembelian di sini mencakup versi Windows, Mac, dan Android. Aplikasi iPhone dan iPad dibeli terpisah di App Store." },
+  ur: { note: "الگ ایپ — App Store سے خریدی جاتی ہے", buy: "آئی فون اور آئی پیڈ: الگ ایپ ہے جو App Store سے خریدی جاتی ہے — یہ اس خریداری میں شامل نہیں۔", q: "کیا اس خریداری میں آئی فون ایپ بھی شامل ہے؟", a: "نہیں۔ یہاں سے خریداری میں ونڈوز، میک اور اینڈرائیڈ ورژن ملتے ہیں۔ آئی فون اور آئی پیڈ ایپ App Store سے الگ خریدی جاتی ہے۔" },
+  fa: { note: "اپلیکیشن جداگانه — از App Store خریداری می\u200cشود", buy: "آیفون و آیپد: اپلیکیشن جداگانه است و از App Store خریداری می\u200cشود — شامل این خرید نیست.", q: "آیا این خرید اپلیکیشن آیفون را هم شامل می\u200cشود؟", a: "نخیر. با خرید از اینجا نسخه\u200cهای ویندوز، مک و اندروید را دریافت می\u200cکنید. اپلیکیشن آیفون و آیپد جداگانه از App Store خریداری می\u200cشود." },
+  ps: { note: "جلا اپلیکیشن — له App Store څخه اخیستل کېږي", buy: "آیفون او آیپډ: جلا اپلیکیشن دی چې له App Store څخه اخیستل کېږي — په دې پېرود کې نه دی شامل.", q: "ایا دا پېرود د آیفون اپلیکیشن هم لري؟", a: "نه. له دې ځایه په پېرود سره د ونډوز، مک او اندروید نسخې ترلاسه کوئ. د آیفون او آیپډ اپلیکیشن په جلا توګه له App Store څخه اخیستل کېږي." },
+  ckb: { note: "ئەپێکی جیاوازە — لە App Store دەکڕدرێت", buy: "ئایفۆن و ئایپاد: ئەپێکی جیاوازە و لە App Store دەکڕدرێت — لەم کڕینەدا نییە.", q: "ئایا ئەم کڕینە ئەپی ئایفۆنیش دەگرێتەوە؟", a: "نەخێر. بە کڕین لێرە وەشانی ویندۆز و ماک و ئەندرۆید وەردەگریت. ئەپی ئایفۆن و ئایپاد بە جیا لە App Store دەکڕدرێت." },
+};
+for (const it of shopItems) {
+  if (!it.platforms?.some((p) => p.key === "ios")) continue;
+  const t = IOS_SEP[it.lang || "ar"] || IOS_SEP.en;
+  it.platforms = it.platforms.map((p) => p.key === "ios" ? { ...IOS_CARD, name: t.name || IOS_CARD.name, hrefLabel: t.label || IOS_CARD.hrefLabel, note: t.note } : p);
+  it.buyNote = t.buy;
+  it.faqs = [...it.faqs.slice(0, 2), { q: t.q, a: t.a }, ...it.faqs.slice(2)];
 }
 
 export const itemBySlug = (slug: string) => shopItems.find((i) => i.slug === slug);

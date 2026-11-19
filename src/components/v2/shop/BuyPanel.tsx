@@ -52,6 +52,7 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
       <div className="head">
         <h2>{item.name}</h2>
         <p className="fmt">{item.format}</p>
+        {item.buyNote && <p className="ios-note">{item.buyNote}</p>}
         <div style={{ visibility: active === null ? "hidden" : undefined }}>
           {was && was > price && <p className="sale"><span>{item.sale!.label}</span><s>{fmt(was)}</s></p>}
           <p className="price" aria-live="polite">{fmt(price)}</p>
