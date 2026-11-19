@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import ShopItemView from "@/components/v2/shop/ShopItemView";
 import { itemBySlug } from "@/lib/shop";
 import { SITE_URL } from "@/lib/share";
+import { allLanguages } from "@/lib/shopIntl";
 
 // نسخة روسيا من «برنامج بث الدروس العلمية» — يُحوَّل لها زائر روسيا تلقائيّاً من /lessons-broadcast/.
 // المحتوى في src/lib/shop.ts (lessons-broadcast-ru)، ونصوص الواجهة في src/lib/shopUi.ts.
@@ -15,7 +16,7 @@ const IMG = { url: `${SITE_URL}/shop/lessons-broadcast/shot-book.jpg`, alt: "Т�
 export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
-  alternates: { canonical: URL, languages: { ar: `${SITE_URL}/lessons-broadcast/`, ru: URL, en: `${SITE_URL}/en/lessons-broadcast/` } },
+  alternates: { canonical: URL, languages: allLanguages(SITE_URL) },
   openGraph: { title: TITLE, description: DESC, url: URL, siteName: "Ibrahim Saud", locale: "ru_RU", type: "website", images: [IMG] },
   twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: [IMG.url] },
 };

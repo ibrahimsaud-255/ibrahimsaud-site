@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "dir": "ltr",
+    "buyNow": "Beli sekarang",
+    "reserve": "Pesan tempat",
+    "whatsInside": "Apa saja isinya?",
+    "onDevices": "Di perangkat Anda.",
+    "inside": "Isinya.",
+    "forWho": "Untuk siapa?",
+    "after": "Setelah membeli",
+    "specs": "Persyaratan.",
+    "faq": "Pertanyaan.",
+    "navOverview": "Ringkasan",
+    "navInside": "Isi",
+    "navSpecs": "Persyaratan",
+    "navFaq": "FAQ",
+    "navBuy": "Beli",
+    "terms": "Ini produk digital yang dikirim langsung setelah pembayaran, sehingga tidak dapat dikembalikan setelah file diunduh — kecuali ada kerusakan yang membuat file tidak bisa dipakai: hubungi saya, akan saya perbaiki atau uang Anda saya kembalikan. File hanya untuk Anda atau lembaga Anda, dan tidak boleh dijual kembali atau disebarluaskan.",
+    "obs": " Program ini berjalan dengan mesin OBS Studio yang gratis dan open source (lisensi GPL).",
+    "availableNow": "Tersedia sekarang — sudah termasuk",
+    "errName": "Masukkan nama Anda",
+    "errEmail": "Email tidak valid — file Anda dikirim ke email ini",
+    "errStart": "Pembayaran tidak dapat dimulai, silakan coba lagi",
+    "oneTime": "Sekali bayar — jadi milik Anda. Tanpa langganan bulanan atau tahunan.",
+    "approxTail": "— ditagihkan ke kartu Anda dalam riyal Saudi (SAR)",
+    "saleEnds": "Promo berakhir pada akhir hari 1 Desember, setelah itu harga kembali menjadi {0}",
+    "soonSeats": "Pendaftaran segera dibuka.",
+    "soonNA": "Belum tersedia untuk dibeli.",
+    "soonTail": " Kirim pesan kepada kami, kami kabari begitu sudah dibuka.",
+    "soonWa": "Assalamu alaikum! I want to buy the Islamic Lessons Broadcast program (Indonesian edition).",
+    "soonBtn": "Kirim pesan WhatsApp",
+    "name": "Nama",
+    "email": "Email",
+    "emailNote": "— file Anda dikirim ke sini",
+    "phone": "Telepon",
+    "optional": "(opsional)",
+    "phonePh": "+62 812 3456 7890",
+    "paying": "Mengarahkan Anda ke pembayaran…",
+    "pay": "Bayar {0}",
+    "trust": [
+      "Pembayaran aman lewat Telr — Visa, Mastercard, Apple Pay",
+      "Langsung unduh setelah bayar, dan tautan pesanan Anda dikirim lewat email",
+      "Tautan ini milik Anda dan hanya berfungsi di perangkat Anda"
+    ],
+    "missingLink": "Tautan tidak lengkap — buka tautan dari email Anda.",
+    "cantOpenTitle": "Pesanan Anda tidak dapat dibuka",
+    "cantOpen": "Pesanan tidak dapat dibuka",
+    "contact": "Hubungi saya",
+    "waProblem": "Assalamu alaikum! I can't open my order (Indonesian edition).",
+    "opening": "Membuka pesanan Anda…",
+    "notConfirmedTitle": "Pembayaran belum terkonfirmasi",
+    "notConfirmedText": "Jika kartu Anda sudah terpotong, pesanan Anda aktif otomatis dalam beberapa menit dan tautannya dikirim lewat email. Anda bisa memuat ulang halaman ini nanti.",
+    "refresh": "Perbarui status",
+    "checking": "Mengonfirmasi pembayaran…",
+    "checkingText": "Beberapa detik lagi file Anda akan muncul. Jangan tutup halaman ini.",
+    "cancelled": "Pembayaran dibatalkan",
+    "failed": "Pembayaran tidak berhasil",
+    "notCharged": "Tidak ada biaya yang ditagihkan. Anda bisa kembali dan mencoba lagi.",
+    "tryAgain": "Coba lagi",
+    "holdTitle": "Terima kasih {0}, pembayaran Anda sudah kami terima",
+    "holdText": "Pesanan Anda ({0}) sedang diperiksa sebentar sebelum file dibuka — kirim pesan WhatsApp kepada saya, dan akan saya buka dalam beberapa menit.",
+    "holdWa": "Assalamu alaikum! I paid my order ({0}) — Indonesian edition. Please open it.",
+    "holdCta": "Kirim pesan WhatsApp",
+    "thanks": "Terima kasih {0}.",
+    "ready": "Pesanan Anda siap — {0}.",
+    "orderDetails": "Detail pesanan",
+    "orderNo": "Nomor pesanan",
+    "date": "Tanggal",
+    "amount": "Jumlah",
+    "mailLbl": "Email",
+    "soonFor": "Segera hadir untuk pesanan Anda",
+    "soonNote": "— kami kirim email begitu rilis",
+    "note": "Simpan email yang Anda terima — itulah kunci untuk kembali ke file Anda. Tautan hanya berfungsi di perangkat Anda (maksimal 3), dan perangkat baru memerlukan kode yang dikirim ke email Anda. ",
+    "productPage": "Halaman produk",
+    "chev": "›",
+    "demoMsg": "Ini pratinjau — pada pesanan sungguhan, unduhan dimulai di sini.",
+    "dlFail": "Unduhan gagal",
+    "preparing": "File Anda sedang disiapkan — sebentar lagi sampai ke email Anda.",
+    "yourFiles": "File Anda",
+    "left": "Sisa {0} dari {1} unduhan",
+    "dlBusy": "Menyiapkan…",
+    "dlOut": "Kuota habis",
+    "dl": "Unduh",
+    "recoverCompact": "Atau pulihkan tautan pesanan Anda",
+    "recoverTitle": "Pulihkan pesanan Anda",
+    "recoverText": "Masukkan email yang Anda gunakan saat membeli, dan kami kirim ulang tautan pesanan Anda — unduh program dan pembaruannya kapan saja.",
+    "recoverDone": "Jika ada pesanan dengan email ini, tautannya sudah dikirim. Periksa kotak masuk (dan folder spam) Anda.",
+    "sending": "Mengirim…",
+    "sendLink": "Kirim tautan",
+    "doneDefault": "Selesai",
+    "newDevice": "Perangkat baru",
+    "maxDevices": "Pesanan Anda sudah terbuka di 3 perangkat (batas maksimal). ",
+    "maxDevicesLink": "Hubungi saya, akan saya bukakan",
+    "waDevice": "Assalamu alaikum! I need to open my order (Indonesian edition) on a new device.",
+    "protect": "Untuk melindungi file Anda, kami akan memastikan pesanan ini milik Anda: kami akan mengirim kode ke ",
+    "sendCode": "Kirim kode",
+    "enterCode": "Masukkan kode yang dikirim ke ",
+    "verifying": "Memverifikasi…",
+    "verify": "Verifikasi",
+    "newCode": "Kode baru",
+    "sendFail": "Gagal mengirim",
+    "badCode": "Kode salah",
+    "codeLbl": "Kode verifikasi",
+    "mailAria": "Email",
+    "dateLocale": "id-ID"
+  },
+  "item": {
+    "name": "Siaran Kajian Islam",
+    "kicker": "Untuk masjid, Islamic center, para ustadz, dan penuntut ilmu",
+    "tagline": "Kajian Anda, live. Profesional. Satu tombol.",
+    "sub": "Aplikasi sederhana untuk menyiarkan dan merekam kajian: ustadz dan kitab tampil di layar, Al-Maktaba Al-Shamela sudah ada di dalamnya, lengkap dengan logo lembaga Anda — di YouTube, Facebook, dan Telegram sekaligus. Antarmuka dalam bahasa Indonesia dan Arab.",
+    "format": "Windows · Mac · Android — unduh langsung setelah pembayaran",
+    "saleLabel": "Promo peluncuran",
+    "platforms": [
+      {
+        "key": "windows",
+        "name": "Windows",
+        "note": "Windows 10 dan 11"
+      },
+      {
+        "key": "mac",
+        "name": "Mac",
+        "note": "macOS 12 ke atas"
+      },
+      {
+        "key": "android",
+        "name": "Android",
+        "note": "File APK untuk ponsel dan tablet"
+      }
+    ],
+    "inside": [
+      {
+        "title": "Al-Maktaba Al-Shamela di dalamnya",
+        "text": "Lebih dari 8.500 kitab berbahasa Arab: pembaca yang bersih, halaman edisi cetak atau teks rapi dengan nomor halaman sesuai cetakannya — ditambah kitab PDF apa pun dari komputer Anda, dalam bahasa apa saja."
+      },
+      {
+        "title": "Ustadz dan kitab di layar",
+        "text": "Delapan adegan siap pakai: ustadz, kitab bersama ustadz, satu halaman penuh, kitab terbuka yang halamannya berganti, qari, sebelum kajian, jeda, dan penutup."
+      },
+      {
+        "title": "Garis baca",
+        "text": "Garis emas mengikuti pembaca baris demi baris, dan memperbesar halaman dengan sekali ketuk."
+      },
+      {
+        "title": "Desain islami",
+        "text": "Warna-warna islami dan motif geometris, bingkai mihrab atau warna lembaga Anda; nama ustadz muncul dengan animasi yang halus."
+      },
+      {
+        "title": "Semua platform sekaligus",
+        "text": "YouTube, Facebook, dan Telegram bersamaan, plus rekaman kajian utuh di komputer Anda dalam Full HD atau 4K."
+      },
+      {
+        "title": "Suara jernih otomatis",
+        "text": "Penghilang bising dan penyeimbang volume tanpa pengaturan apa pun, serta mikrofon terpisah untuk qari."
+      },
+      {
+        "title": "Logo lembaga dan sponsor",
+        "text": "Hingga enam logo dengan warna aslinya — tampilkan dan sembunyikan dengan sekali ketuk."
+      },
+      {
+        "title": "Chapter YouTube otomatis",
+        "text": "Penanda waktu untuk bab-bab yang dibahas ustadz, siap ditempel di deskripsi video."
+      }
+    ],
+    "forWho": [
+      "Masjid atau Islamic center yang ingin menyiarkan kajiannya dengan baik",
+      "Santri yang merekam kajian gurunya lalu membagikannya",
+      "Ustadz yang menjelaskan kitab atau matan kepada murid secara jarak jauh",
+      "Relawan media yang butuh siaran andal setiap pekan"
+    ],
+    "steps": [
+      "Bayar dengan kartu atau Apple Pay",
+      "Unduh versi Windows, Mac, atau Android dari halaman pesanan Anda",
+      "Pilih kitab, ketik nama ustadz, lalu tekan “Mulai Live”"
+    ],
+    "specs": [
+      {
+        "title": "Komputer — Full HD",
+        "rows": [
+          [
+            "Sistem operasi",
+            "Windows 10 atau 11 (64-bit) — atau macOS 12 ke atas"
+          ],
+          [
+            "Prosesor",
+            "Intel Core i5 generasi ke-8, Ryzen 5, atau Apple M1 ke atas"
+          ],
+          [
+            "Memori",
+            "8 GB (16 GB lebih baik)"
+          ],
+          [
+            "Internet",
+            "Kecepatan unggah 6 Mbps atau lebih (kira-kira sebesar itu lagi untuk setiap platform tambahan)"
+          ],
+          [
+            "Penyimpanan",
+            "2 GB untuk program + sekitar 3 GB per jam rekaman"
+          ],
+          [
+            "Kamera & suara",
+            "Kamera USB apa saja atau kamera melalui capture card, dan mikrofon nirkabel atau USB"
+          ]
+        ]
+      },
+      {
+        "title": "Komputer — 4K",
+        "rows": [
+          [
+            "Prosesor",
+            "Apple M1 Pro / M2 ke atas, atau Intel Core i7 / Ryzen 7 dengan NVIDIA GTX 1660 atau lebih baik"
+          ],
+          [
+            "Memori",
+            "16 GB"
+          ],
+          [
+            "Internet",
+            "Kecepatan unggah 20 Mbps"
+          ],
+          [
+            "Kamera",
+            "Kamera yang mendukung 4K"
+          ]
+        ]
+      },
+      {
+        "title": "Ponsel — Android",
+        "rows": [
+          [
+            "Sistem operasi",
+            "Android 8 ke atas"
+          ],
+          [
+            "Memori",
+            "Minimal 3 GB (disarankan 4 GB)"
+          ],
+          [
+            "Prosesor",
+            "Snapdragon 665, Helio G85, atau Exynos 9611 ke atas (sebagian besar ponsel keluaran 2020 ke atas)"
+          ],
+          [
+            "Internet",
+            "Kecepatan unggah 4 Mbps (Wi-Fi atau koneksi 4G yang stabil)"
+          ],
+          [
+            "Tips",
+            "Untuk kajian yang panjang, biarkan ponsel tetap dicas dan terpasang di tripod yang kokoh"
+          ]
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Apakah perlu keahlian teknis?",
+        "a": "Tidak. Tombolnya besar dan jelas: pilih kitab, ketik nama ustadz, lalu tekan “Mulai Live”. Antarmukanya dalam bahasa Indonesia, dan bisa diganti ke bahasa Arab."
+      },
+      {
+        "q": "Apakah ada buku berbahasa Indonesia?",
+        "a": "Al-Maktaba Al-Shamela berisi kitab-kitab berbahasa Arab. Buku PDF apa pun, termasuk yang berbahasa Indonesia, bisa dibuka dari komputer Anda dan ditayangkan dalam siaran."
+      },
+      {
+        "q": "Bisa dipakai di perangkat apa saja?",
+        "a": "Windows, Mac, dan Android (file APK dari halaman pesanan Anda). Lihat bagian “Persyaratan” di atas."
+      },
+      {
+        "q": "Bagaimana cara memasang versi Android?",
+        "a": "Unduh file APK dari halaman pesanan Anda lewat ponsel, lalu buka. Pertama kali, ponsel akan meminta izin untuk memasang dari browser: ketuk “Setelan”, aktifkan “Izinkan dari sumber ini”, lalu kembali ke “Instal”."
+      },
+      {
+        "q": "Bagaimana cara menyiarkan kajian langsung dari masjid?",
+        "a": "Anda butuh komputer atau ponsel, kamera, mikrofon nirkabel untuk ustadz, dan koneksi internet yang stabil. Di program, pilih kitab, masukkan nama ustadz dan judul kajian, tempel stream key YouTube, Facebook, atau Telegram Anda sekali saja, lalu tekan “Mulai Live”."
+      },
+      {
+        "q": "Apakah saya perlu OBS?",
+        "a": "Program ini memakai mesin OBS yang gratis dan open source di latar belakang — Anda tidak perlu membukanya sama sekali. Di Windows, mesinnya sudah ada di dalam installer; di Mac, mesinnya dipasang sekali dengan satu tombol di dalam program."
+      },
+      {
+        "q": "Muncul peringatan saat pertama kali dibuka?",
+        "a": "Itu wajar: di Windows klik “Info selengkapnya” → “Tetap jalankan”; di Mac pindahkan program ke folder Aplikasi, buka sekali (akan muncul pesan, klik “OK”), lalu buka Pengaturan Sistem → Privasi & Keamanan, gulir ke bawah, dan klik “Tetap Buka”. Cukup sekali."
+      },
+      {
+        "q": "Bisa dipakai di berapa perangkat?",
+        "a": "Tautan pesanan Anda bisa dibuka di perangkat Anda sendiri (maksimal 3). Untuk lembaga yang punya beberapa cabang — hubungi saya."
+      },
+      {
+        "q": "Tautan unduhan Anda hilang?",
+        "a": "Buka ibrahimsaud.com/shop/thanks/, masukkan email Anda, dan tautan pesanan akan dikirim ulang. Pesanan ini milik Anda selamanya: program dan pembaruannya bisa diunduh dari sana kapan saja."
+      },
+      {
+        "q": "Apakah ini langganan?",
+        "a": "Tidak. Sekali bayar dan jadi milik Anda — tanpa biaya bulanan atau tahunan. Pembaruan untuk versi Anda gratis dari halaman pesanan yang sama."
+      }
+    ],
+    "promo": {
+      "title": "Anda yang minta… jadi saya buatkan.",
+      "text": "Video saya tentang siaran kajian mendapat lebih dari 100 komentar yang meminta hal yang sama — jadi daripada setup yang rumit, saya buatkan program siap pakai: pilih kitab, ketik nama ustadz, tekan “Mulai Live”. Dari komputer maupun ponsel."
+    },
+    "meta": {
+      "title": "Siaran Kajian Islam — siarkan kajian masjid secara live dengan satu tombol",
+      "description": "Aplikasi untuk menyiarkan dan merekam kajian Islam: ustadz dan kitab di layar, Al-Maktaba Al-Shamela di dalamnya, live di YouTube, Facebook, dan Telegram sekaligus. Windows, Mac, dan Android."
+    }
+  }
+}

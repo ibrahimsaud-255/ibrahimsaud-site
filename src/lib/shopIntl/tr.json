@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "dir": "ltr",
+    "buyNow": "Hemen satın al",
+    "reserve": "Yerini ayırt",
+    "whatsInside": "İçinde neler var?",
+    "onDevices": "Cihazlarınızda.",
+    "inside": "İçinde.",
+    "forWho": "Kimler için?",
+    "after": "Satın aldıktan sonra",
+    "specs": "Gereksinimler.",
+    "faq": "Sorular.",
+    "navOverview": "Genel bakış",
+    "navInside": "İçerik",
+    "navSpecs": "Gereksinimler",
+    "navFaq": "SSS",
+    "navBuy": "Satın al",
+    "terms": "Ödemeden hemen sonra teslim edilen dijital bir üründür; bu nedenle dosyalar indirildikten sonra iadesi yapılmaz — dosyaları kullanmanızı engelleyen bir arıza olmadıkça: bana yazın, sorunu gidereyim ya da ücretinizi iade edeyim. Dosyalar yalnızca sizin veya kurumunuzun kullanımı içindir; yeniden satılamaz ve dağıtılamaz.",
+    "obs": " Program, ücretsiz ve açık kaynaklı OBS Studio motoruyla çalışır (GPL lisansı).",
+    "availableNow": "Şimdi mevcut — pakete dahil",
+    "errName": "Adınızı girin",
+    "errEmail": "Geçersiz e-posta — dosyalarınız bu adrese gönderilir",
+    "errStart": "Ödeme başlatılamadı, lütfen tekrar deneyin",
+    "oneTime": "Tek seferlik ödeme — artık sizindir. Aylık veya yıllık abonelik yok.",
+    "approxTail": "— kartınızdan Suudi riyali (SAR) olarak tahsil edilir",
+    "saleEnds": "Kampanya 1 Aralık günü sonunda bitiyor, ardından fiyat {0} olacak",
+    "soonSeats": "Kayıtlar yakında açılıyor.",
+    "soonNA": "Henüz satışta değil.",
+    "soonTail": " Bize yazın, satışa açılır açılmaz size haber verelim.",
+    "soonWa": "Assalamu alaikum! I want to buy the Islamic Lessons Broadcast program (Turkish edition).",
+    "soonBtn": "WhatsApp'tan yazın",
+    "name": "Ad Soyad",
+    "email": "E-posta",
+    "emailNote": "— dosyalarınız buraya gönderilir",
+    "phone": "Telefon",
+    "optional": "(isteğe bağlı)",
+    "phonePh": "+90 532 000 00 00",
+    "paying": "Ödeme sayfasına yönlendiriliyorsunuz…",
+    "pay": "{0} öde",
+    "trust": [
+      "Telr ile güvenli ödeme — Visa, Mastercard, Apple Pay",
+      "Ödemeden sonra anında indirme; sipariş bağlantınız da e-postanıza gelir",
+      "Bağlantı size özeldir ve yalnızca sizin cihazlarınızda çalışır"
+    ],
+    "missingLink": "Bağlantı eksik — e-postanızdaki bağlantıyı açın.",
+    "cantOpenTitle": "Siparişinizi açamadık",
+    "cantOpen": "Sipariş açılamadı",
+    "contact": "Bana yazın",
+    "waProblem": "Assalamu alaikum! I can't open my order (Turkish edition).",
+    "opening": "Siparişiniz açılıyor…",
+    "notConfirmedTitle": "Ödeme henüz onaylanmadı",
+    "notConfirmedText": "Kartınızdan tahsilat yapıldıysa siparişiniz birkaç dakika içinde otomatik olarak etkinleşir ve bağlantı e-postanıza gelir. Bu sayfayı daha sonra yenileyebilirsiniz.",
+    "refresh": "Durumu yenile",
+    "checking": "Ödeme onaylanıyor…",
+    "checkingText": "Birkaç saniye içinde dosyalarınız görünecek. Lütfen sayfayı kapatmayın.",
+    "cancelled": "Ödeme iptal edildi",
+    "failed": "Ödeme gerçekleşmedi",
+    "notCharged": "Hiçbir ücret alınmadı. Geri dönüp tekrar deneyebilirsiniz.",
+    "tryAgain": "Tekrar dene",
+    "holdTitle": "Teşekkürler {0}, ödemeniz bize ulaştı",
+    "holdText": "Siparişiniz ({0}) dosyalar açılmadan önce kısa bir kontrolden geçiyor — bana WhatsApp'tan yazın, birkaç dakika içinde açayım.",
+    "holdWa": "Assalamu alaikum! I paid my order ({0}) — Turkish edition. Please open it.",
+    "holdCta": "WhatsApp'tan yazın",
+    "thanks": "Teşekkürler {0}.",
+    "ready": "Siparişiniz hazır — {0}.",
+    "orderDetails": "Sipariş ayrıntıları",
+    "orderNo": "Sipariş numarası",
+    "date": "Tarih",
+    "amount": "Tutar",
+    "mailLbl": "E-posta",
+    "soonFor": "Siparişinize yakında eklenecek",
+    "soonNote": "— çıktığında size e-posta göndereceğiz",
+    "note": "Gelen e-postayı saklayın — dosyalarınıza dönmenin anahtarı odur. Bağlantı yalnızca sizin cihazlarınızda (en fazla 3) çalışır; yeni bir cihaz için e-postanıza bir kod gönderilir. ",
+    "productPage": "Ürün sayfası",
+    "chev": "›",
+    "demoMsg": "Bu bir önizlemedir — gerçek bir siparişte indirme burada başlar.",
+    "dlFail": "İndirme başarısız oldu",
+    "preparing": "Dosyalarınız hazırlanıyor — kısa süre içinde e-postanıza ulaşacak.",
+    "yourFiles": "Dosyalarınız",
+    "left": "{1} indirme hakkından {0} kaldı",
+    "dlBusy": "Hazırlanıyor…",
+    "dlOut": "Hak doldu",
+    "dl": "İndir",
+    "recoverCompact": "Ya da sipariş bağlantınızı geri alın",
+    "recoverTitle": "Siparişinizi geri alın",
+    "recoverText": "Satın alırken kullandığınız e-postayı girin, sipariş bağlantınızı yeniden gönderelim — programı ve güncellemelerini dilediğiniz zaman indirin.",
+    "recoverDone": "Bu e-postayla bir sipariş varsa bağlantı gönderildi. Gelen kutunuzu (ve spam klasörünü) kontrol edin.",
+    "sending": "Gönderiliyor…",
+    "sendLink": "Bağlantıyı gönder",
+    "doneDefault": "Tamam",
+    "newDevice": "Yeni cihaz",
+    "maxDevices": "Siparişiniz 3 cihazda açık (azami sınır). ",
+    "maxDevicesLink": "Bana yazın, açayım",
+    "waDevice": "Assalamu alaikum! I need to open my order (Turkish edition) on a new device.",
+    "protect": "Dosyalarınızı korumak için siparişin size ait olduğunu doğrulayacağız. Kod gönderilecek adres: ",
+    "sendCode": "Kod gönder",
+    "enterCode": "Şu adrese gönderilen kodu girin: ",
+    "verifying": "Doğrulanıyor…",
+    "verify": "Doğrula",
+    "newCode": "Yeni kod",
+    "sendFail": "Gönderilemedi",
+    "badCode": "Kod hatalı",
+    "codeLbl": "Doğrulama kodu",
+    "mailAria": "E-posta",
+    "dateLocale": "tr-TR"
+  },
+  "item": {
+    "name": "İlmî Ders Yayını",
+    "kicker": "Camiler, İslami merkezler, hocalar ve ilim talebeleri için",
+    "tagline": "Dersiniz canlı yayında. Profesyonelce. Tek tuşla.",
+    "sub": "Dersi canlı yayınlayan ve kaydeden sade bir program: hoca ve kitap aynı ekranda, Şamile Kütüphanesi içinde hazır, kurumunuzun logoları da yerinde — YouTube, Facebook ve Telegram'da aynı anda. Türkçe ve Arapça arayüz.",
+    "format": "Windows · Mac · Android — ödemeden hemen sonra indirin",
+    "saleLabel": "Lansman fırsatı",
+    "platforms": [
+      {
+        "key": "windows",
+        "name": "Windows",
+        "note": "Windows 10 ve 11"
+      },
+      {
+        "key": "mac",
+        "name": "Mac",
+        "note": "macOS 12 ve üzeri"
+      },
+      {
+        "key": "android",
+        "name": "Android",
+        "note": "Telefon ve tabletler için APK dosyası"
+      }
+    ],
+    "inside": [
+      {
+        "title": "Şamile Kütüphanesi içinde",
+        "text": "8.500'den fazla Arapça kitap: sade bir okuyucu, matbu nüshanın sayfaları ya da baskının sayfa numaralarıyla düzenli metin — üstelik bilgisayarınızdaki her dilde PDF kitap."
+      },
+      {
+        "title": "Hoca ve kitap aynı ekranda",
+        "text": "Sekiz hazır sahne: hoca, kitap ve hoca, tam sayfa, sayfaları çevrilen açık kitap, kıraat eden, ders öncesi, ara ve kapanış."
+      },
+      {
+        "title": "Okuma çizgisi",
+        "text": "Altın renkli bir çizgi okuyanı satır satır takip eder, tek dokunuşla sayfaya yakınlaşır."
+      },
+      {
+        "title": "İslami tasarım",
+        "text": "İslami renkler ve geometrik desenler, mihrap çerçevesi ya da kurumunuzun renkleri; hocanın adı akıcı bir animasyonla ekrana gelir."
+      },
+      {
+        "title": "Tüm platformlarda aynı anda",
+        "text": "YouTube, Facebook ve Telegram birlikte; ayrıca dersin tamamı bilgisayarınıza Full HD veya 4K olarak kaydedilir."
+      },
+      {
+        "title": "Otomatik temiz ses",
+        "text": "Hiçbir ayar gerektirmeden gürültü giderme ve ses seviyesi dengeleme; kıraat eden için ayrı mikrofon."
+      },
+      {
+        "title": "Kurum ve destekçi logoları",
+        "text": "Orijinal renkleriyle altı logoya kadar — tek dokunuşla gösterip gizleyin."
+      },
+      {
+        "title": "Otomatik YouTube bölümleri",
+        "text": "Hocanın işlediği bölümler için zaman damgaları, video açıklamasına yapıştırılmaya hazır."
+      }
+    ],
+    "forWho": [
+      "Derslerini düzgün bir şekilde yayınlamak isteyen cami veya İslami merkez",
+      "Hocasının derslerini kaydedip paylaşan talebe",
+      "Bir kitabı veya metni öğrencilerine uzaktan anlatan hoca",
+      "Her hafta güvenilir bir yayına ihtiyaç duyan medya gönüllüsü"
+    ],
+    "steps": [
+      "Kartla veya Apple Pay ile ödeyin",
+      "Sipariş sayfanızdan Windows, Mac veya Android sürümünü indirin",
+      "Kitabı seçin, hocanın adını yazın ve “Canlı Yayın” düğmesine basın"
+    ],
+    "specs": [
+      {
+        "title": "Bilgisayar — Full HD",
+        "rows": [
+          [
+            "İşletim sistemi",
+            "Windows 10 veya 11 (64 bit) — ya da macOS 12 ve üzeri"
+          ],
+          [
+            "İşlemci",
+            "8. nesil Intel Core i5, Ryzen 5 veya Apple M1 ve üzeri"
+          ],
+          [
+            "Bellek",
+            "8 GB (16 GB daha iyi)"
+          ],
+          [
+            "İnternet",
+            "6 Mbps veya üzeri yükleme hızı (her ek platform için yaklaşık bir o kadar daha)"
+          ],
+          [
+            "Depolama",
+            "Program için 2 GB + kaydın her saati için yaklaşık 3 GB"
+          ],
+          [
+            "Kamera ve ses",
+            "Herhangi bir USB kamera veya yakalama kartı (capture card) üzerinden bir kamera; kablosuz ya da USB mikrofon"
+          ]
+        ]
+      },
+      {
+        "title": "Bilgisayar — 4K",
+        "rows": [
+          [
+            "İşlemci",
+            "Apple M1 Pro / M2 ve üzeri ya da NVIDIA GTX 1660 veya daha iyisiyle Intel Core i7 / Ryzen 7"
+          ],
+          [
+            "Bellek",
+            "16 GB"
+          ],
+          [
+            "İnternet",
+            "20 Mbps yükleme hızı"
+          ],
+          [
+            "Kamera",
+            "4K çekim yapabilen bir kamera"
+          ]
+        ]
+      },
+      {
+        "title": "Telefon — Android",
+        "rows": [
+          [
+            "İşletim sistemi",
+            "Android 8 ve üzeri"
+          ],
+          [
+            "Bellek",
+            "En az 3 GB (4 GB önerilir)"
+          ],
+          [
+            "İşlemci",
+            "Snapdragon 665, Helio G85 veya Exynos 9611 ve üzeri (2020 ve sonrası telefonların çoğu)"
+          ],
+          [
+            "İnternet",
+            "4 Mbps yükleme hızı (Wi-Fi veya stabil bir 4G bağlantısı)"
+          ],
+          [
+            "İpucu",
+            "Uzun derslerde telefonu şarjda ve sağlam bir tripod üzerinde tutun"
+          ]
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Teknik bilgi gerekiyor mu?",
+        "a": "Hayır. Düğmeler büyük ve anlaşılır: kitabı seçin, hocanın adını yazın ve “Canlı Yayın” düğmesine basın. Arayüz Türkçedir, istenirse Arapçaya geçilebilir."
+      },
+      {
+        "q": "Türkçe kitaplar var mı?",
+        "a": "Şamile Kütüphanesi Arapça kitaplardan oluşur. Türkçe kitaplar dahil her PDF kitabı bilgisayarınızdan açıp yayında gösterebilirsiniz."
+      },
+      {
+        "q": "Hangi cihazlarda çalışır?",
+        "a": "Windows, Mac ve Android'de (sipariş sayfanızdan indirilen APK dosyası). Yukarıdaki “Gereksinimler” bölümüne bakın."
+      },
+      {
+        "q": "Android sürümünü nasıl kurarım?",
+        "a": "APK dosyasını telefonunuzda sipariş sayfanızdan indirip açın. İlk seferde telefon, tarayıcıdan yüklemeye izin vermenizi ister: “Ayarlar”a dokunun, “Bu kaynaktan izin ver” seçeneğini açın ve “Yükle”ye geri dönün."
+      },
+      {
+        "q": "Camiden bir dersi nasıl canlı yayınlarım?",
+        "a": "Bir bilgisayar veya telefon, bir kamera, hoca için kablosuz bir mikrofon ve stabil bir internet bağlantısı yeterli. Programda kitabı seçin, hocanın adını ve dersin başlığını girin, YouTube, Facebook veya Telegram yayın anahtarınızı bir kez yapıştırın ve “Canlı Yayın” düğmesine basın."
+      },
+      {
+        "q": "OBS gerekli mi?",
+        "a": "Program arka planda ücretsiz ve açık kaynaklı OBS motorunu kullanır — onu hiç açmanız gerekmez. Windows'ta motor kurulum dosyasının içindedir; Mac'te ise programdaki bir düğmeyle bir kereliğine kurulur."
+      },
+      {
+        "q": "İlk açılışta bir uyarı mı çıkıyor?",
+        "a": "Bu normaldir: Windows'ta “Ek bilgi” → “Yine de çalıştır”a tıklayın; Mac'te programı Uygulamalar klasörüne taşıyın, bir kez açın (bir mesaj çıkar, “Tamam”a tıklayın), ardından Sistem Ayarları → Gizlilik ve Güvenlik'e gidin, aşağı kaydırın ve “Yine de Aç”a tıklayın. Yalnızca bir kez."
+      },
+      {
+        "q": "Kaç cihazda kullanabilirim?",
+        "a": "Sipariş bağlantınız kendi cihazlarınızda (en fazla 3) açılır. Birden fazla şubesi olan kurumlar için — bana yazın."
+      },
+      {
+        "q": "İndirme bağlantınızı mı kaybettiniz?",
+        "a": "ibrahimsaud.com/shop/thanks/ adresini açın, e-postanızı girin; sipariş bağlantısı size yeniden gönderilir. Sipariş kalıcı olarak sizindir: program ve güncellemeleri dilediğiniz zaman oradan indirilir."
+      },
+      {
+        "q": "Abonelik mi?",
+        "a": "Hayır. Tek ödeme ve sizindir — aylık veya yıllık ücret yok. Sürümünüzün güncellemeleri aynı sipariş sayfasından ücretsizdir."
+      }
+    ],
+    "promo": {
+      "title": "Siz istediniz… ben de yaptım.",
+      "text": "Ders yayını üzerine çektiğim videoya aynı şeyi isteyen 100'den fazla yorum geldi — ben de karmaşık kurulumlar yerine hazır bir program yaptım: kitabı seçin, hocanın adını yazın, “Canlı Yayın”a basın. Bilgisayardan da, telefondan da."
+    },
+    "meta": {
+      "title": "İlmî Ders Yayını — cami derslerini tek tuşla canlı yayınlayın",
+      "description": "İslami dersleri canlı yayınlayan ve kaydeden program: hoca ve kitap aynı ekranda, Şamile Kütüphanesi içinde hazır, YouTube, Facebook ve Telegram'da aynı anda canlı. Windows, Mac ve Android."
+    }
+  }
+}

@@ -162,3 +162,8 @@ a.v2-plat .tag { color: #2F66FF; }
 .v2-shop-ru-foot { padding: 28px 0 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--fg-2); }
 .v2-shop-ru-foot .v2-wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .v2-shop-ru-foot a { color: var(--blue); }
+
+/* مبدّل اللغة أسفل صفحات النسخة العالميّة */
+.v2-shop-ru-foot .langs { display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center; }
+.v2-shop-ru-foot .langs a { color: inherit; opacity: .7; text-decoration: none; font-size: 14px; }
+.v2-shop-ru-foot .langs a:hover, .v2-shop-ru-foot .langs a[aria-current] { opacity: 1; color: #2F66FF; }

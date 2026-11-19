@@ -1,6 +1,7 @@
 // نصوص واجهة المتجر بثلاث لغات — العربيّة هي الأصل (نفس النصوص الحيّة حرفيّاً)، والروسيّة لنسخة روسيا
 // (/ru/lessons-broadcast/) والإنجليزيّة للنسخة الإنجليزيّة (/en/lessons-broadcast/). المنتج يحدّد لغته بـ`lang` في shop.ts، وصفحة الشكر تعرفها من sku الطلب.
-export type ShopLang = "ar" | "ru" | "en";
+import { INTL, type IntlCode } from "./shopIntl";
+export type ShopLang = "ar" | "ru" | "en" | IntlCode;
 
 const ar = {
   dir: "rtl" as "rtl" | "ltr",
@@ -152,7 +153,26 @@ const en: ShopT = {
   dateLocale: "en-GB",
 };
 
-export const shopT = (lang?: ShopLang): ShopT => (lang === "ru" ? ru : lang === "en" ? en : ar);
+// لغات الحملة من JSON: القوالب «{0}» تصير دوالّ مثل نظيرتها الإنجليزيّة، وأيّ مفتاح ناقص يأخذ الإنجليزيّ.
+const fill = (s: string, a: unknown[]) => s.replace(/\{(\d)\}/g, (_, i) => String(a[+i] ?? ""));
+function fromJson(ui: Record<string, string>): ShopT {
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(en)) {
+    const s = ui[k];
+    out[k] = typeof v === "function" ? (typeof s === "string" ? (...a: unknown[]) => fill(s, a) : v) : (s ?? v);
+  }
+  return out as ShopT;
+}
+const intlT: Partial<Record<IntlCode, ShopT>> = {};
+export const shopT = (lang?: ShopLang): ShopT => {
+  if (!lang || lang === "ar") return ar;
+  if (lang === "ru") return ru;
+  if (lang === "en") return en;
+  return (intlT[lang] ??= fromJson(INTL[lang].ui));
+};
+/** كل لغات المتجر غير العربيّة (لـ?l= في رابط صفحة الطلب). */
+export const isShopLang = (v: unknown): v is ShopLang =>
+  typeof v === "string" && (v === "ar" || v === "ru" || v === "en" || v in INTL);
 
 /** السعر بلغة الصفحة: «١٤٩ ر.س» للعربيّة، و«375 SAR» للروسيّة والإنجليزيّة. */
 export function money(n: number, lang?: ShopLang): string {

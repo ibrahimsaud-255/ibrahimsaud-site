@@ -5,7 +5,7 @@
 // ?demo=1 يعرض طلباً مدفوعاً وهميّاً بلا أيّ اتّصال — للمعاينة.
 import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { fmtSize, shopCall, itemBySlug, shopItems } from "@/lib/shop";
-import { langOfSku, money, shopT, type ShopLang, type ShopT } from "@/lib/shopUi";
+import { isShopLang, langOfSku, money, shopT, type ShopLang, type ShopT } from "@/lib/shopUi";
 import { PlatformLogo, fileKey } from "./Platforms";
 import { waHref } from "@/lib/v2";
 
@@ -45,7 +45,11 @@ const dateFmt = (iso: string | null, T: ShopT) =>
   iso ? new Date(iso).toLocaleDateString(T.dateLocale, { day: "numeric", month: "long", year: "numeric" }) : "";
 
 /** لغة الصفحة قبل وصول الطلب: ‎?l=ru|en (رابط الإيميل) أو آخر شراء من صفحة روسيّة/إنجليزيّة. */
-const asLang = (v: string | null): ShopLang | null => (v === "ru" || v === "en" ? v : null);
+const asLang = (v: string | null): ShopLang | null => (v !== "ar" && isShopLang(v) ? v : null);
+/** منتج الطلب بلغة الصفحة (النسخة العالميّة لها صفحة لكل لغة بنفس الـsku). */
+const itemFor = (sku: string, lang: ShopLang) =>
+  shopItems.find((i) => i.sku === sku.split("@")[0] && i.lang === lang) || itemBySlug(sku.split("@")[0]);
+
 function hintLang(search: string | null): ShopLang {
   const q = search ? asLang(new URLSearchParams(search).get("l")) : null;
   if (q) return q;
@@ -91,7 +95,12 @@ function ThanksInner({ T, lang, onLang }: { T: ShopT; lang: ShopLang; onLang: (l
     shopCall<OrderView>("order", { o: q.o, t: q.t, device: dev }).then((r) => {
       if (!on) return;
       if (!r.ok) setErr((lang === "ar" && r.data.error) || T.cantOpen);
-      else { setOrder(r.data); onLang(langOfSku(r.data.sku)); }
+      else {
+        setOrder(r.data);
+        // النسخة العالميّة (sku ‎-en) تُباع بعدّة لغات: نبقي لغة صفحة المشتري إن لم تكن عربيّة/روسيّة
+        const s = langOfSku(r.data.sku);
+        onLang(s === "en" && lang !== "ar" && lang !== "ru" ? lang : s);
+      }
     });
     return () => { on = false; };
   }, [q, dev, tick]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -155,7 +164,7 @@ function ThanksInner({ T, lang, onLang }: { T: ShopT; lang: ShopLang; onLang: (l
 
       {/* منصّات قادمة (أندرويد / آيفون): تصل لنفس الطلب لمّا تنزل — بلا شراء جديد */}
       {(() => {
-        const soon = (itemBySlug(order.sku)?.platforms || []).filter((p) => p.soon);
+        const soon = (itemFor(order.sku, lang)?.platforms || []).filter((p) => p.soon);
         if (!soon.length) return null;
         return (
           <section className="v2-shop-files" aria-label={T.soonFor}>
@@ -173,7 +182,7 @@ function ThanksInner({ T, lang, onLang }: { T: ShopT; lang: ShopLang; onLang: (l
       })()}
 
       <p className="v2-shop-note">
-        {T.note}{(() => { const it = itemBySlug(order.sku); return it ? <a className="v2-link" href={it.publicPath || `/shop/${it.slug}/`}>{T.productPage} <span className="chev">{T.chev}</span></a> : null; })()}
+        {T.note}{(() => { const it = itemFor(order.sku, lang); return it ? <a className="v2-link" href={it.publicPath || `/shop/${it.slug}/`}>{T.productPage} <span className="chev">{T.chev}</span></a> : null; })()}
       </p>
     </div>
   );

@@ -10,6 +10,7 @@ import BuyPanel from "@/components/v2/shop/BuyPanel";
 import { PlatformCards } from "@/components/v2/shop/Platforms";
 import type { ShopItem } from "@/lib/shop";
 import { shopT } from "@/lib/shopUi";
+import { LANG_NAMES, langPath } from "@/lib/shopIntl";
 
 // صفحة المنتج كاملة — تُستخدم في /shop/<slug>/ وفي الصفحة العامّة /lessons-broadcast/.
 // أيقونات المتطلّبات بأسلوب آبل: خطّ رفيع بسيط لكل بند
@@ -158,7 +159,12 @@ export default function ShopItemView({ item: i }: { item: ShopItem }) {
         <footer className="v2-shop-ru-foot">
           <div className="v2-wrap">
             <span>© Ibrahim Saud · ibrahimsaud.com</span>
-            <a href="/lessons-broadcast/?lang=ar" lang="ar" dir="rtl">النسخة العربيّة</a>
+            {/* مبدّل اللغة: كل لغات الصفحة بأسمائها */}
+            <nav className="langs" aria-label="Languages">
+              {Object.entries(LANG_NAMES).map(([code, label]) => (
+                <a key={code} href={langPath(code)} lang={code} aria-current={code === i.lang ? "page" : undefined}>{label}</a>
+              ))}
+            </nav>
           </div>
         </footer>
       ) : <Footer />}

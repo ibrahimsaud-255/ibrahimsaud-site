@@ -149,7 +149,7 @@ type Order = {
   status: "pending" | "paid" | "failed" | "cancelled"; telr_cart: string; telr_order_ref: string | null; telr_tran_ref: string | null;
   access_token_hash: string; email_token_hash: string | null; trusted_devices: string[]; otp_hash: string | null; otp_expires: string | null; otp_attempts: number;
   otp_sent_at: string | null; email_sent_at: string | null; check_count: number; created_at: string; updated_at?: string; paid_at: string | null;
-  buyer_country?: string | null; ip_country?: string | null; card_country?: string | null; hold?: string | null; pay_method?: "telr" | "transfer";
+  buyer_country?: string | null; ip_country?: string | null; card_country?: string | null; hold?: string | null; pay_method?: "telr" | "transfer"; lang?: string | null;
 };
 
 async function getProduct(sku: string, activeOnly = true): Promise<Product | null> {
@@ -264,8 +264,11 @@ async function telrCheck(order: Order): Promise<Check> {
   return { status, amount: d?.amount ?? null, tranRef: d?.tranRef ?? null, cardCountry: d?.cardCountry ?? null };
 }
 
-function thanksUrl(order: { id: string; sku?: string }, token: string) {
-  return `${SITE}/shop/thanks/?o=${order.id}&t=${encodeURIComponent(token)}${langOf(order.sku) !== "ar" ? `&l=${langOf(order.sku)}` : ""}`;
+// لغة صفحة الشراء (النسخة العالميّة تُباع بعدّة لغات بنفس الـsku) ← رابط صفحة الطلب يفتح بها.
+const PAGE_LANGS = new Set(["ar", "en", "ru", "fr", "de", "tr", "id", "ur", "fa", "ps", "ckb"]);
+function thanksUrl(order: { id: string; sku?: string; lang?: string | null }, token: string) {
+  const l = order.lang && PAGE_LANGS.has(order.lang) ? order.lang : langOf(order.sku);
+  return `${SITE}/shop/thanks/?o=${order.id}&t=${encodeURIComponent(token)}${l !== "ar" ? `&l=${l}` : ""}`;
 }
 
 /**
@@ -372,6 +375,7 @@ async function checkout(req: Request, b: Record<string, unknown>) {
   await rest("POST", "shop_orders", {
     id, sku: p.sku, title: pr.base.title, amount, buyer_name: name, buyer_email: email, buyer_phone: phone || null,
     telr_cart: cart, access_token_hash: await sha256(token), buyer_country: pr.country || null, ip_country: pr.ip || null,
+    lang: PAGE_LANGS.has(String(b.lang)) ? String(b.lang) : null,
   }, "return=minimal");
 
   let d: { url?: string; ref?: string | null; amount?: string };

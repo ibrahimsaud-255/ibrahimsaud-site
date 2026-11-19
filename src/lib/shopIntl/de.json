@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "dir": "ltr",
+    "buyNow": "Jetzt kaufen",
+    "reserve": "Reservieren",
+    "whatsInside": "Was steckt drin?",
+    "onDevices": "Auf Ihren Geräten.",
+    "inside": "Im Inneren.",
+    "forWho": "Für wen?",
+    "after": "Nach dem Kauf",
+    "specs": "Systemanforderungen.",
+    "faq": "Fragen.",
+    "navOverview": "Überblick",
+    "navInside": "Inhalt",
+    "navSpecs": "Anforderungen",
+    "navFaq": "FAQ",
+    "navBuy": "Kaufen",
+    "terms": "Ein digitales Produkt, das direkt nach der Zahlung geliefert wird – daher ist keine Rückerstattung möglich, sobald die Dateien heruntergeladen wurden. Es sei denn, ein Fehler hindert Sie an der Nutzung: Schreiben Sie mir, und ich behebe ihn oder erstatte Ihnen den Betrag. Die Dateien sind nur für Sie bzw. Ihre Organisation bestimmt und dürfen weder weiterverkauft noch weitergegeben werden.",
+    "obs": " Das Programm läuft auf der kostenlosen Open-Source-Engine OBS Studio (GPL-Lizenz).",
+    "availableNow": "Jetzt verfügbar – inklusive",
+    "errName": "Bitte geben Sie Ihren Namen ein",
+    "errEmail": "Ungültige E-Mail – Ihre Dateien werden dorthin gesendet",
+    "errStart": "Die Zahlung konnte nicht gestartet werden, bitte versuchen Sie es erneut",
+    "oneTime": "Einmalzahlung – es gehört Ihnen. Kein Monats- oder Jahresabo.",
+    "approxTail": "– Ihre Karte wird in Saudi-Riyal (SAR) belastet",
+    "saleEnds": "Angebot gilt bis Ende 1. Dezember, danach gilt wieder der Preis von {0}",
+    "soonSeats": "Plätze werden bald freigeschaltet.",
+    "soonNA": "Noch nicht erhältlich.",
+    "soonTail": " Schreiben Sie uns, und wir sagen Ihnen Bescheid, sobald es losgeht.",
+    "soonWa": "Assalamu alaikum! I want to buy the Islamic Lessons Broadcast program (German edition).",
+    "soonBtn": "Auf WhatsApp schreiben",
+    "name": "Name",
+    "email": "E-Mail",
+    "emailNote": "– Ihre Dateien werden hierhin gesendet",
+    "phone": "Telefon",
+    "optional": "(optional)",
+    "phonePh": "+49 151 23456789",
+    "paying": "Weiterleitung zur Zahlung…",
+    "pay": "{0} bezahlen",
+    "trust": [
+      "Sichere Zahlung über Telr – Visa, Mastercard, Apple Pay",
+      "Sofortiger Download nach der Zahlung, und der Link zu Ihrer Bestellung kommt per E-Mail",
+      "Der Link gehört Ihnen und funktioniert nur auf Ihren Geräten"
+    ],
+    "missingLink": "Der Link ist unvollständig – öffnen Sie den Link aus Ihrer E-Mail.",
+    "cantOpenTitle": "Wir konnten Ihre Bestellung nicht öffnen",
+    "cantOpen": "Bestellung konnte nicht geöffnet werden",
+    "contact": "Schreiben Sie mir",
+    "waProblem": "Assalamu alaikum! I can't open my order (German edition).",
+    "opening": "Ihre Bestellung wird geöffnet…",
+    "notConfirmedTitle": "Zahlung noch nicht bestätigt",
+    "notConfirmedText": "Falls Ihre Karte belastet wurde, wird Ihre Bestellung innerhalb weniger Minuten automatisch freigeschaltet, und der Link kommt per E-Mail. Sie können diese Seite später neu laden.",
+    "refresh": "Status aktualisieren",
+    "checking": "Zahlung wird bestätigt…",
+    "checkingText": "Nur ein paar Sekunden, dann erscheinen Ihre Dateien. Bitte schließen Sie die Seite nicht.",
+    "cancelled": "Zahlung abgebrochen",
+    "failed": "Die Zahlung ist nicht durchgegangen",
+    "notCharged": "Es wurde nichts abgebucht. Sie können zurückgehen und es erneut versuchen.",
+    "tryAgain": "Erneut versuchen",
+    "holdTitle": "Danke, {0} – wir haben Ihre Zahlung erhalten",
+    "holdText": "Ihre Bestellung ({0}) wird kurz geprüft, bevor die Dateien freigeschaltet werden – schreiben Sie mir auf WhatsApp, und ich schalte sie innerhalb weniger Minuten frei.",
+    "holdWa": "Assalamu alaikum! I paid my order ({0}) — German edition. Please open it.",
+    "holdCta": "Auf WhatsApp schreiben",
+    "thanks": "Danke, {0}.",
+    "ready": "Ihre Bestellung ist bereit – {0}.",
+    "orderDetails": "Bestelldetails",
+    "orderNo": "Bestellnummer",
+    "date": "Datum",
+    "amount": "Betrag",
+    "mailLbl": "E-Mail",
+    "soonFor": "Bald für Ihre Bestellung verfügbar",
+    "soonNote": "– wir schreiben Ihnen, sobald es erscheint",
+    "note": "Bewahren Sie die erhaltene E-Mail auf – sie ist Ihr Schlüssel zu Ihren Dateien. Der Link funktioniert nur auf Ihren Geräten (bis zu 3), und ein neues Gerät benötigt einen Code, der an Ihre E-Mail gesendet wird. ",
+    "productPage": "Produktseite",
+    "chev": "›",
+    "demoMsg": "Dies ist eine Vorschau – bei einer echten Bestellung beginnt der Download hier.",
+    "dlFail": "Download fehlgeschlagen",
+    "preparing": "Ihre Dateien werden vorbereitet – sie erreichen Sie in Kürze per E-Mail.",
+    "yourFiles": "Ihre Dateien",
+    "left": "Noch {0} von {1} Downloads übrig",
+    "dlBusy": "Wird vorbereitet…",
+    "dlOut": "Aufgebraucht",
+    "dl": "Herunterladen",
+    "recoverCompact": "Oder den Link zu Ihrer Bestellung wiederherstellen",
+    "recoverTitle": "Bestellung wiederherstellen",
+    "recoverText": "Geben Sie die E-Mail-Adresse ein, mit der Sie gekauft haben, und wir senden Ihnen den Link zu Ihrer Bestellung erneut – laden Sie das Programm und seine Updates jederzeit herunter.",
+    "recoverDone": "Falls es eine Bestellung mit dieser E-Mail-Adresse gibt, wurde der Link gesendet. Prüfen Sie Ihren Posteingang (und den Spam-Ordner).",
+    "sending": "Wird gesendet…",
+    "sendLink": "Link senden",
+    "doneDefault": "Fertig",
+    "newDevice": "Neues Gerät",
+    "maxDevices": "Ihre Bestellung ist auf 3 Geräten geöffnet (das Maximum). ",
+    "maxDevicesLink": "Schreiben Sie mir, und ich schalte sie frei",
+    "waDevice": "Assalamu alaikum! I need to open my order (German edition) on a new device.",
+    "protect": "Zum Schutz Ihrer Dateien bestätigen wir, dass die Bestellung Ihnen gehört: Wir senden einen Code an ",
+    "sendCode": "Code senden",
+    "enterCode": "Geben Sie den Code ein, der gesendet wurde an ",
+    "verifying": "Wird überprüft…",
+    "verify": "Bestätigen",
+    "newCode": "Neuer Code",
+    "sendFail": "Senden fehlgeschlagen",
+    "badCode": "Falscher Code",
+    "codeLbl": "Bestätigungscode",
+    "mailAria": "E-Mail",
+    "dateLocale": "de-DE"
+  },
+  "item": {
+    "name": "Islamischer Unterricht Live",
+    "kicker": "Für Moscheen, islamische Zentren, Lehrer und Schüler des Wissens",
+    "tagline": "Ihr Unterricht, live. Professionell. Mit einem Knopfdruck.",
+    "sub": "Eine einfache Software, die den Unterricht überträgt und aufzeichnet: der Lehrer und das Buch im Bild, die Shamela-Bibliothek integriert und die Logos Ihrer Organisation – auf YouTube, Facebook und Telegram gleichzeitig. Oberfläche auf Deutsch und Arabisch.",
+    "format": "Windows · Mac · Android – Download direkt nach der Zahlung",
+    "saleLabel": "Einführungsangebot",
+    "platforms": [
+      {
+        "key": "windows",
+        "name": "Windows",
+        "note": "Windows 10 und 11"
+      },
+      {
+        "key": "mac",
+        "name": "Mac",
+        "note": "macOS 12 und neuer"
+      },
+      {
+        "key": "android",
+        "name": "Android",
+        "note": "APK-Datei für Smartphones und Tablets"
+      }
+    ],
+    "inside": [
+      {
+        "title": "Die Shamela-Bibliothek integriert",
+        "text": "Über 8.500 arabische Bücher: eine übersichtliche Leseansicht, die Seiten der gedruckten Ausgabe oder sauberer Text mit den Seitenzahlen der Ausgabe – dazu jedes PDF-Buch von Ihrem Computer, in jeder Sprache."
+      },
+      {
+        "title": "Der Lehrer und das Buch im Bild",
+        "text": "Acht fertige Szenen: Lehrer, Buch mit Lehrer, ganze Seite, ein aufgeschlagenes Buch, das umblättert, Vorleser, vor dem Unterricht, Pause und Abschluss."
+      },
+      {
+        "title": "Lesezeile",
+        "text": "Ein goldener Balken folgt dem Vorleser Zeile für Zeile und zoomt mit einem Tippen in die Seite."
+      },
+      {
+        "title": "Islamisches Design",
+        "text": "Islamische Farben und geometrische Muster, ein Mihrab-Rahmen oder die Farben Ihrer Organisation; der Name des Lehrers erscheint mit einer sanften Animation."
+      },
+      {
+        "title": "Alle Plattformen auf einmal",
+        "text": "YouTube, Facebook und Telegram zusammen, dazu eine vollständige Aufnahme des Unterrichts auf Ihrem Computer in Full HD oder 4K."
+      },
+      {
+        "title": "Klarer Ton – automatisch",
+        "text": "Rauschunterdrückung und Pegelausgleich ohne jede Einstellung, dazu ein eigenes Mikrofon für den Vorleser."
+      },
+      {
+        "title": "Logos von Organisation und Sponsoren",
+        "text": "Bis zu sechs Logos in ihren Originalfarben – mit einem Tippen ein- und ausgeblendet."
+      },
+      {
+        "title": "YouTube-Kapitel automatisch",
+        "text": "Zeitmarken für die Abschnitte, die der Lehrer behandelt hat – fertig zum Einfügen in die Videobeschreibung."
+      }
+    ],
+    "forWho": [
+      "Eine Moschee oder ein islamisches Zentrum, das seinen Unterricht würdig veröffentlichen möchte",
+      "Ein Schüler, der den Unterricht seines Scheichs filmt und teilt",
+      "Ein Lehrer, der Schülern aus der Ferne ein Buch oder einen Matn erklärt",
+      "Ein ehrenamtlicher Medienhelfer, der jede Woche einen zuverlässigen Stream braucht"
+    ],
+    "steps": [
+      "Mit Karte oder Apple Pay bezahlen",
+      "Die Version für Windows, Mac oder Android auf Ihrer Bestellseite herunterladen",
+      "Buch wählen, den Namen des Scheichs eingeben und „Live gehen“ drücken"
+    ],
+    "specs": [
+      {
+        "title": "Computer – Full HD",
+        "rows": [
+          [
+            "System",
+            "Windows 10 oder 11 (64 Bit) – oder macOS 12 und neuer"
+          ],
+          [
+            "Prozessor",
+            "Intel Core i5 der 8. Generation, Ryzen 5 oder Apple M1 und höher"
+          ],
+          [
+            "Arbeitsspeicher",
+            "8 GB (16 GB sind besser)"
+          ],
+          [
+            "Internet",
+            "Upload von 6 Mbit/s oder mehr (etwa noch einmal so viel für jede weitere Plattform)"
+          ],
+          [
+            "Speicherplatz",
+            "2 GB für das Programm + etwa 3 GB pro Stunde Aufnahme"
+          ],
+          [
+            "Kamera & Ton",
+            "Jede USB-Kamera oder eine Kamera über eine Capture-Karte sowie ein Funk- oder USB-Mikrofon"
+          ]
+        ]
+      },
+      {
+        "title": "Computer – 4K",
+        "rows": [
+          [
+            "Prozessor",
+            "Apple M1 Pro / M2 und höher oder Intel Core i7 / Ryzen 7 mit einer NVIDIA GTX 1660 oder besser"
+          ],
+          [
+            "Arbeitsspeicher",
+            "16 GB"
+          ],
+          [
+            "Internet",
+            "Upload von 20 Mbit/s"
+          ],
+          [
+            "Kamera",
+            "Eine 4K-fähige Kamera"
+          ]
+        ]
+      },
+      {
+        "title": "Smartphone – Android",
+        "rows": [
+          [
+            "System",
+            "Android 8 und neuer"
+          ],
+          [
+            "Arbeitsspeicher",
+            "Mindestens 3 GB (4 GB empfohlen)"
+          ],
+          [
+            "Prozessor",
+            "Snapdragon 665, Helio G85 oder Exynos 9611 und höher (die meisten Smartphones ab 2020)"
+          ],
+          [
+            "Internet",
+            "Upload von 4 Mbit/s (WLAN oder stabile 4G-Verbindung)"
+          ],
+          [
+            "Tipp",
+            "Bei langem Unterricht das Smartphone am Ladegerät lassen und auf ein stabiles Stativ stellen"
+          ]
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Brauche ich technische Erfahrung?",
+        "a": "Nein. Die Schaltflächen sind groß und klar: Buch wählen, den Namen des Scheichs eingeben und „Live gehen“ drücken. Die Oberfläche ist auf Deutsch, mit einer Umschaltung auf Arabisch."
+      },
+      {
+        "q": "Gibt es Bücher auf Deutsch?",
+        "a": "Die Shamela-Bibliothek enthält arabische Bücher. Jedes PDF-Buch – auch auf Deutsch – lässt sich von Ihrem Computer öffnen und im Stream zeigen."
+      },
+      {
+        "q": "Auf welchen Geräten läuft es?",
+        "a": "Windows, Mac und Android (eine APK-Datei von Ihrer Bestellseite). Siehe „Systemanforderungen“ oben."
+      },
+      {
+        "q": "Wie installiere ich die Android-Version?",
+        "a": "Laden Sie die APK auf dem Smartphone von Ihrer Bestellseite herunter und öffnen Sie sie. Beim ersten Mal fragt das Smartphone, ob Installationen aus dem Browser erlaubt werden sollen: Tippen Sie auf „Einstellungen“, aktivieren Sie „Dieser Quelle vertrauen“ und gehen Sie zurück zu „Installieren“."
+      },
+      {
+        "q": "Wie übertrage ich einen Unterricht live aus der Moschee?",
+        "a": "Sie brauchen einen Computer oder ein Smartphone, eine Kamera, ein Funkmikrofon für den Scheich und eine stabile Internetverbindung. Wählen Sie im Programm das Buch, geben Sie den Namen des Scheichs und den Titel des Unterrichts ein, fügen Sie einmalig Ihren Stream-Schlüssel für YouTube, Facebook oder Telegram ein und drücken Sie „Live gehen“."
+      },
+      {
+        "q": "Brauche ich OBS?",
+        "a": "Das Programm nutzt im Hintergrund die kostenlose Open-Source-Engine von OBS – Sie müssen sie nie öffnen. Unter Windows ist die Engine im Installationsprogramm enthalten; auf dem Mac wird sie einmalig per Knopfdruck im Programm installiert."
+      },
+      {
+        "q": "Beim ersten Öffnen erscheint eine Warnung?",
+        "a": "Das ist normal: Unter Windows klicken Sie auf „Weitere Informationen“ → „Trotzdem ausführen“; auf dem Mac verschieben Sie das Programm in den Ordner „Programme“, öffnen es einmal (es erscheint eine Meldung, klicken Sie auf „OK“), gehen dann zu Systemeinstellungen → Datenschutz & Sicherheit, scrollen nach unten und klicken auf „Dennoch öffnen“. Nur ein einziges Mal."
+      },
+      {
+        "q": "Auf wie vielen Geräten kann ich es nutzen?",
+        "a": "Der Link zu Ihrer Bestellung öffnet sich auf Ihren eigenen Geräten (bis zu 3). Für Organisationen mit mehreren Standorten – schreiben Sie mir."
+      },
+      {
+        "q": "Download-Link verloren?",
+        "a": "Öffnen Sie ibrahimsaud.com/shop/thanks/, geben Sie Ihre E-Mail-Adresse ein, und der Link zur Bestellung wird erneut gesendet. Die Bestellung gehört Ihnen dauerhaft: Das Programm und seine Updates lassen sich dort jederzeit herunterladen."
+      },
+      {
+        "q": "Ist es ein Abo?",
+        "a": "Nein. Eine Zahlung, und es gehört Ihnen – keine monatlichen oder jährlichen Gebühren. Updates für Ihre Version sind kostenlos über dieselbe Bestellseite erhältlich."
+      }
+    ],
+    "promo": {
+      "title": "Ihr habt danach gefragt … also habe ich es gebaut.",
+      "text": "Mein Video über das Streamen von Unterricht bekam über 100 Kommentare mit derselben Bitte – also habe ich statt komplizierter Setups ein fertiges Programm gebaut: Buch wählen, den Namen des Scheichs eingeben, „Live gehen“ drücken. Vom Computer oder vom Smartphone."
+    },
+    "meta": {
+      "title": "Islamischer Unterricht Live – Moscheeunterricht mit einem Knopfdruck live übertragen",
+      "description": "Software zum Übertragen und Aufzeichnen von islamischem Unterricht: der Lehrer und das Buch im Bild, die Shamela-Bibliothek integriert, live auf YouTube, Facebook und Telegram gleichzeitig. Windows, Mac und Android."
+    }
+  }
+}

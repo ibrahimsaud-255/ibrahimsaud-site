@@ -35,7 +35,7 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
     setBusy(true);
     // صفحة الشكر (عودة تلر) تعرض لغة المشتري قبل ما يوصل الطلب
     try { if (foreign) localStorage.setItem("shop-lang", item.lang!); else localStorage.removeItem("shop-lang"); } catch { /* تخزين مقفل */ }
-    const r = await shopCall<{ url?: string }>("checkout", { sku: item.sku, name: name.trim(), email: email.trim(), phone: phone.trim(), ...geo() });
+    const r = await shopCall<{ url?: string }>("checkout", { sku: item.sku, lang: item.lang || "ar", name: name.trim(), email: email.trim(), phone: phone.trim(), ...geo() });
     if (r.ok && r.data.url) {
       window.location.assign(r.data.url);
       return;

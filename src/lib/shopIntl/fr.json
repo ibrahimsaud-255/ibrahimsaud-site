@@ -1,0 +1,304 @@
+{
+  "ui": {
+    "dir": "ltr",
+    "buyNow": "Acheter maintenant",
+    "reserve": "Réserver",
+    "whatsInside": "Qu’y a-t-il dedans ?",
+    "onDevices": "Sur vos appareils.",
+    "inside": "À l’intérieur.",
+    "forWho": "Pour qui ?",
+    "after": "Après l’achat",
+    "specs": "Configuration requise.",
+    "faq": "Questions.",
+    "navOverview": "Présentation",
+    "navInside": "Contenu",
+    "navSpecs": "Configuration",
+    "navFaq": "FAQ",
+    "navBuy": "Acheter",
+    "terms": "Produit numérique livré dès le paiement : il ne peut donc pas être remboursé une fois les fichiers téléchargés — sauf si un défaut vous empêche de les utiliser : écrivez-moi et je le corrige ou vous rembourse. Les fichiers sont réservés à vous ou à votre organisation et ne peuvent être ni revendus ni redistribués.",
+    "obs": " Le programme fonctionne avec le moteur gratuit et libre OBS Studio (licence GPL).",
+    "availableNow": "Disponible dès maintenant — inclus",
+    "errName": "Saisissez votre nom",
+    "errEmail": "E-mail invalide — vos fichiers y sont envoyés",
+    "errStart": "Impossible de lancer le paiement, veuillez réessayer",
+    "oneTime": "Paiement unique — il est à vous. Aucun abonnement mensuel ni annuel.",
+    "approxTail": "— débité sur votre carte en riyals saoudiens (SAR)",
+    "saleEnds": "Offre valable jusqu’à la fin du 1er décembre ; le prix repassera ensuite à {0}",
+    "soonSeats": "Les places ouvrent bientôt.",
+    "soonNA": "Pas encore disponible à l’achat.",
+    "soonTail": " Écrivez-nous et nous vous préviendrons dès l’ouverture.",
+    "soonWa": "Assalamu alaikum! I want to buy the Islamic Lessons Broadcast program (French edition).",
+    "soonBtn": "Écrire sur WhatsApp",
+    "name": "Nom",
+    "email": "E-mail",
+    "emailNote": "— vos fichiers sont envoyés ici",
+    "phone": "Téléphone",
+    "optional": "(facultatif)",
+    "phonePh": "+33 6 12 34 56 78",
+    "paying": "Redirection vers le paiement…",
+    "pay": "Payer {0}",
+    "trust": [
+      "Paiement sécurisé via Telr — Visa, Mastercard, Apple Pay",
+      "Téléchargement immédiat après le paiement, et le lien de votre commande arrive par e-mail",
+      "Le lien est à vous et ne fonctionne que sur vos appareils"
+    ],
+    "missingLink": "Le lien est incomplet — ouvrez celui reçu par e-mail.",
+    "cantOpenTitle": "Nous n’avons pas pu ouvrir votre commande",
+    "cantOpen": "Impossible d’ouvrir la commande",
+    "contact": "Écrivez-moi",
+    "waProblem": "Assalamu alaikum! I can't open my order (French edition).",
+    "opening": "Ouverture de votre commande…",
+    "notConfirmedTitle": "Paiement pas encore confirmé",
+    "notConfirmedText": "Si votre carte a été débitée, votre commande s’active automatiquement en quelques minutes et le lien arrive par e-mail. Vous pouvez actualiser cette page plus tard.",
+    "refresh": "Actualiser le statut",
+    "checking": "Confirmation du paiement…",
+    "checkingText": "Encore quelques secondes et vos fichiers apparaîtront. Ne fermez pas la page.",
+    "cancelled": "Paiement annulé",
+    "failed": "Le paiement n’a pas abouti",
+    "notCharged": "Rien n’a été débité. Vous pouvez revenir en arrière et réessayer.",
+    "tryAgain": "Réessayer",
+    "holdTitle": "Merci {0}, nous avons bien reçu votre paiement",
+    "holdText": "Votre commande ({0}) fait l’objet d’une courte vérification avant l’ouverture des fichiers — écrivez-moi sur WhatsApp et je l’ouvre en quelques minutes.",
+    "holdWa": "Assalamu alaikum! I paid my order ({0}) — French edition. Please open it.",
+    "holdCta": "Écrire sur WhatsApp",
+    "thanks": "Merci {0}.",
+    "ready": "Votre commande est prête — {0}.",
+    "orderDetails": "Détails de la commande",
+    "orderNo": "Numéro de commande",
+    "date": "Date",
+    "amount": "Montant",
+    "mailLbl": "E-mail",
+    "soonFor": "Bientôt disponible pour votre commande",
+    "soonNote": "— nous vous écrirons dès sa sortie",
+    "note": "Conservez l’e-mail reçu — c’est votre clé pour retrouver vos fichiers. Le lien ne fonctionne que sur vos appareils (3 au maximum), et un nouvel appareil nécessite un code envoyé à votre adresse e-mail. ",
+    "productPage": "Page du produit",
+    "chev": "›",
+    "demoMsg": "Ceci est un aperçu — dans une vraie commande, le téléchargement démarre ici.",
+    "dlFail": "Échec du téléchargement",
+    "preparing": "Vos fichiers sont en cours de préparation — ils arriveront bientôt par e-mail.",
+    "yourFiles": "Vos fichiers",
+    "left": "{0} téléchargements restants sur {1}",
+    "dlBusy": "Préparation…",
+    "dlOut": "Épuisé",
+    "dl": "Télécharger",
+    "recoverCompact": "Ou récupérez le lien de votre commande",
+    "recoverTitle": "Récupérer votre commande",
+    "recoverText": "Saisissez l’adresse e-mail utilisée lors de l’achat et nous vous renverrons le lien de votre commande — téléchargez le programme et ses mises à jour à tout moment.",
+    "recoverDone": "S’il existe une commande avec cette adresse, le lien a été envoyé. Vérifiez votre boîte de réception (et vos spams).",
+    "sending": "Envoi…",
+    "sendLink": "Envoyer le lien",
+    "doneDefault": "Terminé",
+    "newDevice": "Nouvel appareil",
+    "maxDevices": "Votre commande est ouverte sur 3 appareils (le maximum). ",
+    "maxDevicesLink": "Écrivez-moi et je l’ouvrirai",
+    "waDevice": "Assalamu alaikum! I need to open my order (French edition) on a new device.",
+    "protect": "Pour protéger vos fichiers, nous vérifions que la commande est bien la vôtre : nous allons envoyer un code à ",
+    "sendCode": "Envoyer le code",
+    "enterCode": "Saisissez le code envoyé à ",
+    "verifying": "Vérification…",
+    "verify": "Vérifier",
+    "newCode": "Nouveau code",
+    "sendFail": "Échec de l’envoi",
+    "badCode": "Code incorrect",
+    "codeLbl": "Code de vérification",
+    "mailAria": "E-mail",
+    "dateLocale": "fr-FR"
+  },
+  "item": {
+    "name": "Diffusion des cours islamiques",
+    "kicker": "Pour les mosquées, les centres islamiques, les enseignants et les étudiants en science",
+    "tagline": "Votre cours, en direct. Professionnel. D’un seul bouton.",
+    "sub": "Un logiciel simple qui diffuse et enregistre le cours : l’enseignant et le livre à l’écran, la bibliothèque Shamela intégrée et les logos de votre organisation — sur YouTube, Facebook et Telegram en même temps. Interface en français et en arabe.",
+    "format": "Windows · Mac · Android — téléchargement dès le paiement",
+    "saleLabel": "Offre de lancement",
+    "platforms": [
+      {
+        "key": "windows",
+        "name": "Windows",
+        "note": "Windows 10 et 11"
+      },
+      {
+        "key": "mac",
+        "name": "Mac",
+        "note": "macOS 12 et versions ultérieures"
+      },
+      {
+        "key": "android",
+        "name": "Android",
+        "note": "Fichier APK pour téléphones et tablettes"
+      }
+    ],
+    "inside": [
+      {
+        "title": "La bibliothèque Shamela intégrée",
+        "text": "Plus de 8 500 livres en arabe : une lecture claire, les pages de l’édition imprimée ou un texte soigné avec la pagination de l’édition — et n’importe quel livre PDF de votre ordinateur, dans toutes les langues."
+      },
+      {
+        "title": "L’enseignant et le livre à l’écran",
+        "text": "Huit scènes prêtes : l’enseignant, le livre avec l’enseignant, la page entière, un livre ouvert qui tourne ses pages, le lecteur, avant le cours, la pause et la clôture."
+      },
+      {
+        "title": "Ligne de lecture",
+        "text": "Une barre dorée suit le lecteur ligne par ligne, et zoome sur la page d’un simple toucher."
+      },
+      {
+        "title": "Un design islamique",
+        "text": "Couleurs islamiques et motifs géométriques, cadre en forme de mihrab ou couleurs de votre organisation ; le nom de l’enseignant apparaît avec une animation fluide."
+      },
+      {
+        "title": "Toutes les plateformes à la fois",
+        "text": "YouTube, Facebook et Telegram ensemble, plus un enregistrement complet du cours sur votre ordinateur en Full HD ou 4K."
+      },
+      {
+        "title": "Un son clair, automatiquement",
+        "text": "Suppression du bruit et équilibrage des niveaux sans aucun réglage, et un micro séparé pour le lecteur."
+      },
+      {
+        "title": "Logos de l’organisation et des partenaires",
+        "text": "Jusqu’à six logos dans leurs couleurs d’origine — affichés et masqués d’un simple toucher."
+      },
+      {
+        "title": "Chapitres YouTube automatiques",
+        "text": "Les horodatages des passages étudiés par l’enseignant, prêts à coller dans la description de la vidéo."
+      }
+    ],
+    "forWho": [
+      "Une mosquée ou un centre islamique qui veut publier ses cours dignement",
+      "Un étudiant qui filme les cours de son cheikh et les partage",
+      "Un enseignant qui explique un livre ou un matn à des élèves à distance",
+      "Un bénévole chargé des médias qui a besoin d’une diffusion fiable chaque semaine"
+    ],
+    "steps": [
+      "Payez par carte ou Apple Pay",
+      "Téléchargez la version Windows, Mac ou Android depuis la page de votre commande",
+      "Choisissez le livre, saisissez le nom du cheikh et appuyez sur « En direct »"
+    ],
+    "specs": [
+      {
+        "title": "Ordinateur — Full HD",
+        "rows": [
+          [
+            "Système",
+            "Windows 10 ou 11 (64 bits) — ou macOS 12 et versions ultérieures"
+          ],
+          [
+            "Processeur",
+            "Intel Core i5 de 8e génération, Ryzen 5 ou Apple M1 et supérieurs"
+          ],
+          [
+            "Mémoire",
+            "8 Go (16 Go c’est mieux)"
+          ],
+          [
+            "Internet",
+            "Débit montant de 6 Mbit/s ou plus (environ autant en plus pour chaque plateforme supplémentaire)"
+          ],
+          [
+            "Stockage",
+            "2 Go pour le programme + environ 3 Go par heure d’enregistrement"
+          ],
+          [
+            "Caméra et son",
+            "N’importe quelle caméra USB ou une caméra via une carte d’acquisition, et un micro sans fil ou USB"
+          ]
+        ]
+      },
+      {
+        "title": "Ordinateur — 4K",
+        "rows": [
+          [
+            "Processeur",
+            "Apple M1 Pro / M2 et supérieurs, ou Intel Core i7 / Ryzen 7 avec une NVIDIA GTX 1660 ou mieux"
+          ],
+          [
+            "Mémoire",
+            "16 Go"
+          ],
+          [
+            "Internet",
+            "Débit montant de 20 Mbit/s"
+          ],
+          [
+            "Caméra",
+            "Une caméra compatible 4K"
+          ]
+        ]
+      },
+      {
+        "title": "Téléphone — Android",
+        "rows": [
+          [
+            "Système",
+            "Android 8 et versions ultérieures"
+          ],
+          [
+            "Mémoire",
+            "Au moins 3 Go (4 Go recommandés)"
+          ],
+          [
+            "Processeur",
+            "Snapdragon 665, Helio G85 ou Exynos 9611 et supérieurs (la plupart des téléphones depuis 2020)"
+          ],
+          [
+            "Internet",
+            "Débit montant de 4 Mbit/s (Wi-Fi ou connexion 4G stable)"
+          ],
+          [
+            "Conseil",
+            "Pour les longs cours, gardez le téléphone en charge et sur un trépied stable"
+          ]
+        ]
+      }
+    ],
+    "faqs": [
+      {
+        "q": "Faut-il des compétences techniques ?",
+        "a": "Non. Les boutons sont grands et clairs : choisissez le livre, saisissez le nom du cheikh et appuyez sur « En direct ». L’interface est en français, avec un bouton pour passer à l’arabe."
+      },
+      {
+        "q": "Y a-t-il des livres en français ?",
+        "a": "La bibliothèque Shamela contient des livres en arabe. N’importe quel livre PDF, y compris en français, peut être ouvert depuis votre ordinateur et affiché pendant la diffusion."
+      },
+      {
+        "q": "Sur quels appareils fonctionne-t-il ?",
+        "a": "Windows, Mac et Android (un fichier APK depuis la page de votre commande). Voir « Configuration requise » ci-dessus."
+      },
+      {
+        "q": "Comment installer la version Android ?",
+        "a": "Téléchargez l’APK depuis la page de votre commande sur le téléphone, puis ouvrez-le. La première fois, le téléphone vous demande d’autoriser les installations depuis le navigateur : touchez « Paramètres », activez « Autoriser cette source » puis revenez à « Installer »."
+      },
+      {
+        "q": "Comment diffuser un cours en direct depuis la mosquée ?",
+        "a": "Il vous faut un ordinateur ou un téléphone, une caméra, un micro sans fil pour le cheikh et une connexion internet stable. Dans le programme, choisissez le livre, saisissez le nom du cheikh et le titre du cours, collez une seule fois votre clé de diffusion YouTube, Facebook ou Telegram, puis appuyez sur « En direct »."
+      },
+      {
+        "q": "Ai-je besoin d’OBS ?",
+        "a": "Le programme utilise en arrière-plan le moteur gratuit et libre OBS — vous n’avez jamais besoin de l’ouvrir. Sous Windows, le moteur est inclus dans l’installateur ; sur Mac, il s’installe une seule fois d’un bouton dans le programme."
+      },
+      {
+        "q": "Un avertissement s’affiche à la première ouverture ?",
+        "a": "C’est normal : sous Windows, cliquez sur « Informations complémentaires » → « Exécuter quand même » ; sur Mac, placez le programme dans Applications, ouvrez-le une fois (un message apparaît, cliquez sur « OK »), puis allez dans Réglages Système → Confidentialité et sécurité, faites défiler vers le bas et cliquez sur « Ouvrir quand même ». Une seule fois suffit."
+      },
+      {
+        "q": "Sur combien d’appareils puis-je l’utiliser ?",
+        "a": "Le lien de votre commande s’ouvre sur vos propres appareils (3 au maximum). Pour les organisations qui ont plusieurs antennes — écrivez-moi."
+      },
+      {
+        "q": "Vous avez perdu votre lien de téléchargement ?",
+        "a": "Ouvrez ibrahimsaud.com/shop/thanks/, saisissez votre adresse e-mail et le lien de la commande vous est renvoyé. La commande vous appartient pour toujours : le programme et ses mises à jour s’y téléchargent à tout moment."
+      },
+      {
+        "q": "Est-ce un abonnement ?",
+        "a": "Non. Un seul paiement et il est à vous — aucun frais mensuel ni annuel. Les mises à jour de votre version sont gratuites depuis la même page de commande."
+      }
+    ],
+    "promo": {
+      "title": "Vous l’avez demandé… alors je l’ai créé.",
+      "text": "Ma vidéo sur la diffusion des cours a reçu plus de 100 commentaires demandant la même chose — alors, plutôt que des installations compliquées, j’ai créé un programme prêt à l’emploi : choisissez le livre, saisissez le nom du cheikh, appuyez sur « En direct ». Depuis un ordinateur ou un téléphone."
+    },
+    "meta": {
+      "title": "Diffusion des cours islamiques — diffusez les cours de la mosquée en direct d’un seul bouton",
+      "description": "Logiciel pour diffuser et enregistrer les cours islamiques : l’enseignant et le livre à l’écran, la bibliothèque Shamela intégrée, en direct sur YouTube, Facebook et Telegram en même temps. Windows, Mac et Android."
+    }
+  }
+}

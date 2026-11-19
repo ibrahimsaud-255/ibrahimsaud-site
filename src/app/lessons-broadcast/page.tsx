@@ -3,6 +3,7 @@ import ShopItemView from "@/components/v2/shop/ShopItemView";
 import LangRedirect from "@/components/v2/shop/LangRedirect";
 import { itemBySlug } from "@/lib/shop";
 import { SITE_URL } from "@/lib/share";
+import { allLanguages } from "@/lib/shopIntl";
 
 // الصفحة العامّة المعلَنة لـ«برنامج بث الدروس العلمية» (رابط البايو + محرّكات البحث).
 // المحتوى نفسه من src/lib/shop.ts؛ نسخة /shop/lessons-broadcast/ مخفيّة وتشير هنا (canonical).
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
   title: TITLE,
   description: DESC,
   keywords: ["بث الدروس العلمية", "تصوير الدروس العلمية", "بثوث علمية", "بث مباشر للدروس", "برنامج بث مباشر عربي", "بث دروس المساجد", "تصوير المحاضرات", "المكتبة الشاملة"],
-  alternates: { canonical: URL, languages: { ar: URL, ru: `${SITE_URL}/ru/lessons-broadcast/`, en: `${SITE_URL}/en/lessons-broadcast/` } },
+  alternates: { canonical: URL, languages: allLanguages(SITE_URL) },
   openGraph: { title: TITLE, description: DESC, url: URL, siteName: "إبراهيم سعود", locale: "ar_SA", type: "website", images: [IMG] },
   twitter: { card: "summary_large_image", title: TITLE, description: DESC, images: [IMG.url] },
 };
@@ -48,7 +49,7 @@ export default function LessonsBroadcast() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-      <LangRedirect sku={item.sku} ru="/ru/lessons-broadcast/" en="/en/lessons-broadcast/" />
+      <LangRedirect sku={item.sku} />
       <ShopItemView item={item} />
     </>
   );

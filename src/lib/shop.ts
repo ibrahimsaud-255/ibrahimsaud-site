@@ -6,6 +6,8 @@
 // فقط لو تعذّرت القراءة. منتج جديد = صفّ في الجدول + مدخل هنا بنفس الـsku.
 // الدليل: docs/المتجر-الرقمي.md
 
+import { INTL, INTL_CODES } from "./shopIntl";
+
 export const SHOP_FN = "https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop";
 const SUPA_URL = "https://rrerwhhxrjyzmnnjsfev.supabase.co";
 const SUPA_KEY = "sb_publishable_T-ka4hy2LVRjUuf0wUH9yA_g4Emxm13";
@@ -38,6 +40,10 @@ export type ShopItem = {
   publicPath?: string;     // صفحة عامّة معلَنة ومفهرسة لنفس المنتج (مثل /lessons-broadcast/)
   seo?: { title: string; paras: string[] };   // فقرة تعريفيّة بكلمات البحث (تظهر في الصفحة)
 };
+
+// آيفون: تطبيق App Store (يُشترى هناك) — بطاقة رابط في صفحات النسخة العالميّة.
+const APP_STORE = "https://apps.apple.com/app/id6836200953";
+const IOS_CARD = { key: "ios" as const, name: "iPhone · iPad", note: "App Store", href: APP_STORE, hrefLabel: "App Store" };
 
 export const shopItems: ShopItem[] = [
   {
@@ -159,11 +165,18 @@ export const shopItems: ShopItem[] = [
       { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "Сцена «лектор»: мягкое размытие и градиент за именем" },
     ],
     fallbackPrice: 399,
+    promo: {
+      src: "/shop/lessons-broadcast/promo-ru.mp4",
+      poster: "/shop/lessons-broadcast/promo-poster-ru.jpg",
+      title: "Вы просили — я сделал.",
+      text: "Моё видео о трансляции уроков собрало больше 100 комментариев с одной и той же просьбой — поэтому вместо сложных настроек я сделал готовую программу: выберите книгу, впишите имя шейха и нажмите «Прямой эфир». С компьютера или телефона.",
+    },
     format: "Windows · Mac · Android — скачивание сразу после оплаты",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 и 11" },
       { key: "mac", name: "Mac", note: "macOS 12 и новее" },
       { key: "android", name: "Android", note: "APK-файл для телефона и планшета" },
+      IOS_CARD,
     ],
     inside: [
       { title: "Библиотека «Шамиля» внутри", text: "Более 8500 книг на арабском: удобный просмотр, страницы печатного издания или аккуратный текст с нумерацией издания — а также любая PDF-книга с вашего компьютера, в том числе на русском." },
@@ -242,12 +255,19 @@ export const shopItems: ShopItem[] = [
       { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "\"Teacher\" scene: soft blur and a gradient behind the name" },
     ],
     fallbackPrice: 149,
+    promo: {
+      src: "/shop/lessons-broadcast/promo-en.mp4",
+      poster: "/shop/lessons-broadcast/promo-poster-en.jpg",
+      title: "You asked for it… so I built it.",
+      text: "My lesson-streaming video got over 100 comments asking for the same thing — so instead of complicated setups, I built a ready program: pick the book, type the shaykh's name and press \"Go live\". From a computer or a phone.",
+    },
     sale: { label: "Launch offer", until: "2026-12-01T21:00:00Z", was: { 149: 399, 99: 199, 79: 129, 49: 69 } },
     format: "Windows · Mac · Android — download right after payment",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 and 11" },
       { key: "mac", name: "Mac", note: "macOS 12 and later" },
       { key: "android", name: "Android", note: "APK file for phones and tablets" },
+      IOS_CARD,
     ],
     inside: [
       { title: "The Shamela library built in", text: "More than 8,500 Arabic books: a clean reader, the printed edition's pages or neat text with the edition's page numbers — plus any PDF book from your computer, in any language." },
@@ -328,6 +348,22 @@ export const shopItems: ShopItem[] = [
     presale: true,
   },
 ];
+
+// النسخة العالميّة بلغات الحملة: صفحة لكل لغة (/<code>/lessons-broadcast/) تبيع lessons-broadcast-en بأسعار الدول نفسها،
+// والمحتوى من src/lib/shopIntl/<code>.json، والإعلان بلغتها promo-<code>.mp4.
+{
+  const en = shopItems.find((i) => i.slug === "lessons-broadcast-en")!;
+  for (const code of INTL_CODES) {
+    const j = INTL[code].item;
+    shopItems.push({
+      ...en, lang: code, slug: `lessons-broadcast-${code}`, publicPath: `/${code}/lessons-broadcast/`,
+      name: j.name, kicker: j.kicker, tagline: j.tagline, sub: j.sub, format: j.format,
+      sale: en.sale && { ...en.sale, label: j.saleLabel || en.sale.label },
+      platforms: [...j.platforms, IOS_CARD], inside: j.inside, forWho: j.forWho, steps: j.steps, specs: j.specs, faqs: j.faqs,
+      promo: { src: `/shop/lessons-broadcast/promo-${code}.mp4`, poster: `/shop/lessons-broadcast/promo-poster-${code}.jpg`, title: j.promo.title, text: j.promo.text },
+    });
+  }
+}
 
 export const itemBySlug = (slug: string) => shopItems.find((i) => i.slug === slug);
 
