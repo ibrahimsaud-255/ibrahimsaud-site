@@ -70,7 +70,7 @@
     "mailLbl": "E-mail",
     "soonFor": "Bientôt disponible pour votre commande",
     "soonNote": "— nous vous écrirons dès sa sortie",
-    "note": "Conservez l’e-mail reçu — c’est votre clé pour retrouver vos fichiers. Le lien ne fonctionne que sur vos appareils (3 au maximum), et un nouvel appareil nécessite un code envoyé à votre adresse e-mail. ",
+    "note": "Conservez l’e-mail reçu — c’est votre clé pour retrouver vos fichiers. Le lien ne fonctionne que sur vos appareils (5 au maximum), et un nouvel appareil nécessite un code envoyé à votre adresse e-mail. ",
     "productPage": "Page du produit",
     "chev": "›",
     "demoMsg": "Ceci est un aperçu — dans une vraie commande, le téléchargement démarre ici.",
@@ -89,7 +89,7 @@
     "sendLink": "Envoyer le lien",
     "doneDefault": "Terminé",
     "newDevice": "Nouvel appareil",
-    "maxDevices": "Votre commande est ouverte sur 3 appareils (le maximum). ",
+    "maxDevices": "Votre commande est ouverte sur 5 appareils (le maximum). ",
     "maxDevicesLink": "Écrivez-moi et je l’ouvrirai",
     "waDevice": "Assalamu alaikum! I need to open my order (French edition) on a new device.",
     "protect": "Pour protéger vos fichiers, nous vérifions que la commande est bien la vôtre : nous allons envoyer un code à ",
@@ -281,7 +281,7 @@
       },
       {
         "q": "Sur combien d’appareils puis-je l’utiliser ?",
-        "a": "Le lien de votre commande s’ouvre sur vos propres appareils (3 au maximum). Pour les organisations qui ont plusieurs antennes — écrivez-moi."
+        "a": "Le lien de votre commande s’ouvre sur vos propres appareils (5 au maximum). Pour les organisations qui ont plusieurs antennes — écrivez-moi."
       },
       {
         "q": "Vous avez perdu votre lien de téléchargement ?",

@@ -70,7 +70,7 @@
     "mailLbl": "E-posta",
     "soonFor": "Siparişinize yakında eklenecek",
     "soonNote": "— çıktığında size e-posta göndereceğiz",
-    "note": "Gelen e-postayı saklayın — dosyalarınıza dönmenin anahtarı odur. Bağlantı yalnızca sizin cihazlarınızda (en fazla 3) çalışır; yeni bir cihaz için e-postanıza bir kod gönderilir. ",
+    "note": "Gelen e-postayı saklayın — dosyalarınıza dönmenin anahtarı odur. Bağlantı yalnızca sizin cihazlarınızda (en fazla 5) çalışır; yeni bir cihaz için e-postanıza bir kod gönderilir. ",
     "productPage": "Ürün sayfası",
     "chev": "›",
     "demoMsg": "Bu bir önizlemedir — gerçek bir siparişte indirme burada başlar.",
@@ -89,7 +89,7 @@
     "sendLink": "Bağlantıyı gönder",
     "doneDefault": "Tamam",
     "newDevice": "Yeni cihaz",
-    "maxDevices": "Siparişiniz 3 cihazda açık (azami sınır). ",
+    "maxDevices": "Siparişiniz 5 cihazda açık (azami sınır). ",
     "maxDevicesLink": "Bana yazın, açayım",
     "waDevice": "Assalamu alaikum! I need to open my order (Turkish edition) on a new device.",
     "protect": "Dosyalarınızı korumak için siparişin size ait olduğunu doğrulayacağız. Kod gönderilecek adres: ",
@@ -281,7 +281,7 @@
       },
       {
         "q": "Kaç cihazda kullanabilirim?",
-        "a": "Sipariş bağlantınız kendi cihazlarınızda (en fazla 3) açılır. Birden fazla şubesi olan kurumlar için — bana yazın."
+        "a": "Sipariş bağlantınız kendi cihazlarınızda (en fazla 5) açılır. Birden fazla şubesi olan kurumlar için — bana yazın."
       },
       {
         "q": "İndirme bağlantınızı mı kaybettiniz?",

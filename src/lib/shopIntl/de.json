@@ -70,7 +70,7 @@
     "mailLbl": "E-Mail",
     "soonFor": "Bald für Ihre Bestellung verfügbar",
     "soonNote": "– wir schreiben Ihnen, sobald es erscheint",
-    "note": "Bewahren Sie die erhaltene E-Mail auf – sie ist Ihr Schlüssel zu Ihren Dateien. Der Link funktioniert nur auf Ihren Geräten (bis zu 3), und ein neues Gerät benötigt einen Code, der an Ihre E-Mail gesendet wird. ",
+    "note": "Bewahren Sie die erhaltene E-Mail auf – sie ist Ihr Schlüssel zu Ihren Dateien. Der Link funktioniert nur auf Ihren Geräten (bis zu 5), und ein neues Gerät benötigt einen Code, der an Ihre E-Mail gesendet wird. ",
     "productPage": "Produktseite",
     "chev": "›",
     "demoMsg": "Dies ist eine Vorschau – bei einer echten Bestellung beginnt der Download hier.",
@@ -89,7 +89,7 @@
     "sendLink": "Link senden",
     "doneDefault": "Fertig",
     "newDevice": "Neues Gerät",
-    "maxDevices": "Ihre Bestellung ist auf 3 Geräten geöffnet (das Maximum). ",
+    "maxDevices": "Ihre Bestellung ist auf 5 Geräten geöffnet (das Maximum). ",
     "maxDevicesLink": "Schreiben Sie mir, und ich schalte sie frei",
     "waDevice": "Assalamu alaikum! I need to open my order (German edition) on a new device.",
     "protect": "Zum Schutz Ihrer Dateien bestätigen wir, dass die Bestellung Ihnen gehört: Wir senden einen Code an ",
@@ -281,7 +281,7 @@
       },
       {
         "q": "Auf wie vielen Geräten kann ich es nutzen?",
-        "a": "Der Link zu Ihrer Bestellung öffnet sich auf Ihren eigenen Geräten (bis zu 3). Für Organisationen mit mehreren Standorten – schreiben Sie mir."
+        "a": "Der Link zu Ihrer Bestellung öffnet sich auf Ihren eigenen Geräten (bis zu 5). Für Organisationen mit mehreren Standorten – schreiben Sie mir."
       },
       {
         "q": "Download-Link verloren?",

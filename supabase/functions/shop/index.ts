@@ -6,7 +6,7 @@
 // ║   webhook    (تلر تناديه بعد الدفع)    → يتحقّق لدى تلر ويعلّم «مدفوع»  ║
 // ║   order      {o,t,device}              → حالة الطلب وقائمة الملفّات      ║
 // ║   otp-send   {o,t,device}              → رمز ٦ أرقام لبريد المشتري       ║
-// ║   otp-verify {o,t,device,code}         → يوثّق جهازاً جديداً (٣ كحدّ)    ║
+// ║   otp-verify {o,t,device,code}         → يوثّق جهازاً جديداً (٥ كحدّ)    ║
 // ║   download   {o,t,device,fileId}       → رابط موقّع مدّته ٦٠ ثانية       ║
 // ║   transfer   {sku,name,email,phone?}   → طلب «بالتحويل» بانتظار الاعتماد  ║
 // ║   transfer-notify {id}                 → بعد اعتماده من اللوحة: الرابط   ║
@@ -19,7 +19,7 @@
 // ║  الأمان: السعر من shop_products لا من المتصفّح؛ الدفع يُفحص لدى تلر     ║
 // ║  نفسها (order_ref) ويُطابَق المبلغ؛ رابط صفحة الشكر يحمل رمزاً تُخزَّن   ║
 // ║  بصمته فقط (sha256)؛ التنزيل لجهاز موثّق فقط (أوّل جهاز يفتح الطلب      ║
-// ║  المدفوع، ثمّ برمز على البريد حتى ٣ أجهزة)، بعدد محدود لكلّ ملفّ،       ║
+// ║  المدفوع، ثمّ برمز على البريد حتى ٥ أجهزة)، بعدد محدود لكلّ ملفّ،       ║
 // ║  وبرابط موقّع يموت بعد ٦٠ ثانية — فنسخ الرابط ونشره لا يفتح شيئاً.     ║
 // ╚══════════════════════════════════════════════════════════════════════╝
 
@@ -45,7 +45,7 @@ const FROM = Deno.env.get("RESEND_FROM") || "إبراهيم سعود <onboarding
 const SITE = (Deno.env.get("SHOP_SITE_URL") || "https://ibrahimsaud.com").replace(/\/$/, "");
 const SELF = `${SUPA_URL}/functions/v1/shop`;
 
-const MAX_DEVICES = 3;
+const MAX_DEVICES = 5;
 const OTP_TTL_MIN = 10;
 const OTP_MAX_ATTEMPTS = 5;
 const SIGNED_URL_SECONDS = 60;
@@ -458,7 +458,7 @@ async function otpSend(b: Record<string, unknown>) {
   const dev = await sha256(String(b.device));
   if (order.trusted_devices.includes(dev)) return j({ ok: true, already: true });
   if (order.trusted_devices.length >= MAX_DEVICES)
-    return j({ error: "وصل الطلب لحدّ ٣ أجهزة. راسلني وأفتح لك جهازاً جديداً." }, 403);
+    return j({ error: "وصل الطلب لحدّ ٥ أجهزة. راسلني وأفتح لك جهازاً جديداً." }, 403);
   if (order.otp_sent_at && Date.now() - new Date(order.otp_sent_at).getTime() < 60_000)
     return j({ error: "أرسلنا رمزاً قبل قليل — انتظر دقيقة قبل طلب رمز جديد" }, 429);
 
@@ -509,7 +509,7 @@ async function otpVerify(b: Record<string, unknown>) {
   }
   const dev = await sha256(String(b.device));
   const devices = order.trusted_devices.includes(dev) ? order.trusted_devices : [...order.trusted_devices, dev];
-  if (devices.length > MAX_DEVICES) return j({ error: "وصل الطلب لحدّ ٣ أجهزة. راسلني وأفتح لك جهازاً جديداً." }, 403);
+  if (devices.length > MAX_DEVICES) return j({ error: "وصل الطلب لحدّ ٥ أجهزة. راسلني وأفتح لك جهازاً جديداً." }, 403);
   await patchOrder(order.id, { trusted_devices: devices, otp_hash: null, otp_expires: null, otp_attempts: 0 });
   return j({ ok: true });
 }

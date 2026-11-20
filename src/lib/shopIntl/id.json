@@ -70,7 +70,7 @@
     "mailLbl": "Email",
     "soonFor": "Segera hadir untuk pesanan Anda",
     "soonNote": "— kami kirim email begitu rilis",
-    "note": "Simpan email yang Anda terima — itulah kunci untuk kembali ke file Anda. Tautan hanya berfungsi di perangkat Anda (maksimal 3), dan perangkat baru memerlukan kode yang dikirim ke email Anda. ",
+    "note": "Simpan email yang Anda terima — itulah kunci untuk kembali ke file Anda. Tautan hanya berfungsi di perangkat Anda (maksimal 5), dan perangkat baru memerlukan kode yang dikirim ke email Anda. ",
     "productPage": "Halaman produk",
     "chev": "›",
     "demoMsg": "Ini pratinjau — pada pesanan sungguhan, unduhan dimulai di sini.",
@@ -89,7 +89,7 @@
     "sendLink": "Kirim tautan",
     "doneDefault": "Selesai",
     "newDevice": "Perangkat baru",
-    "maxDevices": "Pesanan Anda sudah terbuka di 3 perangkat (batas maksimal). ",
+    "maxDevices": "Pesanan Anda sudah terbuka di 5 perangkat (batas maksimal). ",
     "maxDevicesLink": "Hubungi saya, akan saya bukakan",
     "waDevice": "Assalamu alaikum! I need to open my order (Indonesian edition) on a new device.",
     "protect": "Untuk melindungi file Anda, kami akan memastikan pesanan ini milik Anda: kami akan mengirim kode ke ",
@@ -281,7 +281,7 @@
       },
       {
         "q": "Bisa dipakai di berapa perangkat?",
-        "a": "Tautan pesanan Anda bisa dibuka di perangkat Anda sendiri (maksimal 3). Untuk lembaga yang punya beberapa cabang — hubungi saya."
+        "a": "Tautan pesanan Anda bisa dibuka di perangkat Anda sendiri (maksimal 5). Untuk lembaga yang punya beberapa cabang — hubungi saya."
       },
       {
         "q": "Tautan unduhan Anda hilang?",
