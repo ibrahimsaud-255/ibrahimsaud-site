@@ -43,6 +43,7 @@ export type Pkg = {
   featured?: boolean;
   half?: string; // نصف المبلغ (الدفعة الأولى) للعرض، للباقات اللي تُدفع على دفعتين
   href?: string; // رابط بدل واتساب
+  cta?: string; // نصّ الزرّ حين يكون فيه href (افتراضاً «شوف الباقات»)
   free?: boolean; // مجّانيّة: بدون «ريال» ولا روابط دفع — زرّ واتساب ورقم اتصال
 };
 
@@ -64,6 +65,8 @@ export const pkgs = {
   storeAds: { id: "store-ads", name: "إعلانات المتاجر", for: "للمتاجر الإلكترونيّة", price: "من ٧٥٠", approved: true, href: "/ad-packages/", items: ["إعلان طوليّ ٩:١٦", "هوك واسكربت", "تسليم خلال ٣ أيّام"] },
   build: { id: "build", name: "ابنِ نظامك بنفسك", for: "٣ جلسات معي", price: "١,٥٠٠", half: "٧٥٠", approved: true, items: ["جلسة ١: المصطلحات والأساسيّات، ونفتح حساباتك: GitHub وقاعدة البيانات والدومين", "جلسة ٢: تبني بيدك وأنا معك لين يشتغل", "جلسة ٣: أسئلتك، وكيف تحلّ أيّ مشكلة مع Claude", "هديّة: نسخة من «النظام» على حسابك تبدأ منها (يُباع لحاله من ٥,٠٠٠ ريال)"] },
   nasaq: { id: "nasaq", name: "النظام", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
+  // اشتراك ذاتيّ الخدمة: السعر الفعليّ في shop_products (charity-year) وفي public/charity/config.js — غيّرها معاً.
+  charitySub: { id: "charity-sub", name: "نظام الجمعيات الشبابية", for: "اشتراك جاهز — ابدأ اليوم", price: "٧٩٩", unit: "سنويّاً", approved: true, featured: true, href: "/charity/?signup=1", cta: "ابدأ ١٤ يوماً مجّاناً", items: ["تسجّل جمعيّتك بنفسك وتبدأ خلال دقيقة", "موسم الأندية: فرق ونقاط وحضور وتقرير أثر", "«جوّالي» للمشارك والميسّر، وألعاب القاعة", "الإفصاح ومعيار الشفافية، وموقع الجمعيّة", "سندات صرف بدورة اعتماد، ومحاسبة غير ربحيّة", "فريقك بصلاحيّات لكلّ قسم", "ما تحتاج بطاقة للتجربة"] },
   nasaqPro: { id: "nasaq-pro", name: "النظام Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في النظام", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
 } satisfies Record<string, Pkg>;
 
@@ -583,7 +586,7 @@ export const navItems: NavItem[] = [
   {
     label: "النظام", href: "/systems/",
     menu: [
-      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "نظام الجمعيّات", href: "/systems/charities/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
+      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "نظام الجمعيات الشبابية", href: "/systems/charities/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
       { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "مكالمة تعارف مجّانيّة", href: bookHref }, { label: "النظام", href: "/systems/#buy" }, { label: "النظام Pro", href: "/systems/#buy" }] },
     ],
   },

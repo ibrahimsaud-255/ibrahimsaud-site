@@ -33,7 +33,7 @@ export default function PackageCards({ items, compact = false }: { items: Pkg[];
             );
             return (
               <FaceOn face="wink">
-                <a className="v2-btn v2-btn-primary" href={p.href || ask} {...(p.href ? {} : { target: "_blank", rel: "noopener" })}>{p.href ? "شوف الباقات" : "اطلبها"}</a>
+                <a className="v2-btn v2-btn-primary" href={p.href || ask} {...(p.href ? {} : { target: "_blank", rel: "noopener" })}>{p.href ? (p.cta || "شوف الباقات") : "اطلبها"}</a>
               </FaceOn>
             );
           })()}

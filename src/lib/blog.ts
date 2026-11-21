@@ -79,6 +79,10 @@ const LEGACY_SLUGS: Record<string, string> = {
   "8e22ac8a-ec3a-49b7-ba67-968910e651a1": "business-podcast-guide",
   "2ea44f11-9df0-43c9-affd-e9d782cd2ae4": "personal-branding-linkedin",
   "892d736f-7f3e-4dd0-8012-69ca845ccf6a": "company-website-design-saudi",
+  // الجمعيّات الشبابيّة (نوفمبر ٢٠٢٦ — مسوّدات تُنشر معاً لأنّها تربط ببعض وبصفحات /systems/charities/*)
+  "91234fcd-b5ba-4dde-bc51-6df4c146c01e": "youth-associations-saudi",
+  "1a075162-140a-4483-b2e3-f0f416087bef": "establish-youth-association",
+  "c938fc92-94d8-4f7c-8476-0de3a6249d98": "summer-youth-club-guide",
 };
 
 const SLUG_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
@@ -159,7 +163,7 @@ export type TopicKey = "systems" | "charities" | "ai" | "media" | "journal";
 export const TOPICS: Record<TopicKey, { name: string; cta: { title: string; text: string; href: string; label: string } }> = {
   charities: {
     name: "أنظمة الجمعيّات",
-    cta: { title: "تبي نظام لجمعيّتكم؟", text: "سندات صرف بدورة اعتماد، ومحاسبة غير ربحيّة، ومستفيدون وتطوّع وحوكمة، وموقع يُدار من النظام. جرّبوا نظام جمعيّة حقيقيّ قبل أيّ كلام، والكود وقاعدة البيانات باسم الجمعيّة.", href: "/systems/charities/", label: "نظام الجمعيّات" },
+    cta: { title: "تبي نظام لجمعيّتكم؟", text: "نظام الجمعيات الشبابية: موسم الأندية بفرقه ونقاطه وحضوره، والإفصاح ومعيار الشفافية، وموقع الجمعيّة، والماليّة والحوكمة. ٧٩٩ ريالاً في السنة، وتجربة ١٤ يوماً مجّاناً بلا بطاقة.", href: "/systems/charities/", label: "نظام الجمعيات الشبابية" },
   },
   systems: {
     name: "أنظمة الإدارة للمنشآت",
@@ -189,7 +193,8 @@ put("systems", `erp-system-guide-saudi accounting-system-small-business invoicin
   erp-system-cost-small-business own-your-system-source-code develop-your-system-with-claude company-website-design-saudi`);
 put("charities", `charity-management-system-own-or-subscribe charity-management-system-features charity-payment-voucher-approval-workflow
   nonprofit-governance-digital charity-website-essentials volunteer-management-system nonprofit-accounting-guide
-  beneficiary-management-system nonprofit-digital-transformation donation-donor-management charity-reports-transparency`);
+  beneficiary-management-system nonprofit-digital-transformation donation-donor-management charity-reports-transparency
+  youth-associations-saudi establish-youth-association summer-youth-club-guide`);
 put("ai", `ai-workshop-for-companies ai-use-cases-small-business ai-usage-policy-template claude-vs-chatgpt-vs-gemini
   prompt-writing-guide-arabic ai-workshop-for-schools-students ai-for-nonprofits build-with-ai-without-coding reading-and-writing-in-the-ai-era`);
 put("media", `store-video-ads-guide video-ad-production-cost-saudi ad-script-hook-guide company-profile-video business-podcast-guide

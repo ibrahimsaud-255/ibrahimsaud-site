@@ -13,8 +13,10 @@ import PackageCards from "@/components/v2/PackageCards";
 import QuoteForm from "@/components/v2/QuoteForm";
 import BlogLinks from "@/components/v2/BlogLinks";
 import ServiceSchema from "@/components/v2/ServiceSchema";
+import SoftwareSchema from "@/components/v2/SoftwareSchema";
 import { charitiesPage as c } from "@/lib/charities";
-import { bookHref, demos, pkgs, products, waHref } from "@/lib/v2";
+import { guides } from "@/lib/charity-guides";
+import { demos, pkgs, products, waHref } from "@/lib/v2";
 
 export const metadata: Metadata = { ...c.meta, ...share(c.meta, c.path), alternates: { canonical: `${SITE_URL}${c.path}` } };
 
@@ -25,9 +27,10 @@ export default function CharitiesPage() {
   const quote = products.systems.quote!;
   return (
     <Shell>
-      <ServiceSchema path={c.path} name="نظام إدارة الجمعيّات الخيريّة والأهليّة" description={c.meta.description} serviceType="نظام إدارة جمعيّات خيريّة وأهليّة (ERP)" packages={[pkgs.nasaqPro]} faqs={c.faqs} />
+      <SoftwareSchema />
+      <ServiceSchema path={c.path} name="نظام الجمعيات الشبابية — نظام إدارة الجمعيات الأهلية" description={c.meta.description} serviceType="نظام إدارة جمعيّات شبابيّة وأهليّة" packages={[pkgs.charitySub, pkgs.nasaqPro]} faqs={c.faqs} />
       <Nav sticky={false} />
-      <LocalNav name="نظام الجمعيّات" links={[{ label: "شوفه", href: "#see" }, { label: "تملك أو تستأجر", href: "#own" }, { label: "التسليم", href: "#handover" }, { label: "السعر", href: "#buy" }]} />
+      <LocalNav name="نظام الجمعيات الشبابية" links={[{ label: "شوفه", href: "#see" }, { label: "اشتراك أو تملّك", href: "#own" }, { label: "السعر", href: "#buy" }, { label: "ابدأ مجّاناً", href: c.signup }]} />
       <main id="top">
         {/* ===== الواجهة ===== */}
         <section className="v2-phero ch-hero">
@@ -36,8 +39,8 @@ export default function CharitiesPage() {
             <h1><span className="kicker ch-kw">{c.kicker}</span>{c.h1}</h1>
             <p className="sub">{c.sub}</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary" href="#see">شوف نظام جمعيّة حقيقيّ</a>
-              <a className="v2-btn v2-btn-ghost" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a>
+              <a className="v2-btn v2-btn-primary" href={c.signup}>ابدأ ١٤ يوماً مجّاناً</a>
+              <a className="v2-btn v2-btn-ghost" href={c.demo}>جرّبه الحين بدون تسجيل</a>
             </div>
             <p className="from">{c.from}</p>
           </div>
@@ -91,9 +94,9 @@ export default function CharitiesPage() {
         {/* ===== وش فيه ===== */}
         <section className="v2-sec">
           <div className="v2-wrap">
-            <h2 className="v2-title" data-rise>وش في نظام إدارة الجمعيّات؟</h2>
+            <h2 className="v2-title" data-rise>وش في نظام إدارة الجمعيات الشبابية؟</h2>
             <div className="v2-needs">
-              {c.features.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p></div>)}
+              {c.features.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p>{"href" in f && f.href ? <a className="v2-link" href={f.href}>اقرأ أكثر <span className="chev">‹</span></a> : null}</div>)}
             </div>
           </div>
         </section>
@@ -144,9 +147,9 @@ export default function CharitiesPage() {
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
               <h2>سعر واضح، من أوّل يوم.</h2>
-              <p>ابدأوا بمكالمة مجّانيّة تاخذون فيها المعلومة كاملة، وبعدها عرض سعر رسميّ. ما فيه أيّ مبلغ قبل ما تقرّرون.</p>
+              <p>جرّبوا ١٤ يوماً بدون بطاقة، وبعدها ٧٩٩ ريال في السنة. ولو تبون نظاماً باسمكم وكوده لكم، ابدأوا بمكالمة مجّانيّة وعرض سعر رسميّ للنظام Pro.</p>
             </div>
-            <PackageCards items={[pkgs.call, pkgs.nasaqPro]} />
+            <PackageCards items={[pkgs.charitySub, pkgs.nasaqPro, pkgs.call]} />
             <div className="ch-costs" data-rise>
               <h3>{c.costs.title}</h3>
               <ul className="v2-checks">{c.costs.items.map((i) => <li key={i}>{i}</li>)}</ul>
@@ -158,14 +161,27 @@ export default function CharitiesPage() {
         <section className="v2-sec" id="request">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
-              <h2>اطلب عرض سعر لجمعيّتك.</h2>
+              <h2>تبون النظام Pro؟ اطلبوا عرض سعر.</h2>
               <p>خمس خانات، وأرد عليكم بعرض سعر رسميّ ترفعونه لمجلس الإدارة.</p>
             </div>
             <div data-rise><QuoteForm subject="عرض سعر لنظام جمعيّة" fields={quote.fields} cta="اطلب عرض السعر" /></div>
           </div>
         </section>
 
-        <BlogLinks topic="charities" max={9} first={["charity-management-system-own-or-subscribe", "charity-management-system-features", "charity-payment-voucher-approval-workflow", "nonprofit-accounting-guide", "beneficiary-management-system", "volunteer-management-system"]} />
+        {/* ===== أدلّة الجمعيّات (عنقود SEO: كلّ دليل صفحة تستهدف كلمتها وتعود لهنا) ===== */}
+        <section className="v2-sec ch-guides" id="guides">
+          <div className="v2-wrap">
+            <div className="v2-head" data-rise>
+              <h2>أدلّة لجمعيّتك.</h2>
+              <p>الأندية الصيفيّة، ومعيار الشفافية والإفصاح، واللائحة التنفيذيّة المعدّلة: شرح عمليّ لما يطلبه منكم كلّ واحد.</p>
+            </div>
+            <ul className="v2-reads" data-rise>
+              {guides.map((g) => <li key={g.slug}><a href={g.path}><b>{g.crumb}</b><span>{g.sub.slice(0, 130)}…</span></a></li>)}
+            </ul>
+          </div>
+        </section>
+
+        <BlogLinks topic="charities" max={9} first={["youth-associations-saudi", "summer-youth-club-guide", "establish-youth-association", "charity-management-system-own-or-subscribe", "charity-management-system-features", "charity-payment-voucher-approval-workflow", "nonprofit-accounting-guide", "beneficiary-management-system", "volunteer-management-system"]} />
 
         {/* ===== أسئلة ===== */}
         <section className="v2-sec alt">
@@ -181,10 +197,10 @@ export default function CharitiesPage() {
           <WindowLight style={{ top: 0, left: "50%", width: 900, height: 600, marginLeft: -450 }} />
           <div className="v2-wrap" style={{ position: "relative" }}>
             <div style={{ display: "grid", placeItems: "center", marginBottom: 24 }}><Memoji3D base="wink" className="small" /></div>
-            <h2>نظام جمعيّتك، باسمها.</h2>
-            <p>مكالمة ٢٠ دقيقة، مجّانيّة، وتطلعون منها بخطّة.</p>
+            <h2>نظام جمعيّتك، من اليوم.</h2>
+            <p>سجّلوا خلال دقيقة، وجرّبوا ١٤ يوماً مجّاناً بدون بطاقة.</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a>
+              <a className="v2-btn v2-btn-primary" href={c.signup}>ابدأ مجّاناً</a>
               <a className="v2-link" href={waHref("السلام عليكم، أبي نظام لجمعيّتنا")} target="_blank" rel="noopener">أو كلّمني واتساب <span className="chev">‹</span></a>
             </div>
           </div>
