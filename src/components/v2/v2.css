@@ -634,3 +634,5 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-launch .plats { font-size: 15px; color: var(--fg-2); margin-top: 10px; }
 .v2-launch .art.frame { margin-top: 28px; }
 .v2-launch .art.frame img { margin-bottom: clamp(24px, 4vw, 44px); }
+/* آخر بلاطة نصفيّة وحيدة في صفّها تأخذ العرض كاملاً (بدل فراغ بجانبها) */
+@media (min-width: 761px) { .v2-tile-grid > .v2-tile.half:last-child:nth-child(odd) { grid-column: 1 / -1; } }

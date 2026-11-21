@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
-import { share } from "@/lib/share";
-import "@/components/v2/v2.css";
-import ProductPage from "@/components/v2/ProductPage";
-import { products } from "@/lib/v2";
+// «حضور» أُزيلت من الموقع (قرار إبراهيم ٢٠٢٦-١١-٢١): صفحة «صناعة المحتوى» تكفي لمن يبحث عن الأعمال الإعلاميّة.
+// بياناتها باقية في products.brand وpkgs.hudoor* داخل src/lib/v2.ts لو احتجتها.
+import Redirect, { redirectMeta } from "@/components/v2/Redirect";
 
-const p = products.brand;
-export const metadata: Metadata = { ...p.meta, ...share(p.meta, "/brand/"), alternates: { canonical: "https://ibrahimsaud.com/brand/" } };
+export const metadata = redirectMeta("/content/", "صناعة المحتوى");
 
 export default function Page() {
-  return <ProductPage p={p} />;
+  return <Redirect to="/content/" label="صناعة المحتوى" />;
 }

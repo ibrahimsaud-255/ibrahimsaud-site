@@ -1,0 +1,31 @@
+/* صفحة الذكاء الاصطناعي: صور الورش أوّلاً، ثمّ الأخبار، ثمّ التواصل. */
+.ai-top { padding-top: clamp(36px, 5vw, 64px); padding-bottom: clamp(24px, 4vw, 48px); text-align: center; overflow: hidden; }
+.ai-kicker { color: var(--blue); font-weight: 800; font-size: clamp(16px, 1.8vw, 20px); }
+.ai-top h1 { font-size: clamp(44px, 8vw, 96px); font-weight: 900; line-height: 1.05; margin: 6px 0 clamp(24px, 3vw, 36px); }
+
+.ai-gal { position: relative; }
+.ai-gal-track { display: flex; gap: 16px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 0 max(16px, calc((100vw - 1100px) / 2)) 8px; }
+.ai-gal-track::-webkit-scrollbar { display: none; }
+.ai-gal figure { flex: 0 0 clamp(240px, 30vw, 340px); margin: 0; scroll-snap-align: center; position: relative; border-radius: 28px; overflow: hidden; background: #111; }
+.ai-gal img { width: 100%; aspect-ratio: 9 / 16; object-fit: cover; display: block; }
+.ai-gal figcaption { position: absolute; inset: auto 0 0 0; padding: 40px 18px 16px; color: #fff; font-weight: 700; font-size: 15px; text-align: start; background: linear-gradient(transparent, rgba(0, 0, 0, .72)); }
+.ai-gal-ctl { display: flex; justify-content: center; gap: 12px; margin-top: 18px; }
+.ai-gal-ctl button { width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--fg); font-size: 22px; cursor: pointer; }
+.ai-gal-ctl button:hover { border-color: var(--blue); color: var(--blue); }
+
+.ai-news-list { display: grid; gap: 20px; max-width: 900px; }
+.ai-news-list article { display: grid; grid-template-columns: 160px 1fr; gap: 22px; align-items: center; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: 16px; }
+.ai-news-list img { width: 160px; aspect-ratio: 1; object-fit: cover; border-radius: 16px; }
+.ai-news-list h3 { font-size: clamp(21px, 2.2vw, 26px); margin: 4px 0 6px; }
+.ai-news-list h3 a { color: inherit; }
+.ai-news-list p { color: var(--fg-2); font-size: 17px; line-height: 1.6; }
+
+.ai-contact { text-align: center; }
+.ai-contact h2 { font-size: clamp(32px, 4.6vw, 52px); margin-bottom: 24px; }
+.ai-contact-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+.ai-phone { margin-top: 18px; font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 600px) {
+  .ai-news-list article { grid-template-columns: 96px 1fr; gap: 14px; }
+  .ai-news-list img { width: 96px; }
+}

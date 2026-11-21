@@ -11,15 +11,15 @@ import Manifesto from "@/components/v2/Manifesto";
 import WorksRail from "@/components/v2/WorksRail";
 import Devices from "@/components/v2/Devices";
 import { brands } from "@/lib/site";
-import { aiPage, bookHref, hero, manifesto, products, tools, waHref } from "@/lib/v2";
+import { aiPage, bookHref, hero, manifesto, tools, waHref } from "@/lib/v2";
 import { featured, workThumb } from "@/lib/content";
 
 // الرئيسيّة بهندسة apple.com: واجهة إبراهيم، ثمّ لوحة كاملة العرض لكلّ منتج، ثمّ شبكة لوحات أصغر.
 // القديمة محفوظة في /classic. المحتوى كلّه في src/lib/v2.ts.
 
-const homeTitle = "إبراهيم سعود — صناعة المحتوى والأنظمة";
+const homeTitle = "إبراهيم سعود — صناعة المحتوى ونظام الجمعيات الشبابية";
 const homeDesc =
-  "إبراهيم سعود، مخرج ومنتج: أفلام رسميّة وإعلانات وتغطية فعاليّات وبودكاست، ومواقع وأنظمة إدارة تملكها، للجهات والشركات والخبراء في الرياض وكلّ المملكة.";
+  "إبراهيم سعود، مخرج ومنتج: أفلام رسميّة وإعلانات وتغطية فعاليّات وبودكاست، ونظام الجمعيات الشبابية، للجهات والجمعيّات والخبراء في الرياض وكلّ المملكة.";
 
 export const metadata: Metadata = {
   title: homeTitle,
@@ -27,8 +27,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://ibrahimsaud.com" },
   ...share({ title: homeTitle, description: homeDesc }, "/")
 };
-
-const { brand, systems } = products;
 
 export default function Home() {
   return (
@@ -91,28 +89,14 @@ export default function Home() {
 
           <section className="v2-tile dark" data-rise>
             <WindowLight style={{ top: -40, left: "50%", width: 900, height: 560, marginLeft: -450 }} />
-            <h2>{systems.name}</h2>
-            <p className="line">{systems.headline}</p>
+            <h2>نظام الجمعيات الشبابية</h2>
+            <p className="line">جمعيّتك كلّها، في جوالك.</p>
             <div className="ctas">
-              <a className="v2-btn v2-btn-primary sm" href={systems.href}>اعرف أكثر</a>
-              <a className="v2-btn v2-btn-ghost sm" href={`${systems.href}#try`}>جرّبه من جوالك</a>
+              <a className="v2-btn v2-btn-primary sm" href="/systems/charities/">اعرف أكثر</a>
+              <a className="v2-btn v2-btn-ghost sm" href="/systems/charities/#try">جرّبه بدون تسجيل</a>
             </div>
-            <div className="art screen"><Devices s={systems.heroScreen!} /></div>
+            <div className="art screen"><Devices s={{ src: "/v2/shots/youth-desk.jpg", url: "نظام الجمعيات الشبابية", phone: "/v2/shots/youth-stu-home.jpg" }} /></div>
           </section>
-
-          <section className="v2-tile" data-rise>
-            <h2>{brand.name}</h2>
-            <p className="line">{brand.headline}</p>
-            <div className="ctas">
-              <a className="v2-btn v2-btn-primary sm" href={brand.href}>اعرف أكثر</a>
-              <a className="v2-btn v2-btn-ghost sm" href={`${brand.href}#buy`}>اطلب</a>
-            </div>
-            <div className="art memoji">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src="/v2/memoji/hands_on_hips.png" alt="" loading="lazy" />
-            </div>
-          </section>
-
 
           <div className="v2-tile-grid">
             <section className="v2-tile half dark" data-rise>
@@ -142,29 +126,27 @@ export default function Home() {
 
             <section className="v2-tile half" data-rise>
               <h2>{aiPage.name}</h2>
-              <p className="line">ورش وتدريب لفريقك، بأمثلة من شغلكم.</p>
+              <p className="line">ورش عمليّة للجهات والمدارس والفرق.</p>
               <div className="ctas">
                 <a className="v2-link" href="/ai/">اعرف أكثر <span className="chev">‹</span></a>
-                <a className="v2-link" href="/ai/#request">اطلب ورشة <span className="chev">‹</span></a>
+                <a className="v2-link" href="/ai/#contact">اطلب ورشة <span className="chev">‹</span></a>
               </div>
               <div className="art frame">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/v2/shots/workshop-cover.jpg" alt="ورشة «لا تدرسه… جرّبه» للذكاء الاصطناعي" loading="lazy" />
+                <img src="/v2/shots/ws-ai-1.jpg" alt="إبراهيم سعود يقدّم ورشة الذكاء الاصطناعي" loading="lazy" style={{ objectPosition: "center 30%" }} />
               </div>
             </section>
 
             <section className="v2-tile half dark" data-rise>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img className="tile-logo" src="/tools/claude.svg" alt="Claude" />
-              <h2>هويّة</h2>
-              <p className="line">هويّتك. داخل Claude.</p>
+              <h2>جوّالي</h2>
+              <p className="line">تطبيق الطالب في جمعيّتك. بطاقته وبنكه وفريقه.</p>
               <div className="ctas">
-                <a className="v2-link" href="/brand/#identity">اعرف أكثر <span className="chev">‹</span></a>
-                <a className="v2-link" href="/store/#addons">اطلب <span className="chev">‹</span></a>
+                <a className="v2-link" href="/systems/charities/#jawwali">اعرف أكثر <span className="chev">‹</span></a>
+                <a className="v2-link" href="/charity/season/?demo=1" target="_blank" rel="noopener">جرّبه <span className="chev">‹</span></a>
               </div>
-              <div className="art frame">
+              <div className="art phones two">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/v2/shots/saad-quote.jpg" alt="" loading="lazy" />
+                {["/v2/shots/youth-stu-home.jpg", "/v2/shots/youth-stu-bank.jpg"].map((s) => <img key={s} src={s} alt="" loading="lazy" />)}
               </div>
             </section>
 
@@ -180,17 +162,6 @@ export default function Home() {
               </div>
             </section>
 
-            <section className="v2-tile half" data-rise>
-              <h2>حزمة النشر</h2>
-              <p className="line">فكرة وحدة. كلّ المنصّات.</p>
-              <div className="ctas">
-                <a className="v2-link" href="/store/#addons">اعرف أكثر <span className="chev">‹</span></a>
-              </div>
-              <div className="art memoji">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/v2/memoji/surprise.png" alt="" loading="lazy" />
-              </div>
-            </section>
           </div>
         </div>
 

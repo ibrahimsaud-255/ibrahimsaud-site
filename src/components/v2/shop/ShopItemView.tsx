@@ -27,7 +27,8 @@ function SpecIcon({ label }: { label: string }) {
   const d = (SPEC_ICONS.find(([r]) => r.test(label)) || SPEC_ICONS[0])[1];
   return <svg className="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden dangerouslySetInnerHTML={{ __html: d }} />;
 }
-export default function ShopItemView({ item: i }: { item: ShopItem }) {
+// promo: قسم اختياريّ قبل الأسئلة (مثل «تعمل في جمعيّة؟» في صفحة بث الدروس العربيّة).
+export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo?: React.ReactNode }) {
   const T = shopT(i.lang);
   const foreign = !!i.lang && i.lang !== "ar";
   return (
@@ -136,6 +137,8 @@ export default function ShopItemView({ item: i }: { item: ShopItem }) {
             <BuyPanel item={i} />
           </div>
         </section>
+
+        {promo}
 
         <section className="v2-sec" id="faq">
           <div className="v2-wrap">

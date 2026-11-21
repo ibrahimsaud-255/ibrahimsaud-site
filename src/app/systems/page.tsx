@@ -1,12 +1,9 @@
-import type { Metadata } from "next";
-import { share } from "@/lib/share";
-import "@/components/v2/v2.css";
-import ProductPage from "@/components/v2/ProductPage";
-import { products } from "@/lib/v2";
+// «النظام» العامّ للمنشآت أُزيل من الموقع (قرار ٢٠٢٦-١١-٢١): المنتج الوحيد للأنظمة = نظام الجمعيات الشبابية.
+// (بيانات الصفحة القديمة باقية في products.systems داخل src/lib/v2.ts لو احتجتها.)
+import Redirect, { redirectMeta } from "@/components/v2/Redirect";
 
-const p = products.systems;
-export const metadata: Metadata = { ...p.meta, ...share(p.meta, "/systems/"), alternates: { canonical: "https://ibrahimsaud.com/systems/" } };
+export const metadata = redirectMeta("/systems/charities/", "نظام الجمعيات الشبابية");
 
 export default function Page() {
-  return <ProductPage p={p} />;
+  return <Redirect to="/systems/charities/" label="نظام الجمعيات الشبابية" />;
 }

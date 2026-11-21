@@ -56,7 +56,7 @@ export const pkgs = {
   // أوّل خطوة مجّانيّة دائماً (نوفمبر ٢٠٢٦: أُلغيت «جلسة التشخيص» المدفوعة) — المهتمّ ياخذ المعلومة كاملة بدون أيّ مبلغ.
   call: { id: "call", name: "مكالمة تعارف", for: "قبل أيّ باقة", price: "مجّانيّة", free: true, approved: true, items: ["اتصال أو واتساب، بالوقت اللي يناسبك", "تاخذ المعلومة كاملة: وش تستلم، وبكم، وكم ياخذ", "بدون أيّ رسوم ولا التزام"] },
   hudoor: { id: "hudoor", name: "حضور", for: "تبدأ حضورك", price: "٤,٩٠٠", half: "٢,٤٥٠", approved: true, items: ["يوم تصوير", "صور لينكدإن احترافيّة", "فيديو تعريفيّ", "صفحة شخصيّة وبايو"] },
-  hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", half: "٧,٤٥٠", approved: true, featured: true, items: ["جلسة تشخيص وخطّة", "هويّة في Claude", "موقع بصفحة بيع وباقات", "نظام عروض أسعار وفواتير", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
+  hudoorPro: { id: "hudoor-pro", name: "حضور Pro", for: "كلّ شي من الصفر", price: "١٤,٩٠٠", half: "٧,٤٥٠", approved: true, featured: true, items: ["جلسة تشخيص وخطّة", "موقع بصفحة بيع وباقات", "يوم استوديو: فيديو وصور و٨ مقاطع", "خطّة محتوى ٩٠ يوماً"] },
   hudoorPlus: { id: "hudoor-plus", name: "حضور+", for: "محتوى كلّ شهر", price: "٦,٥٠٠", unit: "شهريّاً", approved: true, items: ["يوم تصوير شهريّ", "١٦ مقطعاً", "النشر على حساباتك"] },
   hawiya: { id: "hawiya", name: "هويّة", for: "هويّتك داخل Claude", price: "١,٤٩٠", half: "٧٤٥", approved: true, items: ["مهارة Claude بهويّتك: أغلفة ومنشورات وموشن", "دليل هويّة PDF تعرضه وتشاركه", "الخطّ واللون والشعار", "تشارك المهارة مع فريقك في Claude"] },
   publish: { id: "publish", name: "حزمة النشر", for: "فكرة وحدة، كلّ المنصّات", price: "٣,٩٠٠", half: "١,٩٥٠", approved: true, items: ["دفتر NotebookLM بمعادلة الانتشار وهويّتك", "برومت حزمة النشر", "أستوديو نشر مربوط بحساباتك"] },
@@ -124,7 +124,7 @@ export const tools = [
 export const why = [
   { title: "المكالمة الأولى مجّانيّة.", text: "٢٠ دقيقة أسمع فيها وضعك وأقول لك وش تحتاج فعلاً، حتى لو أقلّ من باقة.", memoji: "wink" as Memoji },
   { title: "طبّقته على نفسي أوّل.", text: "كلّ شي أبيعه شغّال عندي اليوم: حروف ودروس، وهذا الموقع، والاستوديو.", memoji: "proud" as Memoji },
-  { title: "تعدّل بنفسك.", text: "تتدرّب تعدّل موقعك ونظامك بـClaude بكلام عاديّ، بدون مبرمج.", memoji: "big_happy" as Memoji },
+  { title: "تكلّمني أنا.", text: "ما فيه قسم مبيعات ولا تذاكر دعم: تتواصل معي مباشرة من أوّل مكالمة لآخر تعديل.", memoji: "big_happy" as Memoji },
   { title: "نصف المبلغ ونبدأ.", text: "عرض سعر أوّلاً، ثمّ نصف المبلغ ونبدأ الشغل، والباقي عند التسليم، بفاتورة رسميّة.", memoji: "happy" as Memoji },
 ];
 
@@ -189,17 +189,15 @@ export const products: Record<Product["slug"], Product> = {
     kicker: "البراند الشخصيّ",
     meta: {
       title: "حضور — بناء البراند الشخصيّ للخبراء: موقع وبودكاست وهويّة | إبراهيم سعود",
-      description: "للخبراء والمستشارين والمدرّبين: موقع شخصيّ يبيع، تصوير بودكاست في الرياض، صور لينكدإن، هويّة بصريّة ومهارة Claude، ونظام عروض أسعار وفواتير.",
+      description: "للخبراء والمستشارين والمدرّبين: موقع شخصيّ يبيع، تصوير بودكاست في الرياض، صور لينكدإن، وفيديو تعريفيّ وخطّة محتوى.",
     },
     headline: "خبرتك ٢٠ سنة. خلّ السوق يشوفها.",
-    sub: "طلعت من الوظيفة أو تفكّر تطلع؟ حضور يبني لك اللي يحتاجه الخبير المستقلّ: صورة يثق فيها العميل، ومحتوى يوصل، ونظام يدير شغلك.",
+    sub: "طلعت من الوظيفة أو تفكّر تطلع؟ حضور يبني لك اللي يحتاجه الخبير المستقلّ: صورة يثق فيها العميل، ومحتوى يوصل، وصفحة تبيع بدالك.",
     from: "يبدأ من ٤,٩٠٠ ريال",
     memoji: "one_raised_eyebrow",
     highlights: [
       { title: "صفحة تبيع بدالك.", text: "من أنت، ووش تقدّم، وكم سعره، وزرّ حجز. مثل هذي الصفحة.", img: "/v2/memoji/hands_on_hips.png", kind: "memoji" },
       { title: "حلقة تصير عشرة مقاطع.", text: "استوديو بثلاث كاميرات في الرياض، وحلقة تتقطّع لمحتوى شهر.", img: "/v2/shots/studio.jpg", kind: "cover", dark: true },
-      { title: "هويّتك داخل Claude.", text: "تقول «سوّ لي غلاف لهالحلقة» ويطلع بخطّك ولونك.", img: "/v2/shots/saad-quote.jpg", kind: "frame", dark: true },
-      { title: "نظام بدل المدير.", text: "عروض أسعار وفواتير ومتابعة عملاء في مكان واحد.", img: "/v2/shots/hl-office.jpg", kind: "phone" },
     ],
     journey: {
       title: "الصقر والبرّ.",
@@ -215,25 +213,8 @@ export const products: Record<Product["slug"], Product> = {
         { title: "صفحة تبيع بدالك", text: "موقع فيه من أنت ووش تقدّم وكم سعره وزرّ حجز. بدونه كلّ عميل يجيك من معارفك بس." },
         { title: "محتوى يشرح خبرتك", text: "حلقة بودكاست تتقطّع لعشرة مقاطع، من استوديو جاهز بثلاث كاميرات." },
         { title: "صورة تليق بخبرتك", text: "صور لينكدإن وهويّة بسيطة بخطّ ولون ثابتين، تعرفك الناس فيها." },
-        { title: "نظام بدل المدير", text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، تعدّل عليه بـClaude." },
       ],
     }],
-    screen: {
-      title: "نظام الخبير.",
-      text: "عروض أسعار وفواتير ومتابعة عملاء ومهامّ في مكان واحد، باسمك وشعارك. هذا نظامي أنا اللي أدير فيه شغلي، وتقدر تجرّبه الحين.",
-      src: "/v2/shots/desk-office.jpg",
-      url: "النظام — نسخة عرض",
-      phone: "/v2/shots/phone-office.jpg",
-      href: "/demo/nasaq/index.html",
-    },
-    showcase: {
-      id: "identity",
-      eyebrow: "هويّة",
-      title: "هويّتك تشتغل معك كلّ يوم.",
-      text: "دليل هويّة ومهارة داخل Claude: تقول له «سوّ لي غلاف لهالحلقة» ويطلع بهويّتك. هذي هويّة سعد السيف اللي سلّمناها، وموشن حلقاته يطلع منها.",
-      imgs: ["/v2/shots/saad-quote.jpg", "/v2/shots/saad-name.jpg", "/v2/shots/saad-stat.jpg"],
-      logos: [{ src: "/v2/logos/saad-alsaif-white.png", alt: "سعد السيف" }, { src: "/tools/claude.svg", alt: "Claude", label: "Claude" }],
-    },
     compare: {
       models: [
         { name: "حضور", price: "٤,٩٠٠" },
@@ -245,15 +226,13 @@ export const products: Record<Product["slug"], Product> = {
         { label: "صور لينكدإن احترافيّة", v: [true, true, false] },
         { label: "فيديو تعريفيّ", v: [true, true, false] },
         { label: "صفحتك على الإنترنت", v: ["صفحة وبايو", "موقع بصفحة بيع وباقات", false] },
-        { label: "هويّة في Claude", v: [false, true, false] },
-        { label: "نظام عروض أسعار وفواتير", v: [false, true, false] },
         { label: "مقاطع قصيرة", v: [false, "٨ مقاطع", "١٦ مقطعاً كلّ شهر"] },
         { label: "خطّة محتوى", v: [false, "٩٠ يوماً", false] },
         { label: "النشر على حساباتك", v: [false, false, true] },
       ],
     },
     packages: [pkgs.hudoor, pkgs.hudoorPro, pkgs.hudoorPlus],
-    addons: [pkgs.podcast, pkgs.hawiya, pkgs.publish],
+    addons: [pkgs.podcast, pkgs.publish],
     faqs: [faqs[0], faqs[2], faqs[1], faqs[3], faqs[4]],
     final: "خلّ خبرتك تشتغل لك.",
   },
@@ -434,7 +413,7 @@ export const products: Record<Product["slug"], Product> = {
 export const aiPage = {
   meta: {
     title: "ورش وتدريب الذكاء الاصطناعي للشركات والجهات والمدارس | إبراهيم سعود",
-    description: "ورش عمل وتدريب واستشارات في الذكاء الاصطناعي بالرياض: كيف يفكّر فريقك ويبني ويتعلّم مع الذكاء الاصطناعي، وكيف يطوّر المدير نظامه بنفسه مع Claude.",
+    description: "إبراهيم سعود، مدرّب ذكاء اصطناعي: ورش عمليّة للجهات والمدارس والفرق في الرياض وكلّ المملكة. صور وأخبار ورش قدّمتها، وتواصل مباشر بالواتساب.",
   },
   kicker: "ورش · تدريب · استشارات",
   name: "الذكاء الاصطناعي",
@@ -442,7 +421,6 @@ export const aiPage = {
   sub: "ورش وتدريب واستشارات للشركات والجهات والمدارس: كيف يفكّر فريقك ويبني ويتعلّم مع الذكاء الاصطناعي، بأمثلة من شغلكم أنتم.",
   services: [
     { title: "ورشة لفريقك", text: "ورشة حضوريّة أو عن بعد، مبنيّة على شغل جهتكم: الأساسيّات، وكيف تكلّمه صحّ، والأدوات اللي تفرق، وتطبيق حيّ.", memoji: "big_happy" as Memoji },
-    { title: "تدريب المدير على نظامه", text: "لو سوّيت لكم نظام أو موقع: جلسة يتعلّم فيها المدير يطوّر نظامه بنفسه مع Claude، بكلام عاديّ.", memoji: "proud" as Memoji },
     { title: "استشارة: وين يدخل؟", text: "جلسة نمرّ فيها على شغلكم ونحدّد وين يوفّر الذكاء الاصطناعي وقتاً فعلاً، ووين ما يستاهل.", memoji: "head_tilt" as Memoji },
   ],
   workshop: {
@@ -451,6 +429,16 @@ export const aiPage = {
     text: "ورشة لطلاب المرحلة المتوسطة والثانويّة: كيف تفكّر وتبني وتتعلّم مع الذكاء الاصطناعي. فيها قصّة من شغلي: كيف دخل المصحف الشريف منصّة حروف ودروس بالهندسة العكسيّة، وكيف تكلّمه صحّ، والأدوات اللي تستاهل.",
     imgs: ["/v2/shots/workshop-cover.jpg", "/v2/shots/workshop-story.jpg", "/v2/shots/workshop-method.jpg", "/v2/shots/workshop-tools.jpg"],
   },
+  // أعلى الصفحة (قرار إبراهيم ٢٠٢٦-١١-٢١): صور حقيقيّة من ورش الذكاء الاصطناعي فقط، ثمّ الأخبار، ثمّ التواصل.
+  // لا شرائح عروض ولا شرح طويل — الزائر يتصفّح بسرعة. أيّ ورشة أو خبر جديد يُضاف هنا بصوره ورابطه.
+  gallery: [
+    { src: "/v2/shots/ws-ai-1.jpg", alt: "إبراهيم سعود يقدّم ورشة الذكاء الاصطناعي للطلاب", cap: "ورشة الذكاء الاصطناعي للطلاب · مدينة القيم" },
+    { src: "/v2/shots/ws-ai-2.jpg", alt: "إبراهيم سعود أمام الطلاب في ورشة الذكاء الاصطناعي", cap: "ورشة الذكاء الاصطناعي للطلاب · مدينة القيم" },
+    { src: "/v2/shots/ws-ai-3.jpg", alt: "إبراهيم سعود يشرح في ورشة الذكاء الاصطناعي", cap: "ورشة الذكاء الاصطناعي للطلاب · مدينة القيم" },
+  ],
+  news: [
+    { title: "ورشة الذكاء الاصطناعي للطلاب", host: "ضمن برنامج مدينة القيم · الأحساء", text: "ورشة تفاعليّة لطلاب المتوسّط والثانويّ: المصطلحات اللي يحتاجونها، وكيف يجرّبونه بأنفسهم بوعي، ويعرفون متى يغلط.", img: "/v2/shots/ws-ai-2.jpg", href: "" },
+  ],
   // ورش قدّمتها فعلاً — كلّ ورشة جديدة تنضاف هنا بصورها وأرقامها
   past: [
     {
@@ -576,6 +564,14 @@ export const navItems: NavItem[] = [
       { title: "احصل عليه", links: [{ label: "اشترِ الآن", href: "/lessons-broadcast/#buy" }, { label: "ويندوز · ماك · أندرويد", href: "/lessons-broadcast/#platforms" }] },
     ],
   },
+  // المنتج الوحيد للأنظمة (قرار ٢٠٢٦-١١-٢١): نظام الجمعيات الشبابية — جمهور بث الدروس من الجمعيّات أصلاً
+  {
+    label: "نظام الجمعيات", href: "/systems/charities/",
+    menu: [
+      { title: "نظام الجمعيات الشبابية", big: true, links: [{ label: "نظرة عامّة", href: "/systems/charities/" }, { label: "«جوّالي» للطالب", href: "/systems/charities/#jawwali" }, { label: "تطبيق الميسّرين", href: "/systems/charities/#staff" }, { label: "الأندية الشبابية الصيفية", href: "/systems/charities/youth-clubs/" }, { label: "معيار الشفافية والإفصاح", href: "/systems/charities/transparency/" }] },
+      { title: "ابدأ", links: [{ label: "ابدأ ١٤ يوماً مجّاناً", href: "/charity/?signup=1" }, { label: "جرّبه بدون تسجيل", href: "/systems/charities/#try" }, { label: "السعر", href: "/systems/charities/#buy" }] },
+    ],
+  },
   {
     label: "صناعة المحتوى", href: "/content/",
     menu: [
@@ -584,26 +580,10 @@ export const navItems: NavItem[] = [
     ],
   },
   {
-    label: "النظام", href: "/systems/",
-    menu: [
-      { title: "استكشف النظام", big: true, links: [{ label: "النظام", href: "/systems/" }, { label: "نظام الجمعيات الشبابية", href: "/systems/charities/" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "جرّبه من جوالك", href: "/systems/#try" }, { label: "قارن", href: "/systems/#compare" }] },
-      { title: "اطلب", links: [{ label: "اطلب عرض سعر", href: "/systems/#request" }, { label: "مكالمة تعارف مجّانيّة", href: bookHref }, { label: "النظام", href: "/systems/#buy" }, { label: "النظام Pro", href: "/systems/#buy" }] },
-    ],
-  },
-  {
-    label: "حضور", href: "/brand/",
-    menu: [
-      { title: "استكشف حضور", big: true, links: [{ label: "حضور", href: "/brand/" }, { label: "قارن الباقات", href: "/brand/#compare" }, { label: "هويّة", href: "/brand/#identity" }] },
-      { title: "اطلب", links: [{ label: "حضور", href: "/brand/#buy" }, { label: "حضور Pro", href: "/brand/#buy" }, { label: "حضور+", href: "/brand/#buy" }] },
-      { title: "المزيد", links: [{ label: "حلقة بودكاست", href: "/video/#buy" }, { label: "حزمة النشر", href: "/store/#addons" }] },
-    ],
-  },
-  {
     label: "الذكاء الاصطناعي", href: "/ai/",
     menu: [
-      { title: "استكشف", big: true, links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "آخر ورشة", href: "/ai/#workshop" }, { label: "اطلب ورشة", href: "/ai/#request" }] },
-      { title: "الخدمات", links: [{ label: "ورشة لفريقك", href: "/ai/#services" }, { label: "ابنِ نظامك بنفسك", href: "/build/" }, { label: "تدريب المدير على نظامه", href: "/ai/#services" }, { label: "استشارة", href: "/ai/#services" }] },
+      { title: "استكشف", big: true, links: [{ label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "صور الورش", href: "/ai/#top" }, { label: "أخبار الورش", href: "/ai/#news" }] },
+      { title: "اطلب", links: [{ label: "ورشة لفريقك", href: "/ai/#contact" }, { label: "واتساب", href: waHref("السلام عليكم، أبي ورشة ذكاء اصطناعي") }] },
     ],
   },
-  { label: "الباقات", href: "/store/" },
 ];
