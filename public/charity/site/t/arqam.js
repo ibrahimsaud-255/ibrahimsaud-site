@@ -75,7 +75,7 @@
     return `<footer class="aq-ft"><div class="wrap"><b class="aq-ft-n">${esc(C.short)}</b>
       <div class="aq-ft-g"><p>${esc(D.name)}${p.license ? `<br>ترخيص المركز الوطنيّ لتنمية القطاع غير الربحيّ رقم ${esc(p.license)}` : ''}</p>
         <nav>${K.visible().filter(id => id !== 'impact').map(id => `<a href="#${id}" data-go="${id}">${SECTIONS[id]}</a>`).join('')}</nav></div>
-      <div class="aq-ft-c"><span>© ${new Date().getFullYear()}</span><a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات</a></div></div></footer>`;
+      <div class="aq-ft-c"><span>© ${new Date().getFullYear()}</span><a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات الشبابية</a></div></div></footer>`;
   }
   window.SiteT('arqam', { header, hero, S, footer });
 })();

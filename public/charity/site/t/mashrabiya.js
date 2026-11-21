@@ -67,7 +67,7 @@
     return `<footer class="mb-ft"><div class="mb-pat" aria-hidden="true"></div><div class="wrap">${star('mb-big')}
       <b>${esc(D.name)}</b>${p.license ? `<small>مسجّلة لدى المركز الوطنيّ لتنمية القطاع غير الربحيّ برقم ${esc(p.license)}</small>` : ''}
       <nav>${K.visible().filter(id => id !== 'impact').map(id => `<a href="#${id}" data-go="${id}">${SECTIONS[id]}</a>`).join('')}</nav>
-      <p>© ${new Date().getFullYear()} ${esc(C.short)} · <a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات</a></p></div></footer>`;
+      <p>© ${new Date().getFullYear()} ${esc(C.short)} · <a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات الشبابية</a></p></div></footer>`;
   }
   window.SiteT('mashrabiya', { hero, S, footer });
 })();

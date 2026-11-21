@@ -30,7 +30,7 @@ function wsFontCss() {
   const l = document.createElement('link'); l.id = 'wsFontCss'; l.rel = 'stylesheet'; l.href = 'https://fonts.googleapis.com/css2?' + fams.join('&') + '&text=' + txt + '&display=swap'; document.head.appendChild(l);
 }
 const WS_THUMB_V = 'v=1';
-const WS_SITE_V = 'sv=7';   // يُرفع مع كلّ تعديل في site/ حتى لا تُعرض المعاينة من نسخة مخزّنة
+const WS_SITE_V = 'sv=8';   // يُرفع مع كلّ تعديل في site/ حتى لا تُعرض المعاينة من نسخة مخزّنة
 const WS_SECTIONS = { impact: ['أثرنا', 'bar-chart-3'], about: ['من نحن', 'info'], programs: ['البرامج', 'graduation-cap'], stories: ['قصص وشهادات', 'quote'], news: ['الأخبار', 'newspaper'],
   join: ['تطوّع معنا', 'hand-heart'], donate: ['ادعمنا', 'heart'], governance: ['الحوكمة والشفافية', 'shield-check'], partners: ['الشركاء', 'handshake'], faq: ['الأسئلة الشائعة', 'circle-help'], contact: ['تواصل معنا', 'phone'] };
 const WS_ORDER = ['impact', 'about', 'programs', 'stories', 'news', 'join', 'donate', 'governance', 'partners', 'faq', 'contact'];

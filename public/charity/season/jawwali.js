@@ -292,7 +292,8 @@
       const perm = 'Notification' in window ? Notification.permission : 'unsupported';
       view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يظهر تنبيه في «جوّالي» وقت كلّ صلاة.</div>
         ${list.map(p => `<div class="pt${p[0] === np[0] && p[1].getTime() === np[1].getTime() ? ' next' : p[1] < nowD ? ' past' : ''}"><span>${p[0]}</span><b>${fmtT(p[1])}</b></div>`).join('')}
-        ${perm === 'default' ? `<button class="btn sec" style="margin-top:18px" data-act="notif">فعّل التنبيهات على جوالي</button>` : ''}
+        <button class="btn sec" style="margin-top:18px" data-act="adhantest">🔊 اسمع الأذان</button>
+        ${perm === 'default' ? `<button class="btn sec" style="margin-top:10px" data-act="notif">فعّل التنبيهات على جوالي</button>` : ''}
         <p class="empty" style="padding:18px 6px">«إنّ الصلاة كانت على المؤمنين كتاباً موقوتاً»</p>`);
     },
     avatar() {
@@ -566,16 +567,20 @@
     const pr = e.target.closest('[data-prod]'); if (pr) { prod(+pr.dataset.prod); return; }
     const xa = e.target.closest('[data-xamt]'); if (xa) { XF.amt = +xa.dataset.xamt; const ia = document.getElementById('xa'); if (ia) ia.value = XF.amt; xa.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === xa)); xferBtn(); return; }
     const vm = e.target.closest('[data-vno]'); if (vm) { OPEN.scan(+vm.dataset.vno); return; }
-    const c = e.target.closest('[data-close]'); if (c) { c.closest('.view').remove(); if (D) home(); return; }
+    const c = e.target.closest('[data-close]'); if (c) { const au = document.getElementById('adhanAudio'); if (au && !au.paused && !document.querySelector('.adhan')) { au.pause(); au.currentTime = 0; } c.closest('.view').remove(); if (D) home(); return; }
     const pick = (attr, set) => { const b = e.target.closest('[' + attr + ']'); if (!b) return false; set(b.getAttribute(attr)); b.parentElement.querySelectorAll('[' + attr + ']').forEach(x => x.classList.toggle('on', x === b)); return true; };
     if (pick('data-amt', v => STF.amt = +v) || pick('data-pts', v => STF.pts = +v) || pick('data-reason', v => STF.reason = v) || pick('data-item', v => STF.item = v) || pick('data-team', v => STF.team = v)) return;
-    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'notif') { Notification.requestPermission().then(() => OPEN.pray()); return; } act(ac.dataset.act); }
+    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'notif') { Notification.requestPermission().then(() => OPEN.pray()); return; } act(ac.dataset.act); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { const v = document.querySelector('.view'); if (v) { v.remove(); if (D) home(); } } });
 
   /* ═════════ التنبيهات: الصلاة (شاشة كاملة + صوت الأذان إن وُضع ملفّه، وإلا نغمة) والنشاط القادم قبل ١٠ دقائق ═════════ */
   const fired = new Set();
   function tone() { try { const ac = new (window.AudioContext || window.webkitAudioContext)(); [523.25, 659.25, 783.99].forEach((f, i) => { const o = ac.createOscillator(), g = ac.createGain(); o.frequency.value = f; o.connect(g); g.connect(ac.destination); const t0 = ac.currentTime + i * .5; g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.25, t0 + .05); g.gain.exponentialRampToValueAtTime(.001, t0 + 1.4); o.start(t0); o.stop(t0 + 1.5); }); } catch (e) {} }
+  /* المتصفّحات (خاصّة الآيفون) تمنع الصوت بلا لمسة: أوّل لمسة في التطبيق «تفتح» عنصر الأذان صامتاً ليعمل وقت الصلاة */
+  let audioOK = false;
+  document.addEventListener('pointerdown', () => { if (audioOK) return; const a = document.getElementById('adhanAudio'); if (!a) return; a.muted = true; const p = a.play(); if (p) p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; audioOK = true; }).catch(() => { a.muted = false; }); }, { passive: true });
+  function adhanTest(btn) { const a = document.getElementById('adhanAudio'); if (!a.paused) { a.pause(); a.currentTime = 0; btn.textContent = '🔊 اسمع الأذان'; return; } a.muted = false; a.play().then(() => { btn.textContent = '■ إيقاف'; a.onended = () => { btn.textContent = '🔊 اسمع الأذان'; }; }).catch(() => toast('تعذّر تشغيل الصوت', 1)); }
   function sound() { try { const a = document.getElementById('adhanAudio'); const p = a.play(); if (p) p.catch(tone); } catch (e) { tone(); } }
   function notify(title, body) { try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '../assets/apps/default/prayer.webp' }); } catch (e) {} }
   function adhan(name) {

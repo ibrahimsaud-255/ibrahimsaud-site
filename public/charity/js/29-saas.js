@@ -24,7 +24,7 @@ function saasApplyProfile(o) {
   CONFIG.license = p.license || ''; CONFIG.companyAddress = p.address || '';
   CONFIG.ownerPhone = p.phone || ''; CONFIG.ownerEmail = p.email || '';
   CONFIG.bankName = p.bankName || ''; CONFIG.bankIban = p.iban || ''; CONFIG.bankAccName = p.accName || o.name || '';
-  CONFIG.brandLogo = (p.logo && /^https:\/\//.test(p.logo)) ? p.logo : './assets/logo-black.png';   // المطبوعات بشعار الجمعيّة
+  CONFIG.brandLogo = (p.logo && /^https:\/\//.test(p.logo)) ? p.logo : './assets/logo-black.png?v=2';   // المطبوعات بشعار الجمعيّة
   if (Array.isArray(p.boardMembers)) ORG_CFG.boardMembers = p.boardMembers;
   if (typeof ofApplyProfile === 'function') ofApplyProfile(p);   // حدود الصلاحيّات ومسمّى المسؤول التنفيذيّ (30-compliance)
   if (S && S.settings) {

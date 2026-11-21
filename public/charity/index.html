@@ -4,7 +4,7 @@
 <meta name="robots" content="noindex,nofollow">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>نظام الجمعيات — دخول</title>
+<title>نظام الجمعيات الشبابية — دخول</title>
 <meta name="theme-color" content="#F5F5F7">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -701,12 +701,12 @@
 <link rel="stylesheet" href="./assets/trello.css?v=4">
 <link rel="stylesheet" href="./assets/board-apple.css?v=5">
 <link rel="stylesheet" href="./assets/calendar.css?v=3">
-<link rel="stylesheet" href="./assets/brand.css?v=25">
-<link rel="stylesheet" href="./assets/sidebar.css?v=1">
+<link rel="stylesheet" href="./assets/brand.css?v=26">
+<link rel="stylesheet" href="./assets/sidebar.css?v=2">
 <link rel="stylesheet" href="./assets/apple.css?v=9">
-<link rel="stylesheet" href="./assets/dark.css?v=7">
+<link rel="stylesheet" href="./assets/dark.css?v=8">
 <link rel="stylesheet" href="./assets/season.css?v=11">
-<link rel="stylesheet" href="./assets/contrast.css?v=9">
+<link rel="stylesheet" href="./assets/contrast.css?v=10">
 <link rel="stylesheet" href="./assets/hig.css?v=3">
 <style>
   .saas-switch{margin-top:16px;text-align:center;font-size:13.5px;color:var(--muted)}
@@ -722,9 +722,9 @@
 
 <div id="loginView" class="login-wrap">
   <div class="login-box">
-    <img class="brand-logo" src="./assets/logo-blue.png" alt="الشعار" style="max-width:210px;width:72%;display:block;margin:0 auto 12px;border-radius:12px" onerror="this.style.display='none'">
+    <img class="brand-logo" src="./assets/logo-blue.png?v=2" alt="الشعار" style="max-width:210px;width:72%;display:block;margin:0 auto 12px;border-radius:12px" onerror="this.style.display='none'">
     <div id="loginBox">
-    <p>نظام الجمعيات — دخول فريق الجمعيّة</p>
+    <p>نظام الجمعيات الشبابية — دخول فريق الجمعيّة</p>
     <div class="field"><label>البريد الإلكتروني</label><input type="email" id="em" placeholder="you@email.com" autocomplete="username" inputmode="email" autocapitalize="none" autocorrect="off" spellcheck="false"></div>
     <div class="field"><label>كلمة المرور</label><div class="pw-wrap"><input type="password" id="pw" placeholder="••••••••" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')doLogin()"><button type="button" class="pw-toggle" onclick="togglePw('pw',this)">إظهار</button></div></div>
     <button id="btnLogin" class="btn btn-gold" style="width:100%" onclick="doLogin()">دخول</button>
@@ -759,7 +759,7 @@
 
 <div id="resetView" class="login-wrap hidden">
   <div class="login-box">
-    <img class="brand-logo" src="./assets/logo-blue.png" alt="الشعار" style="max-width:210px;width:72%;display:block;margin:0 auto 12px;border-radius:12px" onerror="this.style.display='none'">
+    <img class="brand-logo" src="./assets/logo-blue.png?v=2" alt="الشعار" style="max-width:210px;width:72%;display:block;margin:0 auto 12px;border-radius:12px" onerror="this.style.display='none'">
     <p>تعيين كلمة مرور جديدة</p>
     <div class="field"><label>كلمة المرور الجديدة</label><div class="pw-wrap"><input type="password" id="np1" placeholder="8 أحرف على الأقل" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false" oninput="pwStrength()"><button type="button" class="pw-toggle" onclick="togglePw('np1',this)">إظهار</button></div><div class="pw-meter"><i id="pwBar"></i></div><div class="pw-hint" id="pwHint">استخدم 8 أحرف على الأقل مع أرقام ورموز.</div></div>
     <div class="field"><label>تأكيد كلمة المرور</label><div class="pw-wrap"><input type="password" id="np2" placeholder="أعد كتابتها" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false" onkeydown="if(event.key==='Enter')doSetNewPassword()"><button type="button" class="pw-toggle" onclick="togglePw('np2',this)">إظهار</button></div></div>
@@ -772,7 +772,7 @@
 <div id="appShell" class="hidden">
   <div class="shell">
     <aside class="sidebar" id="sidebar">
-      <div class="logo-area" style="text-align:center"><img class="brand-logo" src="./assets/logo-blue.png" alt="الشعار" style="max-width:155px;width:86%;display:block;margin:0 auto 6px;border-radius:10px" onerror="this.style.display='none'"><div class="tagline">نظام إدارة الأعمال</div></div>
+      <div class="logo-area" style="text-align:center"><img class="brand-logo" src="./assets/logo-blue.png?v=2" alt="الشعار" style="max-width:155px;width:86%;display:block;margin:0 auto 6px;border-radius:10px" onerror="this.style.display='none'"><div class="tagline">نظام إدارة الأعمال</div></div>
       <nav class="nav" id="nav"></nav>
       <div class="nav-foot">
         <a onclick="go('settings')"><span class="nic"><i data-lucide="settings"></i></span> الإعدادات</a>
@@ -794,7 +794,7 @@
 <div id="modalRoot"></div>
 
 <!-- الإعدادات المركزية — يُحمَّل أولاً قبل كلّ شيء -->
-<script src="./config.js?v=31"></script>
+<script src="./config.js?v=32"></script>
 <script>
 document.title=CONFIG.brandName||'نظام إدارة الأعمال';
 if(CONFIG.brandLogoLight||CONFIG.brandLogo){document.querySelectorAll('.brand-logo').forEach(i=>i.src=CONFIG.brandLogoLight||CONFIG.brandLogo)}
@@ -830,10 +830,10 @@ document.querySelectorAll('.tagline').forEach(t=>t.textContent=CONFIG.brandTagli
 <script src="./js/26-org-erp.js?v=7ba"></script>
 <script src="./js/27-org-trello.js?v=1ba"></script>
 <script src="./js/28-org-calendar.js?v=1ba"></script>
-<script src="./js/29-saas.js?v=5"></script>
+<script src="./js/29-saas.js?v=6"></script>
 <script src="./js/30-compliance.js?v=4"></script>
 <script src="./js/31-desk.js?v=9"></script>
-<script src="./js/32-website.js?v=13"></script>
+<script src="./js/32-website.js?v=14"></script>
 <script src="./js/33-nav.js?v=3"></script>
 <script src="./js/34-apple.js?v=2"></script>
 <script src="./js/35-photos.js?v=6"></script>

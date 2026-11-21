@@ -50,15 +50,15 @@ const CONFIG = {
   vatCR:        '',
 
   /* ═══════ الهوية البصرية ═══════ */
-  brandName:    'نظام الجمعيات',
-  brandLogo:    './assets/logo-black.png',      // المطبوعات — يُستبدل بشعار الجمعيّة إن وضعته
-  brandLogoLight: './assets/logo-blue.png',     // الشريط الجانبيّ — شعار المنتج دائماً
+  brandName:    'نظام الجمعيات الشبابية',
+  brandLogo:    './assets/logo-black.png?v=2',      // المطبوعات — يُستبدل بشعار الجمعيّة إن وضعته
+  brandLogoLight: './assets/logo-blue.png?v=2',     // الشريط الجانبيّ — شعار المنتج دائماً
   brandMark:    '',
   printFontFamily: 'F',
   printFonts:   '@font-face{font-family:F;src:url(/fonts/thmanyah/thmanyahsans-Regular.woff2)}@font-face{font-family:F;src:url(/fonts/thmanyah/thmanyahsans-Bold.woff2);font-weight:700}',
   brandAccent:  '#1003BD',
   brandAccent2: '#4A3FE0',
-  brandTagline: 'نظام الجمعيات',
+  brandTagline: 'نظام الجمعيات الشبابية',
 
   currency:     'ر.س',
   usdRate:      3.75,

@@ -88,7 +88,7 @@
     return `<footer class="sh-ft"><div class="wrap"><b class="sh-ft-n">${esc(D.name)}</b>
       <p>${p.license ? `مسجّلة لدى المركز الوطنيّ لتنمية القطاع غير الربحيّ برقم ${esc(p.license)} · ` : ''}© ${new Date().getFullYear()}</p>
       <nav>${K.visible().filter(id => id !== 'impact').map(id => `<a href="#${id}" data-go="${id}">${SECTIONS[id]}</a>`).join('')}</nav>
-      <a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات</a></div></footer>`;
+      <a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات الشبابية</a></div></footer>`;
   }
   window.SiteT('sahifa', { header, hero, S, footer });
 })();

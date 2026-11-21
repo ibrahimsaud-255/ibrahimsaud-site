@@ -102,5 +102,4 @@ html.ap-dark .nv-demo small{color:var(--ap-l2)}
 /* شاشة الدخول في الوضع الداكن: البطاقة كانت بيضاء (brand.css) والنصّ فاتح — تصير داكنة والشعار أبيض */
 html.ap-dark .login-wrap{background:radial-gradient(1200px 600px at 50% -10%,#1C1C1E,#000 60%)!important}
 html.ap-dark .login-box{background:#1C1C1E!important;border:1px solid rgba(255,255,255,.08)!important;box-shadow:0 20px 60px -20px rgba(0,0,0,.8)!important}
-html.ap-dark .login-box .brand-logo{filter:brightness(0) invert(1)}
 html.ap-dark .login-box input{background:#2C2C2E!important;color:#F5F5F7!important;border-color:rgba(84,84,88,.6)!important}

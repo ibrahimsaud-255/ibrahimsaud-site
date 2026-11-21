@@ -291,7 +291,7 @@
     return `<footer class="ft"><div class="wrap ft-in"><div class="ft-b">${CFG.logo ? `<img src="${esc(CFG.logo)}" alt="">` : ''}<b>${esc(D.name)}</b>
       ${p.license ? `<small>مسجّلة لدى المركز الوطنيّ لتنمية القطاع غير الربحيّ برقم ${esc(p.license)}</small>` : ''}</div>
       <nav class="ft-nav">${visible().filter(id => id !== 'impact').map(id => `<a href="#${id}" data-go="${id}">${SECTIONS[id]}</a>`).join('')}</nav>
-      <div class="ft-c"><span>© ${new Date().getFullYear()} ${esc(CFG.short)}</span><a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات</a></div></div></footer>`;
+      <div class="ft-c"><span>© ${new Date().getFullYear()} ${esc(CFG.short)}</span><a class="made" href="https://ibrahimsaud.com/systems/charities/" target="_blank" rel="noopener">صُنع بنظام الجمعيات الشبابية</a></div></div></footer>`;
   }
   function fab() {
     const wa = waLink(CFG.contact.whatsapp || CFG.social.whatsapp || '');
@@ -339,7 +339,7 @@
     return new Promise(res => { const n = document.createElement('link'); n.rel = 'stylesheet'; n.href = href; n.onload = n.onerror = () => { if (l) l.remove(); n.id = id; res(); }; document.head.appendChild(n); setTimeout(res, 2500); });
   }
   function addScript(src) { return new Promise(res => { const s = document.createElement('script'); s.src = src; s.onload = s.onerror = res; document.head.appendChild(s); }); }
-  const TV = 'v=4';
+  const TV = 'v=5';
   async function prepare() {
     const c = config(D), F = FONTS[c.font];
     const jobs = [addLink('fcss', F.g ? 'https://fonts.googleapis.com/css2?' + F.g.map(x => 'family=' + x).join('&') + '&display=swap' : '')];

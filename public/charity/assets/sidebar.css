@@ -22,7 +22,7 @@
 
 /* الشعار: أصغر، والسطر الثانويّ أهدأ */
 .sidebar .logo-area{border-bottom:0!important;margin-bottom:4px!important;padding:2px 8px 6px!important}
-.sidebar .logo-area img{max-width:96px!important;margin:6px auto 2px!important}
+.sidebar .logo-area img{max-width:136px!important;margin:6px auto 2px!important}
 .sidebar .tagline{font-size:11.5px!important;color:#8E8E93!important}
 
 /* ═════════ الحساب أعلى الشريط ═════════ */

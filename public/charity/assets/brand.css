@@ -52,7 +52,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--accent)!important;box
 /* شاشة الدخول */
 .login-wrap{background:radial-gradient(1200px 600px at 50% -10%,#fff,#F5F5F7 60%)!important}
 .login-box{background:#fff!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:24px!important;box-shadow:0 20px 60px -20px rgba(0,0,0,.15)!important}
-.login-box .brand-logo{max-width:170px!important;border-radius:0!important}
+.login-box .brand-logo{max-width:240px!important;border-radius:0!important}
 .login-box p{color:var(--muted)!important}
 
 /* شريط الاشتراك */
