@@ -296,3 +296,9 @@ textarea.tx{resize:vertical;min-height:90px;border:1.5px solid var(--line);backg
 .avh{color:#fff;font-size:15px;margin:14px 2px 8px}
 .avopts{grid-template-columns:repeat(3,1fr)}
 @media (prefers-reduced-motion:reduce){.avprev .av{transition:none}.avprev.pop .av,.avprev.zoom.pop .av{animation:none}}
+/* الإشعارات */
+.pushb{display:flex!important;align-items:center;gap:12px;border-color:rgba(255,214,10,.45)!important}
+.pb-i{font-size:28px}.pushb b{font-size:17px!important;margin:0!important}.pushb small{display:block;line-height:1.5}
+.inst{text-align:center;padding:8px 4px}.inst-ic img{width:96px;height:96px;border-radius:22px;box-shadow:0 14px 30px -12px rgba(0,0,0,.7)}
+.inst p{color:var(--l2);line-height:1.8}.inst ol{text-align:start;line-height:2.1;font-size:17px;padding-inline-start:22px}
+.shr{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.15)}

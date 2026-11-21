@@ -122,7 +122,7 @@
     } catch (e) { if (fromLogin || !D) login(e.message); else toast(e.message, 1); }
   }
   let linked = false;
-  function deepLink() { const v = +Q.get('v'); if (!v || linked) return; linked = true; if (MODE === 'staff') OPEN.scan(v); else if (v !== D.me.no) OPEN.xfer(v); }
+  function deepLink() { const op = Q.get('open'); if (op && ['pray', 'cal', 'news', 'bank'].includes(op) && !linked) { linked = true; OPEN[op](); return; } const v = +Q.get('v'); if (!v || linked) return; linked = true; if (MODE === 'staff') OPEN.scan(v); else if (v !== D.me.no) OPEN.xfer(v); }
   function setWall(kind) {
     const w = document.getElementById('wall');
     if (kind === 'staff') { const sty = STY_STAFF.some(x => x[0] === wallStyle) ? wallStyle : 'graphite'; w.style.backgroundImage = `url(./walls/staff-${sty}.jpg)`; document.documentElement.style.setProperty('--tc', '#48484A'); document.documentElement.style.setProperty('--sc', '#1C1C1E'); return; }
@@ -149,16 +149,16 @@
       $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(me.avatar, me.name)}</button><p class="hello">أهلاً ${esc(me.name.split(' ')[0])}</p><p class="sub">${me.role === 'lead' ? 'قائد' : 'ميسّر'}${me.stage ? ' · ' + esc(me.stage) : ''} · ${esc(D.season.name)}</p>
         <div class="apps">${app('news', 'الأخبار', 'w-news')}${me.perms && me.perms.post === false ? '' : app('publish', 'انشر', 'w-testimonials')}${app('give', 'امنح', 'finance')}${app('teams', 'نقاط الفرق', 'season')}${me.perms && me.perms.sell ? app('counter', 'الكاونتر', 'procurement') : ''}${app('scan', 'تحقّق', 'comply')}${app('people', 'الطلاب', 'beneficiaries')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('games', 'الألعاب', 'letters')}${app('survey', 'رأيك', 'requests')}${app('trophy', 'الترتيب', 'team')}${app('id', 'بطاقتي', 'hr')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="give"><small>منحتَ هذا الموسم</small><b>${money(me.given || 0)}</b></button><button class="widget" data-open="people"><small>طلابك</small><b>${(D.members || []).length}</b></button></div>
-        ${pw}</div>`;
+        ${pw}<div id="pushb"></div></div>`;
     } else {
       const t = team(D.me.team);
       $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(D.me.avatar, D.me.name)}</button><p class="hello">أهلاً ${esc(D.me.name.split(' ')[0])}</p><p class="sub">${esc(t.name)} · رقمك ${esc(D.me.no)}${D.me.stage ? ' · ' + esc(D.me.stage) : ''}</p>
         <div class="apps">${app('news', 'الأخبار', 'w-news')}${app('bank', 'البنك', 'finance')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('shop', 'المتجر', 'procurement')}${app('trophy', 'الترتيب', 'season')}${app('id', 'بطاقتي', 'hr')}${app('survey', 'رأيك', 'requests')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="bank"><small>رصيدك</small><b>${money(D.me.balance)}</b></button><button class="widget" data-open="trophy"><small>فريقك</small><b>${esc(t.name)}</b></button></div>
         ${pw}${next ? `<button class="widget" data-open="cal"><small>النشاط القادم · ${esc(fmtDay(next.d))}</small><b>${esc(next.t)}</b><small>${esc([next.f && next.f + (next.e ? '–' + next.e : ''), next.p].filter(Boolean).join(' · '))}</small></button>` : ''}
-        </div>`;
+        <div id="pushb"></div></div>`;
     }
-    paintDock();
+    paintDock(); pushBanner();
   }
   function paintDock(cur) {
     const look = MODE === 'staff' ? 'dark' : 'default', k = MODE === 'staff' ? [['news', 'الأخبار', 'w-news'], ['give', 'امنح', 'finance'], ['scan', 'تحقّق', 'comply']] : [['news', 'الأخبار', 'w-news'], ['bank', 'البنك', 'finance'], ['id', 'بطاقتي', 'hr']];
@@ -293,7 +293,7 @@
       view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يظهر تنبيه في «جوّالي» وقت كلّ صلاة.</div>
         ${list.map(p => `<div class="pt${p[0] === np[0] && p[1].getTime() === np[1].getTime() ? ' next' : p[1] < nowD ? ' past' : ''}"><span>${p[0]}</span><b>${fmtT(p[1])}</b></div>`).join('')}
         <button class="btn sec" style="margin-top:18px" data-act="adhantest">🔊 اسمع الأذان</button>
-        ${perm === 'default' ? `<button class="btn sec" style="margin-top:10px" data-act="notif">فعّل التنبيهات على جوالي</button>` : ''}
+        <button class="btn sec" style="margin-top:10px" data-act="pushon">🔔 الإشعارات والجوال مقفل</button>
         <p class="empty" style="padding:18px 6px">«إنّ الصلاة كانت على المؤمنين كتاباً موقوتاً»</p>`);
     },
     avatar() {
@@ -570,7 +570,7 @@
     const c = e.target.closest('[data-close]'); if (c) { const au = document.getElementById('adhanAudio'); if (au && !au.paused && !document.querySelector('.adhan')) { au.pause(); au.currentTime = 0; } c.closest('.view').remove(); if (D) home(); return; }
     const pick = (attr, set) => { const b = e.target.closest('[' + attr + ']'); if (!b) return false; set(b.getAttribute(attr)); b.parentElement.querySelectorAll('[' + attr + ']').forEach(x => x.classList.toggle('on', x === b)); return true; };
     if (pick('data-amt', v => STF.amt = +v) || pick('data-pts', v => STF.pts = +v) || pick('data-reason', v => STF.reason = v) || pick('data-item', v => STF.item = v) || pick('data-team', v => STF.team = v)) return;
-    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'notif') { Notification.requestPermission().then(() => OPEN.pray()); return; } act(ac.dataset.act); }
+    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'pushon') { pushEnable(ac); return; } act(ac.dataset.act); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { const v = document.querySelector('.view'); if (v) { v.remove(); if (D) home(); } } });
 
@@ -581,6 +581,46 @@
   let audioOK = false;
   document.addEventListener('pointerdown', () => { if (audioOK) return; const a = document.getElementById('adhanAudio'); if (!a) return; a.muted = true; const p = a.play(); if (p) p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; audioOK = true; }).catch(() => { a.muted = false; }); }, { passive: true });
   function adhanTest(btn) { const a = document.getElementById('adhanAudio'); if (!a.paused) { a.pause(); a.currentTime = 0; btn.textContent = '🔊 اسمع الأذان'; return; } a.muted = false; a.play().then(() => { btn.textContent = '■ إيقاف'; a.onended = () => { btn.textContent = '🔊 اسمع الأذان'; }; }).catch(() => toast('تعذّر تشغيل الصوت', 1)); }
+  /* ═════════ الإشعارات الحقيقيّة (Web Push): تصل والجوال مقفل — في الآيفون بعد «إضافة إلى الشاشة الرئيسيّة» ═════════ */
+  const isIOS = !/Android/i.test(navigator.userAgent) && (/iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
+  const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+  let swReg = null;
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').then(r => { swReg = r; }).catch(() => {});
+  async function pushState() {
+    if (isIOS && !standalone()) return 'install';
+    if (!('serviceWorker' in navigator) || !('PushManager' in window) || !('Notification' in window)) return 'unsupported';
+    if (Notification.permission === 'denied') return 'denied';
+    try { const r = swReg || await navigator.serviceWorker.ready; const sub = await r.pushManager.getSubscription(); return sub && Notification.permission === 'granted' ? 'on' : 'off'; } catch (e) { return 'off'; }
+  }
+  const b64 = s2 => { const p = '='.repeat((4 - s2.length % 4) % 4), raw = atob((s2 + p).replace(/-/g, '+').replace(/_/g, '/')); return Uint8Array.from([...raw].map(c => c.charCodeAt(0))); };
+  async function pushEnable(btn) {
+    const st = await pushState();
+    if (st === 'install') { installHelp(); return; }
+    if (st === 'unsupported') { toast('هذا المتصفّح لا يدعم الإشعارات — جرّب سفاري أو كروم', 1); return; }
+    if (st === 'denied') { toast('الإشعارات ممنوعة لـ«جوّالي» — فعّلها من إعدادات الجوال', 1); return; }
+    if (btn) btn.disabled = true;
+    try {
+      if (await Notification.requestPermission() !== 'granted') throw new Error('لم تُسمح الإشعارات');
+      if (DEMO) { toast('فُعّلت الإشعارات ✓ (تجريبيّ)'); OPEN.pray(); return; }
+      const r = swReg || await navigator.serviceWorker.ready, { key } = await (await fetch(API + '/season/push/key')).json();
+      const sub = (await r.pushManager.getSubscription()) || await r.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
+      await post('/season/push/sub', { code: saved.code, pin: saved.pin, as: MODE === 'staff' ? 'staff' : 'me', sub: sub.toJSON() });
+      try { localStorage.setItem('jw_push', '1'); } catch (e) {}
+      toast('فُعّلت الإشعارات ✓ — يصلك الأذان والأخبار والجوال مقفل'); home();
+    } catch (e) { toast(e.message || 'تعذّر تفعيل الإشعارات', 1); if (btn) btn.disabled = false; }
+  }
+  function installHelp() {
+    view('أضف «جوّالي» للشاشة', `<div class="inst"><div class="inst-ic"><img src="./icons/icon-192.png" alt=""></div>
+      <p>في الآيفون تصل الإشعارات (الأذان والأخبار والعملات) بعد إضافة «جوّالي» للشاشة الرئيسيّة:</p>
+      <ol><li>اضغط زرّ <b>المشاركة</b> <span class="shr" aria-hidden="true">⬆︎</span> أسفل سفاري</li><li>اختر <b>«إضافة إلى الشاشة الرئيسيّة»</b></li><li>افتح «جوّالي» من أيقونته ثمّ اضغط <b>«فعّل الإشعارات»</b></li></ol>
+      <p class="note">رمزك محفوظ — لن تحتاج إدخاله مرّة أخرى.</p></div>`);
+  }
+  async function pushBanner() {
+    const el = document.getElementById('pushb'); if (!el) return;
+    let hide = false; try { hide = localStorage.getItem('jw_push_x') === '1'; } catch (e) {}
+    const st = await pushState(); if (hide || st === 'on' || st === 'unsupported') return;
+    el.innerHTML = `<button class="widget pushb" data-act="pushon"><span class="pb-i" aria-hidden="true">🔔</span><span><b>فعّل الإشعارات</b><small>${st === 'install' ? 'أضف «جوّالي» للشاشة الرئيسيّة ليصلك الأذان والجوال مقفل' : st === 'denied' ? 'الإشعارات ممنوعة — فعّلها من الإعدادات' : 'الأذان والأخبار وعملاتك تصلك والجوال مقفل'}</small></span></button>`;
+  }
   function sound() { try { const a = document.getElementById('adhanAudio'); const p = a.play(); if (p) p.catch(tone); } catch (e) { tone(); } }
   function notify(title, body) { try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '../assets/apps/default/prayer.webp' }); } catch (e) {} }
   function adhan(name) {
