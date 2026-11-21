@@ -148,3 +148,4 @@ html.ap-dark .sv-row,html.ap-dark .sv-tpl{background:rgba(44,44,46,.92);box-shad
 .sn-days input:checked+span{background:var(--accent-fill,var(--accent,#1003BD));color:#fff}.sn-days input:focus-visible+span{outline:2px solid var(--accent,#1003BD);outline-offset:2px}
 .sn-tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(255,159,10,.18);color:#B45F06;vertical-align:middle}
 html.ap-dark .sn-tag{color:#FFC46B}
+.sn-dow{margin:10px 2px 4px;font-weight:800}

@@ -1,8 +1,8 @@
 /*
- * ألعاب القاعة بهويّة «حروف ودروس» — تُشغَّل من لابتوب القاعة على البروجكتر (الميسّر برمزه من «جوّال الميسّر»).
+ * ألعاب القاعة بهويّة «حروف ودروس» — تُشغَّل من لابتوب القاعة على البروجكتر (المشرف برمزه من «جوّال المشرف»).
  * الرسوم من تطبيق حروف ودروس نفسه (assets/hex و assets/mil — صورٌ مُصيَّرة في بلندر) وأصواته وخطّه (Baloo Bhaijaan 2).
  *   • حروف: لوحة ٥×٥ ثلاثيّة الأبعاد بهندسة hexArt.ts نفسها — الفريق الأوّل أعلى↔أسفل، والثاني يمين↔يسار؛
- *     السؤال ملء الشاشة والميسّر يحكم «من أجاب صحّاً؟»، والفوز بكأس بلون الفريق ← يُضاف لنقاط فريقه في الموسم.
+ *     السؤال ملء الشاشة والمشرف يحكم «من أجاب صحّاً؟»، والفوز بكأس بلون الفريق ← يُضاف لنقاط فريقه في الموسم.
  *   • من سيربح المليون: سلّم ألواح، أجوبة بجواهر أ ب ج د، مؤقّت ٦٠ث، ٥٠:٥٠ والجمهور والاستبدال ← الجائزة نقاطاً لفريقه.
  * الأسئلة من بنك «حروف ودروس» عبر POST /season/questions (لا يُحمَّل البنك كاملاً). ?demo=1 بأسئلة توضيحيّة.
  */
@@ -45,7 +45,7 @@
     try { const d = await req('/season/staff', {}); TEAMS = ((d.season || {}).teams || []).filter(t => t && t.id); } catch (e) { TEAMS = []; }
     return TEAMS;
   }
-  /* نقاط الفوز لفريقٍ في الموسم — بصلاحيّة الميسّر نفسه (الخادم يتحقّق من صلاحيّة النقاط) */
+  /* نقاط الفوز لفريقٍ في الموسم — بصلاحيّة المشرف نفسه (الخادم يتحقّق من صلاحيّة النقاط) */
   async function awardPoints(teamId, pts, reason) {
     if (DEMO) return { ok: true };
     return req('/season/staff/act', { act: { kind: 'point', team: teamId, points: pts, reason } });
@@ -69,9 +69,9 @@
 
   /* ═════════ الدخول والقائمة ═════════ */
   function login(msg) {
-    $.innerHTML = `<div class="wrap"><div class="top"><div class="brandline"><img src="${A}logo.webp" alt="حروف ودروس"><div><h1>ألعاب القاعة</h1><div class="sub">ادخل برمز الموسم ورمزك كميسّر</div></div></div></div>
+    $.innerHTML = `<div class="wrap"><div class="top"><div class="brandline"><img src="${A}logo.webp" alt="حروف ودروس"><div><h1>ألعاب القاعة</h1><div class="sub">ادخل برمز الموسم ورمزك كمشرف</div></div></div></div>
       <div class="card" style="max-width:520px"><div class="fld">رمز الموسم<input id="c" maxlength="6" dir="ltr" autocapitalize="characters"></div><br>
-      <div class="fld">رمز الميسّر<input id="p" maxlength="6" dir="ltr" inputmode="numeric"></div><br>
+      <div class="fld">رمز المشرف<input id="p" maxlength="6" dir="ltr" inputmode="numeric"></div><br>
       <p class="err" role="alert">${esc(msg || '')}</p><button class="xb go" id="go">دخول</button></div></div>`;
     document.getElementById('go').onclick = async () => {
       auth = { code: document.getElementById('c').value.trim().toUpperCase(), pin: document.getElementById('p').value.trim() };
@@ -239,7 +239,7 @@
   const OPT_COLORS = ['#2979FF', '#FF9000', '#8B5CF6', '#00B8A9'], OPT_TILES = ['t0', 't1', 't5', 't2'];
   const barColor = f => f > .5 ? '#1FBF75' : f > .25 ? '#FFBB00' : '#FF3D3D';
   function mhex(key, text, size, color, k) { return `<span class="mhex" style="width:${size}px;height:${size * G.th / G.tw}px"><img src="${A}hex/tile-${key}.png" alt=""><span style="font-size:${size * (k || .42)}px;color:${color || '#fff'}">${esc(text || '')}</span></span>`; }
-  /* شاشة السؤال ملء الشاشة (QuestionStage في حروف ودروس): شريط وقت ٣٠ث، سؤال كبير، والميسّر يحكم «من أجاب صحّاً؟» */
+  /* شاشة السؤال ملء الشاشة (QuestionStage في حروف ودروس): شريط وقت ٣٠ث، سؤال كبير، والمشرف يحكم «من أجاب صحّاً؟» */
   function ask(i) {
     const cell = HX.cells[i]; let q = pickQ(cell.l); if (!q) { HX.sel = null; drawBoard(); toast('نفدت الأسئلة لهذا الحرف', 1); return; }
     const team = HX.teams[HX.turn];

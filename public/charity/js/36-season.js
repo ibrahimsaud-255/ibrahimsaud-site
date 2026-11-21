@@ -20,6 +20,7 @@ async function renderSeason() {
   SN.seasons = await RDB.list('seasons', { order: 'created_at' }).catch(() => []);
   if (!SN.cur || !SN.seasons.find(s => s.id === SN.cur)) SN.cur = (SN.seasons[0] || {}).id || null;
   await snLoad(); snPaint();
+  if (typeof AV !== 'undefined' && AV.lib) AV.lib().then(g => { if (g.length && CUR === 'season') snPaint(); });   // الأفاتارات الافتراضيّة من المكتبة
 }
 async function snLoad() {
   if (!SN.cur) { SN.members = []; SN.points = []; return; }
@@ -45,7 +46,7 @@ function snPaint() {
       <div class="card sn-start">${rEmpty('trophy', 'ابدأ موسمك الأوّل: اكتب اسمه وتاريخه، ثمّ أضف المشاركين ووزّعهم على الفرق بضغطة.', `<button class="btn btn-gold" onclick="snNewSeason()"><i data-lucide="plus"></i> موسم جديد</button>`)}</div></div>`;
     refreshIcons(); return;
   }
-  const tabs = [{ id: 'teams', name: 'الفرق' }, { id: 'members', name: 'المشاركون' }, { id: 'att', name: 'الحضور' }, { id: 'points', name: 'النقاط' }, { id: 'bank', name: 'البنك' }, { id: 'store', name: 'المتجر' }, { id: 'sched', name: 'الجدول' }, { id: 'staff', name: 'الميسّرون' }, { id: 'news', name: 'الأخبار' }, { id: 'surveys', name: 'الاستبيانات' }];
+  const tabs = [{ id: 'teams', name: 'الفرق' }, { id: 'members', name: 'المشاركون' }, { id: 'att', name: 'الحضور' }, { id: 'points', name: 'النقاط' }, { id: 'bank', name: 'البنك' }, { id: 'store', name: 'المتجر' }, { id: 'sched', name: 'الجدول' }, { id: 'staff', name: 'المشرفون' }, { id: 'news', name: 'الأخبار' }, { id: 'surveys', name: 'الاستبيانات' }];
   main.innerHTML = `<div class="r-page sn">
     <div class="page-head"><div><h1>${esc(s.name)}</h1><p class="r-sub">${SN_PHASES[s.phase] || ''}${s.start_date ? ' · ' + fmtD(s.start_date) + (s.end_date ? ' — ' + fmtD(s.end_date) : '') : ''}</p>
       ${s.code ? `<button type="button" class="sn-code" onclick="snShareCode()"><i data-lucide="smartphone"></i> «جوّالي» للمشاركين — رمز الموسم <b dir="ltr">${esc(s.code)}</b></button>` : ''}</div>
@@ -241,18 +242,19 @@ function snNewSeason() { snEditSeason(true); }
 function snEditSeason(isNew) {
   const s = isNew ? { phase: 'prep' } : snSeason() || {};
   openModal(isNew ? 'موسم جديد' : 'الموسم', `<div class="field"><label>اسم الموسم</label><input id="sns_name" value="${esc(s.name || '')}" placeholder="مثلاً: النادي الصيفيّ ١٤٤٨"></div>
+    <div class="field"><label>نوع البرنامج</label><select id="sns_kind"><option value="summer"${((s.settings || {}).kind || 'summer') === 'summer' ? ' selected' : ''}>برنامج صيفيّ (أسابيع محدّدة)</option><option value="year"${(s.settings || {}).kind === 'year' ? ' selected' : ''}>برنامج أسبوعيّ مستمرّ طوال السنة</option></select><div class="r-hint">المستمرّ: أنشطة أسبوعيّة متكرّرة (درس/مجلس ثمّ رياضة) ورحلات دوريّة، وترتيب شهريّ يحفّز طوال السنة.</div></div>
     <div class="field"><label>يبدأ</label><input id="sns_start" type="date" value="${esc(s.start_date || '')}"></div>
     <div class="field"><label>ينتهي</label><input id="sns_end" type="date" value="${esc(s.end_date || '')}"></div>
     <div class="field"><label>المرحلة</label><select id="sns_phase">${Object.entries(SN_PHASES).map(([k, v]) => `<option value="${k}"${k === s.phase ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
     <div class="field"><label>المدينة (لمواقيت الصلاة في «جوّالي»)</label><select id="sns_city">${Object.keys(SN_CITIES).map(c => `<option${c === ((s.settings || {}).city || 'الرياض') ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
-    <div class="field"><label>لون كلّ مرحلة</label><div class="sn-stcol">${SN_STAGES.slice(0, 4).map(g => `<label><input type="color" data-stage="${g}" value="${esc(snStageColor(g, s))}"><span>${g}</span></label>`).join('')}</div><div class="r-hint">يظهر في «جوّالي» وعلى البطاقات — والميسّرون بالأسود.</div></div>
+    <div class="field"><label>لون كلّ مرحلة</label><div class="sn-stcol">${SN_STAGES.slice(0, 4).map(g => `<label><input type="color" data-stage="${g}" value="${esc(snStageColor(g, s))}"><span>${g}</span></label>`).join('')}</div><div class="r-hint">يظهر في «جوّالي» وعلى البطاقات — والمشرفون بالأسود.</div></div>
     <div class="field"><label>عملات الحضور (تُمنح تلقائياً عند تسجيل حضور الطالب)</label><input id="sns_attc" type="number" min="0" max="50" inputmode="numeric" value="${esc((s.settings || {}).attend_coins || 0)}"><div class="r-hint">٠ = بلا عملات. الحضور يُسجَّل مرّة في اليوم.</div></div>
     <label class="r-check"><input type="checkbox" id="sns_xfer"${(s.settings || {}).transfers === false ? '' : ' checked'}> السماح بالحوالات بين المشاركين في «البنك» (١–١٠٠ عملة، ٥ في اليوم)</label>
     ${isNew && SN.seasons.length ? `<div class="field"><label>تسليم الموسم — انسخ من «${esc((snSeason() || {}).name || '')}»</label>
-      ${[['sns_copy', 'الفرق (الأسماء والألوان)'], ['sns_c_items', 'أصناف المتجر وأسعارها'], ['sns_c_sched', 'الجدول (يُزاح لتاريخ البداية الجديد)'], ['sns_c_surv', 'الاستبيانات (مسوّدات)'], ['sns_c_staff', 'الميسّرون وصلاحيّاتهم (برموز جديدة)']].map(([k, n]) => `<label class="r-check"><input type="checkbox" id="${k}" checked> ${n}</label>`).join('')}
+      ${[['sns_copy', 'الفرق (الأسماء والألوان)'], ['sns_c_items', 'أصناف المتجر وأسعارها'], ['sns_c_sched', 'الجدول (يُزاح لتاريخ البداية الجديد)'], ['sns_c_surv', 'الاستبيانات (مسوّدات)'], ['sns_c_staff', 'المشرفون وصلاحيّاتهم (برموز جديدة)']].map(([k, n]) => `<label class="r-check"><input type="checkbox" id="${k}" checked> ${n}</label>`).join('')}
       <div class="r-hint">الدفعة الجديدة تبدأ من حيث انتهت السابقة — لا يضيع شيء مع تغيّر المتطوّعين.</div></div>` : ''}`, async () => {
       const stages = {}; document.querySelectorAll('.sn-stcol input[data-stage]').forEach(i => stages[i.dataset.stage] = i.value);
-      const row = { name: fval('sns_name'), start_date: fval('sns_start') || null, end_date: fval('sns_end') || null, phase: fval('sns_phase'), settings: Object.assign({}, s.settings || {}, { city: fval('sns_city'), stages, transfers: !!fval('sns_xfer'), attend_coins: Math.max(0, Math.min(50, parseInt(fval('sns_attc'), 10) || 0)) }) };
+      const row = { name: fval('sns_name'), start_date: fval('sns_start') || null, end_date: fval('sns_end') || null, phase: fval('sns_phase'), settings: Object.assign({}, s.settings || {}, { city: fval('sns_city'), stages, kind: fval('sns_kind'), transfers: !!fval('sns_xfer'), attend_coins: Math.max(0, Math.min(50, parseInt(fval('sns_attc'), 10) || 0)) }) };
       if (row.name.length < 2) { rToast('اكتب اسم الموسم', 1); return; }
       try {
         if (isNew) { const prev = snSeason(), cp = { items: fval('sns_c_items'), sched: fval('sns_c_sched'), surv: fval('sns_c_surv'), staff: fval('sns_c_staff') }, old = { items: SN.items.slice(), sched: SN.sched.slice(), staff: SN.staff.slice() };
@@ -296,7 +298,7 @@ function snCards() {
   w.document.close();
 }
 
-/* ═════════ الحضور: يسجّله الميسّر بمسح البطاقة في «تحقّق»، أو من هنا يدوياً — والغائبون برسالة لوليّ الأمر ═════════ */
+/* ═════════ الحضور: يسجّله المشرف بمسح البطاقة في «تحقّق»، أو من هنا يدوياً — والغائبون برسالة لوليّ الأمر ═════════ */
 const snToday = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 function snAttView() {
   const days = [...new Set(SN.att.map(a => a.day))].sort(), day = SN.attDay || (days.includes(snToday()) ? snToday() : days[days.length - 1] || snToday());
@@ -304,7 +306,7 @@ function snAttView() {
   const absent = SN.members.filter(m => !here.has(m.id)), present = SN.members.filter(m => here.has(m.id)), max = Math.max(1, ...days.map(d => SN.att.filter(a => a.day === d).length));
   const s = snSeason(), wa = m => { const ph = String(m.guardian_phone || '').replace(/\D/g, '').replace(/^0/, '966'); return ph ? `https://wa.me/${ph}?text=${encodeURIComponent(`السلام عليكم، نفيدكم بغياب ابنكم ${m.name.split(' ')[0]} عن «${s.name}» اليوم. نتمنّى له التوفيق ونسعد بحضوره غداً.`)}` : ''; };
   return `<div class="sn-acts"><input type="date" class="sn-pick" value="${day}" onchange="SN.attDay=this.value;snPaint()" aria-label="اليوم"></div>
-    <div class="card sv-head"><div><h2>${fmtD(day)}</h2><p class="r-sub">يسجّله الميسّر بمسح بطاقة الطالب في «تحقّق» — مرّة في اليوم${(s.settings || {}).attend_coins ? ` · +${s.settings.attend_coins} عملة للحاضر` : ''}.</p></div>
+    <div class="card sv-head"><div><h2>${fmtD(day)}</h2><p class="r-sub">يسجّله المشرف بمسح بطاقة الطالب في «تحقّق» — مرّة في اليوم${(s.settings || {}).attend_coins ? ` · +${s.settings.attend_coins} عملة للحاضر` : ''}.</p></div>
       <div class="sv-kpis"><div><b>${n}</b><small>حاضر</small></div><div><b>${tot - n}</b><small>غائب</small></div><div><b style="color:${pct >= 80 ? '#34C759' : pct >= 60 ? '#FF9500' : '#FF3B30'}">${pct}٪</b><small>نسبة الحضور</small></div></div>
       ${days.length > 1 ? `<div class="sn-attbars" aria-label="الحضور لكلّ يوم">${days.map(d => { const k = SN.att.filter(a => a.day === d).length; return `<button type="button" class="${d === day ? 'on' : ''}" onclick="SN.attDay='${d}';snPaint()" title="${fmtD(d)}: ${k}"><i style="height:${Math.round(k / max * 100)}%"></i></button>`; }).join('')}</div>` : ''}</div>
     <div class="sv-res"><div class="card"><h3>الغائبون (${absent.length})</h3><div class="r-list">${absent.map(m => `<div class="r-item"><span class="sn-av sm">${snAv(m)}</span><span class="r-item-t"><b>${esc(m.name)}</b><small>#${m.no} · ${esc(m.stage || '')}</small></span>
@@ -314,14 +316,14 @@ function snAttView() {
 async function snMark(mid, day) {
   try { SN.att.push(await RDB.insert('season_attendance', { season_id: SN.cur, member_id: mid, day, at: new Date().toISOString() })); snPaint(); } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
 }
-/* تسليم الموسم: الدفعة الجديدة ترث الأصناف والجدول والاستبيانات والميسّرين */
+/* تسليم الموسم: الدفعة الجديدة ترث الأصناف والجدول والاستبيانات والمشرفين */
 async function snHandover(prev, n, old, cp) {
   const shift = prev.start_date && n.start_date ? Math.round((new Date(n.start_date) - new Date(prev.start_date)) / 864e5) : 0;
   const mv = d => { if (!shift || !d) return d; const x = new Date(d + 'T00:00:00'); x.setDate(x.getDate() + shift); return x.toISOString().slice(0, 10); };
   const pick = (o, ks) => Object.fromEntries(ks.filter(k => o[k] !== undefined).map(k => [k, o[k]]));
   try {
     if (cp.items) for (const it of old.items) await RDB.insert('season_items', Object.assign({ season_id: n.id }, pick(it, ['name', 'price', 'stock', 'image_url', 'emoji', 'description', 'active', 'sort'])));
-    if (cp.sched) for (const x of old.sched) await RDB.insert('season_schedule', Object.assign({ season_id: n.id }, pick(x, ['title', 'place', 'starts', 'ends', 'stage']), { day: mv(x.day) }));
+    if (cp.sched) for (const x of old.sched) await RDB.insert('season_schedule', Object.assign({ season_id: n.id }, pick(x, ['title', 'place', 'starts', 'ends', 'stage', 'kind', 'repeat_dow']), { day: x.repeat_dow != null && n.start_date ? n.start_date : mv(x.day) }));
     if (cp.surv) { const sv = await RDB.list('season_surveys', { eq: { season_id: prev.id } }).catch(() => []); for (const v of sv) { const r = Object.assign({ season_id: n.id, status: 'draft' }, pick(v, ['title', 'intro', 'audience', 'questions'])); if (snLocal()) r.token = Array.from({ length: 16 }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join(''); await RDB.insert('season_surveys', r); } }
     if (cp.staff) for (const x of old.staff) { const r = Object.assign({ season_id: n.id }, pick(x, ['name', 'role', 'stage', 'perms', 'active', 'phone'])); if (snLocal()) r.pin = String(Math.floor(Math.random() * 1e6)).padStart(6, '0'); await RDB.insert('season_staff', r); }
     rToast('سُلِّم الموسم — راجع الجدول والأسعار');
@@ -348,7 +350,7 @@ async function snImpact() {
     table{width:100%;border-collapse:collapse}td,th{border-bottom:1px solid #eee;padding:8px;text-align:start}.dot{display:inline-block;width:12px;height:12px;border-radius:50%;vertical-align:middle;margin-inline-end:6px}
     @media print{body{margin:14mm}.k{break-inside:avoid}}</style></head><body>
     <h1>تقرير الأثر — ${esc(s.name)}</h1><p class="sub">${esc(org)}${s.start_date ? ' · ' + fmtD(s.start_date) + (s.end_date ? ' — ' + fmtD(s.end_date) : '') : ''} · أُعدّ ${fmtD(snToday())}</p>
-    <h2>المشاركة</h2><div class="g">${K(SN.members.length, 'مشاركاً', prevN != null ? `${SN.members.length >= prevN ? '+' : ''}${SN.members.length - prevN} عن «${esc(prevS.name)}»` : '')}${K(avgAtt == null ? '—' : avgAtt + '٪', 'متوسّط الحضور', days.length ? days.length + ' أيّام مسجّلة' : 'لم يُسجَّل حضور')}${K(SN.staff.length, 'ميسّراً متطوّعاً')}${K(SN.sched.length, 'نشاطاً في الجدول')}</div>
+    <h2>المشاركة</h2><div class="g">${K(SN.members.length, 'مشاركاً', prevN != null ? `${SN.members.length >= prevN ? '+' : ''}${SN.members.length - prevN} عن «${esc(prevS.name)}»` : '')}${K(avgAtt == null ? '—' : avgAtt + '٪', 'متوسّط الحضور', days.length ? days.length + ' أيّام مسجّلة' : 'لم يُسجَّل حضور')}${K(SN.staff.length, 'مشرفاً متطوّعاً')}${K(SN.sched.length, 'نشاطاً في الجدول')}</div>
     <p class="sub">بالمراحل: ${Object.entries(byStage).map(([g, n]) => `${esc(g)} ${n}`).join(' · ') || '—'}</p>
     <h2>التفاعل والتحفيز</h2><div class="g">${K(given.toLocaleString('en'), 'عملة مُنحت', 'على الحضور والمشاركة والإنجاز')}${K(sold, 'عمليّة شراء', spent ? spent.toLocaleString('en') + ' عملة صُرفت في المتجر' : '')}${K(SN.posts.length, 'منشوراً في الأخبار')}${K(SN.reacts.length, 'تفاعلاً')}</div>
     <h2>الفرق</h2><table><tr><th>#</th><th>الفريق</th><th>المشاركون</th><th>النقاط</th></tr>${teams.map((t, i) => `<tr><td>${i + 1}</td><td><span class="dot" style="background:${esc(t.color)}"></span>${esc(t.name)}</td><td>${t.n}</td><td>${t.pts}</td></tr>`).join('')}</table>
@@ -466,51 +468,63 @@ async function snSell(itemId) {
 }
 
 /* الجدول: أيّام الموسم وأنشطتها (يظهر للمشارك في «جوّالي» حسب مرحلته) */
-function snSchedView() {
-  const days = {}; SN.sched.forEach(x => (days[x.day] = days[x.day] || []).push(x));
-  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snSchedSheet()"><i data-lucide="plus"></i> نشاط</button></div>
-    ${Object.keys(days).sort().map(d => `<h3 class="sn-h">${fmtD(d)}</h3><div class="r-list">${days[d].sort((a, b) => String(a.starts).localeCompare(String(b.starts))).map(x => `<button type="button" class="r-item" onclick="snSchedSheet('${x.id}')">
-      <span class="sn-time" dir="ltr">${esc(x.starts || '')}${x.ends ? '–' + esc(x.ends) : ''}</span><span class="r-item-t"><b>${esc(x.title)}</b><small>${esc([x.place, x.stage].filter(Boolean).join(' · '))}</small></span></button>`).join('')}</div>`).join('')
-      || `<div class="card">${rEmpty('calendar-days', 'أضف أنشطة الموسم — تظهر لكلّ مشارك في «جوّالي» حسب مرحلته.', '')}</div>`}`;
+/* الجدول: المتكرّر أسبوعياً (البرامج المستمرّة طوال السنة) في قسم مستقلّ، ثمّ الرحلات، ثمّ الأنشطة المؤرّخة */
+const SN_DOW = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+function snSchedRow(x) {
+  return `<button type="button" class="r-item" onclick="snSchedSheet('${x.id}')"><span class="sn-time" dir="ltr">${esc(x.starts || '')}${x.ends ? '–' + esc(x.ends) : ''}</span>
+    <span class="r-item-t"><b>${x.kind === 'trip' ? '🚌 ' : ''}${esc(x.title)}</b><small>${esc([x.place, x.stage].filter(Boolean).join(' · '))}</small></span>${x.repeat_dow != null ? '<span class="sn-tag">أسبوعيّ</span>' : ''}</button>`;
 }
-function snSchedSheet(id) {
-  const x = SN.sched.find(r => r.id === id) || { day: (snSeason() || {}).start_date || today() };
-  openModal(id ? 'النشاط' : 'نشاط جديد', `<div class="field"><label>النشاط</label><input id="snc_t" value="${esc(x.title || '')}" placeholder="مثلاً: دوري كرة القدم"></div>
-    <div class="field"><label>اليوم</label><input id="snc_d" type="date" value="${esc(x.day || '')}"></div>
+function snSchedView() {
+  const weekly = SN.sched.filter(x => x.repeat_dow != null), trips = SN.sched.filter(x => x.repeat_dow == null && x.kind === 'trip'), dated = SN.sched.filter(x => x.repeat_dow == null && x.kind !== 'trip');
+  const days = {}; dated.forEach(x => (days[x.day] = days[x.day] || []).push(x));
+  const byS = a => a.sort((p, q) => String(p.starts).localeCompare(String(q.starts)));
+  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snSchedSheet()"><i data-lucide="plus"></i> نشاط</button><button class="btn btn-ghost" onclick="snSchedSheet(null,'weekly')"><i data-lucide="repeat"></i> نشاط أسبوعيّ</button><button class="btn btn-ghost" onclick="snSchedSheet(null,'trip')"><i data-lucide="bus"></i> رحلة</button></div>
+    ${weekly.length ? `<h3 class="sn-h">كلّ أسبوع</h3>${[0, 1, 2, 3, 4, 5, 6].filter(d => weekly.some(x => x.repeat_dow === d)).map(d => `<p class="r-sub sn-dow">كلّ ${SN_DOW[d]}</p><div class="r-list">${byS(weekly.filter(x => x.repeat_dow === d)).map(snSchedRow).join('')}</div>`).join('')}` : ''}
+    ${trips.length ? `<h3 class="sn-h">الرحلات</h3><div class="r-list">${trips.sort((p, q) => String(p.day).localeCompare(String(q.day))).map(x => snSchedRow(x).replace('<span class="sn-time" dir="ltr">', `<span class="sn-time">${fmtD(x.day)}<br>`)).join('')}</div>` : ''}
+    ${Object.keys(days).sort().map(d => `<h3 class="sn-h">${fmtD(d)}</h3><div class="r-list">${byS(days[d]).map(snSchedRow).join('')}</div>`).join('')}
+    ${SN.sched.length ? '' : `<div class="card">${rEmpty('calendar-days', 'أضف الأنشطة: أسبوعيّة متكرّرة (درس أو مجلس ثمّ نشاط رياضيّ) للبرامج المستمرّة، أو مؤرّخة للبرنامج الصيفيّ، والرحلات — تظهر لكلّ مشارك في «جوّالي» حسب مرحلته.', '')}</div>`}`;
+}
+function snSchedSheet(id, mode) {
+  const x = SN.sched.find(r => r.id === id) || { day: mode === 'trip' ? '' : (snSeason() || {}).start_date || today(), kind: mode === 'trip' ? 'trip' : '', repeat_dow: mode === 'weekly' ? new Date((((snSeason() || {}).start_date) || today()) + 'T00:00:00').getDay() : null };
+  const trip = x.kind === 'trip';
+  openModal(id ? (trip ? 'الرحلة' : 'النشاط') : trip ? 'رحلة جديدة' : 'نشاط جديد', `<div class="field"><label>${trip ? 'الرحلة' : 'النشاط'}</label><input id="snc_t" value="${esc(x.title || '')}" placeholder="${trip ? 'مثلاً: رحلة المدينة المنورة' : 'مثلاً: درس السيرة، مجلس، كرة طائرة'}"></div>
+    <div class="field"><label>النوع</label><select id="snc_k"><option value="">نشاط</option><option value="trip"${trip ? ' selected' : ''}>رحلة 🚌</option></select></div>
+    <label class="r-check"><input type="checkbox" id="snc_r"${x.repeat_dow != null ? ' checked' : ''} onchange="document.getElementById('snc_dl').textContent=this.checked?'يبدأ من (ويتكرّر كلّ أسبوع في يومه)':'اليوم'"> <b>يتكرّر كلّ أسبوع</b> — للبرامج المستمرّة طوال السنة</label>
+    <div class="field"><label id="snc_dl">${x.repeat_dow != null ? 'يبدأ من (ويتكرّر كلّ أسبوع في يومه)' : 'اليوم'}</label><input id="snc_d" type="date" value="${esc(x.day || '')}"></div>
     <div class="field"><label>من</label><input id="snc_f" type="time" value="${esc(x.starts || '')}"></div>
     <div class="field"><label>إلى</label><input id="snc_e" type="time" value="${esc(x.ends || '')}"></div>
     <div class="field"><label>المكان (اختياريّ)</label><input id="snc_p" value="${esc(x.place || '')}"></div>
     <div class="field"><label>للمرحلة</label><select id="snc_g"><option value="">الجميع</option>${SN_STAGES.map(g => `<option${g === x.stage ? ' selected' : ''}>${g}</option>`).join('')}</select></div>`, async () => {
-      const row = { title: fval('snc_t'), day: fval('snc_d'), starts: fval('snc_f'), ends: fval('snc_e'), place: fval('snc_p'), stage: fval('snc_g') };
+      const row = { title: fval('snc_t'), day: fval('snc_d'), starts: fval('snc_f'), ends: fval('snc_e'), place: fval('snc_p'), stage: fval('snc_g'), kind: fval('snc_k'), repeat_dow: fval('snc_r') && fval('snc_d') ? new Date(fval('snc_d') + 'T00:00:00').getDay() : null };
       if (row.title.length < 2 || !row.day) { rToast('اكتب النشاط واليوم', 1); return; }
       try { if (id) Object.assign(x, await RDB.update('season_schedule', id, row)); else SN.sched.push(await RDB.insert('season_schedule', Object.assign({ season_id: SN.cur }, row))); closeModal(); snPaint(); }
       catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
     }, id ? async () => { if (!await snAsk('حذف النشاط؟', '', 'حذف')) return; await RDB.remove('season_schedule', id); SN.sched = SN.sched.filter(r => r.id !== id); closeModal(); snPaint(); } : null);
 }
 
-/* ═════════ المرحلة ٣: الميسّرون وألوان المراحل ═════════ */
-// ألوان المراحل المعتمدة في «حروف ودروس» (watch.css) — والجامعيّ/الميسّرون بالأسود
+/* ═════════ المرحلة ٣: المشرفون وألوان المراحل ═════════ */
+// ألوان المراحل المعتمدة في «حروف ودروس» (watch.css) — والجامعيّ/المشرفون بالأسود
 const SN_STAGE_COLORS = { 'ابتدائي': '#00C6FF', 'متوسط': '#FF9000', 'ثانوي': '#1A3365', 'جامعي': '#1C1C1E' };
 function snStageColor(g, s) { return (((s || snSeason() || {}).settings || {}).stages || {})[g] || SN_STAGE_COLORS[g] || '#8E8E93'; }
 /* مدن المواقيت (أم القرى) — تُستعمل في «جوّالي» */
 const SN_CITIES = { 'الرياض': [24.7136, 46.6753], 'جدة': [21.4858, 39.1925], 'مكة المكرمة': [21.3891, 39.8579], 'المدينة المنورة': [24.5247, 39.5692], 'الدمام': [26.4207, 50.0888], 'الخبر': [26.2794, 50.2083],
   'الأحساء': [25.3833, 49.5867], 'القطيف': [26.5196, 50.0115], 'الجبيل': [27.0046, 49.646], 'الطائف': [21.2703, 40.4158], 'أبها': [18.2164, 42.5053], 'خميس مشيط': [18.3, 42.7333], 'تبوك': [28.3838, 36.555],
   'حائل': [27.5114, 41.69], 'بريدة': [26.326, 43.975], 'عنيزة': [26.0844, 43.9935], 'جازان': [16.8892, 42.5511], 'نجران': [17.5656, 44.2289], 'الباحة': [20.0129, 41.4677], 'سكاكا': [29.9697, 40.2064], 'عرعر': [30.9753, 41.0381], 'ينبع': [24.0895, 38.0618] };
-const SN_ROLE = { lead: 'قائد', staff: 'ميسّر' };
+const SN_ROLE = { lead: 'قائد', staff: 'مشرف' };
 function snStaffView() {
-  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snStaffSheet()"><i data-lucide="user-plus"></i> ميسّر</button></div>
-    <p class="ws-note"><i data-lucide="info"></i> <span>الميسّرون يدخلون «جوّال الميسّر» برمز الموسم ورمزهم، ويمنحون العملات ونقاط الفرق ويبيعون من المتجر — كلٌّ في حدود صلاحيّاته، وكلّ حركة تُسجَّل باسمه.</span></p>
+  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snStaffSheet()"><i data-lucide="user-plus"></i> مشرف</button></div>
+    <p class="ws-note"><i data-lucide="info"></i> <span>المشرفون يدخلون «جوّال المشرف» برمز الموسم ورمزهم، ويمنحون العملات ونقاط الفرق ويبيعون من المتجر — كلٌّ في حدود صلاحيّاته، وكلّ حركة تُسجَّل باسمه.</span></p>
     <div class="r-list">${SN.staff.map(x => { const given = SN.coins.filter(c => c.staff_id === x.id && c.amount > 0).reduce((a, c) => a + c.amount, 0);
       return `<button type="button" class="r-item" onclick="snStaffSheet('${x.id}')"><span class="sn-staff-av">${esc(initials(x.name))}</span><span class="r-item-t"><b>${esc(x.name)}${x.active ? '' : ' <small>(موقوف)</small>'}${(x.perms || {}).store ? ' <span class="sn-tag">مدير المتجر</span>' : ''}</b><small>${SN_ROLE[x.role] || ''}${x.stage ? ' · ' + esc(x.stage) : ' · كلّ المراحل'} · منح ${given} عملة</small></span><i data-lucide="chevron-left"></i></button>`; }).join('')
-      || '<div class="r-empty"><p>أضف ميسّري الموسم — كلّ واحد يأخذ رمزاً خاصّاً يدخل به من جواله.</p></div>'}</div>`;
+      || '<div class="r-empty"><p>أضف مشرفي الموسم — كلّ واحد يأخذ رمزاً خاصّاً يدخل به من جواله.</p></div>'}</div>`;
 }
 function snStaffSheet(id) {
   const x = SN.staff.find(r => r.id === id) || { role: 'staff', active: true, perms: { coins: 50, points: true, sell: true } }, P = x.perms || {};
-  openModal(id ? 'الميسّر' : 'ميسّر جديد', `${id ? `<div class="sn-idcard"><span>رمز الدخول <b dir="ltr">${esc(x.pin || '—')}</b></span><span>رمز الموسم <b dir="ltr">${esc((snSeason() || {}).code || '')}</b></span><span>الدور <b>${SN_ROLE[x.role]}</b></span></div>
+  openModal(id ? 'المشرف' : 'مشرف جديد', `${id ? `<div class="sn-idcard"><span>رمز الدخول <b dir="ltr">${esc(x.pin || '—')}</b></span><span>رمز الموسم <b dir="ltr">${esc((snSeason() || {}).code || '')}</b></span><span>الدور <b>${SN_ROLE[x.role]}</b></span></div>
       <button type="button" class="btn btn-ghost sn-wide" onclick="snStaffShare('${x.id}')"><i data-lucide="send"></i> أرسل له رابط الدخول</button><button type="button" class="btn btn-ghost sn-wide" onclick="closeModal();setTimeout(()=>snStaffQR('${x.id}'),250)"><i data-lucide="qr-code"></i> رمز الدخول (QR)</button>` : ''}
     <div class="field"><label>الاسم</label><input id="sst_n" value="${esc(x.name || '')}"></div>
     <div class="field"><label>الجوال (اختياريّ)</label><input id="sst_p" dir="ltr" inputmode="tel" value="${esc(x.phone || '')}"></div>
-    <div class="field"><label>الدور</label><select id="sst_r"><option value="staff"${x.role === 'staff' ? ' selected' : ''}>ميسّر — يرى طلاب مرحلته</option><option value="lead"${x.role === 'lead' ? ' selected' : ''}>قائد — يرى الجميع</option></select></div>
+    <div class="field"><label>الدور</label><select id="sst_r"><option value="staff"${x.role === 'staff' ? ' selected' : ''}>مشرف — يرى طلاب مرحلته</option><option value="lead"${x.role === 'lead' ? ' selected' : ''}>قائد — يرى الجميع</option></select></div>
     <div class="field"><label>المرحلة</label><select id="sst_g"><option value="">كلّ المراحل</option>${SN_STAGES.map(g => `<option${g === x.stage ? ' selected' : ''}>${g}</option>`).join('')}</select></div>
     <div class="field"><label>أقصى عملات في المرّة</label><input id="sst_c" type="number" inputmode="numeric" min="1" max="1000" value="${esc(P.coins || 50)}"></div>
     <label class="r-check"><input type="checkbox" id="sst_pt"${P.points ? ' checked' : ''}> يمنح نقاط الفرق</label>
@@ -525,16 +539,16 @@ function snStaffSheet(id) {
         else { const r = Object.assign({ season_id: SN.cur }, row); if (snLocal()) do { r.pin = String(Math.floor(Math.random() * 1e6)).padStart(6, '0'); } while (SN.staff.some(m => m.pin === r.pin) || SN.members.some(m => m.pin === r.pin)); SN.staff.push(await RDB.insert('season_staff', r)); }
         closeModal(); snPaint();
       } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
-    }, id ? async () => { if (!await snAsk('حذف الميسّر؟', 'تبقى حركاته مسجّلة.', 'حذف')) return; await RDB.remove('season_staff', id); SN.staff = SN.staff.filter(r => r.id !== id); closeModal(); snPaint(); } : null);
+    }, id ? async () => { if (!await snAsk('حذف المشرف؟', 'تبقى حركاته مسجّلة.', 'حذف')) return; await RDB.remove('season_staff', id); SN.staff = SN.staff.filter(r => r.id !== id); closeModal(); snPaint(); } : null);
 }
 function snStaffQR(id) {
   const x = SN.staff.find(r => r.id === id), s = snSeason(); if (!x) return;
-  openModal('دخول ' + x.name.split(' ')[0], `<div class="sn-qr">${snQR(snLoginUrl(s.code, x.pin, true))}</div><p class="r-sub" style="text-align:center">يمسحه الميسّر بكاميرا جواله فيدخل «جوّال الميسّر» مباشرة. الرمز خاصّ به.</p>`);
+  openModal('دخول ' + x.name.split(' ')[0], `<div class="sn-qr">${snQR(snLoginUrl(s.code, x.pin, true))}</div><p class="r-sub" style="text-align:center">يمسحه المشرف بكاميرا جواله فيدخل «جوّال المشرف» مباشرة. الرمز خاصّ به.</p>`);
 }
 async function snStaffShare(id) {
   const x = SN.staff.find(r => r.id === id), s = snSeason(); if (!x) return;
   const url = snLoginUrl(s.code, x.pin, true);
-  const text = `أهلاً ${x.name.split(' ')[0]} — «جوّال الميسّر» في ${s.name}\nافتح الرابط وتدخل مباشرة:\n${url}\n(رابطك خاصّ بك — لا تشاركه مع أحد)`;
+  const text = `أهلاً ${x.name.split(' ')[0]} — «جوّال المشرف» في ${s.name}\nافتح الرابط وتدخل مباشرة:\n${url}\n(رابطك خاصّ بك — لا تشاركه مع أحد)`;
   if (navigator.share) { try { await navigator.share({ title: s.name, text }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text); rToast('نُسخت الرسالة — أرسلها له على واتساب'); } catch (e) { await apPrompt('انسخ الرسالة:', text); }
 }
@@ -544,9 +558,9 @@ const SN_PK = { news: 'خبر', honor: 'تكريم', program: 'إعلان برن
 function snNewsView() {
   const now = new Date().toISOString();
   return `<div class="sn-acts"><button class="btn btn-gold" onclick="snPostSheet()"><i data-lucide="plus"></i> منشور</button></div>
-    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر في «الأخبار» داخل جوّالي للطلاب والميسّرين. التفاعل بقلب فقط، ويُلوَّن بمرحلة كلّ متفاعل.</span></p>
+    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر في «الأخبار» داخل جوّالي للطلاب والمشرفين. التفاعل بقلب فقط، ويُلوَّن بمرحلة كلّ متفاعل.</span></p>
     <div class="sn-posts">${SN.posts.map(p => { const r = {}; SN.reacts.filter(x => x.post_id === p.id).forEach(x => { const g = x.stage || 'جامعي'; r[g] = (r[g] || 0) + 1; });
-      const by = p.staff_id ? ((SN.staff.find(x => x.id === p.staff_id) || {}).name || 'ميسّر') : 'الإدارة', hon = SN.members.find(x => x.id === p.member_id), later = String(p.publish_at) > now;
+      const by = p.staff_id ? ((SN.staff.find(x => x.id === p.staff_id) || {}).name || 'مشرف') : 'الإدارة', hon = SN.members.find(x => x.id === p.member_id), later = String(p.publish_at) > now;
       return `<button type="button" class="sn-post" onclick="snPostSheet('${p.id}')">${p.image_url ? `<img src="${esc(snImg(p.image_url))}" alt="">` : `<span class="sn-post-ph">${p.kind === 'honor' ? '🏅' : '📰'}</span>`}
         <span class="sn-post-t"><small>${SN_PK[p.kind] || ''} · ${esc(by)}${later ? ' · <b>يُنشر ' + fmtD(String(p.publish_at).slice(0, 10)) + '</b>' : ''}</small><b>${esc(p.title)}</b>${hon ? `<small>🏅 ${esc(hon.name)}</small>` : ''}
         <span class="sn-rx">${Object.entries(r).map(([g, n]) => `<i style="--tc:${snStageColor(g)}"></i>${n}`).join(' ') || '<small>لا تفاعل بعد</small>'}</span></span></button>`; }).join('') || `<div class="card">${rEmpty('newspaper', 'انشر أوّل خبر للموسم: إعلان برنامج بصورته وموعده، أو تكريم طالب.', '')}</div>`}</div>`;
@@ -576,24 +590,24 @@ async function snPostImg(inp) {
 }
 
 
-/* ═════════ الاستبيانات — رضا المشاركين والميسّرين وأولياء الأمور (معيار الشفافية: مؤشّر ٣) ═════════
+/* ═════════ الاستبيانات — رضا المشاركين والمشرفين وأولياء الأمور (معيار الشفافية: مؤشّر ٣) ═════════
  * الجداول season_surveys · season_survey_answers (services/charity/db/surveys.sql)
- * يجيب الطالب والميسّر من «جوّالي»، ووليّ الأمر برابط عامّ ‎/charity/survey/?t=…  — والأسماء لا تظهر في النتائج.
+ * يجيب الطالب والمشرف من «جوّالي»، ووليّ الأمر برابط عامّ ‎/charity/survey/?t=…  — والأسماء لا تظهر في النتائج.
  * الأسئلة: {id, t: stars|nps|choice|text, l, o} */
-const SN_SV_AUD = { students: 'المشاركون', staff: 'الميسّرون', parents: 'أولياء الأمور' };
+const SN_SV_AUD = { students: 'المشاركون', staff: 'المشرفون', parents: 'أولياء الأمور' };
 const SN_SV_T = { stars: 'تقييم بالنجوم', nps: 'هل تنصح؟ (٠–١٠)', choice: 'اختيار', text: 'نصّ حرّ' };
 const SN_SV_ST = { draft: ['مسودّة', '#8E8E93'], open: ['مفتوح', '#34C759'], closed: ['مغلق', '#FF9500'] };
 const snQ = (t, l, o) => Object.assign({ id: 'q' + Math.random().toString(36).slice(2, 7), t, l }, o ? { o } : {});
 const SN_SV_TPL = [
   { k: 'season', icon: 'sparkles', title: 'رضا المستفيدين عن الموسم', audience: 'students', intro: 'رأيك يصنع الموسم القادم — دقيقتان فقط.',
-    q: () => [snQ('stars', 'البرامج والأنشطة'), snQ('stars', 'الميسّرون وتعاملهم'), snQ('stars', 'المكان والتنظيم'), snQ('stars', 'الضيافة والوجبات'),
+    q: () => [snQ('stars', 'البرامج والأنشطة'), snQ('stars', 'المشرفون وتعاملهم'), snQ('stars', 'المكان والتنظيم'), snQ('stars', 'الضيافة والوجبات'),
       snQ('choice', 'أكثر شيء أعجبك', ['الرحلات', 'المسابقات', 'الدورات والمهارات', 'الرياضة']), snQ('nps', 'هل تنصح صديقك بالتسجيل معنا؟'), snQ('text', 'ماذا تتمنّى في الموسم القادم؟')] },
   { k: 'activity', icon: 'calendar-check', title: 'تقييم برنامج أو نشاط', audience: 'students', intro: 'قيّم نشاط اليوم.',
     q: () => [snQ('stars', 'استمتعت بالنشاط'), snQ('stars', 'تعلّمت شيئاً جديداً'), snQ('choice', 'مدّة النشاط', ['قصيرة', 'مناسبة', 'طويلة']), snQ('text', 'ملاحظة أو اقتراح')] },
   { k: 'parents', icon: 'users', title: 'رضا أولياء الأمور', audience: 'parents', intro: 'شكراً لثقتكم. رأيكم يساعدنا على خدمة أبنائكم أفضل.',
     q: () => [snQ('stars', 'التواصل وإبلاغكم بالبرامج والمواعيد'), snQ('stars', 'سلامة الأبناء والإشراف عليهم'), snQ('stars', 'الأثر التربويّ والقيميّ'), snQ('stars', 'التنظيم والالتزام بالمواعيد'),
       snQ('choice', 'هل لاحظتم أثراً إيجابيّاً على ابنكم؟', ['كبير', 'متوسّط', 'قليل', 'لم ألاحظ']), snQ('nps', 'هل تنصحون غيركم بتسجيل أبنائهم معنا؟'), snQ('text', 'اقتراحاتكم')] },
-  { k: 'staff', icon: 'hand-heart', title: 'رضا الميسّرين', audience: 'staff', intro: 'أنتم قلب الموسم — نريد أن نسمعكم.',
+  { k: 'staff', icon: 'hand-heart', title: 'رضا المشرفين', audience: 'staff', intro: 'أنتم قلب الموسم — نريد أن نسمعكم.',
     q: () => [snQ('stars', 'وضوح المهامّ والأدوار'), snQ('stars', 'دعم الإدارة'), snQ('stars', 'التدريب والتهيئة'), snQ('stars', 'روح الفريق وبيئة العمل'),
       snQ('choice', 'هل ترغب بالمشاركة في الموسم القادم؟', ['نعم بالتأكيد', 'ربّما', 'لا']), snQ('text', 'ما الذي يجعل تجربتك أفضل؟')] },
   { k: 'needs', icon: 'compass', title: 'اهتمامات المشاركين (قبل الموسم)', audience: 'students', intro: 'ساعدنا نصمّم موسماً على ذوقك.',
@@ -610,11 +624,11 @@ function snSvView() {
   if (SN.svOpen && SN.surveys.find(v => v.id === SN.svOpen)) return snSvResults(SN.svOpen);
   const n = id => (SN.svAns[id] || []).length;
   return `<div class="sn-acts"><button class="btn btn-gold" onclick="snSvNew()"><i data-lucide="plus"></i> استبيان</button></div>
-    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر الاستبيان المفتوح في «جوّالي» للمشاركين أو الميسّرين، ولأولياء الأمور برابط تشاركه. الأسماء لا تظهر في النتائج — وقياس الرضا ونشر نتائجه من معايير الشفافية.</span></p>
+    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر الاستبيان المفتوح في «جوّالي» للمشاركين أو المشرفين، ولأولياء الأمور برابط تشاركه. الأسماء لا تظهر في النتائج — وقياس الرضا ونشر نتائجه من معايير الشفافية.</span></p>
     <div class="sv-list">${SN.surveys.slice().reverse().map(v => { const st = SN_SV_ST[v.status] || SN_SV_ST.draft;
       return `<button type="button" class="sv-row" onclick="snSvGo('${v.id}')"><span class="sv-n"><b>${n(v.id)}</b><small>إجابة</small></span>
         <span class="sv-t"><b>${esc(v.title)}</b><small>${SN_SV_AUD[v.audience] || ''} · ${(v.questions || []).length} أسئلة</small></span><span class="r-badge" style="--c:${st[1]}">${st[0]}</span></button>`; }).join('')
-      || `<div class="card">${rEmpty('clipboard-list', 'ابدأ بقالب جاهز: رضا المشاركين، أولياء الأمور، الميسّرين، أو تقييم نشاط.', `<button class="btn btn-gold" onclick="snSvNew()"><i data-lucide="plus"></i> استبيان من قالب</button>`)}</div>`}</div>`;
+      || `<div class="card">${rEmpty('clipboard-list', 'ابدأ بقالب جاهز: رضا المشاركين، أولياء الأمور، المشرفين، أو تقييم نشاط.', `<button class="btn btn-gold" onclick="snSvNew()"><i data-lucide="plus"></i> استبيان من قالب</button>`)}</div>`}</div>`;
 }
 function snSvGo(id) { SN.svOpen = id; snPaint(); }
 function snSvNew() {
@@ -732,7 +746,7 @@ async function snSvComply() {
 /* نسخة تجريبيّة: إجابات معقولة (أغلبها راضٍ) لترى شكل النتائج */
 async function snSvDemo(id) {
   const v = SN.surveys.find(x => x.id === id), stages = ['ابتدائي', 'متوسط', 'ثانوي'], pool = v.audience === 'students' ? SN.members.length : v.audience === 'staff' ? SN.staff.length : 0, n = pool ? Math.max(3, Math.round(pool * .8)) : 24;
-  const texts = ['رحلات أكثر', 'مسابقة حروف كلّ أسبوع', 'وقت أطول للرياضة', 'الميسّرون رائعون', 'وجبات أفضل', 'دورة تصوير', 'أكثر شيء حبّيته الأجواء'];
+  const texts = ['رحلات أكثر', 'مسابقة حروف كلّ أسبوع', 'وقت أطول للرياضة', 'المشرفون رائعون', 'وجبات أفضل', 'دورة تصوير', 'أكثر شيء حبّيته الأجواء'];
   const pick = a => a[Math.floor(Math.random() * a.length)], w = () => { const r = Math.random(); return r < .55 ? 5 : r < .85 ? 4 : r < .95 ? 3 : 2; };
   for (let i = 0; i < n; i++) {
     const a = {}; (v.questions || []).forEach(q => { if (q.t === 'stars') a[q.id] = w(); else if (q.t === 'nps') a[q.id] = Math.min(10, w() * 2 - Math.floor(Math.random() * 2)); else if (q.t === 'choice') a[q.id] = pick(q.o || ['']); else if (Math.random() < .5) a[q.id] = pick(texts); });

@@ -316,3 +316,35 @@ textarea.tx{resize:vertical;min-height:90px;border:1.5px solid var(--line);backg
 /* شارة التطبيق: لا تُقصّ — الأيقونة تُقلَّم بنفسها والشارة فوق الزاوية العليا اليمنى كما في iOS */
 .ic{overflow:visible}.ic img{border-radius:inherit}
 .badge{top:-6px!important;right:-6px!important;left:auto!important;inset-inline-end:auto!important;width:18px!important;height:18px!important;border:2.5px solid #fff!important;box-shadow:0 2px 6px rgba(0,0,0,.35);z-index:2}
+/* التحفيز طوال السنة: المستوى والأسابيع المتتالية، الرحلة القادمة، الترتيب الشهريّ */
+.lvl{display:flex!important;align-items:center;gap:12px}.lv-i{font-size:34px}.lvl b{font-size:18px!important}
+.lv-bar{display:block;height:7px;border-radius:4px;background:rgba(255,255,255,.18);overflow:hidden;margin-top:6px}.lv-bar u{display:block;height:100%;background:var(--sc,#FFD60A);border-radius:4px}
+.trip{background:linear-gradient(135deg,rgba(255,159,10,.32),rgba(20,20,28,.55))!important;border-color:rgba(255,159,10,.5)!important}
+.rkper{display:flex;gap:8px;justify-content:center;margin:4px 0 10px}
+.rkper button{min-height:38px;padding:0 16px;border-radius:99px;border:1px solid var(--line);background:none;color:#fff;font-weight:800;cursor:pointer}.rkper button.on{background:#fff;color:#111}
+/* Memoji آبل: مربّع اللصق والخطوات */
+.avmode{margin:2px 0 12px}
+.mjbox{min-height:64px;border-radius:18px;border:2px dashed rgba(255,255,255,.35);background:rgba(255,255,255,.06);padding:10px;text-align:center;color:#fff;caret-color:#fff;outline:0}
+.mjbox:empty::before{content:"اضغط هنا لفتح لوحة المفاتيح";color:var(--l2)}.mjbox:focus{border-color:#fff}.mjbox img{max-height:80px}
+.mjsteps{line-height:2;font-size:15px;color:var(--l2);padding-inline-start:20px}.mjsteps b{color:#fff}
+.mjfile{margin-top:4px}.mjempty{height:100%;display:grid;place-items:center;color:var(--l2);background:rgba(255,255,255,.06)}
+/* مكتبة الأفاتارات */
+.avmode.three{grid-template-columns:1fr 1fr 1fr}
+.libg{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 12px}
+.libg button{min-height:38px;padding:0 14px;border-radius:99px;border:0;background:rgba(255,255,255,.12);color:#fff;font-weight:800;cursor:pointer;font-size:14px}.libg button.on{background:#fff;color:#111}
+.libgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.libit{aspect-ratio:1;padding:4px;border-radius:18px;border:2.5px solid transparent;background:rgba(255,255,255,.08);cursor:pointer}
+.libit img{width:100%;height:100%;object-fit:contain;display:block}.libit.on{border-color:#fff;background:rgba(255,255,255,.2)}
+/* الشخصيّة دائرة في كلّ مكان: تملأ الدائرة كاملة بلا فراغات ولا زوايا */
+.av{border-radius:50%;clip-path:circle(50%);aspect-ratio:1}
+.hav .av{clip-path:none}
+.idbody{align-items:start}
+.idph{width:112px;height:112px;border-radius:50%;overflow:visible;background:transparent;border:0;box-shadow:0 0 0 3px color-mix(in srgb,var(--cc) 55%,#fff)}
+.idph .av{width:112px;height:112px}
+.ided{bottom:-2px;inset-inline-start:-2px;box-shadow:0 0 0 2px #fff,0 4px 10px rgba(0,0,0,.25)}
+.vph{width:150px;height:150px;border-radius:50%;border:0;background:transparent;box-shadow:0 0 0 4px var(--cc)}
+.rav,.rav.big{border-radius:50%}
+.avprev{border-radius:50%}
+.avo .av{border-radius:50%}
+.libit{border-radius:50%;padding:3px}
+.libit img{border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}

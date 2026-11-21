@@ -196,7 +196,31 @@ var AV = (function () {
     return { fs: r(6), s: r(9), bd: 1, e: [0, 0, 1, 2, 5][r(5)], br: r(5), n: r(4), m: [0, 0, 1, 2, 6][r(5)], h: r(11), hc: r(4), f: 0, w: [0, 0, 1, 1, 2, 3][r(6)], ws: [0, 2, 5][r(3)], wc: r(7), g: [0, 0, 0, 3, 4][r(5)], gc: r(3), c: [0, 0, 0, 7, 6, 2][r(6)], cc: r(6), b: r(8) };
   }
   const has = a => a && typeof a === 'object' && Object.keys(a).length;
-  const of = (av, name, o) => svg(has(av) ? av : seed(name), Object.assign({ label: name ? 'شخصيّة ' + name : '' }, o || {}));
+  // مكتبة الأفاتارات الجاهزة (حزم مرخّصة): avatars/manifest.json — المسار نسبةً لمكان avatar.js (يعمل من «جوّالي» ومن النظام)
+  const BASE = ((document.currentScript && document.currentScript.src) || location.href).replace(/[^/]*$/, '') + 'avatars/';
+  const PK = /^[a-z0-9]{2,12}\/[0-9]{3}\.webp$/;
+  let LIB = null;
+  const isPk = av => !!(av && typeof av.pk === 'string' && PK.test(av.pk));
+  function pkSvg(av, name, o) {
+    // صور المكتبة مربّعة ٢٥٦ تملأ الدائرة كاملة (الأقراص مقصوصة على دائرتها، والنصفيّة قاعدتها على حافّة الدائرة)؛ وجوه «emoji» بهامش
+    o = o || {}; const bg = at(BG, seed(name).b), p = /^emoji\//.test(av.pk) ? 16 : 0, s = 200 - 2 * p;
+    return `<svg class="av" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${o.label || 'الشخصيّة'}">${o.noBg ? '' : `<rect width="200" height="200" fill="${bg}"/>`}<image href="${BASE + av.pk}" x="${p}" y="${p}" width="${s}" height="${s}" preserveAspectRatio="xMidYMid slice"/></svg>`;
+  }
+  async function lib() {
+    if (LIB) return LIB;
+    try { const r = await fetch(BASE + 'manifest.json', { cache: 'force-cache' }); if (!r.ok) throw 0; const m = await r.json(); LIB = (m.groups || []).filter(g => g.items && g.items.length); } catch (e) { LIB = []; }
+    return LIB;
+  }
+  // ملصق Memoji الذي ينشئه صاحبه في جواله ويلصقه (av.mj صورة) — على خلفيّة لونه الثابت
+  const MJ = /^data:image\/(webp|png);base64,[A-Za-z0-9+/=]+$/;
+  const isMj = av => !!(av && typeof av.mj === 'string' && MJ.test(av.mj));
+  function mjSvg(av, name, o) {
+    o = o || {}; const bg = at(BG, seed(name).b), vb = o.crop === 'head' ? '18 10 164 164' : '0 0 200 200';
+    return `<svg class="av" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="${o.label || 'الشخصيّة'}">${o.noBg ? '' : `<rect width="200" height="200" fill="${bg}"/>`}<image href="${av.mj}" x="14" y="20" width="172" height="172" preserveAspectRatio="xMidYMid meet"/></svg>`;
+  }
+  // بلا اختيار: أفاتار ثابت من المكتبة لكلّ اسم (إن حُمّلت)، وإلا الرسم
+  const pickFor = name => { const all = (LIB || []).flatMap(g => g.items); if (!all.length) return null; let x = 0; for (const ch of String(name || '')) x = (x * 31 + ch.charCodeAt(0)) >>> 0; return { pk: all[x % all.length] }; };
+  const of = (av, name, o) => isPk(av) ? pkSvg(av, name, Object.assign({ label: name ? 'شخصيّة ' + name : '' }, o || {})) : !has(av) && pickFor(name) ? pkSvg(pickFor(name), name, Object.assign({ label: name ? 'شخصيّة ' + name : '' }, o || {})) : isMj(av) ? mjSvg(av, name, Object.assign({ label: name ? 'شخصيّة ' + name : '' }, o || {})) : svg(has(av) ? av : seed(name), Object.assign({ label: name ? 'شخصيّة ' + name : '' }, o || {}));
   // أقسام المحرّر: كلّ قسم مجموعات — أشكال (مصغّرات) أو ألوان؛ crop:'head' يقرّب المعاينة على الوجه
   const CATS = [
     { id: 'face', n: 'الوجه', crop: 'head', g: [{ t: 'البشرة', k: 's', cols: SKIN }, { t: 'شكل الوجه', k: 'fs', names: ['بيضاويّ', 'نحيف', 'مربّع', 'عريض', 'حادّ', 'دائريّ'] }] },
@@ -211,5 +235,5 @@ var AV = (function () {
     { id: 'clothes', n: 'اللبس', g: [{ t: 'اللبس', k: 'c', names: ['ثوب', 'ثوب وبشت', 'بدلة وكرافتة', 'بدلة بلا كرافتة', 'بدلة ثلاث قطع', 'جاكيت وتيشيرت', 'هودي', 'تيشيرت', 'رياضيّ', 'بولو'] },
       { t: 'اللون', k: 'cc', cols: c => c.c === 0 ? THOBE : c.c === 1 ? BISHT : c.c <= 5 ? SUIT : CAS }] },
     { id: 'bg', n: 'الخلفيّة', g: [{ t: 'الخلفيّة', k: 'b', cols: BG }] }];
-  return { svg, seed, of, has, CATS, BG, SKIN };
+  return { svg, seed, of, has, isMj, isPk, lib, BASE, CATS, BG, SKIN };
 })();
