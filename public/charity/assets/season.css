@@ -141,3 +141,10 @@ html.ap-dark .sv-row,html.ap-dark .sv-tpl{background:rgba(44,44,46,.92);box-shad
 .sn-attbars{display:flex;align-items:flex-end;gap:4px;height:70px;width:100%;margin-top:6px}
 .sn-attbars button{flex:1;height:100%;display:flex;align-items:flex-end;border:0;background:rgba(120,120,128,.1);border-radius:6px;padding:0;cursor:pointer;min-width:10px}
 .sn-attbars i{display:block;width:100%;border-radius:6px;background:var(--accent-fill,var(--accent,#1003BD));opacity:.55}.sn-attbars button.on i{opacity:1}
+/* الرواتب ومدير المتجر */
+.sn-sal{margin-bottom:14px}.sn-sal-h{display:flex;justify-content:space-between;align-items:center}.sn-sal-h h3{display:flex;gap:8px;align-items:center;margin:0}
+.sn-days{display:flex;flex-wrap:wrap;gap:8px}.sn-days label{display:inline-flex}.sn-days input{position:absolute;opacity:0;pointer-events:none}
+.sn-days span{min-height:40px;padding:0 14px;border-radius:999px;display:inline-flex;align-items:center;background:var(--ap-fill2,rgba(120,120,128,.12));font-weight:700;cursor:pointer}
+.sn-days input:checked+span{background:var(--accent-fill,var(--accent,#1003BD));color:#fff}.sn-days input:focus-visible+span{outline:2px solid var(--accent,#1003BD);outline-offset:2px}
+.sn-tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(255,159,10,.18);color:#B45F06;vertical-align:middle}
+html.ap-dark .sn-tag{color:#FFC46B}
