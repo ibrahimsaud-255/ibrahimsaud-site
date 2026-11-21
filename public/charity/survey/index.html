@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#F2F2F7">
+<title>استبيان</title>
+<link rel="icon" href="../assets/favicon.png" type="image/png">
+<style>
+@font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+:root{--bg:#F2F2F7;--card:#fff;--tx:#1D1D1F;--l2:#5B5B60;--line:rgba(60,60,67,.16);--a:#1003BD;--af:#1003BD;--gold:#B37B00}
+@media (prefers-color-scheme:dark){:root{--bg:#000;--card:#1C1C1E;--tx:#F5F5F7;--l2:#AEAEB2;--line:rgba(84,84,88,.6);--a:#8C8CFF;--af:#3D3AD6;--gold:#FFD60A}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:TS,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased;line-height:1.6}
+main{max-width:640px;margin:0 auto;padding:max(20px,env(safe-area-inset-top)) 16px 40px}
+header{text-align:center;margin:10px 0 18px}header small{color:var(--l2);font-size:15px}
+h1{font-size:28px;margin:4px 0 6px;line-height:1.35}
+.intro{color:var(--l2);margin:0}
+.q{background:var(--card);border-radius:20px;padding:18px 16px;margin:12px 0}
+.q h2{font-size:18px;margin:0 0 12px;line-height:1.5}
+button{font:inherit;cursor:pointer}
+.stars{display:flex;gap:6px;justify-content:center}
+.stars button{width:54px;height:54px;border:0;border-radius:14px;background:rgba(120,120,128,.12);color:rgba(120,120,128,.55);font-size:30px}
+.stars button.on{color:var(--gold);background:rgba(255,204,0,.16)}
+.nps{display:grid;grid-template-columns:repeat(11,1fr);gap:4px;direction:ltr}
+.nps button{min-height:44px;border:0;border-radius:10px;background:rgba(120,120,128,.12);color:var(--tx);font-weight:700;padding:0}
+.nps button.on{background:var(--af);color:#fff}
+.lbl{display:flex;justify-content:space-between;color:var(--l2);font-size:13px;margin-top:6px;direction:ltr}
+.ch{display:flex;flex-wrap:wrap;gap:8px}
+.ch button{min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--line);background:none;color:var(--tx);font-weight:700}
+.ch button.on{background:var(--af);border-color:var(--af);color:#fff}
+textarea{width:100%;min-height:96px;font:inherit;font-size:17px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:rgba(120,120,128,.08);color:var(--tx);resize:vertical}
+.send{width:100%;min-height:54px;border:0;border-radius:999px;background:var(--af);color:#fff;font-size:18px;font-weight:700;margin-top:8px}
+.send:disabled{opacity:.5}
+.note{color:var(--l2);text-align:center;font-size:14px}
+.err{color:#D70015;text-align:center;font-weight:700}
+.done{text-align:center;padding:60px 10px}.done div{font-size:72px}
+@media (prefers-color-scheme:dark){.err{color:#FF6961}}
+</style>
+</head>
+<body>
+<main id="app"><p class="note">جارٍ التحميل…</p></main>
+<script>
+/* استبيان أولياء الأمور برابط (بلا دخول): GET /survey?t=… ثمّ POST /survey/submit — localhost ← staging. ?demo=1 للعرض */
+(function () {
+  'use strict';
+  const Q = new URLSearchParams(location.search), T = Q.get('t') || '', DEMO = Q.get('demo') === '1';
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'https://br-red-smoke-baq7yp0d-api.compute.c-8.eu-central-1.aws.neon.tech' : 'https://br-dark-band-bajth6rv-api.compute.c-8.eu-central-1.aws.neon.tech';
+  const $ = document.getElementById('app'), A = {};
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const KEY = 'sv_done_' + T;
+  const DEMO_SV = { org: 'جمعيّة تجريبيّة', title: 'رضا أولياء الأمور', intro: 'شكراً لثقتكم. رأيكم يساعدنا على خدمة أبنائكم أفضل.', status: 'open',
+    q: [{ id: 'a', t: 'stars', l: 'التواصل وإبلاغكم بالبرامج والمواعيد' }, { id: 'b', t: 'stars', l: 'سلامة الأبناء والإشراف عليهم' }, { id: 'c', t: 'choice', l: 'هل لاحظتم أثراً إيجابيّاً على ابنكم؟', o: ['كبير', 'متوسّط', 'قليل', 'لم ألاحظ'] }, { id: 'd', t: 'nps', l: 'هل تنصحون غيركم بتسجيل أبنائهم معنا؟' }, { id: 'e', t: 'text', l: 'اقتراحاتكم' }] };
+  function done(msg) { $.innerHTML = `<div class="done"><div aria-hidden="true">💙</div><h1>${msg || 'وصل رأيكم — شكراً لكم'}</h1><p class="note">جزاكم الله خيراً.</p></div>`; }
+  function render(v) {
+    document.title = v.title;
+    if (v.status !== 'open') { $.innerHTML = `<header><small>${esc(v.org)}</small><h1>${esc(v.title)}</h1></header><p class="note">انتهى وقت هذا الاستبيان. شكراً لاهتمامكم.</p>`; return; }
+    try { if (localStorage.getItem(KEY)) { done('أرسلتم رأيكم من قبل — شكراً لكم'); return; } } catch (e) {}
+    const qh = q => q.t === 'stars' ? `<div class="stars" role="radiogroup" aria-label="${esc(q.l)}">${[1, 2, 3, 4, 5].map(n => `<button type="button" data-q="${esc(q.id)}" data-v="${n}" role="radio" aria-checked="false" aria-label="${n} من ٥">★</button>`).join('')}</div>`
+      : q.t === 'nps' ? `<div class="nps">${[...Array(11).keys()].map(n => `<button type="button" data-q="${esc(q.id)}" data-v="${n}">${n}</button>`).join('')}</div><div class="lbl"><span>لا أنصح</span><span>أنصح بشدّة</span></div>`
+      : q.t === 'choice' ? `<div class="ch">${(q.o || []).map(o => `<button type="button" data-q="${esc(q.id)}" data-v="${esc(o)}" data-s="1">${esc(o)}</button>`).join('')}</div>`
+      : `<textarea data-t="${esc(q.id)}" maxlength="1000" aria-label="${esc(q.l)}" placeholder="اكتب هنا (اختياريّ)"></textarea>`;
+    $.innerHTML = `<header><small>${esc(v.org)}</small><h1>${esc(v.title)}</h1>${v.intro ? `<p class="intro">${esc(v.intro)}</p>` : ''}</header>
+      ${(v.q || []).map(q => `<section class="q"><h2>${esc(q.l)}</h2>${qh(q)}</section>`).join('')}
+      <p class="err" id="err" role="alert"></p><button class="send" id="send">إرسال</button><p class="note">لا نطلب اسمكم، والإجابات تُجمع بلا أسماء.</p>`;
+    $.addEventListener('click', e => {
+      const b = e.target.closest('[data-q]'); if (!b) return;
+      const box = b.parentElement, star = box.classList.contains('stars'); A[b.dataset.q] = b.dataset.s ? b.dataset.v : +b.dataset.v;
+      box.querySelectorAll('[data-q]').forEach(x => { x.classList.toggle('on', star ? +x.dataset.v <= +b.dataset.v : x === b); if (star) x.setAttribute('aria-checked', String(x === b)); });
+    });
+    document.getElementById('send').onclick = async e => {
+      document.querySelectorAll('[data-t]').forEach(t => { if (t.value.trim()) A[t.dataset.t] = t.value.trim(); });
+      const err = document.getElementById('err'); if (!Object.keys(A).length) { err.textContent = 'أجيبوا عن سؤال واحد على الأقلّ'; return; }
+      e.target.disabled = true; err.textContent = '';
+      try {
+        if (!DEMO) { const r = await fetch(API + '/survey/submit', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ t: T, answers: A }) }); const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.error || 'تعذّر الإرسال'); }
+        try { localStorage.setItem(KEY, '1'); } catch (er) {}
+        done(); scrollTo(0, 0);
+      } catch (er) { err.textContent = er.message; e.target.disabled = false; }
+    };
+  }
+  if (DEMO) { render(DEMO_SV); return; }
+  if (!/^[a-f0-9]{16}$/.test(T)) { $.innerHTML = '<p class="err">الرابط غير صالح — تأكّدوا من نسخه كاملاً.</p>'; return; }
+  fetch(API + '/survey?t=' + T).then(r => r.json().then(d => ({ ok: r.ok, d }))).then(({ ok, d }) => ok ? render(d) : ($.innerHTML = `<p class="err">${esc(d.error || 'تعذّر التحميل')}</p>`))
+    .catch(() => { $.innerHTML = '<p class="err">تعذّر الاتّصال — حاولوا مرّة أخرى.</p>'; });
+})();
+</script>
+</body>
+</html>

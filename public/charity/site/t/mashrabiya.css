@@ -1,0 +1,139 @@
+/* قالب «مشربيّة» — لون الجمعيّة عميقاً + ذهبيّ + عاجيّ، نقش النجمة الثمانيّة وأقواس المحراب */
+[data-t=mashrabiya]{--bg:#FBF7EF;--bg2:#F4EDDF;--fg:#1E1B16;--muted:#5A5347;--line:#E4D9C3;--card:#FFFDF8;--r:20px;--rs:14px;--sh:none;
+  --deep:color-mix(in srgb,var(--c) 78%,#000);--deep2:color-mix(in srgb,var(--c) 62%,#000);--gold:#D4AF63;--gold-d:#8A6420;
+  --cd:color-mix(in srgb,var(--c) 70%,#000)}
+[data-t=mashrabiya] h1,[data-t=mashrabiya] h2,[data-t=mashrabiya] h3{font-weight:700}
+
+/* النقش: شبكة نجوم ثمانيّة تتّصل خطوطها — قناع يُلوَّن بأيّ لون */
+.mb-pat{position:absolute;inset:0;pointer-events:none;background:var(--gold);opacity:.16;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Crect x='32' y='32' width='36' height='36'/%3E%3Cpath d='M50 24.5 75.5 50 50 75.5 24.5 50Z'/%3E%3Cpath d='M50 24.5V0M75.5 50H100M50 75.5V100M24.5 50H0M68 68l32 32M32 32 0 0M68 32l32-32M32 68 0 100'/%3E%3Ccircle cx='50' cy='50' r='7'/%3E%3C/svg%3E") 0 0/88px 88px repeat;
+          mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Crect x='32' y='32' width='36' height='36'/%3E%3Cpath d='M50 24.5 75.5 50 50 75.5 24.5 50Z'/%3E%3Cpath d='M50 24.5V0M75.5 50H100M50 75.5V100M24.5 50H0M68 68l32 32M32 32 0 0M68 32l32-32M32 68 0 100'/%3E%3Ccircle cx='50' cy='50' r='7'/%3E%3C/svg%3E") 0 0/88px 88px repeat}
+
+/* الترويسة */
+[data-t=mashrabiya] .hd{background:color-mix(in srgb,var(--deep) 92%,transparent);color:#fff}
+[data-t=mashrabiya] .hd.scrolled{border-bottom-color:color-mix(in srgb,var(--gold) 40%,transparent);box-shadow:none}
+[data-t=mashrabiya] .brand-mark{background:transparent;border:1.5px solid var(--gold);color:var(--gold);border-radius:10px;transform:rotate(45deg)}
+[data-t=mashrabiya] .brand-mark{font-size:0}[data-t=mashrabiya] .brand-mark::after{content:"";width:14px;height:14px;border:1.5px solid var(--gold);transform:rotate(45deg)}
+[data-t=mashrabiya] .brand img{filter:brightness(0) invert(1)}
+[data-t=mashrabiya] .brand-n{font-family:var(--fh)}
+[data-t=mashrabiya] .hd-nav a{color:rgba(255,255,255,.86)}
+[data-t=mashrabiya] .hd-nav a:hover{color:#fff;background:rgba(255,255,255,.1)}
+[data-t=mashrabiya] .hd-menu{background:transparent;color:#fff;border-color:rgba(255,255,255,.3)}
+[data-t=mashrabiya] .sheet{background:var(--deep);color:#fff}
+[data-t=mashrabiya] .sheet a{border-bottom-color:rgba(255,255,255,.14);font-family:var(--fh)}[data-t=mashrabiya] .sheet a .ic{color:var(--gold)}
+[data-t=mashrabiya] .hd .btn-c{background:var(--gold);color:#1E1B16}
+
+/* الأزرار */
+.mb-gold{background:var(--gold);color:#1E1B16}.mb-gold:hover{filter:brightness(1.06)}
+.mb-line{border-color:color-mix(in srgb,var(--gold) 70%,transparent);color:#fff}.mb-line:hover{background:rgba(255,255,255,.08)}
+[data-t=mashrabiya] .btn-c{background:var(--deep);color:#fff}
+
+/* الواجهة */
+.mb-hero{position:relative;background:radial-gradient(90% 70% at 50% 0%,var(--deep2),var(--deep) 70%);color:#fff;overflow:hidden}
+.mb-hero-in{position:relative;display:grid;gap:34px;padding-top:44px;padding-bottom:78px;text-align:center;justify-items:center}
+.mb-hero-t{display:flex;flex-direction:column;align-items:center;max-width:760px}
+.mb-big{width:46px;height:46px;color:var(--gold);margin-bottom:14px}
+.mb-eye{font-size:14.5px;color:var(--gold);font-weight:600;letter-spacing:.3px;margin-bottom:12px}
+.mb-hero h1{font-size:clamp(36px,8.4vw,66px);line-height:1.3;margin-bottom:16px}
+.mb-hero h1 em{font-style:normal;color:var(--gold)}
+.mb-lead{font-size:clamp(17px,2.4vw,20px);color:rgba(255,255,255,.86);margin:0}
+.mb-hero .ctas{justify-content:center;margin:26px 0 14px}
+.mb-trust{display:flex;align-items:center;gap:8px;font-size:13.5px;color:rgba(255,255,255,.78);margin:0;text-align:start}.mb-trust .ic{color:var(--gold);width:18px;height:18px}
+.mb-arch{width:min(100%,360px);aspect-ratio:3/4;border-radius:50% 50% 0 0/37.5% 37.5% 0 0;overflow:hidden;border:2px solid var(--gold);padding:8px;background:rgba(0,0,0,.12)}
+.mb-arch img,.mb-arch .mb-arch-pat{width:100%;height:100%;object-fit:cover;border-radius:50% 50% 0 0/37.5% 37.5% 0 0}
+.mb-arch-pat{position:relative;display:grid;place-items:center;background:color-mix(in srgb,var(--gold) 14%,var(--deep2));overflow:hidden}
+.mb-arch-pat::before{content:"";position:absolute;inset:0;background:var(--gold);opacity:.35}
+.mb-mid{width:38%;color:var(--gold);position:relative}
+.mb-arches{position:absolute;inset:auto 0 -1px;height:26px;background:radial-gradient(circle at 50% 100%,var(--bg) 0 23px,transparent 24px) 50% 100%/48px 26px repeat-x}
+@media (min-width:900px){
+  .mb-hero-in{grid-template-columns:1.25fr .9fr;text-align:start;justify-items:start;align-items:center;padding-top:70px;padding-bottom:100px}
+  .mb-hero-t{align-items:flex-start}.mb-hero .ctas{justify-content:flex-start}
+  .mb-arch{justify-self:end}
+}
+
+/* النقش داخل قوس البرامج والواجهة */
+.mb-arch-pat{--m:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100' fill='none' stroke='%23000' stroke-width='1.3'%3E%3Crect x='32' y='32' width='36' height='36'/%3E%3Cpath d='M50 24.5 75.5 50 50 75.5 24.5 50Z'/%3E%3Cpath d='M50 24.5V0M75.5 50H100M50 75.5V100M24.5 50H0M68 68l32 32M32 32 0 0M68 32l32-32M32 68 0 100'/%3E%3Ccircle cx='50' cy='50' r='7'/%3E%3C/svg%3E") 0 0/64px 64px repeat}
+.mb-arch-pat::before{-webkit-mask:var(--m);mask:var(--m)}
+
+/* رؤوس الأقسام */
+[data-t=mashrabiya] .sec{padding:64px 0}
+[data-t=mashrabiya] .sec:nth-of-type(even){background:transparent}
+.mb-h{text-align:center;margin:0 auto 32px;max-width:720px;display:flex;flex-direction:column;align-items:center}
+.mb-orn{display:flex;align-items:center;gap:10px;color:var(--gold-d);margin-bottom:8px}
+.mb-orn i{display:block;width:44px;height:1.5px;background:currentColor;opacity:.6}
+.mb-s{width:22px;height:22px}
+.mb-h>span{font-size:14px;font-weight:700;color:var(--gold-d)}
+.mb-h h2{font-size:clamp(28px,5.4vw,40px)}
+
+/* الأرقام داخل النجوم */
+.mb-impact{position:relative;padding:40px 0 30px!important}
+.mb-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.mb-stat{position:relative;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:22%}
+.mb-ss{position:absolute;inset:0;width:100%;height:100%;color:var(--gold-d);opacity:.55}
+.mb-stat b{position:relative;font-family:var(--fh);font-size:clamp(21px,5.2vw,38px);color:var(--cd);line-height:1.15;font-variant-numeric:tabular-nums}
+.mb-stat span{position:relative;font-size:clamp(11.5px,3vw,14px);color:var(--muted);line-height:1.4}
+[data-t=mashrabiya] .asof{text-align:center}
+@media (min-width:820px){.mb-stats{grid-template-columns:repeat(4,1fr);gap:26px}}
+
+/* من نحن */
+.mb-txt{max-width:760px;margin:0 auto 26px;text-align:center}
+.mb-vm{display:grid;gap:16px}
+.mb-tile{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;text-align:center;position:relative}
+.mb-tile::before{content:"";position:absolute;top:-1px;inset-inline:30%;height:3px;background:var(--gold);border-radius:0 0 3px 3px}
+.mb-tile span{display:block;font-family:var(--fh);font-size:19px;color:var(--cd);margin-bottom:8px}
+.mb-tile p{margin:0;font-size:18px}
+.mb-vals{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:22px}
+.mb-vals span{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border:1px solid var(--line);border-radius:999px;background:var(--card);font-weight:600}
+.mb-xs{width:16px;height:16px;color:var(--gold-d)}
+.mb-goals{list-style:none;counter-reset:g;margin:24px auto 0;padding:0;max-width:760px;display:grid;gap:10px}
+.mb-goals li{counter-increment:g;display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:var(--rs);padding:14px 18px;font-weight:500}
+.mb-goals li::before{content:counter(g);flex:0 0 30px;height:30px;display:grid;place-items:center;font-family:var(--fh);font-weight:700;color:#fff;background:var(--deep);transform:rotate(45deg);border-radius:6px}
+@media (min-width:760px){.mb-vm{grid-template-columns:1fr 1fr}}
+
+/* البرامج: بطاقات بأقواس */
+.mb-progs{display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(min(100%,280px),1fr))}
+.mb-prog{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:999px 999px var(--r) var(--r);padding:10px;transition:transform .2s var(--ease),border-color .2s}
+.mb-prog:hover{transform:translateY(-4px);border-color:var(--gold)}
+.mb-pa{aspect-ratio:4/3.4;border-radius:999px 999px 10px 10px;overflow:hidden}
+.mb-pa img,.mb-pa .mb-arch-pat{width:100%;height:100%;object-fit:cover}
+.mb-pa .mb-arch-pat{background:color-mix(in srgb,var(--gold) 16%,var(--deep))}
+.mb-pb{padding:16px 10px 10px;display:flex;flex-direction:column;gap:6px;text-align:center;align-items:center}
+.mb-pb h3{font-size:21px}.mb-pb p{margin:0;color:var(--muted);font-size:15px}.mb-pb small{color:var(--muted);font-size:13.5px}
+.mb-open,.mb-st{font-size:12.5px;font-weight:700;padding:3px 12px;border-radius:999px;background:#E6F4EA;color:#14622F}.mb-st{background:var(--bg2);color:var(--muted)}
+
+/* الأحزمة العميقة (القصص والتبرّع) */
+.mb-band{position:relative;background:var(--deep)!important;color:#fff;overflow:hidden}
+.mb-band .mb-pat{opacity:.12}
+.mb-band .mb-orn,.mb-band .mb-h>span{color:var(--gold)}
+.mb-band .wrap{position:relative}
+.mb-quotes{display:grid;gap:18px}
+.mb-quotes figure{margin:0;padding:28px 24px;border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:var(--r);background:rgba(0,0,0,.14);text-align:center}
+.mb-quotes blockquote{margin:0 0 14px;font-family:var(--fh);font-size:clamp(20px,3.4vw,25px);line-height:1.7}
+.mb-quotes figcaption b{display:block;color:var(--gold)}.mb-quotes figcaption small{color:rgba(255,255,255,.75)}
+@media (min-width:760px){.mb-quotes{grid-template-columns:1fr 1fr}}
+.mb-donate{text-align:center;display:flex;flex-direction:column;align-items:center}
+.mb-dp{max-width:600px;color:rgba(255,255,255,.86);font-size:17px;margin:-14px 0 20px}
+.mb-ibans{width:100%;max-width:820px;margin-top:22px;text-align:start}
+[data-t=mashrabiya] .iban{background:rgba(0,0,0,.16);border-color:color-mix(in srgb,var(--gold) 45%,transparent)}
+[data-t=mashrabiya] .iban .btn-light{background:var(--gold);color:#1E1B16}
+@media (min-width:760px){.mb-ibans{grid-template-columns:1fr 1fr}}
+
+/* الأقسام المشتركة */
+[data-t=mashrabiya] .card,[data-t=mashrabiya] .facts div,[data-t=mashrabiya] .doc,[data-t=mashrabiya] .logo,[data-t=mashrabiya] .acc details{background:var(--card);border-color:var(--line)}
+[data-t=mashrabiya] .pc{border-radius:999px 999px var(--r) var(--r);padding:10px}
+[data-t=mashrabiya] .pc .cv{border-radius:999px 999px 10px 10px}
+[data-t=mashrabiya] .ph{background:color-mix(in srgb,var(--gold) 16%,var(--deep));color:var(--gold)}
+[data-t=mashrabiya] .go,[data-t=mashrabiya] .doc .ic,[data-t=mashrabiya] .row .ic,[data-t=mashrabiya] .gov-g h3 .ic,[data-t=mashrabiya] .form-card h3 .ic{color:var(--cd)}
+[data-t=mashrabiya] .av{background:var(--deep);color:var(--gold)}
+[data-t=mashrabiya] .acc summary,[data-t=mashrabiya] .facts dd{font-family:var(--fh)}
+
+/* التذييل */
+.mb-ft{position:relative;background:var(--deep);color:rgba(255,255,255,.82);text-align:center;padding:46px 0 calc(30px + env(safe-area-inset-bottom));overflow:hidden}
+.mb-ft .mb-pat{opacity:.1}
+.mb-ft .wrap{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px}
+.mb-ft b{font-family:var(--fh);font-size:24px;color:#fff}
+.mb-ft small{color:rgba(255,255,255,.7)}
+.mb-ft nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin:10px 0}
+.mb-ft nav a:hover{color:var(--gold)}
+.mb-ft p{margin:0;font-size:13.5px;color:rgba(255,255,255,.7)}
+.mb-ft .made{opacity:1;color:rgba(255,255,255,.82)}

@@ -1,0 +1,64 @@
+/* ألعاب القاعة (البروجكتر واللابتوب) — خلية الحروف ومن سيربح المليون، بأسئلة «حروف ودروس» */
+@font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Black.woff2) format("woff2");font-weight:900;font-display:swap}
+:root{--bg:#07070D;--l2:rgba(235,235,245,.78);--line:rgba(255,255,255,.14);--a:#16A34A;--b:#DC2626;--gold:#FFC83D}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{margin:0;min-height:100%;background:radial-gradient(120% 90% at 50% -10%,#1b1d3c,#07070D 65%) fixed;color:#fff;font-family:TS,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+button,input,select{font:inherit;color:inherit}
+.wrap{max-width:1500px;margin:0 auto;padding:clamp(16px,3vw,40px);min-height:100vh;display:flex;flex-direction:column;gap:clamp(14px,2vw,26px)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.top h1{margin:0;font-size:clamp(24px,3vw,40px);font-weight:900}
+.top .sub{color:var(--l2);font-size:15px}
+.btn{min-height:50px;padding:0 22px;border:0;border-radius:16px;background:#fff;color:#111;font-weight:800;font-size:17px;cursor:pointer}
+.btn.sec{background:rgba(255,255,255,.12);color:#fff}.btn:disabled{opacity:.45;cursor:default}
+.card{background:rgba(255,255,255,.07);border:1px solid var(--line);border-radius:24px;padding:clamp(16px,2vw,26px)}
+.games{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin:auto 0;width:100%}
+.game{display:flex;gap:24px;align-items:center;min-height:220px;text-align:start;cursor:pointer;border:1px solid var(--line);border-radius:28px;padding:22px;background:rgba(255,255,255,.07)}
+.game img{width:140px;height:140px;flex:none;border-radius:24px;box-shadow:0 14px 30px -14px #000}.game b{display:block;font-size:clamp(26px,2.6vw,38px);margin-bottom:6px}.game small{color:var(--l2);font-size:15px;line-height:1.6}
+.fld{display:flex;flex-direction:column;gap:6px;color:var(--l2);font-size:14px}
+.fld input,.fld select{font-size:18px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--line);background:rgba(0,0,0,.35);color:#fff}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}.row .fld{flex:1 1 200px}
+.seg{display:inline-grid;grid-auto-flow:column;background:rgba(255,255,255,.1);border-radius:14px;padding:3px}
+.seg button{border:0;background:none;border-radius:11px;min-height:44px;padding:0 18px;font-weight:800;cursor:pointer}.seg button.on{background:#fff;color:#111}
+.err{color:#FFB4AE;font-weight:700}
+.tm{display:flex;gap:8px;align-items:center}.tm input[type=color]{width:52px;height:46px;border:0;border-radius:12px;background:none;padding:0}
+/* ═════════ خلية الحروف ═════════ */
+.hx-stage{display:grid;grid-template-columns:minmax(180px,1fr) auto minmax(180px,1fr);align-items:center;gap:20px;flex:1}
+.team{display:flex;flex-direction:column;align-items:center;gap:8px;padding:18px;border-radius:24px;background:color-mix(in srgb,var(--c) 22%,rgba(0,0,0,.3));border:2px solid color-mix(in srgb,var(--c) 70%,transparent);text-align:center}
+.team b{font-size:clamp(22px,2.6vw,36px)}.team .s{font-size:clamp(40px,5vw,80px);font-weight:900;line-height:1}.team small{color:var(--l2)}
+.board{position:relative;height:min(76vh,800px);aspect-ratio:1012/860;max-width:62vw}
+.board svg{width:100%;height:100%;overflow:visible}
+.cell{cursor:pointer;transition:transform .15s}.cell polygon{stroke:rgba(255,255,255,.25);stroke-width:3}
+.cell text{font-weight:900;fill:#fff;pointer-events:none;font-family:TS,system-ui}
+.cell:hover polygon{stroke:#fff}
+.edge{opacity:.85}
+.qbox{position:fixed;inset:0;z-index:20;background:rgba(5,5,12,.92);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;padding:4vw;text-align:center}
+.qbox .lt{width:120px;height:120px;border-radius:30px;display:grid;place-items:center;font-size:72px;font-weight:900;background:linear-gradient(160deg,#5E5CE6,#2a1f9e)}
+.qbox .q{font-size:clamp(28px,4vw,58px);font-weight:900;line-height:1.5;max-width:1200px}
+.qbox .ans{font-size:clamp(26px,3.4vw,48px);font-weight:900;color:var(--gold);min-height:1.4em}
+.qbox .acts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+.qbox .acts .btn{min-height:60px;font-size:20px}
+.timer{font-size:clamp(34px,4vw,56px);font-weight:900;font-variant-numeric:tabular-nums;width:110px;height:110px;border-radius:50%;display:grid;place-items:center;border:6px solid rgba(255,255,255,.25)}
+.timer.low{border-color:#FF453A;color:#FF8A84}
+.win{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;background:radial-gradient(80% 70% at 50% 40%,color-mix(in srgb,var(--c) 60%,#000),#05050a);text-align:center}
+.win h2{margin:0;font-size:clamp(44px,7vw,110px);font-weight:900}.win p{font-size:22px;color:var(--l2);margin:0}
+/* ═════════ من سيربح المليون ═════════ */
+.mm{display:grid;grid-template-columns:1fr 300px;gap:22px;flex:1}
+.mq{display:flex;flex-direction:column;justify-content:center;gap:22px}
+.mq .q{font-size:clamp(26px,3vw,46px);font-weight:900;line-height:1.55;padding:clamp(18px,2.4vw,32px);border-radius:28px;background:linear-gradient(160deg,#1d2a6b,#0b1033);border:2px solid #3b4db8;text-align:center}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.opt{min-height:clamp(64px,8vh,96px);border-radius:999px;border:2px solid #3b4db8;background:#0b1033;color:#fff;font-size:clamp(18px,2vw,28px);font-weight:800;cursor:pointer;display:flex;align-items:center;gap:14px;padding:0 24px;text-align:start}
+.opt i{font-style:normal;color:var(--gold);font-weight:900}
+.opt.sel{background:#C77700;border-color:#FFC83D}.opt.ok{background:#16A34A;border-color:#4ADE80}.opt.bad{background:#B91C1C;border-color:#FF8A84}.opt.gone{visibility:hidden}
+.ladder{display:flex;flex-direction:column-reverse;gap:4px;font-variant-numeric:tabular-nums}
+.ladder div{display:flex;justify-content:space-between;padding:6px 14px;border-radius:10px;font-weight:800;color:var(--l2);font-size:clamp(13px,1.3vw,18px)}
+.ladder .safe{color:#fff}.ladder .cur{background:#C77700;color:#fff}.ladder .done{color:var(--gold)}
+.life{display:flex;gap:10px;justify-content:center}
+.life button{width:74px;height:54px;border-radius:999px;border:2px solid #3b4db8;background:#0b1033;color:#fff;font-weight:900;cursor:pointer;font-size:16px}
+.life button:disabled{opacity:.3;text-decoration:line-through}
+.aud{display:flex;gap:12px;align-items:flex-end;justify-content:center;height:180px;margin-top:10px}
+.aud div{width:56px;background:var(--gold);border-radius:10px 10px 0 0;display:flex;align-items:flex-start;justify-content:center;font-weight:900;color:#111;padding-top:4px}
+.aud span{display:block;text-align:center;font-weight:900;margin-top:4px}
+@media (max-width:900px){.hx-stage{grid-template-columns:1fr}.board{height:auto;width:100%;max-width:none}.mm{grid-template-columns:1fr}.opts{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){.cell{transition:none}}

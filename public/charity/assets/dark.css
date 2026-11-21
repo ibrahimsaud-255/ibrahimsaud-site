@@ -1,0 +1,122 @@
+/*
+ * dark.css — الوضع الداكن على نمط آبل (html.ap-dark) — يفعّله 34-apple.js حسب «المظهر والنص»:
+ * تلقائيّ (يتبع الجهاز) · فاتح · داكن. ألوان آبل الدلاليّة للوضع الداكن:
+ * أسود حقيقيّ، أسطح #1C1C1E/#2C2C2E، فواصل رماديّة شفّافة، ولون تمييز أفتح حتى يُقرأ على الأسود.
+ */
+html.ap-dark,html.ap-dark[data-theme],html.ap-dark[data-theme="light"]{color-scheme:dark;
+  --accent:#7072FF;--accent-h:#8587FF;--accent-soft:rgba(112,114,255,.18);
+  --bg:#000;--panel:#1C1C1E;--panel2:#2C2C2E;--panel3:#3A3A3C;--line:rgba(84,84,88,.55);
+  --ink:#F5F5F7;--muted:rgba(235,235,245,.62);--deep:#F5F5F7;--gold2:#A9ABFF;
+  --ap-fill:rgba(118,118,128,.26);--ap-fill2:rgba(118,118,128,.2);--ap-fill3:rgba(118,118,128,.36);
+  --ap-sep:rgba(84,84,88,.62);--ap-l2:rgba(235,235,245,.62);--ap-l3:rgba(235,235,245,.32)}
+html.ap-dark body{background:#000!important;color:var(--ink)}
+html.ap-dark #orgWall{filter:brightness(.6) saturate(1.08)}
+html.ap-dark ::selection{background:rgba(112,114,255,.4)}
+
+/* الأسطح: بطاقات وقوائم ونوافذ */
+html.ap-dark :is(.card,.r-kpi,.r-list,.ws-card,.r-res,.saas-bar,.r-demo-note,.cx-row,.of-wrap>.card,.r-member,.dk-cz-pv+b){background:rgba(28,28,30,.86)!important;color:var(--ink)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(160%);backdrop-filter:blur(24px) saturate(160%);box-shadow:0 0 0 .5px rgba(255,255,255,.08)!important}
+html.ap-dark .saas-bar.bad{background:rgba(70,10,14,.9)!important;color:#FF8A84!important}
+html.ap-dark :is(.r-item,.r-row){color:var(--ink)!important}
+html.ap-dark .r-item:hover{background:rgba(255,255,255,.04)!important}
+html.ap-dark .r-item:active{background:rgba(255,255,255,.08)!important}
+html.ap-dark :is(h1,h2,h3,h4,b,strong,dt,dd,label,td){color:inherit}
+html.ap-dark :is(.r-sub,.r-hint,small){color:var(--ap-l2)}
+html.ap-dark .main [style*="background:#fff"],html.ap-dark .main [style*="background: #fff"]{background:var(--panel)!important}
+
+/* الشريط العلويّ والجانبيّ والـDock */
+html.ap-dark .content-top{background:rgba(22,22,24,.72)!important;border-bottom-color:rgba(84,84,88,.45)!important}
+html.ap-dark .content-top .ct-title,html.ap-dark .ct-date{color:#F5F5F7!important}
+html.ap-dark .menu-toggle{background:rgba(255,255,255,.1)!important;color:#fff!important;border-color:rgba(255,255,255,.14)!important}
+html.ap-dark .sidebar{background:linear-gradient(180deg,rgba(40,40,44,.62),rgba(28,28,30,.55))!important;border-color:rgba(255,255,255,.1)!important;box-shadow:0 22px 60px -24px rgba(0,0,0,.8),inset 0 1px 0 rgba(255,255,255,.08)!important}
+html.ap-dark .sidebar .nav a{color:#F5F5F7!important}
+html.ap-dark .sidebar .nav a:hover{background:rgba(255,255,255,.07)!important}
+html.ap-dark .sidebar .nav a.active{background:var(--accent)!important;color:#fff!important}
+html.ap-dark .nv-me{background:rgba(255,255,255,.08);box-shadow:0 0 0 .5px rgba(255,255,255,.1);color:#F5F5F7}
+html.ap-dark .nv-me:hover{background:rgba(255,255,255,.13)}
+html.ap-dark .nv-menu{background:rgba(44,44,46,.94)}
+html.ap-dark .nv-menu button{color:#F5F5F7}
+html.ap-dark .nv-demo select{background:#2C2C2E;color:#fff;border-color:rgba(84,84,88,.6)}
+html.ap-dark .sidebar .logo-area img{filter:brightness(0) invert(1)}
+html.ap-dark .dk-bar .dk-dock{background:rgba(36,36,40,.72)!important;border-color:rgba(255,255,255,.12)!important;box-shadow:0 14px 40px -12px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.1)!important}
+html.ap-dark .dk-bar .dk-tile.on::after{background:#fff}
+html.ap-dark .dk-bar .dk-sep{background:rgba(255,255,255,.2)}
+
+/* الحقول وأداة التقسيم والمفاتيح */
+html.ap-dark :is(.main,.modal) :is(input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=range]):not([type=file]),select,textarea):focus{background:#2C2C2E!important}
+html.ap-dark.has-wp .main>.r-page>:not(.card):not(.r-list):not(.ws-grid) :is(input:not([type=checkbox]):not([type=radio]),select){background-color:rgba(44,44,46,.8)!important}
+html.ap-dark :is(.main,.modal) select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23AEAEB2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5M7 9l5-5 5 5'/%3E%3C/svg%3E")!important}
+html.ap-dark :is(.r-tabs,.r-seg,.cv-seg){background:rgba(118,118,128,.26)!important}
+html.ap-dark.has-wp :is(.r-tabs,.r-seg){background:rgba(40,40,44,.55)!important;box-shadow:inset 0 0 0 .5px rgba(255,255,255,.1)!important}
+html.ap-dark :is(.r-tabs,.r-seg) button{color:#F5F5F7!important}
+html.ap-dark :is(.r-tabs,.r-seg) button:hover{background:rgba(255,255,255,.08)!important}
+html.ap-dark :is(.r-tabs,.r-seg,.cv-seg) button.on{background:#636366!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,0,0,.3)!important}
+html.ap-dark .r-check{color:var(--ink)!important}
+html.ap-dark .r-check input[type=checkbox]{background:#39393D!important}
+html.ap-dark .r-check input[type=checkbox]:checked{background:#30D158!important}
+html.ap-dark .ws-sw span{background:#39393D}
+
+/* النوافذ والتنبيهات */
+html.ap-dark .modal{background:#1C1C1E!important;color:var(--ink)!important;box-shadow:0 40px 100px -30px rgba(0,0,0,.9),0 0 0 .5px rgba(255,255,255,.1)!important}
+html.ap-dark :is(.modal-head,.modal-foot){background:rgba(28,28,30,.9)!important}
+html.ap-dark .modal-head .x{color:#EBEBF5!important}
+html.ap-dark .ap-grab::before{background:rgba(235,235,245,.3)}
+html.ap-dark .ap-al{background:rgba(44,44,46,.9);box-shadow:0 30px 80px -20px rgba(0,0,0,.8),0 0 0 .5px rgba(255,255,255,.1) inset}
+html.ap-dark .ap-al b{color:#fff}html.ap-dark .ap-al p{color:rgba(235,235,245,.7)}
+html.ap-dark .ap-al-btns button{background:rgba(118,118,128,.3);color:#fff}
+html.ap-dark .ap-al-btns .main{background:var(--accent)}html.ap-dark .ap-al-btns .danger{background:#FF453A}
+html.ap-dark .ap-al-in{background:rgba(118,118,128,.26);color:#fff}
+html.ap-dark .ap-al-in:focus{background:#2C2C2E}
+html.ap-dark .r-toast{background:rgba(58,58,60,.9)!important}
+
+/* الجداول */
+html.ap-dark .main table{color:var(--ink)}
+html.ap-dark .main table tr:hover td{background:rgba(255,255,255,.03)}
+
+/* لوحة المهام */
+html.ap-dark .tr-app{--tx:#F5F5F7;--tx2:rgba(235,235,245,.62);--card:#2C2C2E;--card-h:#2C2C2E}
+html.ap-dark .tr-bar{background:rgba(28,28,30,.7)!important;box-shadow:0 0 0 .5px rgba(255,255,255,.1) inset!important}
+html.ap-dark .tr-list{background:rgba(28,28,30,.78)!important;box-shadow:0 0 0 .5px rgba(255,255,255,.08) inset!important}
+html.ap-dark .tr-card{background:#2C2C2E!important;box-shadow:0 0 0 .5px rgba(255,255,255,.08)!important}
+html.ap-dark .tr-card:hover{background:#333336!important}
+html.ap-dark :is(.tr-view button.on,.tr-quick button){background:#636366!important;color:#fff!important}
+html.ap-dark :is(.tr-composer textarea,.tr-itemadd textarea,#trDescIn){background:#2C2C2E!important}
+html.ap-dark .tr-pop{background:rgba(44,44,46,.96)!important}
+html.ap-dark .tr-modal{background:#000!important}
+html.ap-dark .tr-mtop{background:rgba(28,28,30,.92)!important}
+html.ap-dark .tr-side{background:rgba(28,28,30,.6)!important}
+html.ap-dark :is(.tr-sec,.tr-chips button){background:#1C1C1E!important}
+html.ap-dark #trTitle:focus{background:#2C2C2E!important}
+html.ap-dark .tr-tablewrap{background:#1C1C1E!important}
+
+/* المكتب وموقع الجمعيّة والملفّ والامتثال */
+html.ap-dark .dk-pill.on{background:#fff;color:#000}
+html.ap-dark :is(.ws-tile,.ws-step:active,.ws-ord button,.ws-img-pv,.ws-slug span){background:#2C2C2E!important;color:var(--ink)}
+html.ap-dark .ws-tile{border-color:rgba(84,84,88,.5)!important}
+html.ap-dark .ws-ring b{background:#1C1C1E}
+html.ap-dark .ws-slug{background:#1C1C1E;border-color:rgba(84,84,88,.6)}
+html.ap-dark .ws-mock{background:#2C2C2E;border-color:rgba(84,84,88,.6)}
+html.ap-dark .ws-mock i{background:#3A3A3C}
+html.ap-dark .ws-note{color:var(--ink)}
+html.ap-dark .of-nav{background:rgba(28,28,30,.82)!important;border-color:rgba(255,255,255,.08)!important}
+html.ap-dark .of-nav button{color:var(--ink)}
+html.ap-dark .of-nav button:hover{background:rgba(255,255,255,.06)}
+html.ap-dark .dk-cz-o b,html.ap-dark .dk-cz-tint b{color:var(--ink)}
+html.ap-dark .dk-tc.on{box-shadow:0 0 0 3px #1C1C1E,0 0 0 5px var(--c)}
+
+/* الوضع الداكن مع «زيادة التباين» */
+@media (prefers-contrast:more){html.ap-dark{--ap-sep:rgba(150,150,155,.8);--ap-l2:rgba(235,235,245,.85)}}
+html.ap-dark .saas-bar,html.ap-dark .saas-bar :is(span,b,i,svg){color:#F5F5F7!important}
+html.ap-dark .tr-edit{background:rgba(58,58,60,.95)!important;color:#EBEBF5!important;box-shadow:0 0 0 .5px rgba(255,255,255,.12)!important}
+html.ap-dark .tr-boards{color:#F5F5F7!important}
+html.ap-dark :is(.tr-ms,.tr-avs) :is(.r-av,.r-av-img){box-shadow:0 0 0 2px #2C2C2E!important}
+
+/* شارات المواعيد في الوضع الداكن */
+html.ap-dark .tr-due.late{background:rgba(255,69,58,.2)!important;color:#FF6961!important}
+html.ap-dark .tr-due.soon{background:rgba(255,159,10,.2)!important;color:#FFB340!important}
+html.ap-dark .tr-due.ok,html.ap-dark .tr-badges .ok{background:rgba(48,209,88,.2)!important;color:#4CD964!important}
+/* أسطح بقيت فاتحة (بطاقة الترحيب، شريط التصفية، لوحات الخرائط، ملاحظات الإعدادات) */
+html.ap-dark :is(.r-hello,.r-filters,.ff-tpl,.ff-card,.ff-card-b,.badge-note,.r-legend,.r-warn){background:rgba(28,28,30,.86)!important;color:var(--ink)!important;border-color:rgba(84,84,88,.5)!important}
+html.ap-dark .r-filters:not(:has(*)){background:none!important}
+html.ap-dark :is(.ff-card,.ff-tpl){box-shadow:0 0 0 .5px rgba(255,255,255,.1)!important}
+html.ap-dark .badge-note{color:#C9CAFF!important}

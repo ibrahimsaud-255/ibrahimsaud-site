@@ -1,0 +1,141 @@
+/* قالب «صحيفة» — ورق عاجيّ وحبر أسود، لون الجمعيّة للعناوين الصغيرة وكلمة العنوان فقط */
+[data-t=sahifa]{--bg:#F5F1E8;--bg2:#F5F1E8;--fg:#1B1A17;--muted:#55524A;--line:#1B1A17;--card:#FBF8F1;--r:0px;--rs:0px;--sh:none;
+  --rule:color-mix(in srgb,var(--fg) 22%,transparent);--cd:color-mix(in srgb,var(--c) 78%,#000);line-height:1.85}
+[data-t=sahifa] body,[data-t=sahifa]{font-size:17px}
+[data-t=sahifa] h1,[data-t=sahifa] h2,[data-t=sahifa] h3{font-weight:700}
+
+/* سطر التاريخ والترويسة */
+.sh-strip{border-bottom:1px solid var(--rule);font-size:13px;color:var(--muted)}
+.sh-strip .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-block:8px}
+.sh-mast{text-align:center;padding:22px 0 0}
+.sh-logo{height:54px;width:auto;margin:0 auto 6px;object-fit:contain}
+.sh-name{display:block;font-family:var(--fh);font-weight:700;font-size:clamp(34px,9vw,78px);line-height:1.15;letter-spacing:-.3px}
+.sh-tag{display:flex;justify-content:space-between;gap:10px;margin-top:14px;padding:7px 0;border-top:3px double var(--fg);border-bottom:1px solid var(--fg);font-size:13.5px;color:var(--muted);flex-wrap:wrap}
+.sh-tag span:first-child{color:var(--cd);font-weight:700}
+
+/* شريط التنقّل الثابت */
+[data-t=sahifa] .sh-bar{background:color-mix(in srgb,var(--bg) 92%,transparent);border-bottom:1px solid var(--rule)}
+[data-t=sahifa] .sh-bar .hd-in{height:56px}
+[data-t=sahifa] .sh-bar.scrolled{box-shadow:none;border-bottom-color:var(--fg)}
+.sh-mini{font-family:var(--fh);font-weight:700;font-size:19px;opacity:0;transition:opacity .2s}
+.sh-bar.scrolled .sh-mini{opacity:1}
+[data-t=sahifa] .hd-nav a{border-radius:0;color:var(--fg);font-weight:500;padding:8px 10px}
+[data-t=sahifa] .hd-nav a+a{border-inline-start:1px solid var(--rule)}
+[data-t=sahifa] .hd-nav a:hover{background:none;color:var(--cd);text-decoration:underline;text-underline-offset:6px}
+[data-t=sahifa] .hd-menu{border-radius:0;border-color:var(--fg);background:transparent}
+[data-t=sahifa] .sheet{inset:56px 0 0;background:var(--bg)}
+[data-t=sahifa] .sheet a{font-family:var(--fh);border-bottom-color:var(--rule)}
+[data-t=sahifa] .btn{border-radius:0;min-height:46px}
+[data-t=sahifa] .btn-c{background:var(--fg);color:var(--bg)}
+[data-t=sahifa] .btn-ghost{border-color:var(--fg)}
+@media (min-width:980px){[data-t=sahifa] .hd-nav{margin-inline:auto}}
+
+/* الصفحة الأولى */
+.sh-front{padding:26px 0 40px;border-bottom:3px double var(--fg)}
+.sh-front-g{display:grid;gap:26px}
+.sh-kick{display:inline-block;font-size:13.5px;font-weight:700;color:var(--cd);border-bottom:2px solid currentColor;padding-bottom:2px;margin-bottom:12px}
+.sh-story h1{font-size:clamp(36px,8.5vw,68px);line-height:1.2;margin-bottom:16px}
+.sh-story h1 em{font-style:normal;color:var(--cd)}
+.sh-dek{font-size:clamp(18px,2.6vw,22px);color:var(--muted);margin:0}
+.sh-story .ctas{margin:22px 0 0}
+.sh-photo{margin:0}
+.sh-photo img,.sh-ph{width:100%;aspect-ratio:4/3;object-fit:cover;filter:grayscale(.15) contrast(1.04)}
+.sh-ph{display:grid;place-items:center;background:
+  radial-gradient(circle at 50% 50%,color-mix(in srgb,var(--fg) 26%,transparent) 1.1px,transparent 1.6px) 0 0/7px 7px,
+  linear-gradient(160deg,color-mix(in srgb,var(--c) 22%,var(--bg)),color-mix(in srgb,var(--fg) 12%,var(--bg)));border:1px solid var(--rule)}
+.sh-ph b{font-family:var(--fh);font-size:clamp(30px,7vw,54px);background:var(--bg);padding:2px 18px;border:1px solid var(--fg)}
+.sh-photo figcaption{font-size:13.5px;color:var(--muted);padding-top:8px;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.sh-side h3{font-size:15px;letter-spacing:.3px;border-top:3px solid var(--fg);border-bottom:1px solid var(--fg);padding:6px 0;margin-bottom:6px}
+.sh-fig{display:flex;flex-direction:column;padding:12px 0;border-bottom:1px solid var(--rule)}
+.sh-fig b{font-family:var(--fh);font-size:clamp(34px,6vw,44px);line-height:1.1;font-variant-numeric:tabular-nums}
+.sh-fig span{color:var(--muted);font-size:15px}
+.sh-side small{display:block;color:var(--muted);font-size:12.5px;padding-top:8px}
+@media (min-width:640px){.sh-side{display:grid;grid-template-columns:1fr 1fr;column-gap:22px}.sh-side h3,.sh-side small{grid-column:1/-1}}
+@media (min-width:980px){
+  .sh-front{padding-top:34px}
+  .sh-front-g{grid-template-columns:minmax(0,2fr) minmax(0,1.35fr) 230px;gap:0}
+  .sh-story{padding-inline-end:28px}
+  .sh-photo{padding-inline:28px;border-inline-start:1px solid var(--rule);border-inline-end:1px solid var(--rule)}
+  .sh-side{display:block;padding-inline-start:24px}
+  .sh-front-g:not(:has(.sh-side)){grid-template-columns:minmax(0,1.6fr) minmax(0,1fr)}
+  .sh-front-g:not(:has(.sh-side)) .sh-photo{border-inline-end:0;padding-inline-end:0}
+}
+
+/* رؤوس الأقسام */
+[data-t=sahifa] .sec{padding:44px 0}
+[data-t=sahifa] .sec:nth-of-type(even){background:transparent}
+.sh-h{display:flex;justify-content:space-between;align-items:baseline;gap:14px;border-top:3px solid var(--fg);border-bottom:1px solid var(--fg);padding:8px 0;margin-bottom:24px}
+.sh-h h2{font-size:clamp(26px,5vw,36px)}
+.sh-h span{font-size:13.5px;font-weight:700;color:var(--cd);white-space:nowrap}
+
+/* من نحن */
+.sh-about{display:grid;gap:24px}
+.sh-cols p{font-size:17.5px}
+.sh-cols p:first-child::first-letter{font-family:var(--fh);float:right;font-size:3.6em;line-height:.9;padding:.08em 0 0 .14em;color:var(--cd)}
+.sh-pulls{display:grid;gap:18px}
+.sh-pull{margin:0;font-family:var(--fh);font-size:clamp(21px,3.4vw,26px);line-height:1.6;border-top:1px solid var(--fg);border-bottom:1px solid var(--fg);padding:14px 0}
+.sh-pull small{display:block;font-family:var(--fb);font-size:13px;font-weight:700;color:var(--cd)}
+.sh-two{display:grid;gap:22px;margin-top:28px;padding-top:22px;border-top:1px solid var(--rule)}
+.sh-two h3{font-size:20px;margin-bottom:8px}
+.sh-inline{font-size:18px}
+.sh-ol{margin:0;padding-inline-start:22px}.sh-ol li{margin-bottom:6px}.sh-ol li::marker{font-family:var(--fh);font-weight:700;color:var(--cd)}
+.sh-about:not(:has(.sh-cols)) .sh-pulls{grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:0 36px}
+@media (min-width:900px){.sh-about:has(.sh-cols){grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:36px}.sh-cols{column-count:2;column-gap:32px;column-rule:1px solid var(--rule)}.sh-two{grid-template-columns:1fr 1fr;gap:36px}}
+
+/* البرامج كمقالات بأعمدة */
+.sh-arts{display:grid;gap:0}
+.sh-art{display:flex;flex-direction:column;gap:6px;padding:18px 0;border-bottom:1px solid var(--rule)}
+.sh-art img{aspect-ratio:3/2;object-fit:cover;width:100%;margin-bottom:6px;filter:grayscale(.15)}
+.sh-n{font-family:var(--fh);font-size:15px;color:var(--cd);font-weight:700}
+.sh-art h3{font-size:clamp(23px,3.6vw,27px);line-height:1.35}
+.sh-art p{margin:0;color:var(--muted)}
+.sh-art small{color:var(--muted);font-size:13.5px}.sh-art small em{font-style:normal;color:var(--cd);font-weight:700}
+.sh-art:hover h3{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:7px}
+@media (min-width:760px){.sh-arts{grid-template-columns:repeat(3,1fr)}.sh-art{padding:4px 22px 18px;border-bottom:0;border-inline-start:1px solid var(--rule)}.sh-art:nth-child(3n+1){border-inline-start:0;padding-inline-start:0}}
+
+/* أقوال */
+.sh-quotes{display:grid;gap:22px}
+.sh-quotes figure{margin:0;padding:6px 0 16px;border-bottom:1px solid var(--rule)}
+.sh-quotes blockquote{margin:0 0 10px;font-family:var(--fh);font-size:clamp(23px,4vw,31px);line-height:1.6}
+.sh-quotes blockquote::before{content:"«";color:var(--cd)}.sh-quotes blockquote::after{content:"»";color:var(--cd)}
+.sh-quotes figcaption{color:var(--muted);font-size:15px}
+@media (min-width:760px){.sh-quotes{grid-template-columns:1fr 1fr;gap:36px}}
+
+/* الأخبار */
+.sh-news a{display:grid;grid-template-columns:1fr;gap:4px;padding:16px 0;border-bottom:1px solid var(--rule)}
+.sh-news time{font-size:13.5px;color:var(--cd);font-weight:700}
+.sh-news b{font-family:var(--fh);font-size:22px;line-height:1.45}
+.sh-news p{margin:4px 0 0;color:var(--muted)}
+.sh-news a:hover b{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+.sh-more{display:inline-block;margin-top:16px;font-weight:700;color:var(--cd)}
+@media (min-width:760px){.sh-news a{grid-template-columns:180px 1fr;gap:24px}}
+
+/* إعلان التبرّع */
+.sh-notice{border:3px double var(--fg);padding:26px 22px;text-align:center;background:var(--card)}
+.sh-notice h2{font-size:clamp(28px,5.4vw,42px);margin-bottom:6px}
+.sh-notice p{color:var(--muted);max-width:620px;margin:0 auto 16px}
+.sh-ibans{display:grid;gap:12px;margin-top:20px;text-align:start}
+[data-t=sahifa] .iban{background:var(--bg);border:1px dashed var(--fg);color:var(--fg)}
+[data-t=sahifa] .iban b{font-family:ui-monospace,Menlo,monospace;letter-spacing:.5px}
+[data-t=sahifa] .btn-light{background:var(--fg);color:var(--bg)}
+@media (min-width:760px){.sh-ibans{grid-template-columns:1fr 1fr}}
+
+/* الأقسام المشتركة بلمسة الورق */
+[data-t=sahifa] .card{background:var(--card);border-color:var(--rule)}
+[data-t=sahifa] .facts div,[data-t=sahifa] .doc,[data-t=sahifa] .logo,[data-t=sahifa] .acc details{background:transparent;border-color:var(--rule)}
+[data-t=sahifa] .facts dd,[data-t=sahifa] .acc summary{font-family:var(--fh);font-size:18px}
+[data-t=sahifa] .tag{border-radius:0;background:transparent;border:1px solid var(--fg);color:var(--fg)}
+[data-t=sahifa] .fld input,[data-t=sahifa] .fld textarea{border-radius:0;background:var(--bg);border-color:color-mix(in srgb,var(--fg) 35%,transparent)}
+[data-t=sahifa] .av{background:var(--fg);color:var(--bg)}
+[data-t=sahifa] .soc a{border-radius:0}
+[data-t=sahifa] .page h1{font-weight:700}
+
+/* التذييل */
+.sh-ft{border-top:3px double var(--fg);padding:30px 0 calc(28px + env(safe-area-inset-bottom));text-align:center}
+.sh-ft-n{font-family:var(--fh);font-size:30px;display:block}
+.sh-ft p{color:var(--muted);font-size:13.5px;margin:6px 0 14px}
+.sh-ft nav{display:flex;flex-wrap:wrap;justify-content:center;gap:4px 16px;margin-bottom:16px}
+.sh-ft nav a:hover{color:var(--cd)}
+.sh-ft .made{font-size:13px;color:var(--muted)}
+@media (max-width:639px){.sh-strip span+span{display:none}.sh-mast{padding-top:16px}}
+.sh-ft .made{opacity:1;color:var(--muted)}

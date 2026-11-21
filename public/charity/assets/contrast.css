@@ -1,0 +1,101 @@
+/*
+ * contrast.css — طبقة التباين (تُحمَّل بعد dark.css وقبل hig.css)
+ * ─────────────────────────────────────────────────────────────────
+ * القاعدة: كلّ نصّ ≥ 4.5:1 مع ما خلفه فعلاً (البطاقة الزجاجيّة + صورة الخلفيّة تحتها)،
+ * والنصّ الكبير/العريض ≥ 3:1 — في الوضعين. فُحصت كلّ الشاشات آلياً بقياس بكسلات الخلفيّة الحقيقيّة.
+ *   • الفاتح: الزجاج فوق خلفيّة داكنة كان يُضعف النصّ الثانويّ ← زجاج أكثف قليلاً + رماديّ ثانويّ أغمق.
+ *   • الداكن: لون التمييز صار لونين — نصّ أفتح (--accent) وتعبئة أعمق تحت النصّ الأبيض (--accent-fill).
+ */
+
+/* ═════════ الرموز ═════════ */
+:root{--accent-fill:var(--accent);--ap-badge:#D93025;--ap-bad-t:#B00012}
+:root,:root[data-theme="light"]{--muted:#5C5C62}
+:root{--ap-l2:rgba(52,52,60,.84)}
+html.ap-dark,html.ap-dark[data-theme],html.ap-dark[data-theme="light"]{
+  --accent:#9C9EFF;--accent-h:#B3B4FF;--accent-soft:rgba(112,114,255,.22);--accent-fill:#5E5CE6;--gold2:#B3B4FF;
+  --muted:rgba(235,235,245,.74);--ap-l2:rgba(235,235,245,.74);--ap-bad-t:#FF6961}
+
+/* ═════════ الفاتح: زجاج البطاقات أكثف فوق الخلفيّة ═════════ */
+html:not(.ap-dark).has-wp :is(.card,.r-kpi,.r-list,.r-res,.r-demo-note,.badge-note,.r-hello,.ws-card,.r-member,.cx-row){background:rgba(255,255,255,.9)!important}
+html:not(.ap-dark) .ff-h3{background:rgba(255,255,255,.92)}
+
+/* ═════════ تعبئات لون التمييز تحت نصّ أبيض ═════════ */
+.btn-gold,.tr-btn.on,.tr-primary,.tr-pop>button:hover,.tr-quick button:hover,.nv-menu button:hover,.of-nav button.on,
+.sidebar .nav a.active,html.ap-dark .sidebar .nav a.active{background:var(--accent-fill)!important}
+.ap-al-btns .main,html.ap-dark .ap-al-btns .main{background:var(--accent-fill)}
+.tr-btn b{background:var(--accent-fill)!important}
+html.ap-dark .ws-status.live{background:linear-gradient(150deg,#4B49D6,#2A1F9E)}
+html.ap-dark .ws-btn.ghost{background:rgba(0,0,0,.22)}
+html.ap-dark .ws-link-btn{color:#fff}
+html.ap-dark .ws-status.live a{color:#fff}
+html.ap-dark .of-nav button.on .of-n{background:rgba(0,0,0,.22)}
+
+/* ═════════ الشارات الحمراء (العدّاد، اليوم في التقويم) ═════════ */
+.dk-badge,.r-tabs .r-cnt,.ap-al-btns .danger,.nv-menu button.bad:hover{background:var(--ap-badge)!important}
+.cv-app{--red:var(--ap-badge)}
+html.ap-dark .modal-foot #mDel,html.ap-dark .modal-foot .ap-del,html.ap-dark .nv-menu button.bad,html.ap-dark .nv-menu button.bad svg{color:#FF6961!important}
+.r-late,.of-req{color:var(--ap-bad-t)!important}
+html.ap-dark .tr-due.late{background:rgba(255,69,58,.16)!important;color:#FF8A84!important}
+
+/* ═════════ أشرطة الحالات: النصّ يُقرأ على كلّ لون ═════════ */
+.r-bar span{color:rgba(0,0,0,.78)}
+.r-bar span[style*="1003BD" i]{color:#fff}
+
+/* ═════════ الصور الرمزيّة: الحرف لونه من لون الإدارة لكن بعمق يكفي ═════════ */
+.r-av:not(.r-av-img){color:color-mix(in srgb,var(--avc,currentColor) 58%,#000)!important;background:color-mix(in srgb,var(--avc,currentColor) 16%,#fff)!important}
+html.ap-dark .r-av:not(.r-av-img){color:color-mix(in srgb,var(--avc,currentColor) 42%,#fff)!important;background:color-mix(in srgb,var(--avc,currentColor) 34%,#1C1C1E)!important}
+
+/* ═════════ حلقة جاهزيّة الإفصاح (الامتثال) ═════════ */
+html.ap-dark .cx-ring{background:radial-gradient(closest-side,#1C1C1E 78%,transparent 79%),conic-gradient(var(--c) calc(var(--p)*1%),rgba(255,255,255,.12) 0)}
+html.ap-dark .cx-ring b{color:var(--ink)}
+
+/* ═════════ أزرار رأس الصفحة فوق الخلفيّة الداكنة ═════════ */
+html.has-wp:is(.wp-dark,.ap-dark) .main>.r-page>.page-head .btn-ghost{background:rgba(0,0,0,.28)!important;color:#fff!important}
+
+/* ═════════ التقويم والمهامّ والفاتح الصغير ═════════ */
+.cv-gutter,.tr-cnt,.tr-due{color:var(--ap-l2)!important}
+html:not(.ap-dark) .tr-btn:not(.on){background:rgba(255,255,255,.9)!important}
+html.ap-dark .ff-h3{background:rgba(28,28,30,.86);color:var(--ink)}
+
+/* ═════════ التقويم (له ألوانه الخاصّة في calendar.css) ═════════ */
+.cv-app{--tx2:#6E6E73}
+html.ap-dark .cv-app{--line:rgba(84,84,88,.6);--line2:rgba(84,84,88,.3);--tx:#F5F5F7;--tx2:rgba(235,235,245,.68);--bg:#1C1C1E;--side:rgba(28,28,30,.9)}
+html.ap-dark .cv-mini-g button.sel{background:rgba(255,255,255,.16)}
+html.ap-dark .cv-ev{background:color-mix(in srgb,var(--c) 32%,#1C1C1E);color:color-mix(in srgb,var(--c) 40%,#fff)}
+html.ap-dark .cv-chip{background:color-mix(in srgb,var(--c) 34%,#1C1C1E);color:color-mix(in srgb,var(--c) 38%,#fff)}
+html.ap-dark .cv-ev.sel,html.ap-dark .cv-chip.sel,html.ap-dark .cv-ml.sel{background:color-mix(in srgb,var(--c) 80%,#000);color:#fff}
+html.ap-dark .cv-lday h3{background:var(--bg)}
+html.ap-dark .cv-det{background:#2C2C2E;box-shadow:0 0 0 .5px rgba(255,255,255,.1)}
+html.ap-dark .cv-pop{background:rgba(44,44,46,.96);box-shadow:0 12px 40px rgba(0,0,0,.5),0 0 0 .5px rgba(255,255,255,.12);color:var(--ink)}
+html.ap-dark :is(.cv-dhc.now span,.cv-lday h3.now){color:#FF6961}
+
+/* ═════════ نصوص تقع مباشرة على الخلفيّة (لا بطاقة تحتها) ═════════ */
+.has-wp .r-sub{color:var(--muted)}
+html.wp-dark .r-page>:not([class])>.r-sub,html.wp-dark .r-page>.r-sub,html.ap-dark.has-wp .r-page>:not([class])>.r-sub,html.ap-dark.has-wp .r-page>.r-sub{color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.45),0 0 14px rgba(0,0,0,.3)}
+html.wp-light:not(.ap-dark) .r-page>:not([class])>.r-sub,html.wp-light:not(.ap-dark) .r-page>.r-sub{color:#2C2C2E!important}
+html:not(.ap-dark).has-wp .r-filters{background:rgba(255,255,255,.9)!important}
+
+/* ═════════ لوحة المهامّ والموقع ═════════ */
+.tr-app{--tx2:rgba(52,52,60,.82)}
+html.ap-dark .tr-app{--tx2:rgba(235,235,245,.7)}
+.ws-sec.off .ws-t{opacity:1;color:var(--ap-l2)}
+
+/* ═════════ الشريط الجانبيّ الزجاجيّ وشريط حجم النصّ ═════════ */
+.sidebar .tagline,.nv-h{color:var(--ap-l2)!important}
+.ap-size.dis{opacity:.72}
+@media (min-width:861px){html:not(.ap-dark) .sidebar{background:linear-gradient(180deg,rgba(250,250,252,.82),rgba(242,242,247,.76))!important}}
+.cv-mini-g button.out{color:var(--tx2)}
+
+/* ═════════ الجداول (org.css يفرض خلفيّة بيضاء) ═════════ */
+html.ap-dark table{background:transparent!important;color:var(--ink)}
+html.ap-dark :is(td,th){border-color:var(--ap-sep)!important}
+html.ap-dark tbody tr:hover{background:rgba(255,255,255,.04)}
+
+/* ═════════ خطوات «ملفّ الجمعيّة» ═════════ */
+.of-t small{opacity:1;color:var(--ap-l2)}
+.of-nav button.on .of-t small{color:#fff}
+
+/* قائمة «تجربة الصلاحيّات» في قائمة الحساب — كانت بيضاء بنصّ فاتح في الداكن */
+.nv-demo select,html .nv-demo select{background:#fff!important;color:#1D1D1F!important;-webkit-text-fill-color:#1D1D1F;border:1px solid rgba(60,60,67,.18)!important;min-height:44px}
+html.ap-dark .nv-demo select{background:#2C2C2E!important;color:#F5F5F7!important;-webkit-text-fill-color:#F5F5F7;border-color:rgba(84,84,88,.6)!important}
+html.ap-dark .nv-demo small{color:var(--ap-l2)}
