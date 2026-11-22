@@ -61,7 +61,7 @@ export default function Home() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img className="hm-sq" src="/v2/logos/huroof-white.png" alt="حروف ودروس" width={600} height={600} />
             </h2>
-            <p className="line">منصّة تعليميّة بنيتها بنفسي. على الويب وفي متجر آبل.</p>
+            <p className="line">منصّة حروف ودروس التعليميّة لكلّ المراحل. على الويب وفي متجر آبل.</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary sm" href="https://huroofduroos.com" target="_blank" rel="noopener">زُر المنصّة</a>
             </div>
@@ -73,7 +73,6 @@ export default function Home() {
 
           <section className="v2-tile dark v2-launch hm-prod hm-black" data-rise>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img className="hm-icon" src="/charity/season/icons/icon-512.png" alt="" width={96} height={96} />
             <h2 className="logo">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/charity/assets/logo-white.png" alt="نظام الجمعيات الشبابية" width={800} height={356} />

@@ -643,7 +643,6 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .hm-prod .plats { color: rgba(245, 245, 247, .62); }
 .hm-black { background: #000; }
 .hm-prod h2.logo img.hm-sq { width: clamp(130px, 16vw, 180px); }
-.hm-icon { width: clamp(72px, 8vw, 96px); height: auto; border-radius: 22%; margin-bottom: 14px; box-shadow: 0 12px 30px rgba(0, 0, 0, .5); }
 .v2-tile .art.hm-photos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(92%, 900px); margin: 30px auto 44px; }
 .v2-tile .art.hm-photos img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; object-position: center 28%; border-radius: 18px; display: block; background: #222; }
 @media (max-width: 640px) { .v2-tile .art.hm-photos { grid-template-columns: 1fr 1fr; } .v2-tile .art.hm-photos img:nth-child(3) { display: none; } }
