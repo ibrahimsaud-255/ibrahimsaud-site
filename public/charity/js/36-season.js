@@ -49,7 +49,7 @@ function snPaint() {
   const tabs = [{ id: 'teams', name: 'الفرق' }, { id: 'members', name: 'المشاركون' }, { id: 'att', name: 'الحضور' }, { id: 'points', name: 'النقاط' }, { id: 'bank', name: 'البنك' }, { id: 'store', name: 'المتجر' }, { id: 'sched', name: 'الجدول' }, { id: 'staff', name: 'المشرفون' }, { id: 'news', name: 'الأخبار' }, { id: 'surveys', name: 'الاستبيانات' }];
   main.innerHTML = `<div class="r-page sn">
     <div class="page-head"><div><h1>${esc(s.name)}</h1><p class="r-sub">${SN_PHASES[s.phase] || ''}${s.start_date ? ' · ' + fmtD(s.start_date) + (s.end_date ? ' — ' + fmtD(s.end_date) : '') : ''}</p>
-      ${s.code ? `<button type="button" class="sn-code" onclick="snShareCode()"><i data-lucide="smartphone"></i> «جوّالي» للمشاركين — رمز الموسم <b dir="ltr">${esc(s.code)}</b></button>` : ''}</div>
+      ${s.code ? `<button type="button" class="sn-code" onclick="snShareCode()"><i data-lucide="smartphone"></i> دخول الطلاب والمشرفين — رمز الموسم <b dir="ltr">${esc(s.code)}</b></button>` : ''}</div>
       <div class="sn-head-act">${SN.seasons.length > 1 ? `<select class="sn-pick" onchange="snPick(this.value)" aria-label="الموسم">${SN.seasons.map(x => `<option value="${x.id}"${x.id === s.id ? ' selected' : ''}>${esc(x.name)}</option>`).join('')}</select>` : ''}
         <button class="btn btn-ghost" onclick="snImpact()"><i data-lucide="file-bar-chart"></i> تقرير الأثر</button><button class="btn btn-ghost" onclick="snEditSeason()"><i data-lucide="settings-2"></i> الموسم</button><button class="btn btn-ghost" onclick="snNewSeason()"><i data-lucide="plus"></i> موسم جديد</button></div></div>
     ${rTabs('sn', tabs, SN.tab, 'snGo')}<div id="snBody">${snBody()}</div></div>`;
@@ -147,8 +147,8 @@ function snMemberRows() {
 function snMemberSheet(id) {
   const r = SN.members.find(x => x.id === id) || {};
   const opt = (arr, v) => arr.map(a => `<option${a === v ? ' selected' : ''}>${esc(a)}</option>`).join('');
-  openModal(id ? 'المشارك' : 'مشارك جديد', `${id ? `<div class="sn-idcard"><span>رقم المشارك <b>${r.no || '—'}</b></span><span>رمز «جوّالي» <b dir="ltr">${esc(r.pin || '—')}</b></span><span>الرصيد <b>${snBal(r.id)}</b></span></div>` : ''}<div class="field"><label>الاسم</label><input id="snm_name" value="${esc(r.name || '')}" autocomplete="off"></div>
-    ${id ? `<div class="field"><label>شخصيّته</label><div class="sn-avrow"><span class="sn-av">${snAv(r)}</span><span class="r-hint">يصمّمها المشارك بنفسه من «بطاقتي» في جوّالي — بدل الصورة، فلا نجمع صور القاصرين.</span></div></div>` : ''}
+  openModal(id ? 'المشارك' : 'مشارك جديد', `${id ? `<div class="sn-idcard"><span>رقم المشارك <b>${r.no || '—'}</b></span><span>رمز الدخول <b dir="ltr">${esc(r.pin || '—')}</b></span><span>الرصيد <b>${snBal(r.id)}</b></span></div>` : ''}<div class="field"><label>الاسم</label><input id="snm_name" value="${esc(r.name || '')}" autocomplete="off"></div>
+    ${id ? `<div class="field"><label>شخصيّته</label><div class="sn-avrow"><span class="sn-av">${snAv(r)}</span><span class="r-hint">يصمّمها المشارك بنفسه من «بطاقتي» في شاشته — بدل الصورة، فلا نجمع صور القاصرين.</span></div></div>` : ''}
     <div class="field"><label>المرحلة</label><select id="snm_stage"><option value="">—</option>${opt(SN_STAGES, r.stage)}</select></div>
     <div class="field"><label>الصفّ / السنة (اختياريّ)</label><input id="snm_grade" value="${esc(r.grade || '')}"></div>
     <div class="field"><label>الفريق</label><select id="snm_team"><option value="">بلا فريق</option>${snTeams().map(t => `<option value="${t.id}"${t.id === r.team_id ? ' selected' : ''}>${esc(t.name)}</option>`).join('')}</select></div>
@@ -246,8 +246,8 @@ function snEditSeason(isNew) {
     <div class="field"><label>يبدأ</label><input id="sns_start" type="date" value="${esc(s.start_date || '')}"></div>
     <div class="field"><label>ينتهي</label><input id="sns_end" type="date" value="${esc(s.end_date || '')}"></div>
     <div class="field"><label>المرحلة</label><select id="sns_phase">${Object.entries(SN_PHASES).map(([k, v]) => `<option value="${k}"${k === s.phase ? ' selected' : ''}>${v}</option>`).join('')}</select></div>
-    <div class="field"><label>المدينة (لمواقيت الصلاة في «جوّالي»)</label><select id="sns_city">${Object.keys(SN_CITIES).map(c => `<option${c === ((s.settings || {}).city || 'الرياض') ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
-    <div class="field"><label>لون كلّ مرحلة</label><div class="sn-stcol">${SN_STAGES.slice(0, 4).map(g => `<label><input type="color" data-stage="${g}" value="${esc(snStageColor(g, s))}"><span>${g}</span></label>`).join('')}</div><div class="r-hint">يظهر في «جوّالي» وعلى البطاقات — والمشرفون بالأسود.</div></div>
+    <div class="field"><label>المدينة (لمواقيت الصلاة وتنبيه الأذان)</label><select id="sns_city">${Object.keys(SN_CITIES).map(c => `<option${c === ((s.settings || {}).city || 'الرياض') ? ' selected' : ''}>${c}</option>`).join('')}</select></div>
+    <div class="field"><label>لون كلّ مرحلة</label><div class="sn-stcol">${SN_STAGES.slice(0, 4).map(g => `<label><input type="color" data-stage="${g}" value="${esc(snStageColor(g, s))}"><span>${g}</span></label>`).join('')}</div><div class="r-hint">يظهر في شاشة الطالب وعلى البطاقات — والمشرفون بالأسود.</div></div>
     <div class="field"><label>عملات الحضور (تُمنح تلقائياً عند تسجيل حضور الطالب)</label><input id="sns_attc" type="number" min="0" max="50" inputmode="numeric" value="${esc((s.settings || {}).attend_coins || 0)}"><div class="r-hint">٠ = بلا عملات. الحضور يُسجَّل مرّة في اليوم.</div></div>
     <label class="r-check"><input type="checkbox" id="sns_xfer"${(s.settings || {}).transfers === false ? '' : ' checked'}> السماح بالحوالات بين المشاركين في «البنك» (١–١٠٠ عملة، ٥ في اليوم)</label>
     ${isNew && SN.seasons.length ? `<div class="field"><label>تسليم الموسم — انسخ من «${esc((snSeason() || {}).name || '')}»</label>
@@ -280,7 +280,7 @@ const snBal = id => SN.coins.filter(c => c.member_id === id).reduce((a, c) => a 
 const snByNo = v => { v = String(v || '').trim(); if (!v) return null; return SN.members.find(m => String(m.no) === v.replace(/^#/, '')) || SN.members.find(m => m.name.includes(v)); };
 function snPortalUrl() { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'season/' + (snLocal() ? '?demo=1' : ''); }
 async function snShareCode() {
-  const s = snSeason(), url = snPortalUrl(), text = `«جوّالي» في ${s.name}\nادخل: ${url}\nرمز الموسم: ${s.code}\nورمزك السرّيّ على بطاقتك.`;
+  const s = snSeason(), url = snPortalUrl(), text = `«نظام الجمعيات الشبابية» — ${s.name}\nادخل: ${url}\nرمز الموسم: ${s.code}\nورمزك السرّيّ على بطاقتك.`;
   if (navigator.share) { try { await navigator.share({ title: s.name, text }); return; } catch (e) { if (e.name === 'AbortError') return; } }
   try { await navigator.clipboard.writeText(text); rToast('نُسخت الرسالة — ألصقها في قروب واتساب المشاركين'); } catch (e) { await apPrompt('انسخ الرسالة:', text); }
 }
@@ -293,7 +293,7 @@ function snCards() {
     .c b{font-size:18px}.c .n{grid-row:span 2;font-size:34px;font-weight:900;color:var(--c)}.t{font-size:13px;color:var(--c);font-weight:700}
     .f{grid-column:1/-1;border-top:1px dashed #bbb;margin-top:8px;padding-top:6px;font-size:12px;color:#444}.f code{font-size:14px;font-weight:800;color:#000}</style></head><body>
     <div class="g">${SN.members.map(m => { const t = snTeam(m.team_id) || { name: '', color: '#888' }; return `<div class="c" style="--c:${esc(t.color)}"><b>${esc(m.name)}</b><span class="n">${m.no || ''}</span><span class="q">${snQR(snLoginUrl(s.code, m.pin))}</span><span class="t">${esc(t.name)}</span>
-      <div class="f">امسح الرمز بكاميرا الجوال لتدخل «جوّالي» مباشرة — أو: رمز الموسم <code dir="ltr">${esc(s.code || '')}</code> · رمزك <code dir="ltr">${esc(m.pin || '')}</code> · احتفظ بالبطاقة لنفسك</div></div>`; }).join('')}</div>
+      <div class="f">امسح الرمز بكاميرا الجوال لتدخل مباشرة — أو: رمز الموسم <code dir="ltr">${esc(s.code || '')}</code> · رمزك <code dir="ltr">${esc(m.pin || '')}</code> · احتفظ بالبطاقة لنفسك</div></div>`; }).join('')}</div>
     <script>onload=()=>print()<\/script></body></html>`);
   w.document.close();
 }
@@ -482,7 +482,7 @@ function snSchedView() {
     ${weekly.length ? `<h3 class="sn-h">كلّ أسبوع</h3>${[0, 1, 2, 3, 4, 5, 6].filter(d => weekly.some(x => x.repeat_dow === d)).map(d => `<p class="r-sub sn-dow">كلّ ${SN_DOW[d]}</p><div class="r-list">${byS(weekly.filter(x => x.repeat_dow === d)).map(snSchedRow).join('')}</div>`).join('')}` : ''}
     ${trips.length ? `<h3 class="sn-h">الرحلات</h3><div class="r-list">${trips.sort((p, q) => String(p.day).localeCompare(String(q.day))).map(x => snSchedRow(x).replace('<span class="sn-time" dir="ltr">', `<span class="sn-time">${fmtD(x.day)}<br>`)).join('')}</div>` : ''}
     ${Object.keys(days).sort().map(d => `<h3 class="sn-h">${fmtD(d)}</h3><div class="r-list">${byS(days[d]).map(snSchedRow).join('')}</div>`).join('')}
-    ${SN.sched.length ? '' : `<div class="card">${rEmpty('calendar-days', 'أضف الأنشطة: أسبوعيّة متكرّرة (درس أو مجلس ثمّ نشاط رياضيّ) للبرامج المستمرّة، أو مؤرّخة للبرنامج الصيفيّ، والرحلات — تظهر لكلّ مشارك في «جوّالي» حسب مرحلته.', '')}</div>`}`;
+    ${SN.sched.length ? '' : `<div class="card">${rEmpty('calendar-days', 'أضف الأنشطة: أسبوعيّة متكرّرة (درس أو مجلس ثمّ نشاط رياضيّ) للبرامج المستمرّة، أو مؤرّخة للبرنامج الصيفيّ، والرحلات — تظهر لكلّ مشارك في شاشته حسب مرحلته.', '')}</div>`}`;
 }
 function snSchedSheet(id, mode) {
   const x = SN.sched.find(r => r.id === id) || { day: mode === 'trip' ? '' : (snSeason() || {}).start_date || today(), kind: mode === 'trip' ? 'trip' : '', repeat_dow: mode === 'weekly' ? new Date((((snSeason() || {}).start_date) || today()) + 'T00:00:00').getDay() : null };
@@ -558,7 +558,7 @@ const SN_PK = { news: 'خبر', honor: 'تكريم', program: 'إعلان برن
 function snNewsView() {
   const now = new Date().toISOString();
   return `<div class="sn-acts"><button class="btn btn-gold" onclick="snPostSheet()"><i data-lucide="plus"></i> منشور</button></div>
-    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر في «الأخبار» داخل جوّالي للطلاب والمشرفين. التفاعل بقلب فقط، ويُلوَّن بمرحلة كلّ متفاعل.</span></p>
+    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر في «الأخبار» عند الطلاب والمشرفين. التفاعل بقلب فقط، ويُلوَّن بمرحلة كلّ متفاعل.</span></p>
     <div class="sn-posts">${SN.posts.map(p => { const r = {}; SN.reacts.filter(x => x.post_id === p.id).forEach(x => { const g = x.stage || 'جامعي'; r[g] = (r[g] || 0) + 1; });
       const by = p.staff_id ? ((SN.staff.find(x => x.id === p.staff_id) || {}).name || 'مشرف') : 'الإدارة', hon = SN.members.find(x => x.id === p.member_id), later = String(p.publish_at) > now;
       return `<button type="button" class="sn-post" onclick="snPostSheet('${p.id}')">${p.image_url ? `<img src="${esc(snImg(p.image_url))}" alt="">` : `<span class="sn-post-ph">${p.kind === 'honor' ? '🏅' : '📰'}</span>`}
@@ -624,7 +624,7 @@ function snSvView() {
   if (SN.svOpen && SN.surveys.find(v => v.id === SN.svOpen)) return snSvResults(SN.svOpen);
   const n = id => (SN.svAns[id] || []).length;
   return `<div class="sn-acts"><button class="btn btn-gold" onclick="snSvNew()"><i data-lucide="plus"></i> استبيان</button></div>
-    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر الاستبيان المفتوح في «جوّالي» للمشاركين أو المشرفين، ولأولياء الأمور برابط تشاركه. الأسماء لا تظهر في النتائج — وقياس الرضا ونشر نتائجه من معايير الشفافية.</span></p>
+    <p class="ws-note"><i data-lucide="info"></i> <span>يظهر الاستبيان المفتوح للمشاركين أو المشرفين في شاشاتهم، ولأولياء الأمور برابط تشاركه. الأسماء لا تظهر في النتائج — وقياس الرضا ونشر نتائجه من معايير الشفافية.</span></p>
     <div class="sv-list">${SN.surveys.slice().reverse().map(v => { const st = SN_SV_ST[v.status] || SN_SV_ST.draft;
       return `<button type="button" class="sv-row" onclick="snSvGo('${v.id}')"><span class="sv-n"><b>${n(v.id)}</b><small>إجابة</small></span>
         <span class="sv-t"><b>${esc(v.title)}</b><small>${SN_SV_AUD[v.audience] || ''} · ${(v.questions || []).length} أسئلة</small></span><span class="r-badge" style="--c:${st[1]}">${st[0]}</span></button>`; }).join('')
@@ -673,7 +673,7 @@ function snSvAddQ(t) { document.getElementById('sv_qs').insertAdjacentHTML('befo
 async function snSvStatus(id, st) {
   const v = SN.surveys.find(x => x.id === id);
   if (st === 'closed' && !await snAsk('إغلاق الاستبيان؟', 'لن تُقبل إجابات جديدة، وتبقى النتائج.', 'إغلاق', false)) return;
-  try { Object.assign(v, await RDB.update('season_surveys', id, { status: st })); snPaint(); rToast(st === 'open' ? 'فُتح — يظهر الآن في جوّالي' : 'أُغلق'); } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
+  try { Object.assign(v, await RDB.update('season_surveys', id, { status: st })); snPaint(); rToast(st === 'open' ? 'فُتح — يظهر الآن للمستهدفين' : 'أُغلق'); } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
 }
 function snSvLink(v) { return location.origin + location.pathname.replace(/[^/]*$/, '') + 'survey/?t=' + v.token + (snLocal() ? '&demo=1' : ''); }
 async function snSvShare(id) {
@@ -713,7 +713,7 @@ function snSvResults(id) {
       ${v.audience === 'students' && rows.length ? `<div class="sv-stages">${Object.entries(S2.byStage).map(([g, n]) => `<span style="--tc:${snStageColor(g)}"><i></i>${esc(g)} ${n}</span>`).join('')}</div>` : ''}</div>
     ${rows.length ? `<div class="sv-res">${(v.questions || []).map(q => snSvQRes(q, S2.out[q.id] || { n: 0 })).join('')}</div>
       <p class="ws-note"><i data-lucide="badge-check"></i> <span>قياس الرضا ونشر نتائجه سنويّاً بند في معيار الشفافية (٧ درجات). اطبع التقرير وانشره في «وثائق الحوكمة» بموقع الجمعيّة، ثمّ <button type="button" class="r-linkbtn" onclick="snSvComply()">سجّله في الامتثال</button>.</span></p>`
-      : `<div class="card">${rEmpty('inbox', v.status === 'draft' ? 'راجع الأسئلة ثمّ اضغط «افتح الاستبيان».' : v.audience === 'parents' ? 'أرسل الرابط لأولياء الأمور — تظهر النتائج هنا فور وصولها.' : 'يظهر الآن في «جوّالي». تظهر النتائج هنا فور وصولها.', '')}</div>`}`;
+      : `<div class="card">${rEmpty('inbox', v.status === 'draft' ? 'راجع الأسئلة ثمّ اضغط «افتح الاستبيان».' : v.audience === 'parents' ? 'أرسل الرابط لأولياء الأمور — تظهر النتائج هنا فور وصولها.' : 'يظهر الآن للمستهدفين. تظهر النتائج هنا فور وصولها.', '')}</div>`}`;
 }
 function snSvQRes(q, r) {
   const bar = (label, n, tot, c) => `<div class="sv-bar"><span>${esc(label)}</span><i><u style="width:${tot ? Math.round(n / tot * 100) : 0}%;${c ? 'background:' + c : ''}"></u></i><b>${n}</b></div>`;

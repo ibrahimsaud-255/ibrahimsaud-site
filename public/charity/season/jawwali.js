@@ -1,5 +1,5 @@
 /*
- * «جوّالي» — الطالب: POST /season/me {code,pin}   ·   المشرف: POST /season/staff و /season/staff/act
+ * نظام الجمعيات الشبابية — شاشة الطالب والمشرف (الملفّ jawwali.js اسم داخليّ فقط) — الطالب: POST /season/me {code,pin}   ·   المشرف: POST /season/staff و /season/staff/act
  * (دالّة api: localhost ← staging، والموقع ← production). ?demo=1 بيانات توضيحيّة، و&as=staff للمشرف، و&stage= للمرحلة.
  * المواقيت محسوبة محلّيّاً بطريقة أمّ القرى حسب مدينة الموسم (settings.city).
  */
@@ -65,7 +65,7 @@
   function rolePick() {
     const dk = document.getElementById('dock'); if (dk) dk.remove();
     setWall('staff');
-    $.innerHTML = `<div class="scr"><div class="onb"><h1>جوّالي</h1><p>أهلاً بك في الموسم. من أنت؟</p>
+    $.innerHTML = `<div class="scr"><div class="onb"><h1>نظام الجمعيات الشبابية</h1><p>أهلاً بك. من أنت؟</p>
       <div class="roles">${ROLES.map(([k, n, d, av]) => `<button class="role" data-role="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b><small>${d}</small></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div></div></div>`;
   }
   function login(msg) {
@@ -84,7 +84,7 @@
     const cam = !!NAT || 'BarcodeDetector' in window;
     $.innerHTML = `<div class="scr"><div class="login">${head}
       ${cam ? `<button class="btn" data-act="scanlogin">${SV.cam} ${staff ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك'}</button><video id="lcam" playsinline muted hidden></video>`
-        : `<div class="note">${staff ? 'امسح رمز الدخول الذي أرسلته لك الإدارة' : 'امسح الرمز المطبوع على بطاقتك'} بكاميرا الجوال — يفتح «جوّالي» ويدخلك مباشرة.</div>`}
+        : `<div class="note">${staff ? 'امسح رمز الدخول الذي أرسلته لك الإدارة' : 'امسح الرمز المطبوع على بطاقتك'} بكاميرا الجوال — يدخلك مباشرة.</div>`}
       <div class="or"><span>أو بالرمز</span></div>
       <label class="fld">رمز الموسم<input id="c" maxlength="6" autocapitalize="characters" autocomplete="off" value="${esc((saved || {}).code || Q.get('c') || '')}"></label>
       <label class="fld">${staff ? 'رمز المشرف' : 'رمزك السرّيّ (على بطاقتك)'}<input id="p" maxlength="6" inputmode="numeric" autocomplete="off"></label>
@@ -96,7 +96,7 @@
   /* الدخول بمسح رمز البطاقة: الرمز رابط فيه رمز الموسم والرمز السرّيّ (c و p) */
   function loginLink(raw) { try { const u = new URL(raw, location.href), c = u.searchParams.get('c'), p = u.searchParams.get('p'); return c && p ? { c: c.toUpperCase(), p, staff: u.searchParams.get('as') === 'staff' } : null; } catch (e) { return null; } }
   async function scanLogin() {
-    if (NAT) { try { const L = loginLink(await NAT.scan(ROLE === 'staff' ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك')); if (!L) { toast('هذا ليس رمز دخول «جوّالي»', 1); return; } MODE = L.staff ? 'staff' : 'me'; fetchData(L.c, L.p, true); } catch (e) {} return; }
+    if (NAT) { try { const L = loginLink(await NAT.scan(ROLE === 'staff' ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك')); if (!L) { toast('هذا ليس رمز دخول للنظام', 1); return; } MODE = L.staff ? 'staff' : 'me'; fetchData(L.c, L.p, true); } catch (e) {} return; }
     const v = document.getElementById('lcam'); if (!v) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); v.srcObject = stream; v.hidden = false; await v.play();
@@ -315,7 +315,7 @@
     pray() {
       const [c, [la, ln]] = cityLL(), list = prayers(new Date(), la, ln), np = nextPrayer(), nowD = new Date();
       const perm = 'Notification' in window ? Notification.permission : 'unsupported';
-      view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يظهر تنبيه في «جوّالي» وقت كلّ صلاة.</div>
+      view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يصلك تنبيه وقت كلّ صلاة.</div>
         ${list.map(p => `<div class="pt${p[0] === np[0] && p[1].getTime() === np[1].getTime() ? ' next' : p[1] < nowD ? ' past' : ''}"><span>${p[0]}</span><b>${fmtT(p[1])}</b></div>`).join('')}
         <button class="btn sec" style="margin-top:18px" data-act="adhantest">🔊 اسمع الأذان</button>
         <button class="btn sec" style="margin-top:10px" data-act="pushon">🔔 الإشعارات والجوال مقفل</button>
@@ -719,7 +719,7 @@
     const st = await pushState();
     if (st === 'install') { installHelp(); return; }
     if (st === 'unsupported') { toast('هذا المتصفّح لا يدعم الإشعارات — جرّب سفاري أو كروم', 1); return; }
-    if (st === 'denied') { toast('الإشعارات ممنوعة لـ«جوّالي» — فعّلها من إعدادات الجوال', 1); return; }
+    if (st === 'denied') { toast('الإشعارات ممنوعة — فعّلها من إعدادات الجوال', 1); return; }
     if (btn) btn.disabled = true;
     if (NAT) {
       try { if (DEMO) throw new Error('الإشعارات تعمل بعد الدخول بحسابك'); await NAT.push.enable({ code: saved.code, pin: saved.pin, as: MODE === 'staff' ? 'staff' : 'me' }, API); toast('فُعّلت الإشعارات ✓ — يصلك الأذان والأخبار والجوال مقفل'); home(); }
@@ -737,16 +737,16 @@
     } catch (e) { toast(e.message || 'تعذّر تفعيل الإشعارات', 1); if (btn) btn.disabled = false; }
   }
   function installHelp() {
-    view('أضف «جوّالي» للشاشة', `<div class="inst"><div class="inst-ic"><img src="./icons/icon-192.png" alt=""></div>
-      <p>في الآيفون تصل الإشعارات (الأذان والأخبار والعملات) بعد إضافة «جوّالي» للشاشة الرئيسيّة:</p>
-      <ol><li>اضغط زرّ <b>المشاركة</b> <span class="shr" aria-hidden="true">⬆︎</span> أسفل سفاري</li><li>اختر <b>«إضافة إلى الشاشة الرئيسيّة»</b></li><li>افتح «جوّالي» من أيقونته ثمّ اضغط <b>«فعّل الإشعارات»</b></li></ol>
+    view('أضف النظام للشاشة', `<div class="inst"><div class="inst-ic"><img src="./icons/icon-192.png" alt=""></div>
+      <p>في الآيفون تصل الإشعارات (الأذان والأخبار والعملات) بعد إضافة النظام للشاشة الرئيسيّة:</p>
+      <ol><li>اضغط زرّ <b>المشاركة</b> <span class="shr" aria-hidden="true">⬆︎</span> أسفل سفاري</li><li>اختر <b>«إضافة إلى الشاشة الرئيسيّة»</b></li><li>افتح النظام من أيقونته ثمّ اضغط <b>«فعّل الإشعارات»</b></li></ol>
       <p class="note">رمزك محفوظ — لن تحتاج إدخاله مرّة أخرى.</p></div>`);
   }
   async function pushBanner() {
     const el = document.getElementById('pushb'); if (!el) return;
     let hide = false; try { hide = localStorage.getItem('jw_push_x') === '1'; } catch (e) {}
     const st = await pushState(); if (hide || st === 'on' || st === 'unsupported') return;
-    el.innerHTML = `<button class="widget pushb" data-act="pushon"><span class="pb-i" aria-hidden="true">🔔</span><span><b>فعّل الإشعارات</b><small>${st === 'install' ? 'أضف «جوّالي» للشاشة الرئيسيّة ليصلك الأذان والجوال مقفل' : st === 'denied' ? 'الإشعارات ممنوعة — فعّلها من الإعدادات' : 'الأذان والأخبار وعملاتك تصلك والجوال مقفل'}</small></span></button>`;
+    el.innerHTML = `<button class="widget pushb" data-act="pushon"><span class="pb-i" aria-hidden="true">🔔</span><span><b>فعّل الإشعارات</b><small>${st === 'install' ? 'أضف النظام للشاشة الرئيسيّة ليصلك الأذان والجوال مقفل' : st === 'denied' ? 'الإشعارات ممنوعة — فعّلها من الإعدادات' : 'الأذان والأخبار وعملاتك تصلك والجوال مقفل'}</small></span></button>`;
   }
   function sound() { try { const a = document.getElementById('adhanAudio'); const p = a.play(); if (p) p.catch(tone); } catch (e) { tone(); } }
   function notify(title, body) { try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '../assets/apps/default/prayer.webp' }); } catch (e) {} }
