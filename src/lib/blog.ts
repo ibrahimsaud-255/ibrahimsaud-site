@@ -3,6 +3,7 @@
 // تكتب من لوحة النظام (16-blog.js) كالعادة، والموقع يُعاد بناؤه تلقائياً
 // لمّا يتغيّر شي في المقالات (فحص كل نصف ساعة في deploy.yml).
 import { SITE_URL } from "@/lib/share";
+import { LESSONS_POSTS, LESSONS_SLUGS } from "@/lib/lessons-posts";
 
 const SUPA_URL = "https://rrerwhhxrjyzmnnjsfev.supabase.co";
 // مفتاح علنيّ (sb_publishable_) — الحماية في RLS: القراءة للمنشور فقط.
@@ -102,9 +103,18 @@ async function rest<T>(path: string): Promise<T> {
   return r.json() as Promise<T>;
 }
 
+// مقالات Supabase المنشورة فقط — منها تُحسب البصمة اللي يقارنها deploy.yml.
+let remoteCache: Promise<Post[]> | null = null;
+const remotePosts = () => (remoteCache ??= rest<Post[]>("posts?select=*&status=eq.published&order=published_at.desc"));
+
+// + مقالات مكتوبة في الكود (src/lib/lessons-posts/) — تُنشر مع الموقع نفسه، ولو صار لها
+// صفّ في Supabase بنفس الرابط فالصفّ يغلب.
 let postsCache: Promise<Post[]> | null = null;
 export function getPosts(): Promise<Post[]> {
-  postsCache ??= rest<Post[]>("posts?select=*&status=eq.published&order=published_at.desc");
+  postsCache ??= remotePosts().then((r) => {
+    const taken = new Set(r.map(slugFor));
+    return [...r, ...LESSONS_POSTS.filter((p) => !taken.has(slugFor(p)))].sort((a, b) => b.published_at.localeCompare(a.published_at));
+  });
   return postsCache;
 }
 
@@ -125,7 +135,7 @@ export async function getSettings(): Promise<BlogSettings> {
 // بصمة المقالات المنشورة — نفس الصيغة اللي يحسبها deploy.yml بـ jq ليعرف هل
 // تغيّر شي يستاهل إعادة النشر. لا تغيّرها هنا بدون ما تغيّرها هناك.
 export async function blogVersion(): Promise<string> {
-  return (await getPosts()).map((p) => `${p.id}@${p.published_at}@${p.slug || ""}`).join(",");
+  return (await remotePosts()).map((p) => `${p.id}@${p.published_at}@${p.slug || ""}`).join(",");
 }
 
 // تنظيف HTML المقال: وسوم التنسيق والجداول بلا خصائص.
@@ -159,8 +169,12 @@ export const plain = (html: string) => sanitize(html).replace(/<[^>]+>/g, " ").r
 // ===== أقسام المدوّنة =====
 // كلّ مقال ينتمي لقسم (من رابطه): يُجمَع تحته في صفحة المدوّنة، ويأخذ دعوة الخدمة المناسبة،
 // وتُقترح عليه مقالات قسمه، وتعرض صفحة الخدمة مقالات قسمها (BlogLinks).
-export type TopicKey = "systems" | "charities" | "ai" | "media" | "journal";
+export type TopicKey = "lessons" | "systems" | "charities" | "ai" | "media" | "journal";
 export const TOPICS: Record<TopicKey, { name: string; cta: { title: string; text: string; href: string; label: string } }> = {
+  lessons: {
+    name: "بث الدروس العلمية وتصويرها",
+    cta: { title: "تبي تبثّ الدرس وتسجّله بدون فريق؟", text: "برنامج بث الدروس العلمية: الشيخ والكتاب في الشاشة، المكتبة الشاملة داخله، وبثّ مباشر على يوتيوب وفيسبوك وتيليجرام معاً، مع تسجيل الدرس كاملاً. ويندوز وماك وأندرويد والآيفون.", href: "/lessons-broadcast/", label: "برنامج بث الدروس العلمية" },
+  },
   charities: {
     name: "أنظمة الجمعيّات",
     cta: { title: "تبي نظام لجمعيّتكم؟", text: "نظام الجمعيات الشبابية: تطبيق واحد للطالب والمشرف والإدارة، وموسم الأندية، والماليّة والرواتب، والموقع والإفصاح. ٧٩٩ ريالاً في السنة، وتجربة ١٤ يوماً مجّاناً بلا بطاقة.", href: "/systems/charities/", label: "نظام الجمعيات الشبابية" },
@@ -182,7 +196,7 @@ export const TOPICS: Record<TopicKey, { name: string; cta: { title: string; text
     cta: { title: "تدير جمعيّة أو تبي ورشة لفريقك؟", text: "نظام الجمعيات الشبابية لإدارة جمعيّتك من جوالك، وورش ذكاء اصطناعي مبنيّة على شغلكم.", href: "/systems/charities/", label: "نظام الجمعيات الشبابية" },
   },
 };
-export const TOPIC_ORDER: TopicKey[] = ["systems", "charities", "ai", "media", "journal"];
+export const TOPIC_ORDER: TopicKey[] = ["lessons", "systems", "charities", "ai", "media", "journal"];
 
 const TOPIC_OF: Record<string, TopicKey> = {};
 const put = (t: TopicKey, slugs: string) => slugs.split(/\s+/).filter(Boolean).forEach((s) => (TOPIC_OF[s] = t));
@@ -197,6 +211,7 @@ put("charities", `charity-management-system-own-or-subscribe charity-management-
   youth-associations-saudi establish-youth-association summer-youth-club-guide`);
 put("ai", `ai-workshop-for-companies ai-use-cases-small-business ai-usage-policy-template claude-vs-chatgpt-vs-gemini
   prompt-writing-guide-arabic ai-workshop-for-schools-students ai-for-nonprofits build-with-ai-without-coding reading-and-writing-in-the-ai-era`);
+put("lessons", LESSONS_SLUGS.join(" "));
 put("media", `store-video-ads-guide video-ad-production-cost-saudi ad-script-hook-guide company-profile-video business-podcast-guide
   personal-branding-linkedin creative-director-one-vision from-idea-to-screen`);
 
