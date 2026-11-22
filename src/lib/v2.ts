@@ -29,7 +29,7 @@ export const hero = {
 
 // يتلوّن كلمة كلمة مع التمرير
 export const manifesto =
-  "قبل ما أبيعها لك، بنيتها لنفسي. موقع يجيب العملاء، ونظام يطلع عروض الأسعار والفواتير، واستوديو يصوّر، وذكاء اصطناعي يكتب وينشر. هذي قصّتي، وممكن تصير قصّتك.";
+  "أبني لقطاع أعرفه من الداخل: الجمعيّات، وحِلق الدروس العلميّة، والتعليم. برنامج يبثّ الدرس من المسجد بضغطة، ومنصّة يتعلّم فيها الطفل حروفه، ونظام يدير الجمعيّة من الجوال. حلول تُستخدم كلّ يوم، وتخدم من يخدم الناس.";
 
 // ===== الباقات =====
 export type Pkg = {
@@ -66,7 +66,7 @@ export const pkgs = {
   build: { id: "build", name: "ابنِ نظامك بنفسك", for: "٣ جلسات معي", price: "١,٥٠٠", half: "٧٥٠", approved: true, items: ["جلسة ١: المصطلحات والأساسيّات، ونفتح حساباتك: GitHub وقاعدة البيانات والدومين", "جلسة ٢: تبني بيدك وأنا معك لين يشتغل", "جلسة ٣: أسئلتك، وكيف تحلّ أيّ مشكلة مع Claude", "هديّة: نسخة من «النظام» على حسابك تبدأ منها (يُباع لحاله من ٥,٠٠٠ ريال)"] },
   nasaq: { id: "nasaq", name: "النظام", for: "للمنشآت وشركات الشخص الواحد", price: "من ٥,٠٠٠", approved: true, items: ["نظام على مقاسك", "عروض أسعار وفواتير ومحاسبة", "العملاء والمشاريع والتقويم", "تدريب التعديل بـClaude"] },
   // اشتراك ذاتيّ الخدمة: السعر الفعليّ في shop_products (charity-year) وفي public/charity/config.js — غيّرها معاً.
-  charitySub: { id: "charity-sub", name: "نظام الجمعيات الشبابية", for: "اشتراك جاهز — ابدأ اليوم", price: "٧٩٩", unit: "سنويّاً", approved: true, featured: true, href: "/charity/?signup=1", cta: "ابدأ ١٤ يوماً مجّاناً", items: ["تسجّل جمعيّتك بنفسك وتبدأ خلال دقيقة", "موسم الأندية: فرق ونقاط وحضور وتقرير أثر", "«جوّالي» للمشارك والميسّر، وألعاب القاعة", "الإفصاح ومعيار الشفافية، وموقع الجمعيّة", "سندات صرف بدورة اعتماد، ومحاسبة غير ربحيّة", "فريقك بصلاحيّات لكلّ قسم", "ما تحتاج بطاقة للتجربة"] },
+  charitySub: { id: "charity-sub", name: "نظام الجمعيات الشبابية", for: "اشتراك جاهز — ابدأ اليوم", price: "٧٩٩", unit: "سنويّاً", approved: true, featured: true, href: "/charity/?signup=1", cta: "ابدأ ١٤ يوماً مجّاناً", items: ["تسجّل جمعيّتك بنفسك وتبدأ خلال دقيقة", "الأندية الشبابيّة: فرق ونقاط وحضور وتقرير أثر", "تطبيق واحد للطالب والمشرف والإدارة، وألعاب القاعة", "الإفصاح ومعيار الشفافية، وموقع الجمعيّة", "سندات صرف بدورة اعتماد، ومحاسبة غير ربحيّة", "فريقك بصلاحيّات لكلّ قسم", "ما تحتاج بطاقة للتجربة"] },
   nasaqPro: { id: "nasaq-pro", name: "النظام Pro", for: "للجمعيّات والجهات بفِرق", price: "من ٧,٠٠٠", approved: true, featured: true, items: ["كلّ ما في النظام", "فريق وصلاحيّات لكلّ قسم", "ماليّة بدورة اعتماد، وحوكمة", "المستفيدون والتطوّع والموارد البشريّة", "موقع الجهة يُدار من النظام"] },
 } satisfies Record<string, Pkg>;
 
@@ -568,7 +568,7 @@ export const navItems: NavItem[] = [
   {
     label: "نظام الجمعيات", href: "/systems/charities/",
     menu: [
-      { title: "نظام الجمعيات الشبابية", big: true, links: [{ label: "نظرة عامّة", href: "/systems/charities/" }, { label: "«جوّالي» للطالب", href: "/systems/charities/#jawwali" }, { label: "تطبيق الميسّرين", href: "/systems/charities/#staff" }, { label: "الأندية الشبابية الصيفية", href: "/systems/charities/youth-clubs/" }, { label: "معيار الشفافية والإفصاح", href: "/systems/charities/transparency/" }] },
+      { title: "نظام الجمعيات الشبابية", big: true, links: [{ label: "نظرة عامّة", href: "/systems/charities/" }, { label: "للطلاب", href: "/systems/charities/#jawwali" }, { label: "للمشرفين", href: "/systems/charities/#staff" }, { label: "الأندية الشبابية", href: "/systems/charities/youth-clubs/" }, { label: "معيار الشفافية والإفصاح", href: "/systems/charities/transparency/" }] },
       { title: "ابدأ", links: [{ label: "ابدأ ١٤ يوماً مجّاناً", href: "/charity/?signup=1" }, { label: "جرّبه بدون تسجيل", href: "/systems/charities/#try" }, { label: "السعر", href: "/systems/charities/#buy" }] },
     ],
   },

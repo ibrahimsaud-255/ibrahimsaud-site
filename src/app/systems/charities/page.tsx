@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { share, SITE_URL } from "@/lib/share";
 import "@/components/v2/v2.css";
+import "@/components/v2/shop.css";
 import "./charities.css";
 import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
@@ -8,7 +9,6 @@ import LocalNav from "@/components/v2/LocalNav";
 import Footer from "@/components/v2/Footer";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
-import Devices from "@/components/v2/Devices";
 import PackageCards from "@/components/v2/PackageCards";
 import BlogLinks from "@/components/v2/BlogLinks";
 import ServiceSchema from "@/components/v2/ServiceSchema";
@@ -25,60 +25,50 @@ export default function CharitiesPage() {
       <SoftwareSchema />
       <ServiceSchema path={c.path} name="نظام الجمعيات الشبابية — نظام إدارة الجمعيات الأهلية" description={c.meta.description} serviceType="نظام إدارة جمعيّات شبابيّة وأهليّة" packages={[pkgs.charitySub]} faqs={c.faqs} />
       <Nav sticky={false} />
-      <LocalNav name="نظام الجمعيات الشبابية" links={[{ label: "جوّالي", href: "#jawwali" }, { label: "الميسّرون", href: "#staff" }, { label: "كلّ الوحدات", href: "#all" }, { label: "جرّبه", href: "#try" }, { label: "السعر", href: "#buy" }]} buy="ابدأ مجّاناً" />
+      <LocalNav name="نظام الجمعيات الشبابية" links={[{ label: "للطلاب", href: "#jawwali" }, { label: "للمشرفين", href: "#staff" }, { label: "الإدارة", href: "#admin" }, { label: "الألعاب", href: "#games" }, { label: "السعر", href: "#buy" }]} buy="ابدأ مجّاناً" />
       <main id="top">
-        {/* ===== الواجهة ===== */}
-        <section className="v2-phero ch-hero yl-hero">
+        {/* ===== الواجهة (بأسلوب صفحة بث الدروس) ===== */}
+        <section className="v2-phero v2-shop-hero yl-hero">
           <WindowLight style={{ top: 40, left: "50%", width: 1000, height: 640, marginLeft: -500 }} />
           <div className="v2-wrap" style={{ position: "relative" }}>
-            <h1><span className="kicker ch-kw">{c.kicker}</span>{c.h1}</h1>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="art-img" src={c.icon} alt="" width={112} height={112} />
+            <p className="kicker">{c.kicker}</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <h1 className="v2-shop-name v2-shop-logo"><img src={c.logo} alt={c.h1} width={800} height={356} /></h1>
             <p className="headline">{c.headline}</p>
             <p className="sub">{c.sub}</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary" href={c.signup}>ابدأ ١٤ يوماً مجّاناً</a>
-              <a className="v2-btn v2-btn-ghost" href="#try">جرّبه الحين بدون تسجيل</a>
+              <a className="v2-btn v2-btn-ghost" href="#jawwali">جرّبه بدون تسجيل</a>
             </div>
             <p className="from">{c.from}</p>
           </div>
-          <div className="v2-wrap media" style={{ position: "relative" }}>
-            <Devices s={c.hero} className="hero" />
-          </div>
         </section>
 
-        {/* ===== ثلاثة ناس ===== */}
-        <section className="v2-sec alt">
-          <div className="v2-wrap">
-            <div className="v2-head center" data-rise><h2>{c.roles.title}</h2><p>{c.roles.sub}</p></div>
-            <div className="yl-roles">
-              {c.roles.items.map((r) => (
-                <div key={r.name} className={`yl-role${"wide" in r && r.wide ? " wide" : ""}`} data-rise>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={r.img} alt={r.alt} loading="lazy" />
-                  <div className="tx">
-                    <span className="app">{r.app}</span>
-                    <h3>{r.name}</h3>
-                    <ul>{r.points.map((p) => <li key={p}>{p}</li>)}</ul>
-                  </div>
-                </div>
-              ))}
+        {/* ===== كلّ جزء بزرّ تجربة ===== */}
+        {c.apps.map((a, i) => (
+          <section key={a.id} className={`v2-sec${i % 2 === 0 ? " alt" : ""}`} id={a.id}>
+            <div className={`v2-wrap yl-app${"phone" in a && a.phone ? " phone" : " wide"}`} data-rise>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={a.img} alt={a.alt} loading="lazy" />
+              <div>
+                <h2>{a.name}</h2>
+                <p>{a.text}</p>
+                <ul className="v2-checks yl-pts">{a.points.map((p) => <li key={p}>{p}</li>)}</ul>
+                <a className="v2-btn v2-btn-primary sm" href={a.href} target="_blank" rel="noopener">{a.cta}</a>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ))}
 
-        {/* ===== جوّالي ===== */}
-        <section className="v2-sec" id="jawwali">
+        {/* ===== برامج طوال السنة ===== */}
+        <section className="v2-sec" id="programs">
           <div className="v2-wrap">
-            <div className="v2-head" data-rise><h2>{c.jawwali.title}</h2><p>{c.jawwali.text}</p></div>
-            <div className="yl-phones" data-rise>
-              {c.jawwali.shots.map((s) => (
-                <figure key={s.src}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={s.src} alt={s.alt} loading="lazy" />
-                  <figcaption>{s.cap}</figcaption>
-                </figure>
-              ))}
+            <div className="v2-head" data-rise><h2>{c.programs.title}</h2><p>{c.programs.sub}</p></div>
+            <div className="v2-needs">
+              {c.programs.items.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p>{"href" in f && f.href ? <a className="v2-link" href={f.href}>اقرأ أكثر <span className="chev">‹</span></a> : null}</div>)}
             </div>
-            <p className="ch-note" data-rise>{c.jawwali.note}</p>
           </div>
         </section>
 
@@ -92,19 +82,6 @@ export default function CharitiesPage() {
           </div>
         </section>
 
-        {/* ===== الميسّرون ===== */}
-        <section className="v2-sec" id="staff">
-          <div className="v2-wrap yl-staff" data-rise>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={c.staff.img} alt={c.staff.alt} loading="lazy" />
-            <div>
-              <h2>{c.staff.title}</h2>
-              <p>{c.staff.text}</p>
-              <a className="v2-btn v2-btn-ghost sm" href="/charity/season/?demo=1&as=staff">جرّب تطبيق الميسّر</a>
-            </div>
-          </div>
-        </section>
-
         {/* ===== كلّ الوحدات ===== */}
         <section className="v2-sec alt" id="all">
           <div className="v2-wrap">
@@ -112,16 +89,6 @@ export default function CharitiesPage() {
             <div className="v2-needs">
               {c.features.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p>{"href" in f && f.href ? <a className="v2-link" href={f.href}>اقرأ أكثر <span className="chev">‹</span></a> : null}</div>)}
             </div>
-          </div>
-        </section>
-
-        {/* ===== جرّبه ===== */}
-        <section className="v2-sec" id="try">
-          <div className="v2-wrap">
-            <div className="v2-head center" data-rise><h2>{c.try.title}</h2><p>{c.try.text}</p></div>
-            <ul className="v2-reads yl-try" data-rise>
-              {c.try.links.map((l) => <li key={l.href}><a href={l.href} target="_blank" rel="noopener"><b>{l.label}</b><span>{l.text}</span></a></li>)}
-            </ul>
           </div>
         </section>
 
@@ -141,7 +108,7 @@ export default function CharitiesPage() {
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
               <h2>سعر واحد، فيه كلّ شي.</h2>
-              <p>جرّبوا ١٤ يوماً بدون بطاقة، وبعدها ٧٩٩ ريال في السنة: النظام وجوّالي وتطبيق الميسّرين والموسم والألعاب والموقع.</p>
+              <p>جرّبوا ١٤ يوماً بدون بطاقة، وبعدها ٧٩٩ ريال في السنة: التطبيق للطلاب والمشرفين والإدارة والموسم والألعاب والموقع.</p>
             </div>
             <div className="yl-pkg"><PackageCards items={[pkgs.charitySub]} /></div>
           </div>
