@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "details": [
+      {
+        "appIDs": ["5PWUK8DKPL.com.ibrahimsaud.jawwali"],
+        "components": [
+          { "/": "/charity/season/*", "comment": "«جوّالي»: مسح البطاقة بكاميرا الآيفون (?c=&p= دخول، ?v= تحقّق) يفتح التطبيق" },
+          { "/": "/charity/season", "comment": "بلا شرطة" }
+        ]
+      }
+    ]
+  }
+}
