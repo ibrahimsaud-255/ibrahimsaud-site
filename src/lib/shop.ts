@@ -69,10 +69,10 @@ export const shopItems: ShopItem[] = [
       title: "طلبتوه… فسوّيته.",
       text: "مقطع بثّ الدروس جاب أكثر من ١٠٠ تعليق بنفس الطلب — فبدل ما أعقّدكم في الربط والتقنية، سوّيت لكم برنامجاً جاهزاً: تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر». من الكمبيوتر أو الجوّال.",
     },
-    fallbackPrice: 399,
-    // عرض الإطلاق: الأسعار الفعليّة في shop_products (١٤٩/٩٩/٧٩/٤٩)، وترجع ٣٩٩/١٩٩/١٢٩/٦٩ بمهمّة pg_cron
+    fallbackPrice: 299,
+    // عرض الإطلاق: الأسعار الفعليّة في shop_products (١٤٩/٩٩/٧٩/٤٩)، وترجع ٢٩٩/١٩٩/١٢٩/٦٩ بمهمّة pg_cron
     // «lb-launch-offer-end» فجر ٢ ديسمبر ٢٠٢٦ بتوقيت الرياض. العرض هنا يختفي وحده بعد until.
-    sale: { label: "عرض الإطلاق", until: "2026-12-01T21:00:00Z", was: { 149: 399, 99: 199, 79: 129, 49: 69 } },
+    sale: { label: "عرض الإطلاق", until: "2026-12-01T21:00:00Z", was: { 149: 299, 99: 199, 79: 129, 49: 69 } },
     format: "ويندوز · ماك · أندرويد — تنزيل فوريّ بعد الدفع",
     platforms: [
       { key: "windows", name: "ويندوز", note: "ويندوز ١٠ و١١" },
@@ -168,7 +168,7 @@ export const shopItems: ShopItem[] = [
       { src: "/shop/lessons-broadcast/shot-page.jpg", alt: "Сцена «страница и лектор» с именем лектора" },
       { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "Сцена «лектор»: мягкое размытие и градиент за именем" },
     ],
-    fallbackPrice: 399,
+    fallbackPrice: 299,
     promo: {
       src: "/shop/lessons-broadcast/promo-ru.mp4",
       poster: "/shop/lessons-broadcast/promo-poster-ru.jpg",
@@ -258,14 +258,14 @@ export const shopItems: ShopItem[] = [
       { src: "/shop/lessons-broadcast/shot-page.jpg", alt: "\"Page and teacher\" scene with the teacher's name" },
       { src: "/shop/lessons-broadcast/shot-speaker.jpg", alt: "\"Teacher\" scene: soft blur and a gradient behind the name" },
     ],
-    fallbackPrice: 149,
+    fallbackPrice: 299,
     promo: {
       src: "/shop/lessons-broadcast/promo-en.mp4",
       poster: "/shop/lessons-broadcast/promo-poster-en.jpg",
       title: "You asked for it… so I built it.",
       text: "My lesson-streaming video got over 100 comments asking for the same thing — so instead of complicated setups, I built a ready program: pick the book, type the shaykh's name and press \"Go live\". From a computer or a phone.",
     },
-    sale: { label: "Launch offer", until: "2026-12-01T21:00:00Z", was: { 149: 399, 99: 199, 79: 129, 49: 69 } },
+    sale: { label: "Launch offer", until: "2026-12-01T21:00:00Z", was: { 149: 299, 99: 199, 79: 129, 49: 69 } },
     format: "Windows · Mac · Android — download right after payment",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 and 11" },
