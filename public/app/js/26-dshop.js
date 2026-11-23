@@ -325,7 +325,7 @@ async function dshSeqToggle(){
 async function dshSeqPreview(){try{const d=await dshMailCall({action:'seq-preview'});alert('أُرسلت '+d.count+' إيميلات لبريدك ✓')}catch(e){alert('تعذّر: '+(e.message||e))}}
 function dshUpdHTML(p,paid){
   const base=s=>String(s||'').split('@')[0];
-  const n=new Set(paid.filter(o=>base(o.sku).startsWith(p.sku)&&!o.hold).map(o=>String(o.buyer_email).toLowerCase())).size;
+  const n=new Set(paid.filter(o=>base(o.sku)===p.sku&&!o.hold).map(o=>String(o.buyer_email).toLowerCase())).size;
   const last=((DSH.upd&&DSH.upd.sent)||[]).filter(x=>x.sku===p.sku).slice(-1)[0];
   const done=last&&last.version===p.version;
   return `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px">

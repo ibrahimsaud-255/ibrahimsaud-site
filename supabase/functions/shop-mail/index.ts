@@ -193,8 +193,10 @@ async function updateAction(req: Request, b: Record<string, unknown>, send: bool
   const log = await getSetting<{ sent?: { sku: string; version: string; at: string; count: number }[] }>("update_mail");
   if ((log.sent || []).some((x) => x.sku === sku && x.version === p.version) && !b.force)
     return j({ error: `أرسلت إعلان الإصدار ${p.version} من قبل`, already: true }, 409);
-  // كلّ مشتري المنتج بكلّ نسخه (lessons-broadcast و-en و-ru وفئاتها) — بريد واحد مرّة واحدة، بلا طلبات «مراجعة»
-  const orders = await rest("GET", `shop_orders?status=eq.paid&hold=is.null&sku=like.${encodeURIComponent(sku)}*&select=buyer_email,buyer_name&order=paid_at.asc&limit=5000`) as { buyer_email: string; buyer_name: string }[];
+  // مشترو هذا المنتج بالضبط وفئاته السعريّة (sku و sku@tN) — النسخ الأخرى (‎-en/-ru) لها بطاقتها وإعلانها بلغتها.
+  // بريد واحد مرّة واحدة، بلا طلبات «مراجعة».
+  const orFilter = encodeURIComponent(`(sku.eq.${sku},sku.like.${sku}@*)`);
+  const orders = await rest("GET", `shop_orders?status=eq.paid&hold=is.null&or=${orFilter}&select=buyer_email,buyer_name&order=paid_at.asc&limit=5000`) as { buyer_email: string; buyer_name: string }[];
   const seen = new Map<string, string>();
   for (const o of orders) { const e = o.buyer_email.toLowerCase(); if (!seen.has(e)) seen.set(e, o.buyer_name); }
   let count = 0, failed = 0;
