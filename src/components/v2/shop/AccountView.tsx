@@ -9,7 +9,7 @@ import { waHref } from "@/lib/v2";
 import { PlatformLogo, fileKey } from "./Platforms";
 
 type FileView = { id: string; name: string; size: number; used: number; max: number };
-type OrderView = { id: string; sku: string; title: string; amount: number; paidAt: string | null; hold: boolean; files: FileView[] };
+type OrderView = { id: string; sku: string; title: string; amount: number; paidAt: string | null; hold: boolean; files: FileView[]; version?: string | null; changelog?: string | null };
 type Library = { email: string; name: string; orders: OrderView[] };
 
 const KEY = "is-account";
@@ -17,6 +17,7 @@ const DEMO: Library = {
   email: "ab••••@gmail.com", name: "عبدالله",
   orders: [{
     id: "demo", sku: "lessons-broadcast", title: "برنامج بث الدروس العلمية", amount: 299, paidAt: new Date().toISOString(), hold: false,
+    version: "1.0.3", changelog: "تنقية صوت أوضح للمساجد الكبيرة\nتصدير فصول يوتيوب بضغطة",
     files: [
       { id: "win", name: "برنامج بث الدروس العلمية — ويندوز", size: 248_300_000, used: 1, max: 10 },
       { id: "mac", name: "برنامج بث الدروس العلمية — ماك", size: 262_200_000, used: 0, max: 10 },
@@ -100,9 +101,15 @@ function OrderCard({ o, session, demo, onRelogin, onChange }: { o: OrderView; se
         {item?.iconImg ? <img src={item.iconImg} alt="" width={52} height={52} /> : <span className="ic" aria-hidden>{item?.icon || "📦"}</span>}
         <div>
           <h2>{o.title}</h2>
-          <small>اشتريته {dateFmt(o.paidAt)}{item?.publicPath ? <> · <a className="v2-link" href={item.publicPath}>صفحة البرنامج</a></> : null}</small>
+          <small>{o.version ? <>الإصدار <b dir="ltr">{o.version}</b> · </> : null}اشتريته {dateFmt(o.paidAt)}{item?.publicPath ? <> · <a className="v2-link" href={item.publicPath}>صفحة البرنامج</a></> : null}</small>
         </div>
       </div>
+      {o.changelog && !o.hold && (
+        <details className="v2-account-new">
+          <summary>وش الجديد{o.version ? ` في ${o.version}` : ""}</summary>
+          <ul>{o.changelog.split(/\n+/).filter(Boolean).map((t) => <li key={t}>{t.replace(/^[-•*]\s*/, "")}</li>)}</ul>
+        </details>
+      )}
       {o.hold ? (
         <p className="v2-shop-note">طلبك قيد المراجعة — <a className="v2-link" href={waHref("السلام عليكم، طلبي في المتجر قيد المراجعة")} target="_blank" rel="noopener">راسلني ونرتّبه لك</a>.</p>
       ) : !o.files.length ? (

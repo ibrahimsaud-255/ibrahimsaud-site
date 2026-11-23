@@ -107,14 +107,14 @@ async function readSession(tok: unknown): Promise<string | null> {
 
 // ── البيانات ───────────────────────────────────────────────────────────────
 type FileRow = { id: string; name: string; path?: string; url?: string; size_bytes?: number };
-type Product = { sku: string; files: FileRow[]; max_downloads: number };
+type Product = { sku: string; files: FileRow[]; max_downloads: number; version?: string | null; changelog?: string | null };
 type Order = { id: string; sku: string; title: string; amount: number; buyer_name: string; buyer_email: string; status: string; paid_at: string | null; hold?: string | null };
 type Login = { email: string; otp_hash: string | null; otp_expires: string | null; otp_attempts: number; otp_sent_at: string | null };
 
 const paidOrdersOf = (email: string) =>
   rest("GET", `shop_orders?buyer_email=eq.${encodeURIComponent(email)}&status=eq.paid&select=id,sku,title,amount,buyer_name,buyer_email,status,paid_at,hold&order=paid_at.desc&limit=50`) as Promise<Order[]>;
 async function getProduct(sku: string): Promise<Product | null> {
-  return ((await rest("GET", `shop_products?sku=eq.${encodeURIComponent(sku)}&select=sku,files,max_downloads`)) as Product[])?.[0] ?? null;
+  return ((await rest("GET", `shop_products?sku=eq.${encodeURIComponent(sku)}&select=sku,files,max_downloads,version,changelog`)) as Product[])?.[0] ?? null;
 }
 const loginRow = async (email: string) =>
   ((await rest("GET", `shop_logins?email=eq.${encodeURIComponent(email)}&select=*`)) as Login[])?.[0];
@@ -183,6 +183,7 @@ async function library(b: Record<string, unknown>) {
     const hold = !!o.hold;
     out.push({
       id: o.id, sku, title: o.title, amount: Number(o.amount), paidAt: o.paid_at, hold,
+      version: p?.version ?? null, changelog: hold ? null : (p?.changelog ?? null),
       files: hold ? [] : (p?.files ?? []).map((f) => ({
         id: f.id, name: f.name, size: f.size_bytes ?? 0, max: p?.max_downloads ?? 10,
         used: logs.filter((l) => l.order_id === o.id && l.file_id === f.id).length,

@@ -132,3 +132,7 @@ create table if not exists public.shop_logins (
 );
 alter table public.shop_logins enable row level security;
 revoke all on public.shop_logins from anon, authenticated;
+
+-- رقم الإصدار و«وش الجديد» (٢٠٢٦-١١-٢٣) — يظهران في «حسابي» ويُعدّلان من لوحة المتجر
+alter table public.shop_products add column if not exists version text;
+alter table public.shop_products add column if not exists changelog text;

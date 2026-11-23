@@ -224,3 +224,6 @@ a.v2-plat .tag { color: #2F66FF; }
   .v2-shop-sticky .p { font-weight: 800; font-size: 17px; }
 }
 @media (prefers-reduced-motion: reduce) { .v2-shop-sticky { transition: none; } }
+.v2-account-new { margin: 4px 0 8px; background: var(--alt); border-radius: 14px; padding: 10px 14px; }
+.v2-account-new summary { cursor: pointer; font-weight: 700; font-size: 15px; color: var(--blue); }
+.v2-account-new ul { margin: 8px 0 2px; padding-inline-start: 20px; font-size: 15px; line-height: 1.8; color: var(--fg-2); }

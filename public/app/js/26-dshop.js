@@ -13,7 +13,7 @@ async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
     const [o,p,d]=await Promise.all([
-      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method').order('created_at',{ascending:false}).limit(500),
+      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at').order('created_at',{ascending:false}).limit(1000),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
     ]);
@@ -24,7 +24,16 @@ async function dshLoad(force){
 }
 function dshMoney(n){return Number(n||0).toLocaleString('ar-SA',{maximumFractionDigits:2})+' ر.س'}
 function dshDate(s){if(!s)return '—';try{return new Date(s).toLocaleDateString('ar-SA-u-ca-gregory',{day:'numeric',month:'short',year:'numeric'})+' · '+new Date(s).toLocaleTimeString('ar-SA',{hour:'2-digit',minute:'2-digit'})}catch(_){return s}}
-function dshPhoneWa(p){const d=String(p||'').replace(/\D/g,'');if(!d)return '';return 'https://wa.me/'+(d.startsWith('05')?'966'+d.slice(1):d.startsWith('5')&&d.length===9?'966'+d:d)}
+const DSH_DIAL={SA:'966',AE:'971',KW:'965',QA:'974',BH:'973',OM:'968',EG:'20',MA:'212',DZ:'213',TN:'216',LY:'218',JO:'962',LB:'961',IQ:'964',PS:'970',SY:'963',YE:'967',SD:'249',TD:'235',TR:'90',PK:'92',IN:'91',ID:'62',MY:'60',AF:'93',NG:'234',KE:'254',ET:'251',SN:'221',ML:'223',NE:'227',BF:'226',UG:'256',MW:'265',FR:'33',FI:'358',CA:'1',US:'1',GB:'44',DE:'49'};
+// رقم الجوال ← رابط واتساب: الرقم الدوليّ كما هو، والمحلّيّ (يبدأ بصفر) بمفتاح بلد المشتري
+function dshPhoneWa(p,cc,text){let d=String(p||'').replace(/\D/g,'');if(!d)return '';
+  if(d.startsWith('00'))d=d.slice(2);
+  else if(d.startsWith('0')){const k=DSH_DIAL[String(cc||'SA').toUpperCase()]||'966';d=k+d.replace(/^0+/,'')}
+  else if(d.length===9&&d.startsWith('5'))d='966'+d;
+  return 'https://wa.me/'+d+(text?'?text='+encodeURIComponent(text):'')}
+// رسالة متابعة لمن بدأ الدفع ولم يكمل — يرسلها إبراهيم بنفسه من واتساب
+function dshFollowText(o){const first=String(o.buyer_name||'').trim().split(/\s+/)[0]||'';
+  return `السلام عليكم ${first} 👋\nمعك إبراهيم سعود. شفت إنك بدأت تطلب «${o.title}» وما اكتمل الدفع.\nلو واجهتك مشكلة في الدفع أو عندك أيّ سؤال قبل الشراء، أنا موجود وأساعدك.\nرابط الطلب: https://ibrahimsaud.com/lessons-broadcast/#buy`}
 
 function renderDShop(){
   const main=document.getElementById('main');
@@ -42,6 +51,19 @@ function renderDShop(){
   const q=DSH.q.trim().toLowerCase();
   const trWait=O.filter(o=>o.pay_method==='transfer'&&o.status==='pending');
   const list=O.filter(o=>(DSH.filter==='all'||(DSH.filter==='transfer'?(o.pay_method==='transfer'&&o.status==='pending'):o.status===DSH.filter))&&(!q||[o.buyer_name,o.buyer_email,o.buyer_phone,o.title].join(' ').toLowerCase().includes(q)));
+  // القمع: الأشخاص (بالإيميل) اللي فتحوا الدفع ← دفعوا. والمتروكة: من بدأ ولم يدفع أبداً بنفس الإيميل.
+  const byEmail={};O.forEach(o=>{const e=String(o.buyer_email||'').toLowerCase();(byEmail[e]=byEmail[e]||[]).push(o)});
+  const people=Object.keys(byEmail).length,buyers=Object.values(byEmail).filter(a=>a.some(o=>o.status==='paid')).length;
+  const abandoned=Object.values(byEmail).filter(a=>!a.some(o=>o.status==='paid')).map(a=>a.slice().sort((x,y)=>new Date(y.created_at)-new Date(x.created_at))[0]).sort((x,y)=>new Date(y.created_at)-new Date(x.created_at));
+  const noMail=paid.filter(o=>!o.email_sent_at).length;
+  const followed=dshFollowed();
+  const abRows=abandoned.slice(0,DSH.abAll?500:12).map(o=>{const wa=dshPhoneWa(o.buyer_phone,o.buyer_country||o.ip_country,dshFollowText(o));const done=followed[o.buyer_email];
+    return `<tr style="${done?'opacity:.55':''}"><td><b>${esc(o.buyer_name)}</b><div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_email)}</div></td>
+      <td>${dshMoney(o.amount)}<div style="font-size:12px;color:var(--muted)">${dshFlag(o.buyer_country||o.ip_country)}</div></td>
+      <td style="font-size:12px;white-space:nowrap">${dshDate(o.created_at)}<div style="color:var(--muted)">${(DSH_ST[o.status]||[o.status])[0]}</div></td>
+      <td style="white-space:nowrap">${wa?`<a class="btn btn-primary btn-sm" href="${wa}" target="_blank" rel="noopener" onclick="dshMarkFollowed('${esc(o.buyer_email)}')" title="يفتح واتساب برسالة جاهزة — أنت ترسلها"><i data-lucide="message-circle"></i> تابِع</a>`:'<span style="font-size:12px;color:var(--muted)">بلا جوال</span>'}
+        <a class="btn btn-ghost btn-sm" href="mailto:${esc(o.buyer_email)}?subject=${encodeURIComponent('طلبك: '+o.title)}&body=${encodeURIComponent(dshFollowText(o))}" onclick="dshMarkFollowed('${esc(o.buyer_email)}')" title="إيميل جاهز"><i data-lucide="mail"></i></a>
+        ${done?`<span style="font-size:11px;color:var(--muted)">تابعته ${dshDate(done).split(' · ')[0]}</span>`:''}</td></tr>`}).join('');
   const pill=(k,l,n)=>`<button class="btn btn-sm ${DSH.filter===k?'btn-primary':'btn-ghost'}" onclick="DSH.filter='${k}';renderDShop()">${l} <span style="opacity:.7">${n}</span></button>`;
 
   const base=s=>String(s||'').split('@')[0];
@@ -63,17 +85,21 @@ function renderDShop(){
         <div><div style="font-size:22px;font-weight:800">${sold.length}</div><div style="font-size:12px;color:var(--muted)">مبيع</div></div>
         <div><div style="font-size:22px;font-weight:800">${dshMoney(sold.reduce((a,o)=>a+Number(o.amount||0),0))}</div><div style="font-size:12px;color:var(--muted)">الإيراد</div></div>
         <a class="btn btn-ghost btn-sm" href="https://ibrahimsaud.com/shop/${encodeURIComponent(p.slug)}/" target="_blank" rel="noopener"><i data-lucide="external-link"></i> الصفحة</a>
+      </div>
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:10px;margin:0 0 10px">
+        <div class="field" style="margin:0"><label>الإصدار</label><input value="${esc(p.version||'')}" placeholder="1.0.3" dir="ltr" onchange="dshProd('${esc(p.sku)}',{version:this.value.trim()||null})"></div>
+        <div class="field" style="margin:0"><label>وش الجديد <small style="color:var(--muted)">(يظهر للمشترين في «حسابي»)</small></label><textarea rows="2" placeholder="سطر لكل تحسين" onchange="dshProd('${esc(p.sku)}',{changelog:this.value.trim()||null})">${esc(p.changelog||'')}</textarea></div>
       </div>${tierHtml}${files}</div>`;
   }).join('');
 
   const rows=list.map(o=>{
-    const [l,c]=DSH_ST[o.status]||[o.status,'#888'];const wa=dshPhoneWa(o.buyer_phone);
+    const [l,c]=DSH_ST[o.status]||[o.status,'#888'];const wa=dshPhoneWa(o.buyer_phone,o.buyer_country||o.ip_country);
     return `<tr>
       <td><b>${esc(o.buyer_name)}</b><div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_email)}</div>${o.buyer_phone?`<div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(o.buyer_phone)}</div>`:''}</td>
       <td>${esc(o.title)}</td><td style="white-space:nowrap">${dshMoney(o.amount)}${o.buyer_country?`<div style="font-size:12px;color:var(--muted)" title="بلد المشتري (من ساعة جهازه أو اختياره) · بلد الاتّصال (IP) لو اختلف · بلد البطاقة">${dshFlag(o.buyer_country)}${o.ip_country&&o.ip_country!==o.buyer_country?' · اتّصال '+dshFlag(o.ip_country):''}${o.card_country&&o.card_country!==o.buyer_country?' · بطاقة '+dshFlag(o.card_country):''}</div>`:''}</td>
       <td><span class="badge" style="background:${c}22;color:${c}">${l}</span>${o.pay_method==='transfer'?`<div style="margin-top:4px"><span class="badge" style="background:#2F66FF22;color:#2F66FF" title="رقم الطلب اللي يرسله المشتري على واتساب">تحويل · <span dir="ltr">${o.id.slice(0,8).toUpperCase()}</span></span>${o.status==='pending'?` <button class="btn btn-primary btn-sm" onclick="dshTransferPaid('${o.id}')" title="وصل المبلغ — يتحوّل مدفوعاً ويوصله رابط التنزيل على إيميله">وصل التحويل ✓</button>`:''}</div>`:''}${o.hold?`<div><span class="badge" style="background:#f59e0b22;color:#b45309;margin-top:4px" title="سعر خاصّ ببطاقة من بلد آخر — التنزيل موقوف">مراجعة</span> <button class="btn btn-ghost btn-sm" onclick="dshApprove('${o.id}')" title="افتح التنزيل لهذا الطلب">اعتمد</button></div>`:''}</td>
-      <td style="white-space:nowrap;font-size:12px">${dshDate(o.paid_at||o.created_at)}</td>
-      <td style="text-align:center">${dlBy[o.id]||0}</td><td style="text-align:center">${(o.trusted_devices||[]).length}/3</td>
+      <td style="white-space:nowrap;font-size:12px">${dshDate(o.paid_at||o.created_at)}${o.status==='paid'?(o.email_sent_at?'<div style="color:#16a34a" title="وصله إيميل «طلبك جاهز»">✉︎ وصله الإيميل</div>':'<div style="color:#b45309" title="ما وصله إيميل الطلب — زرّ الإرسال يرسل له رابطه">✉︎ ما وصله إيميل</div>'):''}</td>
+      <td style="text-align:center">${dlBy[o.id]||0}</td><td style="text-align:center">${(o.trusted_devices||[]).length}/5</td>
       <td style="white-space:nowrap">
         ${o.status==='paid'?`<button class="btn btn-ghost btn-sm" title="يرسل للمشتري رابط طلبه من جديد" onclick="dshResend('${esc(o.buyer_email)}')"><i data-lucide="send"></i></button>
         <button class="btn btn-ghost btn-sm" title="يمسح الأجهزة الموثّقة — أوّل جهاز يفتح الطلب يُوثَّق" onclick="dshResetDevices('${o.id}')"><i data-lucide="smartphone"></i></button>`:''}
@@ -88,6 +114,18 @@ function renderDShop(){
       <div class="stat"><span class="ic"><i data-lucide="calendar"></i></span><div class="v">${dshMoney(mRev)}</div><div class="l">إيراد هذا الشهر</div></div>
       <div class="stat"><span class="ic"><i data-lucide="download"></i></span><div class="v">${(DSH.dl||[]).length}</div><div class="l">تنزيل</div></div>
     </div>
+    <div class="stats" style="margin-bottom:20px">
+      <div class="stat"><span class="ic"><i data-lucide="users"></i></span><div class="v">${people}</div><div class="l">فتحوا صفحة الدفع</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="user-check"></i></span><div class="v">${buyers}</div><div class="l">اشتروا (${people?Math.round(buyers*100/people):0}٪)</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="shopping-cart"></i></span><div class="v">${abandoned.length}</div><div class="l">ما كمّلوا الدفع</div></div>
+      <div class="stat"><span class="ic"><i data-lucide="mail-warning"></i></span><div class="v" style="${noMail?'color:#b45309':''}">${noMail}</div><div class="l">مشترٍ ما وصله إيميل الطلب</div></div>
+    </div>
+    ${abandoned.length?`<div class="card" style="margin-bottom:20px;overflow:auto">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+        <h2 style="margin:0;font-size:17px"><i data-lucide="shopping-cart"></i> بدأوا الدفع وما كمّلوا</h2>
+        <span style="font-size:12px;color:var(--muted)">«تابِع» يفتح واتساب برسالة جاهزة باسمه — أنت تقرأها وترسلها. واتساب للي دخل الدفع فقط.</span></div>
+      <table class="hr-table" style="width:100%"><thead><tr><th>الشخص</th><th>المبلغ</th><th>آخر محاولة</th><th></th></tr></thead><tbody>${abRows}</tbody></table>
+      ${abandoned.length>12?`<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="DSH.abAll=!DSH.abAll;renderDShop()">${DSH.abAll?'أقلّ':'الكلّ ('+abandoned.length+')'}</button>`:''}</div>`:''}
     <h2 style="margin:6px 0 10px;font-size:17px">المنتجات</h2>
     <div class="grid">${prodCards||'<div class="card">ما فيه منتجات — أضفها في supabase/shop.sql</div>'}</div>
     <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin:24px 0 10px;flex-wrap:wrap">
@@ -97,11 +135,14 @@ function renderDShop(){
         <button class="btn btn-ghost btn-sm" onclick="dshCsv()"><i data-lucide="file-down"></i> تصدير CSV</button></div></div>
     <div class="card" style="overflow:auto"><table class="hr-table" style="width:100%"><thead><tr><th>المشتري</th><th>المنتج</th><th>المبلغ</th><th>الحالة</th><th>التاريخ</th><th>تنزيلات</th><th>أجهزة</th><th></th></tr></thead>
       <tbody>${rows||'<tr><td colspan="8" style="color:var(--muted);text-align:center;padding:24px">ما فيه طلبات هنا بعد</td></tr>'}</tbody></table></div>
-    <p style="color:var(--muted);font-size:12px;margin-top:10px">«إرسال الرابط» يرسل للمشتري رابط طلبه من جديد (نفس «استرجع طلبك» في الموقع). «الأجهزة» يمسحها فيقدر يفتح طلبه من جهاز جديد.</p>`;
+    <p style="color:var(--muted);font-size:12px;margin-top:10px">«إرسال الرابط» يرسل للمشتري رابط طلبه من جديد (نفس «استرجع طلبك» في الموقع). «الأجهزة» يمسحها فيقدر يفتح طلبه من جهاز جديد. والمشتري يقدر يرجع لكلّ مشترياته من «حسابي» (ibrahimsaud.com/account) برمز على بريده.</p>`;
   applyWallpaper();refreshIcons();
 }
 const DSH_CC={SA:'السعودية',AE:'الإمارات',KW:'الكويت',QA:'قطر',BH:'البحرين',OM:'عُمان',EG:'مصر',MA:'المغرب',DZ:'الجزائر',TN:'تونس',LY:'ليبيا',JO:'الأردن',LB:'لبنان',IQ:'العراق',PS:'فلسطين',SY:'سوريا',YE:'اليمن',SD:'السودان',MR:'موريتانيا',SO:'الصومال',DJ:'جيبوتي',KM:'جزر القمر',TD:'تشاد',SS:'جنوب السودان',ER:'إريتريا',NE:'النيجر',ML:'مالي',SN:'السنغال',GM:'غامبيا',GN:'غينيا',BF:'بوركينا فاسو',ET:'إثيوبيا',KE:'كينيا',TZ:'تنزانيا',NG:'نيجيريا',AF:'أفغانستان',PK:'باكستان',BD:'بنغلاديش',IN:'الهند',ID:'إندونيسيا',MY:'ماليزيا',TR:'تركيا',MV:'المالديف',KZ:'كازاخستان',UZ:'أوزبكستان',KG:'قرغيزستان',TJ:'طاجيكستان',TM:'تركمانستان',AZ:'أذربيجان',BA:'البوسنة',AL:'ألبانيا',XK:'كوسوفو'};
 function dshFlag(c){c=String(c||'').toUpperCase();if(!/^[A-Z]{2}$/.test(c))return '';return String.fromCodePoint(...[...c].map(x=>0x1F1A5+x.charCodeAt(0)))+' '+(DSH_CC[c]||c)}
+// من تابعتهم (محلّيّاً في هذا المتصفّح — تذكير لك فقط، لا يُرسل شيئاً)
+function dshFollowed(){try{return JSON.parse(localStorage.getItem('dsh-followed')||'{}')}catch(_){return {}}}
+function dshMarkFollowed(email){try{const f=dshFollowed();f[email]=new Date().toISOString();localStorage.setItem('dsh-followed',JSON.stringify(f))}catch(_){}setTimeout(renderDShop,400)}
 async function dshApprove(id){
   if(!confirm('اعتماد الطلب وفتح التنزيل للمشتري؟'))return;
   const {error}=await sb.from('shop_orders').update({hold:null,updated_at:new Date().toISOString()}).eq('id',id);
