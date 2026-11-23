@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import ShopItemView from "@/components/v2/shop/ShopItemView";
-import CharityPromo from "@/components/v2/CharityPromo";
 import BlogLinks from "@/components/v2/BlogLinks";
 import LangRedirect from "@/components/v2/shop/LangRedirect";
 import { itemBySlug } from "@/lib/shop";
@@ -86,7 +85,7 @@ export default function LessonsBroadcast() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <LangRedirect sku={item.sku} />
-      <ShopItemView item={item} promo={<><CharityPromo /><BlogLinks topic="lessons" first={ARTICLES} max={8} alt /></>} />
+      <ShopItemView item={item} promo={<BlogLinks topic="lessons" first={ARTICLES} max={8} alt />} />
     </>
   );
 }

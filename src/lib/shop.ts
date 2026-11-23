@@ -35,6 +35,7 @@ export type ShopItem = {
   shots?: { src: string; alt: string }[];   // لقطات حقيقيّة من البرنامج
   platforms?: { key: "windows" | "mac" | "android" | "ios"; name: string; note: string; soon?: string; href?: string; hrefLabel?: string }[];
   buyNote?: string;        // سطر تنبيه تحت «الصيغة» في لوحة الشراء (مثل: الآيفون شراء مستقلّ من App Store)
+  platCaptions?: { incl: string; sep: string };   // عنوانا مجموعتي المنصّات: «بشراء واحد من هنا» و«شراء منفصل»
   specs?: { title: string; rows: [string, string][] }[];
   promo?: { src: string; poster: string; title: string; text: string };   // مقطع قصير عموديّ
   hidden?: boolean;        // لا يظهر في قائمة /shop/ (الصفحة تفتح برابطها فقط)
@@ -43,7 +44,7 @@ export type ShopItem = {
   // ── أقسام صفحة البيع الموحّدة (docs/المنتجات-الرقمية-والقمع.md §٤) — كلّها حقائق عن المنتج، لا أرقام مخترعة ──
   proof?: { n: string; l: string }[];                    // شريط أرقام تحت الواجهة
   contrast?: { before: string[]; after: string[] };      // قبل ← بعد
-  stack?: { title: string; items: string[] };            // «كلّ هذا بدفعة واحدة» بجانب الشراء
+  stack?: { title: string; items: string[]; note?: string };   // «كلّ هذا بدفعة واحدة» بجانب الشراء (+ سطر «غير مشمول»)
 };
 
 // آيفون: تطبيق App Store (يُشترى هناك) — بطاقة رابط في صفحات النسخة العالميّة.
@@ -62,7 +63,7 @@ export const shopItems: ShopItem[] = [
       { n: "+٨٥٠٠", l: "كتاب من الشاملة داخله" },
       { n: "٨", l: "مشاهد جاهزة" },
       { n: "٣", l: "منصّات في نفس الوقت" },
-      { n: "٤", l: "أجهزة: ويندوز · ماك · أندرويد · آيفون" },
+      { n: "٣", l: "أجهزة بشراء واحد: ويندوز · ماك · أندرويد" },
     ],
     contrast: {
       before: [
@@ -91,6 +92,7 @@ export const shopItems: ShopItem[] = [
         "حتى ٥ أجهزة لجهتك",
         "مساعدة على واتساب لو احتجت أحد يضبطه معك",
       ],
+      note: "غير مشمول: تطبيق الآيفون والآيباد — يُشترى منفصلاً من App Store.",
     },
     sub: "برنامج عربيّ سهل يبثّ الدرس ويسجّله: المتحدّث والكتاب في الشاشة، المكتبة الشاملة داخله، وشعارات جهتك — على يوتيوب وفيسبوك وتيليجرام في نفس الوقت.",
     icon: "📡",
@@ -409,9 +411,9 @@ export const shopItems: ShopItem[] = [
 
 // الآيفون شراء مستقلّ من App Store (بسعره هناك) — الشراء من الموقع يعطي ويندوز وماك وأندرويد فقط.
 // نوضّحه بلغة كل صفحة: ملاحظة بطاقة الآيفون، وسطر في لوحة الشراء، وسؤال في الأسئلة الشائعة.
-const IOS_SEP: Record<string, { name?: string; label?: string; note: string; buy: string; q: string; a: string }> = {
-  ar: { name: "آيفون وآيباد", label: "حمّله من App Store", note: "تطبيق مستقلّ — يُشترى من App Store", buy: "الآيفون والآيباد: تطبيق مستقلّ يُشترى من App Store — غير مشمول في الشراء من هنا.", q: "الشراء من هنا يشمل تطبيق الآيفون؟", a: "لا. الشراء من الموقع يعطيك نسخ ويندوز وماك وأندرويد. تطبيق الآيفون والآيباد شراء مستقلّ من App Store بسعره هناك." },
-  en: { note: "Separate app — sold on the App Store", buy: "iPhone & iPad: a separate app, bought on the App Store — not included here.", q: "Does this purchase include the iPhone app?", a: "No. Buying here gives you the Windows, Mac and Android versions. The iPhone and iPad app is a separate purchase on the App Store." },
+const IOS_SEP: Record<string, { name?: string; label?: string; note: string; buy: string; q: string; a: string; incl?: string; sep?: string }> = {
+  ar: { name: "آيفون وآيباد", label: "حمّله من App Store", note: "تطبيق مستقلّ — يُشترى من App Store", buy: "يشمل: ويندوز · ماك · أندرويد. الآيفون والآيباد غير مشمولة — تطبيقها يُشترى منفصلاً من App Store.", q: "الشراء من هنا يشمل تطبيق الآيفون؟", a: "لا. الشراء من الموقع يعطيك ثلاث نسخ: ويندوز وماك وأندرويد. تطبيق الآيفون والآيباد يُباع من App Store نفسه، فهو شراء منفصل بسعره هناك. لو جهازك آيفون فقط، اشترِه من App Store مباشرة بدل الموقع.", incl: "بشراء واحد من هنا — الثلاث كلّها", sep: "شراء منفصل" },
+  en: { incl: "One purchase here — all three", sep: "Separate purchase", note: "Separate app — sold on the App Store", buy: "Includes Windows · Mac · Android. iPhone & iPad are not included — that app is bought separately on the App Store.", q: "Does this purchase include the iPhone app?", a: "No. Buying here gives you the Windows, Mac and Android versions. The iPhone and iPad app is a separate purchase on the App Store." },
   ru: { note: "Отдельное приложение — продаётся в App Store", buy: "iPhone и iPad: отдельное приложение, покупается в App Store — в эту покупку не входит.", q: "Входит ли в покупку приложение для iPhone?", a: "Нет. Покупка здесь даёт версии для Windows, Mac и Android. Приложение для iPhone и iPad покупается отдельно в App Store." },
   fr: { note: "Application séparée — vendue sur l’App Store", buy: "iPhone et iPad : application séparée, achetée sur l’App Store — non incluse ici.", q: "L’achat inclut-il l’application iPhone ?", a: "Non. L’achat ici vous donne les versions Windows, Mac et Android. L’application iPhone et iPad s’achète séparément sur l’App Store." },
   de: { note: "Separate App – im App Store erhältlich", buy: "iPhone und iPad: separate App, Kauf im App Store – hier nicht enthalten.", q: "Ist die iPhone-App im Kauf enthalten?", a: "Nein. Mit dem Kauf hier erhalten Sie die Versionen für Windows, Mac und Android. Die App für iPhone und iPad wird separat im App Store gekauft." },
@@ -427,6 +429,7 @@ for (const it of shopItems) {
   const t = IOS_SEP[it.lang || "ar"] || IOS_SEP.en;
   it.platforms = it.platforms.map((p) => p.key === "ios" ? { ...IOS_CARD, name: t.name || IOS_CARD.name, hrefLabel: t.label || IOS_CARD.hrefLabel, note: t.note } : p);
   it.buyNote = t.buy;
+  it.platCaptions = t.incl && t.sep ? { incl: t.incl, sep: t.sep } : undefined;
   it.faqs = [...it.faqs.slice(0, 2), { q: t.q, a: t.a }, ...it.faqs.slice(2)];
 }
 

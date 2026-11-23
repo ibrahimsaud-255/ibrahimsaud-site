@@ -24,9 +24,29 @@ export function PlatformLogo({ k, size = 22 }: { k: Key; size?: number }) {
 
 export function PlatformCards({ item }: { item: ShopItem }) {
   if (!item.platforms) return null;
+  const incl = item.platforms.filter((p) => !p.href), ext = item.platforms.filter((p) => p.href);
+  // مجموعتان واضحتان: ما يشمله الشراء من هنا، وما يُشترى منفصلاً (الآيفون من App Store)
+  if (incl.length && ext.length) {
+    return (
+      <div className="v2-plat-split">
+        <div className="v2-plat-incl">
+          {item.platCaptions && <p className="cap">{item.platCaptions.incl}</p>}
+          <PlatformList item={item} list={incl} />
+        </div>
+        <div className="v2-plat-ext">
+          {item.platCaptions && <p className="cap">{item.platCaptions.sep}</p>}
+          <PlatformList item={item} list={ext} />
+        </div>
+      </div>
+    );
+  }
+  return <PlatformList item={item} list={item.platforms} />;
+}
+
+function PlatformList({ item, list }: { item: ShopItem; list: NonNullable<ShopItem["platforms"]> }) {
   return (
     <div className="v2-plat-grid">
-      {item.platforms.map((p) => (
+      {list.map((p) => (
         p.href ? (
           // متوفّر من متجر خارجيّ (آيفون من App Store) — البطاقة كلّها رابط
           <a key={p.key} className="v2-plat" href={p.href} target="_blank" rel="noopener">

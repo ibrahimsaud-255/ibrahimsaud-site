@@ -133,6 +133,9 @@ function OrderCard({ o, session, demo, onRelogin, onChange }: { o: OrderView; se
           })}
         </ul>
       )}
+      {o.sku.startsWith("lessons-broadcast") && !o.hold && (
+        <p className="v2-account-ios">الآيفون والآيباد غير مشمولة في هذا الطلب — تطبيقها يُشترى منفصلاً من <a className="v2-link" href="https://apps.apple.com/app/id6836200953" target="_blank" rel="noopener" style={{ fontSize: 14 }}>App Store ↗</a></p>
+      )}
       {msg && <p className="msg" role="status">{msg}</p>}
     </section>
   );

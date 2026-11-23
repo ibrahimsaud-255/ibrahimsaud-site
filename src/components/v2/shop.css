@@ -259,3 +259,22 @@ a.v2-plat .tag { color: #2F66FF; }
   .v2-kit-page { border: 0; padding: 0 0 12px; page-break-inside: avoid; }
   .v2-kit-sheet { page-break-before: always; }
 }
+
+/* المنصّات: ما يشمله الشراء من هنا ↔ الآيفون شراء منفصل */
+.v2-plat-split { display: grid; grid-template-columns: 3fr 1fr; gap: 18px; align-items: stretch; }
+.v2-plat-split .v2-plat-grid { grid-template-columns: repeat(var(--n, 3), 1fr); height: 100%; }
+.v2-plat-incl .v2-plat-grid { --n: 3; }
+.v2-plat-ext .v2-plat-grid { --n: 1; }
+.v2-plat-incl, .v2-plat-ext { display: flex; flex-direction: column; gap: 10px; }
+.v2-plat-incl { border: 2px solid #BFE6CC; border-radius: 32px; padding: 12px; }
+.v2-plat-ext { border: 2px dashed var(--line); border-radius: 32px; padding: 12px; }
+.v2-plat-split .cap { margin: 4px 0 0; text-align: center; font-size: 14px; font-weight: 800; }
+.v2-plat-incl .cap { color: #146C3A; }
+.v2-plat-ext .cap { color: var(--fg-2); }
+@media (max-width: 900px) {
+  .v2-plat-split { grid-template-columns: 1fr; }
+  .v2-plat-incl .v2-plat-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 560px) { .v2-plat-incl .v2-plat-grid { grid-template-columns: 1fr; } }
+.v2-shop-stack .note { margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); font-size: 14px; color: #b45309; font-weight: 700; }
+.v2-account-ios { margin: 10px 0 0; font-size: 14px; color: var(--fg-2); }

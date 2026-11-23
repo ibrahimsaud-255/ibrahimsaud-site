@@ -159,6 +159,7 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
               <div className="v2-shop-stack">
                 <h2 className="v2-subtitle">{i.stack.title}</h2>
                 <ul>{i.stack.items.map((t) => <li key={t}>{t}</li>)}</ul>
+                {i.stack.note && <p className="note">{i.stack.note}</p>}
               </div>
             )}
             <BuyPanel item={i} />
