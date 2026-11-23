@@ -179,3 +179,9 @@ grant select, insert, update on public.shop_settings to authenticated;
 insert into public.shop_settings(key, value) values ('cart_reminders', '{"enabled": false, "first_hours": 3, "second_days": 3, "enabled_at": null}') on conflict (key) do nothing;
 alter table public.shop_orders add column if not exists remind1_at timestamptz;
 alter table public.shop_orders add column if not exists remind2_at timestamptz;
+
+-- سلسلة الهديّة وإعلان التحديث (٢٠٢٦-١١-٢٣) — الدالّة shop-mail والمهمّة kit-seq-hourly (الدقيقة ٤٣)؛ السلسلة مطفأة افتراضاً
+alter table public.subscribers add column if not exists seq_step int not null default 0;
+alter table public.subscribers add column if not exists seq_at timestamptz;
+insert into public.shop_settings(key, value) values ('kit_sequence', '{"enabled": false, "enabled_at": null}') on conflict (key) do nothing;
+insert into public.shop_settings(key, value) values ('update_mail', '{"sent": []}') on conflict (key) do nothing;

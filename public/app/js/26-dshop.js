@@ -5,24 +5,27 @@
  * الإجراءات الحسّاسة (رابط الطلب للمشتري) عبر الدالّة الحافّة «shop» (action=recover).
  * البادئة dsh — تعريفات فقط (لا تنفيذ عند التحميل). الدليل: docs/المتجر-الرقمي.md
  */
-let DSH={orders:null,products:null,dl:null,views:null,codes:null,kit:null,err:null,loading:false,filter:'paid',q:''};
+let DSH={orders:null,products:null,dl:null,views:null,codes:null,kit:null,soon:null,err:null,loading:false,filter:'paid',q:''};
+// «قريباً» في /shop/#soon — نفس مفاتيح shopSoon في src/lib/shop.ts (مفتاح غير معروف يظهر كما هو)
+const DSH_SOON={'course-lessons-broadcast':'دورة بث وتصوير الدروس العلمية','lessons-publish':'نشر الدروس العلمية','ai-dev-course':'دورة التطوير بالذكاء الاصطناعي'};
 const DSH_ST={paid:['مدفوع','#22c55e'],pending:['بانتظار الدفع','#f59e0b'],failed:['فشل','#ef4444'],cancelled:['أُلغي','#64748b']};
 const DSH_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop';
 
 async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
-    const [o,p,d,k,v,ic,st]=await Promise.all([
+    const [o,p,d,k,v,ic,st,si]=await Promise.all([
       sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at,remind1_at,remind2_at').order('created_at',{ascending:false}).limit(1000),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
       sb.from('subscribers').select('email,name,phone,created_at').eq('source','lb-kit').order('created_at',{ascending:false}).limit(1000),
       sb.from('site_views').select('path,utm,ref,vid,at').gte('at',new Date(Date.now()-30*864e5).toISOString()).order('at',{ascending:false}).limit(20000),
       sb.from('ios_promo_codes').select('*').order('created_at',{ascending:true}),
-      sb.from('shop_settings').select('key,value').eq('key','cart_reminders'),
+      sb.from('shop_settings').select('key,value').in('key',['cart_reminders','kit_sequence','update_mail']),
+      sb.from('shop_interest').select('product,email,name,source,created_at').order('created_at',{ascending:false}).limit(3000),
     ]);
     if(o.error)throw o.error;if(p.error)throw p.error;
-    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;DSH.codes=ic&&!ic.error?(ic.data||[]):null;DSH.remind=st&&!st.error&&st.data&&st.data[0]?st.data[0].value:null;
+    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;DSH.codes=ic&&!ic.error?(ic.data||[]):null;const SS={};(st&&!st.error?st.data||[]:[]).forEach(r=>SS[r.key]=r.value);DSH.remind=SS.cart_reminders||null;DSH.seq=SS.kit_sequence||null;DSH.upd=SS.update_mail||null;DSH.soon=si&&!si.error?(si.data||[]):null;
   }catch(e){DSH.err=(e&&e.message)||'تعذّر الاتصال'}
   DSH.loading=false;if(CUR==='dshop')renderDShop();
 }
@@ -97,6 +100,7 @@ function renderDShop(){
       </div>`:`<p style="color:var(--muted);font-size:14px;margin:0">العدّ بدأ ٢٣ نوفمبر ٢٠٢٦ — الأرقام تظهر هنا مع أوّل الزيارات.</p>`}
       ${DSH.kit&&DSH.kit.length?`<details style="margin-top:12px"><summary style="cursor:pointer;font-size:13px;font-weight:700">أخذوا «قائمة تجهيز المسجد» (${DSH.kit.length})</summary>
         <table class="hr-table" style="width:100%;margin-top:6px"><tbody>${DSH.kit.slice(0,100).map(x=>{const wa=dshPhoneWa(x.phone);return `<tr><td>${esc(x.name||'—')}</td><td dir="ltr" style="font-size:12px">${esc(x.email)}</td><td style="font-size:12px">${dshDate(x.created_at)}</td><td>${wa?`<a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i></a>`:''}</td></tr>`}).join('')}</tbody></table></details>`:''}
+      ${dshSeqHTML()}
       <p style="font-size:12px;color:var(--muted);margin:10px 0 0">صفحة الهديّة المجّانيّة: <code dir="ltr">ibrahimsaud.com/lessons-broadcast/kit/</code> · رابط البايو في تيك توك: <code dir="ltr">ibrahimsaud.com/lessons-broadcast/?utm_source=tiktok</code> — عشان تنحسب زيارات تيك توك باسمها (متصفّح تيك توك يخفي المصدر).</p></div>`;
   }
   const pill=(k,l,n)=>`<button class="btn btn-sm ${DSH.filter===k?'btn-primary':'btn-ghost'}" onclick="DSH.filter='${k}';renderDShop()">${l} <span style="opacity:.7">${n}</span></button>`;
@@ -124,7 +128,8 @@ function renderDShop(){
       <div style="display:grid;grid-template-columns:120px 1fr;gap:10px;margin:0 0 10px">
         <div class="field" style="margin:0"><label>الإصدار</label><input value="${esc(p.version||'')}" placeholder="1.0.3" dir="ltr" onchange="dshProd('${esc(p.sku)}',{version:this.value.trim()||null})"></div>
         <div class="field" style="margin:0"><label>وش الجديد <small style="color:var(--muted)">(يظهر للمشترين في «حسابي»)</small></label><textarea rows="2" placeholder="سطر لكل تحسين" onchange="dshProd('${esc(p.sku)}',{changelog:this.value.trim()||null})">${esc(p.changelog||'')}</textarea></div>
-      </div>${tierHtml}${files}</div>`;
+      </div>
+      ${dshUpdHTML(p,paid)}${tierHtml}${files}</div>`;
   }).join('');
 
   const rows=list.map(o=>{
@@ -158,6 +163,7 @@ function renderDShop(){
     </div>
     ${traffic}
     ${dshCodesHTML()}
+    ${dshSoonHTML()}
     ${abandoned.length?`<div class="card" style="margin-bottom:20px;overflow:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <h2 style="margin:0;font-size:17px"><i data-lucide="shopping-cart"></i> بدأوا الدفع وما كمّلوا</h2>
@@ -183,6 +189,20 @@ function dshFlag(c){c=String(c||'').toUpperCase();if(!/^[A-Z]{2}$/.test(c))retur
  * هديّة فقط: شروط آبل تمنع بيعها أو أخذ أيّ مقابل عنها — لا تُكتب «مع الشراء» في أيّ مكان.
  * الكود ينتهي ١١:٥٩ م بتوقيت المحيط الهادئ بعد ٢٨ يوماً من طلبه (أقصى مدّة عند آبل)، ١٠٠ كود لكل إصدار.
  * الجدول ios_promo_codes للمالك فقط. توليد جديد: App Store Connect ← Promo Codes، ثمّ الصقها هنا. */
+// «قريباً»: من سجّل إيميله لكلّ منتج قادم — عدد لكلّ منتج، والقائمة تنفتح بالضغط، ونسخ الإيميلات لرسالة الإطلاق.
+function dshSoonHTML(){
+  if(!DSH.soon)return '';
+  const by={};Object.keys(DSH_SOON).forEach(k=>by[k]=[]);DSH.soon.forEach(x=>{(by[x.product]=by[x.product]||[]).push(x)});
+  const blocks=Object.entries(by).map(([k,list])=>`<details style="border-top:1px solid var(--line);padding:8px 0"><summary style="cursor:pointer;display:flex;justify-content:space-between;gap:10px;align-items:center"><b style="font-size:14px">${esc(DSH_SOON[k]||k)}</b><span class="badge" style="background:#2F66FF22;color:#2F66FF">${list.length}</span></summary>
+    ${list.length?`<div style="margin:6px 0"><button class="btn btn-ghost btn-sm" onclick="dshCopy(${esc(JSON.stringify(list.map(x=>x.email).join(', ')))},this)"><i data-lucide="copy"></i> نسخ الإيميلات</button></div>
+    <table class="hr-table" style="width:100%"><tbody>${list.slice(0,200).map(x=>`<tr><td>${esc(x.name||'—')}</td><td dir="ltr" style="font-size:12px">${esc(x.email)}</td><td style="font-size:12px;color:var(--muted)">${esc(x.source||'')}</td><td style="font-size:12px">${dshDate(x.created_at)}</td></tr>`).join('')}</tbody></table>`:'<p style="font-size:12px;color:var(--muted);margin:6px 0">ما سجّل أحد بعد</p>'}</details>`).join('');
+  return `<div class="card" style="margin-bottom:20px;overflow:auto">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px">
+      <h2 style="margin:0;font-size:17px"><i data-lucide="bell"></i> «قريباً» — مهتمّون ينتظرون (${DSH.soon.length})</h2>
+      <a class="btn btn-ghost btn-sm" href="https://ibrahimsaud.com/shop/#soon" target="_blank" rel="noopener"><i data-lucide="external-link"></i> الصفحة</a></div>
+    ${blocks}
+    <p style="font-size:12px;color:var(--muted);margin:8px 0 0">من سجّل إيميله في بطاقات «قريباً» بالمتجر. المنتجات والنصوص في <code dir="ltr">src/lib/shop.ts</code> (shopSoon)، والجدول <code dir="ltr">shop_interest</code>.</p></div>`;
+}
 const DSH_ASC_PROMO='https://appstoreconnect.apple.com/apps/6836200953/distribution/promo_codes/generate';
 function dshCodeFree(c){return !c.given_at&&new Date(c.expires_at).getTime()>Date.now()}
 function dshCodeMsg(name,code,exp){const first=String(name||'').trim().split(/\s+/)[0]||'';
@@ -274,6 +294,51 @@ async function dshRemindPreview(){
   try{const r=await fetch(DSH_REMIND_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY},body:JSON.stringify({action:'preview'})});
     const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||('HTTP '+r.status));alert('أُرسل الإيميلان لبريدك ✓ ('+d.to+')');}
   catch(e){alert('تعذّر: '+(e.message||e))}
+}
+
+/* ═══════════ سلسلة «قائمة تجهيز المسجد» + إعلان التحديث (دالّة shop-mail) ═══════════
+ * السلسلة: ٧ إيميلات يوماً بيوم لمن يأخذ الهديّة — مطفأة افتراضاً، وللمشتركين بعد التشغيل فقط، وتتوقّف لمن اشترى أو ألغى.
+ * إعلان التحديث: يُرسل بضغطتك فقط لكلّ مشتري المنتج (مرّة لكل إصدار)، والدالّة تتحقّق أنّ الجلسة جلسة المالك. */
+const DSH_MAIL_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop-mail';
+async function dshMailCall(body){
+  const {data}=await sb.auth.getSession();const tok=data&&data.session?data.session.access_token:'';
+  const r=await fetch(DSH_MAIL_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY,'x-user-token':tok},body:JSON.stringify(body)});
+  const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||('HTTP '+r.status));return d;
+}
+function dshSeqHTML(){
+  const q=DSH.seq;if(!q)return '';
+  const kit=DSH.kit||[];
+  return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:12px;padding:12px 14px;border-radius:14px;background:${q.enabled?'#E6F5EC':'var(--surface2,rgba(0,0,0,.04))'}">
+    <div><b>سلسلة إيميلات الهديّة (٧ أيّام): ${q.enabled?'<span style="color:#146C3A">مفعّلة</span>':'<span style="color:var(--muted)">مطفأة</span>'}</b>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">إيميل كلّ يوم لمن يأخذ «قائمة تجهيز المسجد»${q.enabled&&q.enabled_at?' من '+dshDate(q.enabled_at):''}: القائمة ← ٣ أخطاء ← القصّة ← الكتاب في الشاشة ← الصوت ← الأسئلة ← دعوة للشراء. تتوقّف لمن اشترى أو ألغى.</div></div>
+    <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="dshSeqPreview()" title="يرسل الإيميلات السبعة لبريدك أنت فقط"><i data-lucide="eye"></i> معاينة على بريدي</button>
+      <button class="btn ${q.enabled?'btn-ghost':'btn-primary'} btn-sm" onclick="dshSeqToggle()">${q.enabled?'أطفئها':'شغّلها'}</button></div></div>`;
+}
+async function dshSeqToggle(){
+  const q=DSH.seq||{};const on=!q.enabled;
+  if(on&&!confirm('تشغيل سلسلة إيميلات الهديّة؟\nمن يأخذ «قائمة تجهيز المسجد» من الآن يوصله إيميل كلّ يوم لسبعة أيّام.\nاللي أخذوها قبل الآن ما يوصلهم شيء.'))return;
+  if(!on&&!confirm('إطفاء السلسلة؟'))return;
+  const v={...q,enabled:on,enabled_at:on?new Date().toISOString():q.enabled_at};
+  const {error}=await sb.from('shop_settings').update({value:v,updated_at:new Date().toISOString()}).eq('key','kit_sequence');
+  if(error){alert('تعذّر: '+error.message);return}DSH.seq=v;renderDShop();
+}
+async function dshSeqPreview(){try{const d=await dshMailCall({action:'seq-preview'});alert('أُرسلت '+d.count+' إيميلات لبريدك ✓')}catch(e){alert('تعذّر: '+(e.message||e))}}
+function dshUpdHTML(p,paid){
+  const base=s=>String(s||'').split('@')[0];
+  const n=new Set(paid.filter(o=>base(o.sku).startsWith(p.sku)&&!o.hold).map(o=>String(o.buyer_email).toLowerCase())).size;
+  const last=((DSH.upd&&DSH.upd.sent)||[]).filter(x=>x.sku===p.sku).slice(-1)[0];
+  const done=last&&last.version===p.version;
+  return `<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:0 0 10px">
+    <button class="btn btn-ghost btn-sm" ${p.version?'':'disabled'} onclick="dshUpdPreview('${esc(p.sku)}')" title="يرسل إعلان التحديث لبريدك أنت فقط"><i data-lucide="eye"></i> معاينة الإعلان</button>
+    <button class="btn ${done?'btn-ghost':'btn-primary'} btn-sm" ${p.version&&n?'':'disabled'} onclick="dshUpdSend('${esc(p.sku)}',${n})"><i data-lucide="megaphone"></i> أعلن التحديث للمشترين (${n})</button>
+    <span style="font-size:12px;color:var(--muted)">${last?`آخر إعلان: ${esc(last.version)} لـ${last.count} · ${dshDate(last.at)}`:(p.version?'':'اكتب رقم الإصدار أوّلاً')}</span></div>`;
+}
+async function dshUpdPreview(sku){try{await dshMailCall({action:'update-preview',sku});alert('أُرسلت المعاينة لبريدك ✓')}catch(e){alert('تعذّر: '+(e.message||e))}}
+async function dshUpdSend(sku,n){
+  const p=(DSH.products||[]).find(x=>x.sku===sku);if(!p)return;
+  if(!confirm('نرسل إعلان التحديث '+p.version+' لـ'+n+' مشترٍ؟\nفيه «وش الجديد» ورابط «حسابي». لا يمكن التراجع بعد الإرسال.'))return;
+  try{const d=await dshMailCall({action:'update-send',sku});alert('أُرسل لـ'+d.count+' ✓'+(d.failed?' — تعذّر '+d.failed:''));dshLoad(true)}
+  catch(e){if(/من قبل/.test(e.message||'')){if(confirm((e.message||'')+'\nترسله مرّة ثانية؟')){try{const d=await dshMailCall({action:'update-send',sku,force:true});alert('أُرسل لـ'+d.count+' ✓');dshLoad(true)}catch(e2){alert('تعذّر: '+(e2.message||e2))}}}else alert('تعذّر: '+(e.message||e))}
 }
 
 // من تابعتهم (محلّيّاً في هذا المتصفّح — تذكير لك فقط، لا يُرسل شيئاً)
