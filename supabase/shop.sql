@@ -136,3 +136,23 @@ revoke all on public.shop_logins from anon, authenticated;
 -- رقم الإصدار و«وش الجديد» (٢٠٢٦-١١-٢٣) — يظهران في «حسابي» ويُعدّلان من لوحة المتجر
 alter table public.shop_products add column if not exists version text;
 alter table public.shop_products add column if not exists changelog text;
+
+-- زيارات الموقع (٢٠٢٦-١١-٢٣): بلا IP — الكتابة عبر track_view فقط، والقراءة للمالك
+create table if not exists public.site_views (id bigserial primary key, at timestamptz not null default now(), path text not null, ref text, utm text, vid text);
+create index if not exists site_views_at on public.site_views (at desc);
+create index if not exists site_views_path on public.site_views (path, at desc);
+alter table public.site_views enable row level security;
+revoke all on public.site_views from anon, authenticated;
+grant select on public.site_views to authenticated;
+drop policy if exists site_views_owner_read on public.site_views;
+create policy site_views_owner_read on public.site_views for select to authenticated using ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com');
+create or replace function public.track_view(p_path text, p_ref text default null, p_utm text default null, p_vid text default null)
+returns void language plpgsql security definer set search_path = public as $$
+begin
+  if p_path is null or length(p_path) > 200 or p_path !~ '^/' then return; end if;
+  insert into public.site_views(path, ref, utm, vid) values (p_path, nullif(left(coalesce(p_ref,''),120),''), nullif(left(coalesce(p_utm,''),60),''), nullif(left(coalesce(p_vid,''),40),''));
+end $$;
+revoke all on function public.track_view(text,text,text,text) from public;
+grant execute on function public.track_view(text,text,text,text) to anon, authenticated;
+-- رقم واتساب اختياريّ لمن يأخذ الهديّة المجّانيّة
+alter table public.subscribers add column if not exists phone text;

@@ -3,6 +3,7 @@
 // غلاف الموقع الجديد: يضيف .js (فتختفي العناصر قبل ظهورها فقط إذا اشتغل الجافاسكربت)
 // ويُظهر كلّ [data-rise] عند دخوله الشاشة.
 import { useEffect, useRef } from "react";
+import { trackView } from "@/lib/track";
 
 export default function Shell({ children, dir = "rtl", lang }: { children: React.ReactNode; dir?: "rtl" | "ltr"; lang?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -10,6 +11,7 @@ export default function Shell({ children, dir = "rtl", lang }: { children: React
     const root = ref.current;
     if (!root) return;
     root.classList.add("js");
+    trackView();
     const els = [...root.querySelectorAll<HTMLElement>("[data-rise]")];
     const obs = new IntersectionObserver(
       (entries) => entries.forEach((e) => {

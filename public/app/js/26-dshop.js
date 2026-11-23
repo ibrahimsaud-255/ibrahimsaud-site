@@ -5,20 +5,22 @@
  * الإجراءات الحسّاسة (رابط الطلب للمشتري) عبر الدالّة الحافّة «shop» (action=recover).
  * البادئة dsh — تعريفات فقط (لا تنفيذ عند التحميل). الدليل: docs/المتجر-الرقمي.md
  */
-let DSH={orders:null,products:null,dl:null,err:null,loading:false,filter:'paid',q:''};
+let DSH={orders:null,products:null,dl:null,views:null,err:null,loading:false,filter:'paid',q:''};
 const DSH_ST={paid:['مدفوع','#22c55e'],pending:['بانتظار الدفع','#f59e0b'],failed:['فشل','#ef4444'],cancelled:['أُلغي','#64748b']};
 const DSH_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop';
 
 async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
-    const [o,p,d]=await Promise.all([
+    const [o,p,d,k,v]=await Promise.all([
       sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at').order('created_at',{ascending:false}).limit(1000),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
+      sb.from('subscribers').select('email,name,phone,created_at').eq('source','lb-kit').order('created_at',{ascending:false}).limit(1000),
+      sb.from('site_views').select('path,utm,ref,vid,at').gte('at',new Date(Date.now()-30*864e5).toISOString()).order('at',{ascending:false}).limit(20000),
     ]);
     if(o.error)throw o.error;if(p.error)throw p.error;
-    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);
+    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;
   }catch(e){DSH.err=(e&&e.message)||'تعذّر الاتصال'}
   DSH.loading=false;if(CUR==='dshop')renderDShop();
 }
@@ -64,6 +66,37 @@ function renderDShop(){
       <td style="white-space:nowrap">${wa?`<a class="btn btn-primary btn-sm" href="${wa}" target="_blank" rel="noopener" onclick="dshMarkFollowed('${esc(o.buyer_email)}')" title="يفتح واتساب برسالة جاهزة — أنت ترسلها"><i data-lucide="message-circle"></i> تابِع</a>`:'<span style="font-size:12px;color:var(--muted)">بلا جوال</span>'}
         <a class="btn btn-ghost btn-sm" href="mailto:${esc(o.buyer_email)}?subject=${encodeURIComponent('طلبك: '+o.title)}&body=${encodeURIComponent(dshFollowText(o))}" onclick="dshMarkFollowed('${esc(o.buyer_email)}')" title="إيميل جاهز"><i data-lucide="mail"></i></a>
         ${done?`<span style="font-size:11px;color:var(--muted)">تابعته ${dshDate(done).split(' · ')[0]}</span>`:''}</td></tr>`}).join('');
+  // الزيارات (آخر ٣٠ يوماً) لصفحات البرنامج بكل لغاته ← فتحوا الدفع ← اشتروا، ومن وين جوا
+  let traffic='';
+  if(DSH.views){
+    const since=Date.now()-30*864e5;const isLB=x=>/lessons-broadcast/.test(x.path);
+    const lb=DSH.views.filter(isLB),uv=new Set(lb.map(x=>x.vid||x.at)).size;
+    const o30=O.filter(o=>new Date(o.created_at).getTime()>=since&&/^lessons-broadcast/.test(o.sku||''));
+    const e30={};o30.forEach(o=>{const e=String(o.buyer_email||'').toLowerCase();(e30[e]=e30[e]||[]).push(o)});
+    const st30=Object.keys(e30).length,b30=Object.values(e30).filter(a=>a.some(o=>o.status==='paid')).length;
+    const src={};lb.forEach(x=>{const k=x.utm||(x.ref?x.ref.replace(/^www\./,''):'مباشر / بلا مصدر');src[k]=(src[k]||0)+1});
+    const top=Object.entries(src).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const pct=(a,b)=>b?Math.round(a*1000/b)/10+'٪':'—';
+    const allPages={};DSH.views.forEach(x=>{allPages[x.path]=(allPages[x.path]||0)+1});
+    const topPages=Object.entries(allPages).sort((a,b)=>b[1]-a[1]).slice(0,5);
+    traffic=`<div class="card" style="margin-bottom:20px">
+      <h2 style="margin:0 0 10px;font-size:17px"><i data-lucide="activity"></i> صفحة بث الدروس — آخر ٣٠ يوماً</h2>
+      ${lb.length?`<div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-end">
+        <div><div style="font-size:24px;font-weight:800">${uv}</div><div style="font-size:12px;color:var(--muted)">زائر</div></div>
+        <div style="color:var(--muted)">←</div>
+        <div><div style="font-size:24px;font-weight:800">${st30}</div><div style="font-size:12px;color:var(--muted)">فتحوا الدفع (${pct(st30,uv)})</div></div>
+        <div style="color:var(--muted)">←</div>
+        <div><div style="font-size:24px;font-weight:800">${b30}</div><div style="font-size:12px;color:var(--muted)">اشتروا (${pct(b30,uv)} من الزوّار)</div></div>
+        ${DSH.kit?`<div style="border-inline-start:1px solid var(--line);padding-inline-start:18px"><div style="font-size:24px;font-weight:800">${DSH.kit.length}</div><div style="font-size:12px;color:var(--muted)">أخذوا القائمة المجّانيّة</div></div>`:''}
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:14px">
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px">من وين جوا</div>${top.map(([k,n])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span dir="auto">${esc(k)}</span><b>${n}</b></div>`).join('')}</div>
+        <div><div style="font-size:12px;color:var(--muted);margin-bottom:6px">أكثر صفحات الموقع زيارة</div>${topPages.map(([k,n])=>`<div style="display:flex;justify-content:space-between;font-size:13px;padding:3px 0"><span dir="ltr">${esc(k)}</span><b>${n}</b></div>`).join('')}</div>
+      </div>`:`<p style="color:var(--muted);font-size:14px;margin:0">العدّ بدأ ٢٣ نوفمبر ٢٠٢٦ — الأرقام تظهر هنا مع أوّل الزيارات.</p>`}
+      ${DSH.kit&&DSH.kit.length?`<details style="margin-top:12px"><summary style="cursor:pointer;font-size:13px;font-weight:700">أخذوا «قائمة تجهيز المسجد» (${DSH.kit.length})</summary>
+        <table class="hr-table" style="width:100%;margin-top:6px"><tbody>${DSH.kit.slice(0,100).map(x=>{const wa=dshPhoneWa(x.phone);return `<tr><td>${esc(x.name||'—')}</td><td dir="ltr" style="font-size:12px">${esc(x.email)}</td><td style="font-size:12px">${dshDate(x.created_at)}</td><td>${wa?`<a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener"><i data-lucide="message-circle"></i></a>`:''}</td></tr>`}).join('')}</tbody></table></details>`:''}
+      <p style="font-size:12px;color:var(--muted);margin:10px 0 0">صفحة الهديّة المجّانيّة: <code dir="ltr">ibrahimsaud.com/lessons-broadcast/kit/</code> · رابط البايو في تيك توك: <code dir="ltr">ibrahimsaud.com/lessons-broadcast/?utm_source=tiktok</code> — عشان تنحسب زيارات تيك توك باسمها (متصفّح تيك توك يخفي المصدر).</p></div>`;
+  }
   const pill=(k,l,n)=>`<button class="btn btn-sm ${DSH.filter===k?'btn-primary':'btn-ghost'}" onclick="DSH.filter='${k}';renderDShop()">${l} <span style="opacity:.7">${n}</span></button>`;
 
   const base=s=>String(s||'').split('@')[0];
@@ -120,6 +153,7 @@ function renderDShop(){
       <div class="stat"><span class="ic"><i data-lucide="shopping-cart"></i></span><div class="v">${abandoned.length}</div><div class="l">ما كمّلوا الدفع</div></div>
       <div class="stat"><span class="ic"><i data-lucide="mail-warning"></i></span><div class="v" style="${noMail?'color:#b45309':''}">${noMail}</div><div class="l">مشترٍ ما وصله إيميل الطلب</div></div>
     </div>
+    ${traffic}
     ${abandoned.length?`<div class="card" style="margin-bottom:20px;overflow:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <h2 style="margin:0;font-size:17px"><i data-lucide="shopping-cart"></i> بدأوا الدفع وما كمّلوا</h2>
