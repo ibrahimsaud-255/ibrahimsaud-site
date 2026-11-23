@@ -5,22 +5,23 @@
  * الإجراءات الحسّاسة (رابط الطلب للمشتري) عبر الدالّة الحافّة «shop» (action=recover).
  * البادئة dsh — تعريفات فقط (لا تنفيذ عند التحميل). الدليل: docs/المتجر-الرقمي.md
  */
-let DSH={orders:null,products:null,dl:null,views:null,err:null,loading:false,filter:'paid',q:''};
+let DSH={orders:null,products:null,dl:null,views:null,codes:null,kit:null,err:null,loading:false,filter:'paid',q:''};
 const DSH_ST={paid:['مدفوع','#22c55e'],pending:['بانتظار الدفع','#f59e0b'],failed:['فشل','#ef4444'],cancelled:['أُلغي','#64748b']};
 const DSH_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop';
 
 async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
-    const [o,p,d,k,v]=await Promise.all([
+    const [o,p,d,k,v,ic]=await Promise.all([
       sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at').order('created_at',{ascending:false}).limit(1000),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
       sb.from('subscribers').select('email,name,phone,created_at').eq('source','lb-kit').order('created_at',{ascending:false}).limit(1000),
       sb.from('site_views').select('path,utm,ref,vid,at').gte('at',new Date(Date.now()-30*864e5).toISOString()).order('at',{ascending:false}).limit(20000),
+      sb.from('ios_promo_codes').select('*').order('created_at',{ascending:true}),
     ]);
     if(o.error)throw o.error;if(p.error)throw p.error;
-    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;
+    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;DSH.codes=ic&&!ic.error?(ic.data||[]):null;
   }catch(e){DSH.err=(e&&e.message)||'تعذّر الاتصال'}
   DSH.loading=false;if(CUR==='dshop')renderDShop();
 }
@@ -135,7 +136,8 @@ function renderDShop(){
       <td style="text-align:center">${dlBy[o.id]||0}</td><td style="text-align:center">${(o.trusted_devices||[]).length}/5</td>
       <td style="white-space:nowrap">
         ${o.status==='paid'?`<button class="btn btn-ghost btn-sm" title="يرسل للمشتري رابط طلبه من جديد" onclick="dshResend('${esc(o.buyer_email)}')"><i data-lucide="send"></i></button>
-        <button class="btn btn-ghost btn-sm" title="يمسح الأجهزة الموثّقة — أوّل جهاز يفتح الطلب يُوثَّق" onclick="dshResetDevices('${o.id}')"><i data-lucide="smartphone"></i></button>`:''}
+        <button class="btn btn-ghost btn-sm" title="يمسح الأجهزة الموثّقة — أوّل جهاز يفتح الطلب يُوثَّق" onclick="dshResetDevices('${o.id}')"><i data-lucide="smartphone"></i></button>
+        ${(DSH.codes||[]).some(c=>c.given_email===String(o.buyer_email).toLowerCase())?`<span class="badge" style="background:#2F66FF22;color:#2F66FF" title="أُعطي كود آيفون">🎁</span>`:`<button class="btn btn-ghost btn-sm" title="أهدِه كود تطبيق الآيفون (هديّة — لا يُربط بالشراء)" onclick="dshGiftCode('${o.id}')">🎁</button>`}`:''}
         ${wa?`<a class="btn btn-ghost btn-sm" href="${wa}" target="_blank" rel="noopener" title="واتساب"><i data-lucide="message-circle"></i></a>`:''}
         <a class="btn btn-ghost btn-sm" href="mailto:${esc(o.buyer_email)}" title="إيميل"><i data-lucide="mail"></i></a></td></tr>`;
   }).join('');
@@ -154,6 +156,7 @@ function renderDShop(){
       <div class="stat"><span class="ic"><i data-lucide="mail-warning"></i></span><div class="v" style="${noMail?'color:#b45309':''}">${noMail}</div><div class="l">مشترٍ ما وصله إيميل الطلب</div></div>
     </div>
     ${traffic}
+    ${dshCodesHTML()}
     ${abandoned.length?`<div class="card" style="margin-bottom:20px;overflow:auto">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <h2 style="margin:0;font-size:17px"><i data-lucide="shopping-cart"></i> بدأوا الدفع وما كمّلوا</h2>
@@ -174,6 +177,73 @@ function renderDShop(){
 }
 const DSH_CC={SA:'السعودية',AE:'الإمارات',KW:'الكويت',QA:'قطر',BH:'البحرين',OM:'عُمان',EG:'مصر',MA:'المغرب',DZ:'الجزائر',TN:'تونس',LY:'ليبيا',JO:'الأردن',LB:'لبنان',IQ:'العراق',PS:'فلسطين',SY:'سوريا',YE:'اليمن',SD:'السودان',MR:'موريتانيا',SO:'الصومال',DJ:'جيبوتي',KM:'جزر القمر',TD:'تشاد',SS:'جنوب السودان',ER:'إريتريا',NE:'النيجر',ML:'مالي',SN:'السنغال',GM:'غامبيا',GN:'غينيا',BF:'بوركينا فاسو',ET:'إثيوبيا',KE:'كينيا',TZ:'تنزانيا',NG:'نيجيريا',AF:'أفغانستان',PK:'باكستان',BD:'بنغلاديش',IN:'الهند',ID:'إندونيسيا',MY:'ماليزيا',TR:'تركيا',MV:'المالديف',KZ:'كازاخستان',UZ:'أوزبكستان',KG:'قرغيزستان',TJ:'طاجيكستان',TM:'تركمانستان',AZ:'أذربيجان',BA:'البوسنة',AL:'ألبانيا',XK:'كوسوفو'};
 function dshFlag(c){c=String(c||'').toUpperCase();if(!/^[A-Z]{2}$/.test(c))return '';return String.fromCodePoint(...[...c].map(x=>0x1F1A5+x.charCodeAt(0)))+' '+(DSH_CC[c]||c)}
+/* ═══════════ أكواد الآيفون (App Store Promo Codes) ═══════════
+ * هديّة فقط: شروط آبل تمنع بيعها أو أخذ أيّ مقابل عنها — لا تُكتب «مع الشراء» في أيّ مكان.
+ * الكود ينتهي ١١:٥٩ م بتوقيت المحيط الهادئ بعد ٢٨ يوماً من طلبه (أقصى مدّة عند آبل)، ١٠٠ كود لكل إصدار.
+ * الجدول ios_promo_codes للمالك فقط. توليد جديد: App Store Connect ← Promo Codes، ثمّ الصقها هنا. */
+const DSH_ASC_PROMO='https://appstoreconnect.apple.com/apps/6836200953/distribution/promo_codes/generate';
+function dshCodeFree(c){return !c.given_at&&new Date(c.expires_at).getTime()>Date.now()}
+function dshCodeMsg(name,code,exp){const first=String(name||'').trim().split(/\s+/)[0]||'';
+  return `السلام عليكم ${first} 🎁\nهديّة منّي: كود تطبيق «بث الدروس العلمية» على الآيفون والآيباد:\n${code}\n\nطريقة الاستخدام: افتح App Store ← صورتك أعلى الشاشة ← «استرداد بطاقة هدايا أو رمز» ← الصق الكود.\nأو اضغط هنا: https://apps.apple.com/redeem?code=${code}\n\nالكود صالح حتى ${new Date(exp).toLocaleDateString('ar-SA-u-ca-gregory',{day:'numeric',month:'long'})}.`}
+function dshCodesHTML(){
+  if(!DSH.codes)return '';
+  const C=DSH.codes,free=C.filter(dshCodeFree),given=C.filter(c=>c.given_at),expired=C.filter(c=>!c.given_at&&!dshCodeFree(c));
+  const nextExp=free.length?free.map(c=>c.expires_at).sort()[0]:null;
+  const days=nextExp?Math.max(0,Math.ceil((new Date(nextExp)-Date.now())/864e5)):0;
+  return `<div class="card" style="margin-bottom:20px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+      <h2 style="margin:0;font-size:17px">🎁 أكواد تطبيق الآيفون</h2>
+      <div style="display:flex;gap:6px;flex-wrap:wrap"><a class="btn btn-ghost btn-sm" href="${DSH_ASC_PROMO}" target="_blank" rel="noopener"><i data-lucide="external-link"></i> ولّد أكواد جديدة</a>
+      <button class="btn btn-ghost btn-sm" onclick="dshImportCodes()"><i data-lucide="clipboard-paste"></i> الصق أكواداً</button></div></div>
+    <div style="display:flex;gap:22px;margin:12px 0;flex-wrap:wrap">
+      <div><div style="font-size:24px;font-weight:800">${free.length}</div><div style="font-size:12px;color:var(--muted)">متاح</div></div>
+      <div><div style="font-size:24px;font-weight:800">${given.length}</div><div style="font-size:12px;color:var(--muted)">أُهدي</div></div>
+      ${nextExp?`<div><div style="font-size:24px;font-weight:800;${days<=5?'color:#b45309':''}">${days} يوم</div><div style="font-size:12px;color:var(--muted)">باقي على انتهاء المتاح</div></div>`:''}
+      ${expired.length?`<div><div style="font-size:24px;font-weight:800;color:var(--muted)">${expired.length}</div><div style="font-size:12px;color:var(--muted)">انتهى بلا استخدام</div></div>`:''}
+    </div>
+    ${free.length?`<div style="display:flex;flex-wrap:wrap;gap:8px">${free.map(c=>`<span style="display:inline-flex;align-items:center;gap:6px;padding:6px 8px 6px 12px;border:1px solid var(--line);border-radius:12px;font-family:ui-monospace,Menlo,monospace;font-size:13px" dir="ltr">${esc(c.code)}
+      <button class="btn btn-ghost btn-sm" style="padding:2px 6px" title="انسخ الكود" onclick="dshCopy('${esc(c.code)}',this)"><i data-lucide="copy"></i></button>
+      <button class="btn btn-ghost btn-sm" style="padding:2px 6px" title="سجّل لمين أعطيته" onclick="dshGiveManual('${esc(c.code)}')"><i data-lucide="user-plus"></i></button></span>`).join('')}</div>`:'<p style="color:var(--muted);font-size:14px;margin:0">ما فيه أكواد متاحة — ولّد أكواداً من App Store Connect والصقها هنا.</p>'}
+    ${given.length?`<details style="margin-top:12px"><summary style="cursor:pointer;font-size:13px;font-weight:700">أُهديت (${given.length})</summary>
+      <table class="hr-table" style="width:100%;margin-top:6px"><tbody>${given.slice().sort((a,b)=>new Date(b.given_at)-new Date(a.given_at)).map(c=>`<tr><td dir="ltr" style="font-family:ui-monospace,Menlo,monospace;font-size:12px">${esc(c.code)}</td><td>${esc(c.given_to||'—')}<div style="font-size:12px;color:var(--muted)" dir="ltr">${esc(c.given_email||'')}</div></td><td style="font-size:12px">${dshDate(c.given_at)}</td></tr>`).join('')}</tbody></table></details>`:''}
+    <p style="font-size:12px;color:var(--muted);margin:10px 0 0">هديّة فقط — شروط آبل تمنع بيع الأكواد أو ربطها بالشراء. الكود ينتهي بعد ٢٨ يوماً من توليده (أقصى مدّة عند آبل). زرّ 🎁 بجانب أيّ مشترٍ تحت يعطيه كوداً ويفتح واتساب برسالة جاهزة.</p></div>`;
+}
+function dshCopy(t,btn){try{navigator.clipboard.writeText(t);if(btn){const h=btn.innerHTML;btn.textContent='✓';setTimeout(()=>{btn.innerHTML=h;refreshIcons()},1200)}}catch(e){prompt('انسخ:',t)}}
+async function dshMarkGiven(code,name,email,note){
+  const now=new Date().toISOString();
+  const {data,error}=await sb.from('ios_promo_codes').update({given_to:name||null,given_email:(email||'').toLowerCase()||null,given_at:now,note:note||null}).eq('code',code).is('given_at',null).select('code');
+  if(error){alert('تعذّر: '+error.message);return false}
+  if(!data||!data.length){alert('الكود هذا أُعطي من قبل — حدّث الصفحة');return false}
+  const c=DSH.codes.find(x=>x.code===code);if(c)Object.assign(c,{given_to:name,given_email:(email||'').toLowerCase(),given_at:now});return true;
+}
+async function dshGiftCode(orderId){
+  const o=(DSH.orders||[]).find(x=>x.id===orderId);if(!o)return;
+  const c=(DSH.codes||[]).filter(dshCodeFree).sort((a,b)=>a.expires_at<b.expires_at?-1:1)[0];
+  if(!c){alert('ما فيه أكواد متاحة — ولّد أكواداً من App Store Connect والصقها في «أكواد تطبيق الآيفون».');return}
+  if(!confirm('نهدي '+o.buyer_name+' كود تطبيق الآيفون '+c.code+'؟\n(هديّة — لا تكتب إنّه جزء من الشراء)'))return;
+  if(!await dshMarkGiven(c.code,o.buyer_name,o.buyer_email,'order '+o.id.slice(0,8)))return;
+  const msg=dshCodeMsg(o.buyer_name,c.code,c.expires_at);dshCopy(msg);
+  const wa=dshPhoneWa(o.buyer_phone,o.buyer_country||o.ip_country,msg);
+  if(wa)window.open(wa,'_blank','noopener');else alert('نُسخت الرسالة — ما عنده جوال، أرسلها له على '+o.buyer_email);
+  renderDShop();
+}
+async function dshGiveManual(code){
+  const name=prompt('لمين أعطيت الكود '+code+'؟ (الاسم)');if(name===null)return;
+  const email=prompt('بريده (اختياريّ):','')||'';
+  const c=DSH.codes.find(x=>x.code===code);
+  if(await dshMarkGiven(code,name.trim(),email.trim(),'manual')){dshCopy(dshCodeMsg(name,code,c?c.expires_at:Date.now()+28*864e5));alert('سُجّل ✓ ونُسخت رسالة جاهزة فيها الكود');renderDShop()}
+}
+async function dshImportCodes(){
+  const t=prompt('الصق الأكواد الجديدة من App Store Connect (كلّ كود في سطر أو بينها مسافات):','');if(!t)return;
+  const codes=[...new Set((t.toUpperCase().match(/\b[A-Z0-9]{10,14}\b/g)||[]))];if(!codes.length){alert('ما لقيت أكواداً');return}
+  const ver=prompt('إصدار التطبيق اللي ولّدت له الأكواد:','1.0')||null;
+  // آبل: ١١:٥٩ م بتوقيت المحيط الهادئ بعد ٢٨ يوماً ≈ ٠٧:٥٩ UTC من اليوم التالي
+  const e=new Date();e.setUTCDate(e.getUTCDate()+29);e.setUTCHours(7,59,0,0);
+  const {error}=await sb.from('ios_promo_codes').upsert(codes.map(code=>({code,version:ver,expires_at:e.toISOString()})),{onConflict:'code',ignoreDuplicates:true});
+  if(error){alert('تعذّر الحفظ: '+error.message);return}
+  alert('أُضيف '+codes.length+' كود ✓');dshLoad(true);
+}
+
 // من تابعتهم (محلّيّاً في هذا المتصفّح — تذكير لك فقط، لا يُرسل شيئاً)
 function dshFollowed(){try{return JSON.parse(localStorage.getItem('dsh-followed')||'{}')}catch(_){return {}}}
 function dshMarkFollowed(email){try{const f=dshFollowed();f[email]=new Date().toISOString();localStorage.setItem('dsh-followed',JSON.stringify(f))}catch(_){}setTimeout(renderDShop,400)}

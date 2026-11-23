@@ -156,3 +156,13 @@ revoke all on function public.track_view(text,text,text,text) from public;
 grant execute on function public.track_view(text,text,text,text) to anon, authenticated;
 -- رقم واتساب اختياريّ لمن يأخذ الهديّة المجّانيّة
 alter table public.subscribers add column if not exists phone text;
+
+-- أكواد App Store الترويجيّة لتطبيق الآيفون (٢٠٢٦-١١-٢٣) — هديّة فقط (شروط آبل)، للمالك فقط
+create table if not exists public.ios_promo_codes (code text primary key, app text not null default 'lessons-broadcast', version text,
+  created_at timestamptz not null default now(), expires_at timestamptz not null, given_to text, given_email text, given_at timestamptz, note text);
+alter table public.ios_promo_codes enable row level security;
+revoke all on public.ios_promo_codes from anon;
+drop policy if exists ios_promo_codes_owner on public.ios_promo_codes;
+create policy ios_promo_codes_owner on public.ios_promo_codes for all to authenticated
+  using ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com') with check ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com');
+grant select, insert, update, delete on public.ios_promo_codes to authenticated;
