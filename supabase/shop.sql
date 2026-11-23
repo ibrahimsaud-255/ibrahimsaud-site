@@ -119,3 +119,16 @@ insert into public.shop_products (sku, slug, title, price_sar, active, files, ma
   ('ai-idea-to-launch', 'ai-idea-to-launch', 'من الفكرة للنشر بالذكاء الاصطناعي — دفعة التأسيس', 399, false,
    '[]'::jsonb, 10, 2)
 on conflict (sku) do nothing;
+
+-- ── «حسابي» (٢٠٢٦-١١-٢٣): رموز الدخول بالبريد — الدالّة shop وحدها (RLS بلا سياسات) ──
+create table if not exists public.shop_logins (
+  email text primary key,
+  otp_hash text,
+  otp_expires timestamptz,
+  otp_attempts int not null default 0,
+  otp_sent_at timestamptz,
+  last_login_at timestamptz,
+  created_at timestamptz not null default now()
+);
+alter table public.shop_logins enable row level security;
+revoke all on public.shop_logins from anon, authenticated;

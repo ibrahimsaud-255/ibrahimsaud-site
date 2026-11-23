@@ -88,6 +88,7 @@ export default function BuyPanel({ item }: { item: ShopItem }) {
           <ul className="trust">
             {T.trust.map((t) => <li key={t}>{t}</li>)}
           </ul>
+          {!foreign && <p className="owned">اشتريته قبل؟ <a className="v2-link" href="/account/" style={{ fontSize: 14 }}>نزّل آخر إصدار من حسابي</a></p>}
         </form>
       )}
     </div>

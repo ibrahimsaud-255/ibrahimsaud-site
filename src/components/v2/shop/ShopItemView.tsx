@@ -7,6 +7,7 @@ import Footer from "@/components/v2/Footer";
 import WindowLight from "@/components/v2/WindowLight";
 import ShopPrice from "@/components/v2/shop/ShopPrice";
 import BuyPanel from "@/components/v2/shop/BuyPanel";
+import StickyBuy from "@/components/v2/shop/StickyBuy";
 import { PlatformCards } from "@/components/v2/shop/Platforms";
 import type { ShopItem } from "@/lib/shop";
 import { shopT } from "@/lib/shopUi";
@@ -59,6 +60,14 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
           )}
         </section>
 
+        {i.proof && (
+          <section className="v2-shop-proof" aria-label="بالأرقام">
+            <div className="v2-wrap">
+              {i.proof.map((x) => <div key={x.l}><b>{x.n}</b><span>{x.l}</span></div>)}
+            </div>
+          </section>
+        )}
+
         {i.promo && (
           <section className="v2-sec alt" id="promo">
             <div className="v2-wrap v2-shop-promo">
@@ -76,6 +85,18 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
             <div className="v2-wrap">
               <h2 className="v2-title" style={{ textAlign: "center" }}>{T.onDevices}</h2>
               <PlatformCards item={i} />
+            </div>
+          </section>
+        )}
+
+        {i.contrast && (
+          <section className="v2-sec" id="contrast">
+            <div className="v2-wrap">
+              <h2 className="v2-title" style={{ textAlign: "center" }}>قبل البرنامج… وبعده</h2>
+              <div className="v2-shop-contrast">
+                <div className="before"><h3>اليوم</h3><ul>{i.contrast.before.map((t) => <li key={t}>{t}</li>)}</ul></div>
+                <div className="after"><h3>مع البرنامج</h3><ul>{i.contrast.after.map((t) => <li key={t}>{t}</li>)}</ul></div>
+              </div>
             </div>
           </section>
         )}
@@ -133,7 +154,13 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
         )}
 
         <section className="v2-sec alt">
-          <div className="v2-wrap">
+          <div className={`v2-wrap${i.stack ? " v2-shop-buyrow" : ""}`}>
+            {i.stack && (
+              <div className="v2-shop-stack">
+                <h2 className="v2-subtitle">{i.stack.title}</h2>
+                <ul>{i.stack.items.map((t) => <li key={t}>{t}</li>)}</ul>
+              </div>
+            )}
             <BuyPanel item={i} />
           </div>
         </section>
@@ -158,6 +185,7 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
           </div>
         </section>
       </main>
+      {!foreign && !i.presale && <StickyBuy item={i} label={T.buyNow} />}
       {foreign ? (
         <footer className="v2-shop-ru-foot">
           <div className="v2-wrap">

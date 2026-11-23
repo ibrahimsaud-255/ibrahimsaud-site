@@ -40,6 +40,7 @@ export default function Nav({ sticky = true }: { sticky?: boolean }) {
             </li>
           ))}
         </ul>
+        <a className="acct" href="/account/">حسابي</a>
         <a className="book" href={bookHref} target="_blank" rel="noopener">احجز مكالمة</a>
         <button type="button" className="burger" aria-label={open ? "إغلاق القائمة" : "القائمة"} aria-expanded={open} onClick={() => setOpen(!open)}>
           <span /><span />
@@ -47,6 +48,7 @@ export default function Nav({ sticky = true }: { sticky?: boolean }) {
       </div>
       <nav className="v2-mmenu" aria-label="القائمة" hidden={!open}>
         {navItems.map((it) => <a key={it.label} href={it.href} onClick={() => setOpen(false)}>{it.label}</a>)}
+        <a href="/account/" onClick={() => setOpen(false)}>حسابي — مشترياتك</a>
         <a href={bookHref} target="_blank" rel="noopener" className="small">احجز مكالمة ٢٠ دقيقة</a>
       </nav>
     </header>

@@ -40,6 +40,10 @@ export type ShopItem = {
   hidden?: boolean;        // لا يظهر في قائمة /shop/ (الصفحة تفتح برابطها فقط)
   publicPath?: string;     // صفحة عامّة معلَنة ومفهرسة لنفس المنتج (مثل /lessons-broadcast/)
   seo?: { title: string; paras: string[] };   // فقرة تعريفيّة بكلمات البحث (تظهر في الصفحة)
+  // ── أقسام صفحة البيع الموحّدة (docs/المنتجات-الرقمية-والقمع.md §٤) — كلّها حقائق عن المنتج، لا أرقام مخترعة ──
+  proof?: { n: string; l: string }[];                    // شريط أرقام تحت الواجهة
+  contrast?: { before: string[]; after: string[] };      // قبل ← بعد
+  stack?: { title: string; items: string[] };            // «كلّ هذا بدفعة واحدة» بجانب الشراء
 };
 
 // آيفون: تطبيق App Store (يُشترى هناك) — بطاقة رابط في صفحات النسخة العالميّة.
@@ -52,8 +56,42 @@ export const shopItems: ShopItem[] = [
     slug: "lessons-broadcast",
     name: "برنامج بث الدروس العلمية",
     kicker: "للجمعيّات والمساجد وطلّاب العلم والمعلّمين",
-    tagline: "درسك على الهواء باحتراف. بضغطة زر.",
+    tagline: "درسك القادم على الهواء، والشيخ والكتاب في الشاشة — بدون فريق تصوير.",
     publicPath: "/lessons-broadcast/",
+    proof: [
+      { n: "+٨٥٠٠", l: "كتاب من الشاملة داخله" },
+      { n: "٨", l: "مشاهد جاهزة" },
+      { n: "٣", l: "منصّات في نفس الوقت" },
+      { n: "٤", l: "أجهزة: ويندوز · ماك · أندرويد · آيفون" },
+    ],
+    contrast: {
+      before: [
+        "جوّال على حامل وصورة بعيدة",
+        "صدى وضوضاء في الصوت",
+        "الكتاب اللي يشرحه الشيخ ما يبان للمشاهد",
+        "مصوّر ومونتير كلّ أسبوع",
+        "البثّ على منصّة وحدة، والتسجيل شغل ثاني",
+      ],
+      after: [
+        "الشيخ والكتاب في الشاشة بمشاهد جاهزة",
+        "صوت نقيّ تلقائيّاً بلا إعدادات",
+        "صفحات الشاملة في الشاشة، وشريط ذهبيّ يمشي مع القراءة",
+        "شخص واحد يشغّله بضغطة",
+        "يوتيوب وفيسبوك وتيليجرام معاً، والدرس يتسجّل على جهازك",
+      ],
+    },
+    stack: {
+      title: "كلّ هذا بدفعة واحدة",
+      items: [
+        "البرنامج على ويندوز وماك وأندرويد",
+        "المكتبة الشاملة داخله: أكثر من ٨٥٠٠ كتاب",
+        "٨ مشاهد وتصاميم عربيّة إسلاميّة بألوان جهتك",
+        "بثّ لثلاث منصّات معاً + تسجيل Full HD أو 4K",
+        "التحديثات مجّاناً لنسختك من «حسابي»",
+        "حتى ٥ أجهزة لجهتك",
+        "مساعدة على واتساب لو احتجت أحد يضبطه معك",
+      ],
+    },
     sub: "برنامج عربيّ سهل يبثّ الدرس ويسجّله: المتحدّث والكتاب في الشاشة، المكتبة الشاملة داخله، وشعارات جهتك — على يوتيوب وفيسبوك وتيليجرام في نفس الوقت.",
     icon: "📡",
     iconImg: "/shop/lessons-broadcast/icon.png",
@@ -421,6 +459,22 @@ export function fmtSize(bytes: number): string {
 }
 
 /** نداء الدالّة الحافّة «shop». */
+/** «حسابي» (/account/): دالّة shop-account المستقلّة عن الدفع — دخول برمز البريد، مكتبة المشتريات، التنزيل. */
+export const ACCOUNT_FN = "https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop-account";
+export async function accountCall<T = Record<string, unknown>>(action: string, body: Record<string, unknown>): Promise<{ ok: boolean; status: number; data: T & { error?: string; relogin?: boolean } }> {
+  try {
+    const r = await fetch(ACCOUNT_FN, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: SUPA_KEY, Authorization: `Bearer ${SUPA_KEY}` },
+      body: JSON.stringify({ action, ...body }),
+    });
+    const data = await r.json().catch(() => ({ error: "ردّ غير متوقّع" }));
+    return { ok: r.ok, status: r.status, data };
+  } catch {
+    return { ok: false, status: 0, data: { error: "تعذّر الاتصال — تأكّد من الإنترنت وجرّب مرّة ثانية" } as T & { error?: string } };
+  }
+}
+
 export async function shopCall<T = Record<string, unknown>>(action: string, body: Record<string, unknown>): Promise<{ ok: boolean; status: number; data: T & { error?: string } }> {
   try {
     const r = await fetch(SHOP_FN, {

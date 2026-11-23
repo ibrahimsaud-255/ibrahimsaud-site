@@ -41,7 +41,8 @@ const SERVICE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 // مفتاح تلر لا يُحفظ هنا أصلاً.
 const PAY_PROXY = (Deno.env.get("PAY_PROXY_URL") || "https://huroofduroos.com/api/pay/digital").replace(/\/$/, "");
 const RESEND_KEY = Deno.env.get("RESEND_API_KEY") || "";
-const FROM = Deno.env.get("RESEND_FROM") || "إبراهيم سعود <onboarding@resend.dev>";
+// onboarding@resend.dev لا يرسل إلا لإيميل صاحب الحساب — كل إيميلات العملاء كانت تُرفض (403). الدومين موثّق في Resend.
+const FROM = Deno.env.get("RESEND_FROM") || "إبراهيم سعود <noreply@ibrahimsaud.com>";
 const SITE = (Deno.env.get("SHOP_SITE_URL") || "https://ibrahimsaud.com").replace(/\/$/, "");
 const SELF = `${SUPA_URL}/functions/v1/shop`;
 

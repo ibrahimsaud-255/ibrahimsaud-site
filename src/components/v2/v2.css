@@ -68,6 +68,8 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-gnav .items > li > a { font-size: 13.5px; color: rgba(0, 0, 0, .8); transition: color .2s; }
 .v2-gnav .items > li:hover > a { color: #000; }
 .v2-gnav .book { font-size: 13px; font-weight: 700; color: var(--blue); }
+.v2-gnav .acct { font-size: 13px; font-weight: 600; color: var(--fg); opacity: .8; margin-inline-end: 16px; }
+.v2-gnav .acct:hover { opacity: 1; }
 .v2-gnav .burger { display: none; width: 44px; height: 44px; margin-inline-start: auto; border: 0; background: none; position: relative; cursor: pointer; }
 .v2-gnav .burger span { position: absolute; inset-inline: 13px; height: 1.5px; background: var(--fg); transition: transform .35s var(--ease), top .35s var(--ease); }
 .v2-gnav .burger span:first-child { top: 18px; }
@@ -93,7 +95,7 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-mmenu a.small { font-size: 17px; color: var(--blue); margin-top: 18px; }
 @keyframes v2-in { from { opacity: 0; transform: translateY(-8px); } }
 @media (max-width: 833px) {
-  .v2-gnav .items, .v2-gnav .book { display: none; }
+  .v2-gnav .items, .v2-gnav .book, .v2-gnav .acct { display: none; }
   .v2-gnav .burger { display: block; }
 }
 
