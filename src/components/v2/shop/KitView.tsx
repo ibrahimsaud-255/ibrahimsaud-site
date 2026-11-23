@@ -60,7 +60,8 @@ export default function KitView() {
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
-    try { const q = new URLSearchParams(location.search); if (localStorage.getItem(OPENED) || q.get("demo") === "1" || q.get("k") === "1") setOpen(true); // k=1: رابط الإيميل الأوّل } catch { /* تخزين مقفل */ }
+    // k=1: رابط الإيميل الأوّل في السلسلة يفتح القائمة مباشرة
+    try { const q = new URLSearchParams(location.search); if (localStorage.getItem(OPENED) || q.get("demo") === "1" || q.get("k") === "1") setOpen(true); } catch { /* تخزين مقفل */ }
   }, []);
 
   async function submit(e: React.FormEvent) {
