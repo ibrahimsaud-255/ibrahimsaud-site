@@ -14,6 +14,8 @@ import BlogLinks from "@/components/v2/BlogLinks";
 import ServiceSchema from "@/components/v2/ServiceSchema";
 import SoftwareSchema from "@/components/v2/SoftwareSchema";
 import { charitiesPage as c } from "@/lib/charities";
+import { charitySales as cs } from "@/lib/charities-sales";
+import StickyCta from "@/components/v2/StickyCta";
 import { guides } from "@/lib/charity-guides";
 import { pkgs, waHref } from "@/lib/v2";
 
@@ -43,6 +45,24 @@ export default function CharitiesPage() {
               <a className="v2-btn v2-btn-ghost" href="#jawwali">جرّبه بدون تسجيل</a>
             </div>
             <p className="from">{c.from}</p>
+          </div>
+        </section>
+
+        {/* ===== شريط أرقام (القالب الموحّد) ===== */}
+        <section className="v2-shop-proof" aria-label="بالأرقام">
+          <div className="v2-wrap">
+            {cs.proof.map((x) => <div key={x.l}><b>{x.n}</b><span>{x.l}</span></div>)}
+          </div>
+        </section>
+
+        {/* ===== قبل ← بعد ===== */}
+        <section className="v2-sec" id="contrast">
+          <div className="v2-wrap">
+            <h2 className="v2-title" style={{ textAlign: "center" }}>{cs.contrast.title}</h2>
+            <div className="v2-shop-contrast">
+              <div className="before"><h3>اليوم</h3><ul>{cs.contrast.before.map((t) => <li key={t}>{t}</li>)}</ul></div>
+              <div className="after"><h3>مع النظام</h3><ul>{cs.contrast.after.map((t) => <li key={t}>{t}</li>)}</ul></div>
+            </div>
           </div>
         </section>
 
@@ -152,6 +172,7 @@ export default function CharitiesPage() {
           </div>
         </section>
       </main>
+      <StickyCta price={cs.sticky.price} cta={cs.sticky.cta} href={c.signup} />
       <Footer />
     </Shell>
   );
