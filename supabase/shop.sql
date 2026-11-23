@@ -166,3 +166,16 @@ drop policy if exists ios_promo_codes_owner on public.ios_promo_codes;
 create policy ios_promo_codes_owner on public.ios_promo_codes for all to authenticated
   using ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com') with check ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com');
 grant select, insert, update, delete on public.ios_promo_codes to authenticated;
+
+-- تذكير السلّة المتروكة (٢٠٢٦-١١-٢٣) — مطفأ افتراضاً؛ يُشغَّل من لوحة المتجر. الدالّة shop-remind والمهمّة shop-remind-hourly:
+--   select cron.schedule('shop-remind-hourly','17 * * * *',$$ select net.http_post(url:='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop-remind', headers:='{"Content-Type":"application/json"}'::jsonb, body:='{}'::jsonb); $$);
+create table if not exists public.shop_settings (key text primary key, value jsonb not null default '{}'::jsonb, updated_at timestamptz not null default now());
+alter table public.shop_settings enable row level security;
+revoke all on public.shop_settings from anon;
+drop policy if exists shop_settings_owner on public.shop_settings;
+create policy shop_settings_owner on public.shop_settings for all to authenticated
+  using ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com') with check ((auth.jwt() ->> 'email') = 'ibrahimsaud25@gmail.com');
+grant select, insert, update on public.shop_settings to authenticated;
+insert into public.shop_settings(key, value) values ('cart_reminders', '{"enabled": false, "first_hours": 3, "second_days": 3, "enabled_at": null}') on conflict (key) do nothing;
+alter table public.shop_orders add column if not exists remind1_at timestamptz;
+alter table public.shop_orders add column if not exists remind2_at timestamptz;

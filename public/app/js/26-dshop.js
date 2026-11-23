@@ -12,16 +12,17 @@ const DSH_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop';
 async function dshLoad(force){
   if(DSH.loading)return;DSH.loading=true;try{extAutoSync(!!force)}catch(e){}DSH.err=null;if(force&&CUR==='dshop')renderDShop();
   try{
-    const [o,p,d,k,v,ic]=await Promise.all([
-      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at').order('created_at',{ascending:false}).limit(1000),
+    const [o,p,d,k,v,ic,st]=await Promise.all([
+      sb.from('shop_orders').select('id,sku,title,amount,buyer_name,buyer_email,buyer_phone,status,trusted_devices,created_at,paid_at,buyer_country,ip_country,card_country,hold,pay_method,email_sent_at,remind1_at,remind2_at').order('created_at',{ascending:false}).limit(1000),
       sb.from('shop_products').select('*').order('sort'),
       sb.from('shop_downloads').select('order_id,file_id,at').order('at',{ascending:false}).limit(2000),
       sb.from('subscribers').select('email,name,phone,created_at').eq('source','lb-kit').order('created_at',{ascending:false}).limit(1000),
       sb.from('site_views').select('path,utm,ref,vid,at').gte('at',new Date(Date.now()-30*864e5).toISOString()).order('at',{ascending:false}).limit(20000),
       sb.from('ios_promo_codes').select('*').order('created_at',{ascending:true}),
+      sb.from('shop_settings').select('key,value').eq('key','cart_reminders'),
     ]);
     if(o.error)throw o.error;if(p.error)throw p.error;
-    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;DSH.codes=ic&&!ic.error?(ic.data||[]):null;
+    DSH.orders=o.data||[];DSH.products=p.data||[];DSH.dl=d.error?[]:(d.data||[]);DSH.views=v&&!v.error?(v.data||[]):null;DSH.kit=k&&!k.error?(k.data||[]):null;DSH.codes=ic&&!ic.error?(ic.data||[]):null;DSH.remind=st&&!st.error&&st.data&&st.data[0]?st.data[0].value:null;
   }catch(e){DSH.err=(e&&e.message)||'تعذّر الاتصال'}
   DSH.loading=false;if(CUR==='dshop')renderDShop();
 }
@@ -161,6 +162,7 @@ function renderDShop(){
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
         <h2 style="margin:0;font-size:17px"><i data-lucide="shopping-cart"></i> بدأوا الدفع وما كمّلوا</h2>
         <span style="font-size:12px;color:var(--muted)">«تابِع» يفتح واتساب برسالة جاهزة باسمه — أنت تقرأها وترسلها. واتساب للي دخل الدفع فقط.</span></div>
+      ${dshRemindHTML()}
       <table class="hr-table" style="width:100%"><thead><tr><th>الشخص</th><th>المبلغ</th><th>آخر محاولة</th><th></th></tr></thead><tbody>${abRows}</tbody></table>
       ${abandoned.length>12?`<button class="btn btn-ghost btn-sm" style="margin-top:8px" onclick="DSH.abAll=!DSH.abAll;renderDShop()">${DSH.abAll?'أقلّ':'الكلّ ('+abandoned.length+')'}</button>`:''}</div>`:''}
     <h2 style="margin:6px 0 10px;font-size:17px">المنتجات</h2>
@@ -242,6 +244,36 @@ async function dshImportCodes(){
   const {error}=await sb.from('ios_promo_codes').upsert(codes.map(code=>({code,version:ver,expires_at:e.toISOString()})),{onConflict:'code',ignoreDuplicates:true});
   if(error){alert('تعذّر الحفظ: '+error.message);return}
   alert('أُضيف '+codes.length+' كود ✓');dshLoad(true);
+}
+
+/* ═══════════ تذكير السلّة المتروكة (دالّة shop-remind + مهمّة shop-remind-hourly) ═══════════
+ * مطفأ افتراضاً. التشغيل يكتب enabled_at = الآن: يُذكَّر فقط من يفتح الدفع بعد التشغيل (لا رسائل للقديم).
+ * تذكيران كحدّ أقصى بالإيميل (بعد first_hours ساعات، وبعد second_days أيّام)، ولا واتساب آليّ. */
+const DSH_REMIND_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop-remind';
+function dshRemindHTML(){
+  const r=DSH.remind;if(!r)return '';
+  const O=DSH.orders||[];const r1=O.filter(o=>o.remind1_at),r2=O.filter(o=>o.remind2_at);
+  const remE=new Set([...r1,...r2].map(o=>String(o.buyer_email).toLowerCase()));
+  const back=new Set(O.filter(o=>o.status==='paid'&&remE.has(String(o.buyer_email).toLowerCase())).map(o=>String(o.buyer_email).toLowerCase())).size;
+  return `<div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 12px;padding:12px 14px;border-radius:14px;background:${r.enabled?'#E6F5EC':'var(--surface2,rgba(0,0,0,.04))'}">
+    <div><b>تذكير تلقائيّ بالإيميل: ${r.enabled?'<span style="color:#146C3A">مفعّل</span>':'<span style="color:var(--muted)">مطفأ</span>'}</b>
+      <div style="font-size:12px;color:var(--muted);margin-top:3px">إيميل بعد ${r.first_hours||3} ساعات، وآخر بعد ${r.second_days||3} أيّام — لمن فتح الدفع ولم يدفع${r.enabled&&r.enabled_at?' بعد '+dshDate(r.enabled_at):''}. بلا واتساب آليّ.${r1.length||r2.length?` · أُرسل: ${r1.length} أوّل، ${r2.length} أخير · رجعوا واشتروا: ${back}`:''}</div></div>
+    <div style="display:flex;gap:6px"><button class="btn btn-ghost btn-sm" onclick="dshRemindPreview()" title="يرسل الإيميلين لبريدك أنت فقط"><i data-lucide="eye"></i> معاينة على بريدي</button>
+      <button class="btn ${r.enabled?'btn-ghost':'btn-primary'} btn-sm" onclick="dshRemindToggle()">${r.enabled?'أطفئه':'شغّله'}</button></div></div>`;
+}
+async function dshRemindToggle(){
+  const r=DSH.remind||{};const on=!r.enabled;
+  if(on&&!confirm('تشغيل التذكير التلقائيّ؟\nمن يفتح صفحة الدفع من الآن ولا يدفع يوصله إيميل بعد '+(r.first_hours||3)+' ساعات وآخر بعد '+(r.second_days||3)+' أيّام.\nاللي قبل الآن ما يوصلهم شيء.'))return;
+  if(!on&&!confirm('إطفاء التذكير التلقائيّ؟'))return;
+  const v={...r,enabled:on,enabled_at:on?new Date().toISOString():r.enabled_at};
+  const {error}=await sb.from('shop_settings').update({value:v,updated_at:new Date().toISOString()}).eq('key','cart_reminders');
+  if(error){alert('تعذّر: '+error.message);return}
+  DSH.remind=v;renderDShop();
+}
+async function dshRemindPreview(){
+  try{const r=await fetch(DSH_REMIND_FN,{method:'POST',headers:{'Content-Type':'application/json',apikey:SUPA_KEY,Authorization:'Bearer '+SUPA_KEY},body:JSON.stringify({action:'preview'})});
+    const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||('HTTP '+r.status));alert('أُرسل الإيميلان لبريدك ✓ ('+d.to+')');}
+  catch(e){alert('تعذّر: '+(e.message||e))}
 }
 
 // من تابعتهم (محلّيّاً في هذا المتصفّح — تذكير لك فقط، لا يُرسل شيئاً)
