@@ -196,7 +196,7 @@ var AV = (function () {
     return { fs: r(6), s: r(9), bd: 1, e: [0, 0, 1, 2, 5][r(5)], br: r(5), n: r(4), m: [0, 0, 1, 2, 6][r(5)], h: r(11), hc: r(4), f: 0, w: [0, 0, 1, 1, 2, 3][r(6)], ws: [0, 2, 5][r(3)], wc: r(7), g: [0, 0, 0, 3, 4][r(5)], gc: r(3), c: [0, 0, 0, 7, 6, 2][r(6)], cc: r(6), b: r(8) };
   }
   const has = a => a && typeof a === 'object' && Object.keys(a).length;
-  // مكتبة الأفاتارات الجاهزة (حزم مرخّصة): avatars/manifest.json — المسار نسبةً لمكان avatar.js (يعمل من شاشة الطالب ومن لوحة الإدارة)
+  // مكتبة الأفاتارات الجاهزة (حزم مرخّصة): avatars/manifest.json — المسار نسبةً لمكان avatar.js (يعمل من «جوّالي» ومن النظام)
   const BASE = ((document.currentScript && document.currentScript.src) || location.href).replace(/[^/]*$/, '') + 'avatars/';
   const PK = /^[a-z0-9]{2,12}\/[0-9]{3}\.webp$/;
   let LIB = null;

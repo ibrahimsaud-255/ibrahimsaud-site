@@ -149,3 +149,21 @@ html.ap-dark .sv-row,html.ap-dark .sv-tpl{background:rgba(44,44,46,.92);box-shad
 .sn-tag{display:inline-block;font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;background:rgba(255,159,10,.18);color:#B45F06;vertical-align:middle}
 html.ap-dark .sn-tag{color:#FFC46B}
 .sn-dow{margin:10px 2px 4px;font-weight:800}
+/* حقيبة الموسم ١: اقتصاد الموسم + «اليوم» */
+.sn-econ,.sn-today{margin-bottom:14px}
+.sn-today details{border-top:1px solid var(--line,rgba(0,0,0,.08));padding:10px 0}
+.sn-today summary{cursor:pointer;font-weight:800;min-height:32px;display:flex;align-items:center}
+.sn-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.sn-chips .sn-chip{--tc:#FF9F0A}
+.sn-econ .r-badge{font-weight:800}
+/* المدينة (حقيبة الموسم ٢) */
+.sn-hood{flex-wrap:wrap}.sn-hood .sn-tg{flex:0 0 auto;min-width:110px}.sn-hood .sn-tm{flex:1 1 100%}
+.sn-zrow,.sn-prow{flex-wrap:wrap}.sn-prow .sn-pt{flex:1 1 100%}
+.sn-zgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px;margin-top:10px}
+.sn-zone{display:grid;gap:4px;padding:14px;border-radius:16px;border:1px solid color-mix(in srgb,var(--zc) 45%,transparent);background:color-mix(in srgb,var(--zc) 12%,transparent)}
+.sn-zone small{color:var(--muted,#6e6e73)}.sn-zst{font-weight:800;font-size:18px}.sn-zn em{font-style:normal;color:#FF453A;font-weight:700}
+.sn-zdot{width:14px;height:14px;border-radius:50%;background:var(--zc);flex:none}
+.sn-curimg{display:flex;align-items:center;gap:10px}.sn-curimg img{width:40px;height:40px;border-radius:50%;object-fit:cover}
+.sn-lib{margin:8px 0}.sn-lib summary{cursor:pointer;font-weight:700}
+.sn-libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-top:8px;max-height:300px;overflow:auto}
+.sn-libgrid button{border:0;padding:0;background:none;display:grid;gap:3px;cursor:pointer;color:inherit}.sn-libgrid img{width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}.sn-libgrid small{font-size:11px}
+.sn-zimg{width:44px;height:44px;border-radius:12px;object-fit:cover;flex:none}

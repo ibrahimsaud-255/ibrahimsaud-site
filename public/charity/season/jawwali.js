@@ -1,18 +1,34 @@
 /*
- * نظام الجمعيات الشبابية — شاشة الطالب والمشرف (الملفّ jawwali.js اسم داخليّ فقط) — الطالب: POST /season/me {code,pin}   ·   المشرف: POST /season/staff و /season/staff/act
+ * «جوّالي» — الطالب: POST /season/me {code,pin}   ·   المشرف: POST /season/staff و /season/staff/act
  * (دالّة api: localhost ← staging، والموقع ← production). ?demo=1 بيانات توضيحيّة، و&as=staff للمشرف، و&stage= للمرحلة.
  * المواقيت محسوبة محلّيّاً بطريقة أمّ القرى حسب مدينة الموسم (settings.city).
  */
 (function () {
   'use strict';
-  const Q = new URLSearchParams(location.search), NAT = window.JW_NATIVE || null, LOCAL = NAT ? NAT.staging : /^(localhost|127\.0\.0\.1)$/.test(location.hostname), DEMO = Q.get('demo') === '1';
+  const Q = new URLSearchParams(location.search), NAT = window.JW_NATIVE || null, LOCAL = NAT ? NAT.staging : /^(localhost|127\.0\.0\.1)$/.test(location.hostname), DEMO = Q.get('demo') === '1', DPICK = Q.get('demo') === 'pick';
   const API = LOCAL ? 'https://br-red-smoke-baq7yp0d-api.compute.c-8.eu-central-1.aws.neon.tech' : 'https://br-dark-band-bajth6rv-api.compute.c-8.eu-central-1.aws.neon.tech';
   const $ = document.getElementById('app'), K = 'jawwali2', WEB = NAT ? 'https://ibrahimsaud.com/charity/' : '../';
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const P = d => `<svg viewBox="0 0 24 24" aria-hidden="true">${d}</svg>`;
   const RS = '<svg class="rsym" viewBox="0 0 1124.14 1256.39" role="img" aria-label="ريال"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg>';
-  const money = (n, cls) => `<span class="money${cls ? ' ' + cls : ''}" dir="ltr">${RS}<b>${Number(n || 0).toLocaleString('en-US')}</b></span>`;
+  /* عملة الموسم: اسمها ورمزها من الإعدادات (settings.currency) — الافتراض «العملات» برمز الريال */
+  const CUR = () => { const c = ((typeof D !== 'undefined' && D && D.season.settings) || {}).currency || {}; return { name: c.name || 'الريالات', one: c.one || 'ريال', icon: c.icon || '', img: c.img || '' }; };
+  const money = (n, cls) => `<span class="money${cls ? ' ' + cls : ''}" dir="ltr">${CUR().img ? `<img class="cimg" src="${esc(imgSrc(CUR().img))}" alt="">` : CUR().icon ? `<i class="cico" aria-hidden="true">${esc(CUR().icon)}</i>` : RS}<b>${Number(n || 0).toLocaleString('en-US')}</b></span>`;
   const SV = { out: P('<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/>'), ref: P('<path d="M21 12a9 9 0 1 1-3-6.7L21 8M21 3v5h-5"/>'), send: P('<path d="M7 17 17 7M8 7h9v9"/>'), recv: P('<path d="M17 7 7 17M16 17H7V8"/>'), xfer: P('<path d="M4 8h13l-3-3M20 16H7l3 3"/>'), bag: P('<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>'), star: P('<path d="m12 3 2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.5 2.9 1-6.1L3.2 9.5l6.1-.9L12 3z"/>'), minus: P('<path d="M5 12h14"/>'), pin: P('<path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'), cam: P('<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>'), person: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4.2"/><path d="M3.5 21c.8-4.6 4.2-7 8.5-7s7.7 2.4 8.5 7z"/></svg>' };
+  /* أيقونات خطّيّة بيضاء بدل الإيموجي (قاعدة المنتج: لا إيموجي في الواجهة) */
+  const IP = { bus: '<path d="M8 6v6M16 6v6M2 12h20M7 18h10M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><circle cx="7" cy="18" r="2"/><circle cx="17" cy="18" r="2"/>',
+    award: '<circle cx="12" cy="8" r="6"/><path d="m15.5 13.5 1.5 8.5-5-3-5 3 1.5-8.5"/>', camera: '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+    volume: '<path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M19 5a10 10 0 0 1 0 14"/>', bell: '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+    receipt: '<path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 8h8M8 12h8M8 16h5"/>', gift: '<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7M7.5 8a2.5 2.5 0 0 1 0-5C10 3 12 8 12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+    wallet: '<path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>', clock: '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+    image: '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/>', share: '<path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8M16 6l-4-4-4 4M12 2v13"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/>', ball: '<circle cx="12" cy="12" r="10"/><path d="m12 7 4 3-1.5 5h-5L8 10z"/><path d="M12 2v5M16 10l5-1.5M14.5 15l3 4.5M9.5 15l-3 4.5M8 10 3 8.5"/>',
+    trophy: '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0 0 12 0z"/>',
+    book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>', food: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
+    tool: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>', users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+    spark: '<path d="M12 3l1.9 5.8L20 10l-5 3.9L16.6 20 12 16.6 7.4 20 9 13.9 4 10l6.1-1.2z"/>', sprout: '<path d="M7 20h10M10 20c5.5-2.5.8-6.4 3-10M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8zM14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>' };
+  const I = (k, cls) => `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IP[k] || IP.spark}</svg>`;
   /* رمز QR يُرسم SVG من مكتبة qrcode-generator (vendor/qrcode.min.js) */
   function qrSVG(text) { try { const q = qrcode(0, 'M'); q.addData(text); q.make(); const n = q.getModuleCount(); let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`; return `<svg viewBox="-2 -2 ${n + 4} ${n + 4}" role="img" aria-label="رمز التحقّق" shape-rendering="crispEdges"><rect x="-2" y="-2" width="${n + 4}" height="${n + 4}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; } catch (e) { return ''; } }
   const verifyURL = no => (NAT ? 'https://ibrahimsaud.com/charity/season/' : location.origin + location.pathname) + '?' + (DEMO ? 'demo=1&as=staff&' : '') + 'v=' + no + (D && D.season.code ? '&c=' + D.season.code : '');
@@ -22,7 +38,7 @@
     'الأحساء': [25.3833, 49.5867], 'القطيف': [26.5196, 50.0115], 'الجبيل': [27.0046, 49.646], 'الطائف': [21.2703, 40.4158], 'أبها': [18.2164, 42.5053], 'خميس مشيط': [18.3, 42.7333], 'تبوك': [28.3838, 36.555],
     'حائل': [27.5114, 41.69], 'بريدة': [26.326, 43.975], 'عنيزة': [26.0844, 43.9935], 'جازان': [16.8892, 42.5511], 'نجران': [17.5656, 44.2289], 'الباحة': [20.0129, 41.4677], 'سكاكا': [29.9697, 40.2064], 'عرعر': [30.9753, 41.0381], 'ينبع': [24.0895, 38.0618] };
   const MEDIA = LOCAL ? 'https://br-red-smoke-baq7yp0d.storage.c-8.eu-central-1.aws.neon.tech/media' : 'https://br-dark-band-bajth6rv.storage.c-8.eu-central-1.aws.neon.tech/media';
-  const imgSrc = p => !p ? '' : /^(https?:|data:|\.\/)/.test(p) ? p : MEDIA + '/' + String(p).split('/').map(encodeURIComponent).join('/');
+  const imgSrc = p => !p ? '' : (window.JW_LIB && JW_LIB.src(p, './')) || (/^(https?:|data:|\.\/)/.test(p) ? p : MEDIA + '/' + String(p).split('/').map(encodeURIComponent).join('/'));
   /* لون كلّ مرحلة في كلّ لمسة (القلب، نقاط التفاعل، شارة التكريم) — والمشرف (جامعي) بالأسود */
   const STAGEC = { 'ابتدائي': '#00C6FF', 'متوسط': '#FF9000', 'ثانوي': '#1A3365', 'جامعي': '#1C1C1E' };
   const STY_ME = [['wave', 'موج'], ['warm', 'دافئ'], ['dark', 'داكن'], ['sunset', 'غروب'], ['forest', 'غابة']], STY_STAFF = [['graphite', 'جرافيت'], ['wave', 'موج'], ['forest', 'غابة']];
@@ -65,8 +81,10 @@
   function rolePick() {
     const dk = document.getElementById('dock'); if (dk) dk.remove();
     setWall('staff');
-    $.innerHTML = `<div class="scr"><div class="onb"><h1>نظام الجمعيات الشبابية</h1><p>أهلاً بك. من أنت؟</p>
-      <div class="roles">${ROLES.map(([k, n, d, av]) => `<button class="role" data-role="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b><small>${d}</small></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div></div></div>`;
+    const attr = DPICK ? 'data-demo' : 'data-role';
+    $.innerHTML = `<div class="scr"><div class="onb">${DPICK ? `<button class="rback" data-demo-exit>‹ رجوع</button><h1>جرّب التطبيق</h1><p>بيانات توضيحيّة لجمعيّة تجريبيّة — تصفّح بحرّيّة، لا شيء يُحفظ. اختر الدور:</p>` : `<h1>جوّالي</h1><p>أهلاً بك في الموسم. من أنت؟</p>`}
+      <div class="roles">${ROLES.map(([k, n, d, av]) => `<button class="role" ${attr}="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b><small>${DPICK && k === 'admin' ? 'النظام كاملاً: الموقع، الحوكمة، المالية، الموسم' : d}</small></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
+      ${DPICK ? '' : `<button class="demo-cta" data-demo-pick><b>جرّب التطبيق بدون حساب</b><small>طالب، مشرف، أو إدارة — ببيانات توضيحيّة</small></button>`}</div></div>`;
   }
   function login(msg) {
     const dk = document.getElementById('dock'); if (dk) dk.remove();
@@ -84,7 +102,7 @@
     const cam = !!NAT || 'BarcodeDetector' in window;
     $.innerHTML = `<div class="scr"><div class="login">${head}
       ${cam ? `<button class="btn" data-act="scanlogin">${SV.cam} ${staff ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك'}</button><video id="lcam" playsinline muted hidden></video>`
-        : `<div class="note">${staff ? 'امسح رمز الدخول الذي أرسلته لك الإدارة' : 'امسح الرمز المطبوع على بطاقتك'} بكاميرا الجوال — يدخلك مباشرة.</div>`}
+        : `<div class="note">${staff ? 'امسح رمز الدخول الذي أرسلته لك الإدارة' : 'امسح الرمز المطبوع على بطاقتك'} بكاميرا الجوال — يفتح «جوّالي» ويدخلك مباشرة.</div>`}
       <div class="or"><span>أو بالرمز</span></div>
       <label class="fld">رمز الموسم<input id="c" maxlength="6" autocapitalize="characters" autocomplete="off" value="${esc((saved || {}).code || Q.get('c') || '')}"></label>
       <label class="fld">${staff ? 'رمز المشرف' : 'رمزك السرّيّ (على بطاقتك)'}<input id="p" maxlength="6" inputmode="numeric" autocomplete="off"></label>
@@ -96,7 +114,7 @@
   /* الدخول بمسح رمز البطاقة: الرمز رابط فيه رمز الموسم والرمز السرّيّ (c و p) */
   function loginLink(raw) { try { const u = new URL(raw, location.href), c = u.searchParams.get('c'), p = u.searchParams.get('p'); return c && p ? { c: c.toUpperCase(), p, staff: u.searchParams.get('as') === 'staff' } : null; } catch (e) { return null; } }
   async function scanLogin() {
-    if (NAT) { try { const L = loginLink(await NAT.scan(ROLE === 'staff' ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك')); if (!L) { toast('هذا ليس رمز دخول للنظام', 1); return; } MODE = L.staff ? 'staff' : 'me'; fetchData(L.c, L.p, true); } catch (e) {} return; }
+    if (NAT) { try { const L = loginLink(await NAT.scan(ROLE === 'staff' ? 'امسح رمز الدخول' : 'امسح الرمز على بطاقتك')); if (!L) { toast('هذا ليس رمز دخول «جوّالي»', 1); return; } MODE = L.staff ? 'staff' : 'me'; fetchData(L.c, L.p, true); } catch (e) {} return; }
     const v = document.getElementById('lcam'); if (!v) return;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); v.srcObject = stream; v.hidden = false; await v.play();
@@ -150,7 +168,8 @@
     return out.sort((a, b) => (a.d + (a.f || '')).localeCompare(b.d + (b.f || '')));
   }
   /* ═════════ التحفيز طوال السنة: أسابيع الحضور المتتالية ومستوى الحضور ═════════ */
-  const LEVELS = [[0, 'مبتدئ', '🌱'], [4, 'برونزيّ', '🥉'], [12, 'فضّيّ', '🥈'], [24, 'ذهبيّ', '🥇'], [40, 'ماسيّ', '💎']];
+  const BDG = n => `<img class="bdg" src="./badges/${n}.webp" alt="">`;
+  const LEVELS = [[0, 'مبتدئ', I('sprout', 'lvl0')], [4, 'برونزيّ', BDG('bronze')], [12, 'فضّيّ', BDG('silver')], [24, 'ذهبيّ', BDG('gold')], [40, 'ماسيّ', BDG('diamond')]];
   function level(n) { let k = 0; LEVELS.forEach((l, i) => { if (n >= l[0]) k = i; }); const nx = LEVELS[k + 1]; return { name: LEVELS[k][1], icon: LEVELS[k][2], next: nx ? nx[1] : '', left: nx ? nx[0] - n : 0, pct: nx ? Math.round((n - LEVELS[k][0]) / (nx[0] - LEVELS[k][0]) * 100) : 100 }; }
   function streak(days) {   // أسابيع متتالية (تبدأ الأحد) فيها حضور، حتى هذا الأسبوع أو الذي قبله
     const wk = d => { const x = new Date(d + 'T00:00:00'); x.setDate(x.getDate() - x.getDay()); return x.toISOString().slice(0, 10); };
@@ -163,13 +182,13 @@
   /* ═════════ الشاشة الرئيسيّة ═════════ */
   function home() {
     setWall(MODE === 'staff' ? 'staff' : null);
-    const np = nextPrayer(), todayISO = (d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'))(new Date()), OC = occ(45), nowHM = new Date().toTimeString().slice(0, 5), next = OC.find(x => x.k !== 'trip' && (x.d > todayISO || (x.d === todayISO && (x.e || x.f || '99') >= nowHM))), trip = OC.find(x => x.k === 'trip' && x.d >= todayISO);
+    const np = nextPrayer(), todayISO = (d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'))(new Date()), OC = occ(45), nowHM = new Date().toTimeString().slice(0, 5), next = OC.find(x => x.k !== 'trip' && x.k !== 'zone' && x.k !== 'break' && (x.d > todayISO || (x.d === todayISO && (x.e || x.f || '99') >= nowHM))), trip = OC.find(x => x.k === 'trip' && x.d >= todayISO);
     const top = `<div class="bar"><span>${now()}</span><span>${esc(hijri())}</span></div>`;
     const pw = `<button class="widget pray-next" data-open="pray"><small>الصلاة القادمة · ${esc(cityLL()[0])}</small><b>${np[0]} ${fmtT(np[1])}</b><small>بعد <span class="cd" id="cd">${cd(np[1] - new Date())}</span></small></button>`;
     if (MODE === 'staff') {
       const me = D.me;
-      $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(me.avatar, me.name)}</button><p class="hello">أهلاً ${esc(me.name.split(' ')[0])}</p><p class="sub">${me.role === 'lead' ? 'قائد' : 'مشرف'}${me.stage ? ' · ' + esc(me.stage) : ''} · ${esc(D.season.name)}</p>
-        <div class="apps">${app('news', 'الأخبار', 'w-news')}${me.perms && me.perms.post === false ? '' : app('publish', 'انشر', 'w-testimonials')}${app('give', 'امنح', 'finance')}${app('teams', 'نقاط الفرق', 'season')}${me.perms && me.perms.sell ? app('counter', 'الكاونتر', 'procurement') : ''}${me.perms && me.perms.store ? app('mstore', 'إدارة المتجر', 'library') : ''}${app('scan', 'تحقّق', 'comply')}${app('people', 'الطلاب', 'beneficiaries')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('games', 'الألعاب', 'letters')}${app('survey', 'رأيك', 'requests')}${app('trophy', 'الترتيب', 'team')}${app('id', 'بطاقتي', 'hr')}${app('wall', 'الخلفيّة', '_wall')}</div>
+      $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(me.avatar, me.name)}</button><p class="hello">أهلاً ${esc(me.name.split(' ')[0])}</p><p class="sub">${me.role === 'lead' ? 'قائد' : me.role === 'guest' ? 'ضيف' : 'مشرف'}${me.stage ? ' · ' + esc(me.stage) : ''} · ${esc(D.season.name)}</p>
+        ${me.daily ? budgetWidget() : ''}<div class="apps">${app('news', 'الأخبار', 'w-news')}${me.perms && me.perms.post === false ? '' : app('publish', 'انشر', 'w-testimonials')}${app('give', 'امنح', 'finance')}${can('fine') ? app('fine', 'مخالفة', 'governance') : ''}${can('customs') ? app('customs', esc(((D.season.settings || {}).customs || {}).name || 'الجمارك'), 'ledger') : ''}${me.perms && me.perms.points === false ? '' : app('teams', 'نقاط الفرق', 'season')}${me.perms && me.perms.sell ? app('counter', 'الكاونتر' + ((D.orders || []).length ? ' (' + D.orders.length + ')' : ''), 'procurement') : ''}${can('guests') ? app('guest', 'رمز ضيف', 'myhr') : ''}${((D.season.settings || {}).zones || []).length ? app('zone', 'مكاني', 'site') : ''}${me.perms && me.perms.store ? app('mstore', 'إدارة المتجر', 'library') : ''}${app('scan', 'تحقّق', 'comply')}${app('people', 'الطلاب', 'beneficiaries')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('games', 'الألعاب', 'letters')}${app('survey', 'رأيك', 'requests')}${app('trophy', 'الترتيب', 'team')}${app('id', 'بطاقتي', 'hr')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="give"><small>منحتَ هذا الموسم</small><b>${money(me.given || 0)}</b></button><button class="widget" data-open="people"><small>طلابك</small><b>${(D.members || []).length}</b></button></div>
         ${pw}<div id="pushb"></div></div>`;
     } else {
@@ -177,8 +196,8 @@
       $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(D.me.avatar, D.me.name)}</button><p class="hello">أهلاً ${esc(D.me.name.split(' ')[0])}</p><p class="sub">${esc(t.name)} · رقمك ${esc(D.me.no)}${D.me.stage ? ' · ' + esc(D.me.stage) : ''}</p>
         <div class="apps">${app('news', 'الأخبار', 'w-news')}${app('bank', 'البنك', 'finance')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('shop', 'المتجر', 'procurement')}${app('trophy', 'الترتيب', 'season')}${app('id', 'بطاقتي', 'hr')}${app('survey', 'رأيك', 'requests')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="bank"><small>رصيدك</small><b>${money(D.me.balance)}</b></button><button class="widget" data-open="trophy"><small>فريقك</small><b>${esc(t.name)}</b></button></div>
-        ${(() => { const lv = level(D.me.att || 0), st = streak(D.me.attd); return `<button class="widget lvl" data-open="id"><span class="lv-i" aria-hidden="true">${lv.icon}</span><span><small>مستوى الحضور</small><b>${lv.name}${st ? ` · 🔥 ${st} ${st === 1 ? 'أسبوع' : st <= 10 ? 'أسابيع' : 'أسبوعاً'}` : ''}</b>${lv.next ? `<small>باقي ${lv.left} حضور للمستوى ${lv.next}</small><i class="lv-bar"><u style="width:${lv.pct}%"></u></i>` : '<small>أعلى مستوى — ما شاء الله</small>'}</span></button>`; })()}
-        ${trip ? `<button class="widget trip" data-open="cal"><small>🚌 الرحلة القادمة · ${esc(fmtDay(trip.d))}</small><b>${esc(trip.t)}</b><small>${(() => { const n = Math.round((new Date(trip.d + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 864e5); return n === 0 ? 'اليوم!' : n === 1 ? 'غداً' : 'بعد ' + n + ' يوماً'; })()}${trip.p ? ' · ' + esc(trip.p) : ''}</small></button>` : ''}
+        ${whereNow()}${(() => { const lv = level(D.me.att || 0), st = streak(D.me.attd); return `<button class="widget lvl" data-open="id"><span class="lv-i" aria-hidden="true">${lv.icon}</span><span><small>مستوى الحضور</small><b>${lv.name}${st ? ` · ${BDG('flame')} ${st} ${st === 1 ? 'أسبوع' : st <= 10 ? 'أسابيع' : 'أسبوعاً'}` : ''}</b>${lv.next ? `<small>باقي ${lv.left} حضور للمستوى ${lv.next}</small><i class="lv-bar"><u style="width:${lv.pct}%"></u></i>` : '<small>أعلى مستوى — ما شاء الله</small>'}</span></button>`; })()}
+        ${trip ? `<button class="widget trip" data-open="cal"><small>${I('bus')} الرحلة القادمة · ${esc(fmtDay(trip.d))}</small><b>${esc(trip.t)}</b><small>${(() => { const n = Math.round((new Date(trip.d + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 864e5); return n === 0 ? 'اليوم!' : n === 1 ? 'غداً' : 'بعد ' + n + ' يوماً'; })()}${trip.p ? ' · ' + esc(trip.p) : ''}</small></button>` : ''}
         ${pw}${next ? `<button class="widget" data-open="cal"><small>النشاط القادم · ${esc(fmtDay(next.d))}</small><b>${esc(next.t)}</b><small>${esc([next.f && next.f + (next.e ? '–' + next.e : ''), next.p].filter(Boolean).join(' · '))}</small></button>` : ''}
         <div id="pushb"></div></div>`;
     }
@@ -201,8 +220,8 @@
     const total = Object.values(p.r || {}).reduce((a, b) => a + b, 0);
     const kind = { honor: 'تكريم', program: 'برنامج', teaser: 'قريباً' }[p.k] || '';
     return `<article class="post k-${esc(p.k)}"><header><span class="pav${p.staff ? ' st avr' : ''}">${p.staff ? AV.of(p.bav, p.by) : esc(String(p.by || '؟').charAt(0))}</span><span class="pby"><b>${esc(p.by)}</b><small>${p.staff ? 'مشرف' : 'الإدارة'} · ${ago(p.at)}</small></span>${kind ? `<em class="pk">${kind}</em>` : ''}</header>
-      ${p.img ? `<div class="pimg${p.k === 'teaser' ? ' tz' : ''}"><img src="${esc(imgSrc(p.img))}" alt="" loading="lazy">${p.k === 'teaser' ? '<span>قريباً…</span>' : ''}</div>` : p.k === 'honor' && p.hon ? `<div class="phon" style="--c:${STAGEC[p.hon.g] || '#FF9000'}"><span class="hav">${AV.of(p.hon.av, p.hon.n)}<i>🏅</i></span><b>${esc(p.hon.n)}</b><small>${esc(p.hon.g || '')}</small></div>` : ''}
-      <div class="pb">${p.k === 'honor' && p.hon && p.img ? `<span class="hchip" style="--c:${STAGEC[p.hon.g] || '#FF9000'}">🏅 ${esc(p.hon.n)}</span>` : ''}<b>${esc(p.t)}</b>${p.b ? `<p>${esc(p.b)}</p>` : ''}</div>
+      ${p.img ? `<div class="pimg${p.k === 'teaser' ? ' tz' : ''}"><img src="${esc(imgSrc(p.img))}" alt="" loading="lazy">${p.k === 'teaser' ? '<span>قريباً…</span>' : ''}</div>` : p.k === 'honor' && p.hon ? `<div class="phon" style="--c:${STAGEC[p.hon.g] || '#FF9000'}"><span class="hav">${AV.of(p.hon.av, p.hon.n)}<i><img src="./badges/star.webp" alt=""></i></span><b>${esc(p.hon.n)}</b><small>${esc(p.hon.g || '')}</small></div>` : ''}
+      <div class="pb">${p.k === 'honor' && p.hon && p.img ? `<span class="hchip" style="--c:${STAGEC[p.hon.g] || '#FF9000'}">${I('award')} ${esc(p.hon.n)}</span>` : ''}<b>${esc(p.t)}</b>${p.b ? `<p>${esc(p.b)}</p>` : ''}</div>
       <footer><button class="heart${p.mine ? ' on' : ''}" style="--hc:${hc}" data-react="${esc(p.id)}" aria-pressed="${!!p.mine}" aria-label="أعجبني">${HEART}</button><span class="rsum">${sum}</span>${total ? `<small class="rt">${total}</small>` : ''}</footer></article>`;
   }
   function paintFeed() { const el = document.getElementById('feed'); if (el) el.innerHTML = FEED.map(postHTML).join('') || '<p class="empty">لا منشورات بعد.</p>'; }
@@ -265,7 +284,7 @@
     try {
       if (!DEMO) await post('/season/survey', { code: saved.code, pin: saved.pin, as: MODE === 'staff' ? 'staff' : 'me', survey: SVA.id, answers: SVA.a });
       const v = SURV.find(x => x.id === SVA.id); if (v) v.done = true;
-      view('شكراً لك', `<div class="svthanks"><div aria-hidden="true">💚</div><h3>وصل رأيك</h3><p>رأيك يصنع الموسم القادم.</p><button class="btn sec" data-close>تمّ</button></div>`);
+      view('شكراً لك', `<div class="svthanks"><div aria-hidden="true">${I('check', 'big')}</div><h3>وصل رأيك</h3><p>رأيك يصنع الموسم القادم.</p><button class="btn sec" data-close>تمّ</button></div>`);
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }
   function sampleSurv() {
@@ -301,7 +320,7 @@
         <label class="fld" id="pnoF" ${PUB.kind === 'honor' ? '' : 'hidden'}>رقم الطالب المكرَّم<input id="pno" inputmode="numeric" autocomplete="off"></label>
         <label class="fld">العنوان<input id="pt" class="tx" maxlength="120" placeholder="مثلاً: تكريم نجم الأسبوع"></label>
         <label class="fld">النصّ (اختياريّ)<textarea id="pbd" class="tx" rows="3" maxlength="1500"></textarea></label>
-        <label class="pick"><input type="file" accept="image/*" id="pf" hidden><span id="pfv">📷 أضف صورة</span></label>
+        <label class="pick"><input type="file" accept="image/*" id="pf" hidden><span id="pfv">${I('camera')} أضف صورة</span></label>
         <button class="btn" data-act="publish" style="margin-top:12px">انشر</button>
         <p class="note">يظهر للطلاب والمشرفين في «الأخبار» فوراً. صوّر بإذن المشاركين، وتجنّب نشر الوجوه بلا موافقة.</p>`);
       v.querySelector('#pf').onchange = e => { PUB.file = e.target.files[0] || null; if (PUB.file) document.getElementById('pfv').innerHTML = `<img src="${URL.createObjectURL(PUB.file)}" alt="">`; };
@@ -315,17 +334,17 @@
     pray() {
       const [c, [la, ln]] = cityLL(), list = prayers(new Date(), la, ln), np = nextPrayer(), nowD = new Date();
       const perm = 'Notification' in window ? Notification.permission : 'unsupported';
-      view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يصلك تنبيه وقت كلّ صلاة.</div>
+      view('الصلاة', `<div class="note">مواقيت ${esc(c)} — تقويم أمّ القرى (تقريبيّة). يظهر تنبيه في «جوّالي» وقت كلّ صلاة.</div>
         ${list.map(p => `<div class="pt${p[0] === np[0] && p[1].getTime() === np[1].getTime() ? ' next' : p[1] < nowD ? ' past' : ''}"><span>${p[0]}</span><b>${fmtT(p[1])}</b></div>`).join('')}
-        <button class="btn sec" style="margin-top:18px" data-act="adhantest">🔊 اسمع الأذان</button>
-        <button class="btn sec" style="margin-top:10px" data-act="pushon">🔔 الإشعارات والجوال مقفل</button>
+        <button class="btn sec" style="margin-top:18px" data-act="adhantest">${I('volume')} اسمع الأذان</button>
+        <button class="btn sec" style="margin-top:10px" data-act="pushon">${I('bell')} الإشعارات والجوال مقفل</button>
         <p class="empty" style="padding:18px 6px">«إنّ الصلاة كانت على المؤمنين كتاباً موقوتاً»</p>`);
     },
     avatar() {
       AVE = Object.assign({}, AV.has(D.me.avatar) ? D.me.avatar : AV.seed(D.me.name)); AVM = AV.isPk(AVE) || !AV.has(D.me.avatar) ? 'lib' : AV.isMj(AVE) ? 'mj' : 'draw'; if (!AV.has(D.me.avatar)) AVE = {};
       view('شخصيّتي', `<div class="seg avmode three" role="tablist"><button data-avmode="lib" role="tab">المكتبة</button><button data-avmode="mj" role="tab">Memoji آبل</button><button data-avmode="draw" role="tab">مرسومة</button></div>
         <div class="avprev" id="avp"></div><div id="avlib" hidden><div class="libg" id="libg" role="tablist"></div><div class="libgrid" id="libgrid"><p class="empty">جارٍ التحميل…</p></div></div><div id="avmj" hidden><div class="mjbox" id="mjbox" contenteditable="true" role="textbox" aria-label="الصق ملصق Memoji هنا" inputmode="text"></div>
-          <ol class="mjsteps"><li>اضغط على المربّع فوق</li><li>افتح لوحة الإيموجي 😀 ثمّ <b>الملصقات</b></li><li>اختر الـMemoji حقّك — أو صمّم واحداً من زرّ <b>＋</b></li></ol>
+          <ol class="mjsteps"><li>اضغط على المربّع فوق</li><li>افتح لوحة الإيموجي (زرّ الوجه في لوحة المفاتيح) ثمّ <b>الملصقات</b></li><li>اختر الـMemoji حقّك — أو صمّم واحداً من زرّ <b>＋</b></li></ol>
           <label class="btn sec mjfile">أو اختر صورة Memoji محفوظة<input type="file" accept="image/*" id="mjf" hidden></label></div>
         <div id="avdraw"><div class="avtabs" role="tablist">${AV.CATS.map(c => `<button role="tab" data-avcat="${c.id}">${c.n}</button>`).join('')}</div><div id="avb"></div></div>
         <button class="btn" data-act="avsave" style="margin-top:16px">احفظ شخصيّتي</button><p class="note">شخصيّتك تظهر في بطاقتك والترتيب والأخبار — بدل الصورة.</p>`);
@@ -344,7 +363,7 @@
       const chip = d => { const dt = new Date(d + 'T00:00:00'); return `<button class="dchip${d === sel ? ' on' : ''}" data-day="${d}" aria-pressed="${d === sel}"><small>${d === today ? 'اليوم' : d === tomorrow ? 'غداً' : dt.toLocaleDateString('ar-SA-u-ca-gregory', { weekday: 'short' })}</small><b>${dt.getDate()}</b></button>`; };
       view('الجدول', `<div class="dchips">${keys.map(chip).join('')}</div><p class="dlong">${esc(fmtDay(sel))}</p>
         <div class="evs">${list.map((x, i) => { const s1 = at(x.d, x.f), s2 = at(x.d, x.e), st = s1 && s2 && nowD >= s1 && nowD < s2 ? 'now' : i === nextI ? 'next' : s2 && s2 < nowD ? 'past' : '', [h, ap] = h12(x.f);
-          return `<div class="ev ${st}" style="--ec:${EVC[i % EVC.length]}"><div class="evt"><b>${h}</b><small>${ap}</small></div><div class="evc"><span class="eve" aria-hidden="true">${x.k === 'trip' ? '🚌' : evEmoji(x.t)}</span><span class="evx"><b>${esc(x.t)}</b>
+          return `<div class="ev ${st}" style="--ec:${EVC[i % EVC.length]}"><div class="evt"><b>${h}</b><small>${ap}</small></div><div class="evc"><span class="eve" aria-hidden="true">${x.k === 'trip' ? I('bus') : evEmoji(x.t)}</span><span class="evx"><b>${esc(x.t)}</b>
             <small>${x.p ? SV.pin + esc(x.p) : ''}${x.e ? ` · حتى ${h12(x.e).join(' ')}` : ''}${MODE === 'staff' && x.g ? ' · ' + esc(x.g) : ''}${x.rep ? ' · كلّ أسبوع' : ''}</small></span>${st === 'now' ? '<em>الآن</em>' : st === 'next' ? '<em class="nx">التالي</em>' : ''}</div></div>`; }).join('')}</div>`);
     },
     /* الترتيب: منصّة تتويج للفرق بألوانها، وقائمة الأفراد بصورة رمزيّة بلون المرحلة وحلقة بلون الفريق */
@@ -354,11 +373,11 @@
       const teams = (D.season.teams || []).map(t => Object.assign({}, t, { pts: TS[t.id] || 0 })).sort((a, b) => b.pts - a.pts), max = Math.max(1, ...teams.map(t => t.pts));
       const rich = MODE === 'staff' ? (D.members || []).filter(m => m.b > 0).sort((a, b) => b.b - a.b).slice(0, 10).map(m => ({ n: m.n.split(' ')[0], team: m.t, g: m.g, av: m.av, b: m.b })) : (D.rich || []);
       const richM = RKM && MODE === 'me' ? (D.richMonth || []) : null;
-      const mine = MODE === 'me' ? D.me.team : '', medal = ['🥇', '🥈', '🥉'];
+      const mine = MODE === 'me' ? D.me.team : '', medal = [BDG('gold'), BDG('silver'), BDG('bronze')];
       const pod = [teams[1], teams[0], teams[2]].map((t, k) => t ? `<div class="pod${t.id === mine ? ' me' : ''}" style="--c:${esc(t.color)}"><span class="pm" aria-hidden="true">${medal[[1, 0, 2][k]]}</span><b>${esc(t.name)}</b><span class="pp">${t.pts}<small> نقطة</small></span><div class="pillar" style="height:${[96, 132, 72][k]}px"><span>${[2, 1, 3][k]}</span></div>${t.id === mine ? '<em>فريقك</em>' : ''}</div>` : '<div class="pod"></div>').join('');
       view('الترتيب', `<div class="rkper"><button class="${RKM ? 'on' : ''}" data-rk="m">هذا الشهر</button><button class="${RKM ? '' : 'on'}" data-rk="s">الموسم كاملاً</button></div><div class="seg rkseg" role="tablist"><button class="${tab === 'teams' ? 'on' : ''}" data-rk="teams" role="tab" aria-selected="${tab === 'teams'}">الفرق</button><button class="${tab === 'people' ? 'on' : ''}" data-rk="people" role="tab" aria-selected="${tab === 'people'}">الأفراد</button></div>
         ${tab === 'teams' ? `<div class="podium">${pod}</div><div class="tlist">${teams.slice(3).map((t, i) => `<div class="trow${t.id === mine ? ' me' : ''}" style="--c:${esc(t.color)}"><span class="tn">${i + 4}</span><span class="tx2"><b>${esc(t.name)}</b><i><u style="width:${Math.round(t.pts / max * 100)}%"></u></i></span><b>${t.pts}</b></div>`).join('')}</div>`
-          : `<p class="dlong">${richM ? 'الأكثر كسباً هذا الشهر' : 'الأكثر عملات في الموسم'}</p><div class="plist">${(richM || rich).map((r, i) => `<div class="prow${i < 3 ? ' top' : ''}"><span class="prk">${i < 3 ? medal[i] : i + 1}</span><span class="pav2 avr" style="--sc2:${STAGEC[r.g] || '#5E5CE6'};--tc2:${esc(team(r.team).color)}">${AV.of(r.av, r.n)}</span><span class="tx2"><b>${esc(r.n)}</b><small><i class="dot" style="--c:${esc(team(r.team).color)}"></i> ${esc(team(r.team).name)}${r.g ? ' · ' + esc(r.g) : ''}</small></span>${money(r.b)}</div>`).join('') || '<p class="empty">لا أحد بعد.</p>'}</div>`}`);
+          : `<p class="dlong">${richM ? 'الأكثر كسباً هذا الشهر' : 'الأكثر رصيداً في الموسم'}</p><div class="plist">${(richM || rich).map((r, i) => `<div class="prow${i < 3 ? ' top' : ''}"><span class="prk">${i < 3 ? medal[i] : i + 1}</span><span class="pav2 avr" style="--sc2:${STAGEC[r.g] || '#5E5CE6'};--tc2:${esc(team(r.team).color)}">${AV.of(r.av, r.n)}</span><span class="tx2"><b>${esc(r.n)}</b><small><i class="dot" style="--c:${esc(team(r.team).color)}"></i> ${esc(team(r.team).name)}${r.g ? ' · ' + esc(r.g) : ''}</small></span>${money(r.b)}</div>`).join('') || '<p class="empty">لا أحد بعد.</p>'}</div>`}`);
     },
     ref() { fetchData(saved.code, saved.pin); toast('حُدِّث'); },
     out() { if (NAT) NAT.push.off(API); const v = document.querySelector('.view'); if (v) v.remove(); try { localStorage.removeItem(K); } catch (e) {} saved = { code: saved && saved.code }; D = null; login(); },
@@ -367,8 +386,8 @@
       const me = D.me, tx = me.tx || [], groups = {};
       tx.forEach(x => { const k = isoDay(new Date(x.t)); (groups[k] = groups[k] || []).push(x); });
       const today = isoDay(new Date()), yest = isoDay(new Date(Date.now() - 864e5));
-      const kind = x => /^شراء/.test(x.r || '') ? ['bag', 'buy'] : /^حوالة إلى/.test(x.r || '') ? ['send', 'out'] : /^حوالة من/.test(x.r || '') ? ['recv', 'in'] : x.a > 0 ? ['star', 'in'] : ['minus', 'out'];
-      view('البنك', `<div class="wcard"><div class="wtop"><span>بنك ${esc(D.season.name)}</span><span class="wchip">${esc(me.stage || '')}</span></div>
+      const kind = x => x.k === 'fine' || x.k === 'fee' ? ['minus', 'out'] : x.k === 'order' || x.k === 'buy' || /^شراء/.test(x.r || '') ? ['bag', 'buy'] : /^حوالة إلى/.test(x.r || '') ? ['send', 'out'] : /^حوالة من/.test(x.r || '') ? ['recv', 'in'] : x.a > 0 ? ['star', 'in'] : ['minus', 'out'];
+      view('البنك', `<div class="wcard${['bank', 'lab', 'gold'].includes((D.season.settings || {}).story) ? ' story" style="--story:url(./story/' + D.season.settings.story + '.webp)' : ''}"><div class="wtop"><span>بنك ${esc(D.season.name)}</span><span class="wchip">${esc(me.stage || '')}</span></div>
           <div class="wbal"><small>رصيدك</small>${money(me.balance, 'xl')}</div>
           <div class="wfoot"><b>${esc(me.name)}</b><span dir="ltr">#${me.no}</span></div></div>${nextSalary()}
         <div class="qacts"><button data-open="xfer"><span>${SV.xfer}</span>حوّل</button><button data-open="recv"><span>${SV.recv}</span>استلم</button><button data-open="shop"><span>${SV.bag}</span>المتجر</button></div>
@@ -387,7 +406,7 @@
         <label class="fld">مبلغ آخر<input id="xa" inputmode="numeric" autocomplete="off" value="${XF.amt}"></label>
         <label class="fld">ملاحظة (اختياريّ)<input id="xn" class="tx" maxlength="60" placeholder="مثلاً: شكراً على المساعدة"></label>
         <button class="btn" data-act="xsend" id="xb" style="margin-top:14px" disabled>حوّل</button>
-        <p class="note">من ١ إلى ١٠٠ عملة في المرّة · بقي لك اليوم ${left} حوالات. الحوالة لا تُسترجع.</p>`);
+        <p class="note">من ١ إلى ١٠٠ ${esc(CUR().one)} في المرّة · بقي لك اليوم ${left} حوالات. الحوالة لا تُسترجع.</p>`);
       const ti = document.getElementById('xt'); ti.oninput = () => xferWho(ti.value.trim()); if (XF.to) xferWho(XF.to);
       document.getElementById('xa').oninput = e => { XF.amt = +e.target.value.replace(/\D/g, '') || 0; document.querySelectorAll('[data-xamt]').forEach(x => x.classList.toggle('on', +x.dataset.xamt === XF.amt)); xferBtn(); };
     },
@@ -398,16 +417,17 @@
     /* المتجر: صور كبيرة، السعر بالريال، وما ينقصك للشراء */
     shop() {
       const bal = MODE === 'staff' ? null : D.me.balance;
-      view('المتجر', `${bal != null ? `<div class="shead"><span>رصيدك</span>${money(bal)}</div>` : ''}
+      const ords = MODE === 'staff' ? [] : (D.me.orders || []);
+      view('المتجر', `${bal != null ? `<div class="shead"><span>رصيدك</span>${money(bal)}</div>` : ''}${ords.length ? `<div class="myords"><b>${I('receipt')} طلباتك تنتظرك عند الكاونتر</b>${ords.map(o => `<span>${esc(o.item)}</span>`).join('')}<small>امسح بطاقتك أو قل رقمك ${D.me.no}</small></div>` : ''}
         <div class="shop">${(D.items || []).map((i, k) => `<button class="prod${bal != null && bal < i.p ? ' far' : ''}${i.s === 0 ? ' out' : ''}" data-prod="${k}">
-          <span class="pimg2" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="" loading="lazy">` : `<span class="pe" aria-hidden="true">${esc(i.e || '🎁')}</span>`}${i.s != null ? `<em>${i.s ? 'بقي ' + i.s : 'نفد'}</em>` : ''}</span>
+          <span class="pimg2" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="" loading="lazy">` : `<span class="pe" aria-hidden="true">${I('gift')}</span>`}${i.s != null ? `<em>${i.s ? 'بقي ' + i.s : 'نفد'}</em>` : ''}</span>
           <span class="pinf"><b>${esc(i.n)}</b>${money(i.p)}</span></button>`).join('') || '<p class="empty">المتجر فارغ الآن.</p>'}</div>`);
     },
     /* بطاقتي: مثل بطاقة توكّلنا — صورة وبيانات صحيحة ورمز تحقّق وحركة حيّة تمنع تصوير الشاشة */
     id() {
       const st = MODE === 'staff', me = D.me, col = st ? '#1C1C1E' : (STAGEC[me.stage] || '#5E5CE6'), t = st ? null : team(me.team);
       const rows = st ? [['الصفة', me.role === 'lead' ? 'قائد' : 'مشرف'], ['المرحلة', me.stage || 'كلّ المراحل'], ['الموسم', D.season.name]]
-        : [['رقم المشارك', '<span dir="ltr">#' + me.no + '</span>'], ['المرحلة', esc(me.stage || '—')], ['الصفّ', esc(me.grade || '—')], ['الفريق', `<i class="dot" style="--c:${esc(t.color)}"></i> ${esc(t.name)}`], ['أيّام الحضور', String(me.att || 0)], ['المستوى', (l => l.icon + ' ' + l.name)(level(me.att || 0)) + (streak(me.attd) ? ' · 🔥' + streak(me.attd) : '')]];
+        : [['رقم المشارك', '<span dir="ltr">#' + me.no + '</span>'], ['المرحلة', esc(me.stage || '—')], ['الصفّ', esc(me.grade || '—')], ['الفريق', `<i class="dot" style="--c:${esc(t.color)}"></i> ${esc(t.name)}`], ['أيّام الحضور', String(me.att || 0)], ['المستوى', (l => l.icon + ' ' + l.name)(level(me.att || 0)) + (streak(me.attd) ? ' · ' + BDG('flame') + streak(me.attd) : '')]];
       view('بطاقتي', `<div class="idcard${st ? ' staff' : ''}" style="--cc:${col};--cf:${onColor(col)}">
           <div class="idtop"><span><b>${esc(D.season.org || '')}</b><small>${esc(D.season.name)}</small></span><span class="idk">${st ? 'بطاقة مشرف' : 'بطاقة مشارك'}</span></div>
           <div class="idbody"><button class="idph" data-open="avatar" aria-label="عدّل شخصيّتك">${AV.of(me.avatar, me.name)}<span class="ided">✎</span></button>
@@ -429,6 +449,16 @@
     },
     give() { STF.kind = 'coin'; staffForm(); },
     counter() { STF.kind = 'sell'; staffForm(); },
+    fine() { STF.kind = 'fine'; staffForm(); },
+    zone() { zoneView(); },
+    customs() { STF.kind = 'fee'; staffForm(); },
+    guest() {
+      STF.gb = STF.gb || 100;
+      view('رمز ضيف', `<p class="note">لمقدّم الورشة أو الضيف: يمنح الطلاب أثناء الأسئلة من رصيد محدّد، بلا حساب ولا تدريب. ينتهي الرمز آخر يوم البرنامج.</p>
+        <label class="fld">اسم الضيف<input id="gn" class="tx" maxlength="40" placeholder="مثلاً: أ. خالد — ورشة التصوير"></label>
+        <div class="amts">${[50, 100, 150].map(a => `<button data-gb="${a}" class="${STF.gb === a ? 'on' : ''}">${a}</button>`).join('')}</div>
+        <button class="btn" data-act="guest" style="margin-top:14px">أنشئ الرمز</button>`);
+    },
     teams() {
       const ts = D.season.teams || [];
       view('نقاط الفرق', `<div class="teams">${ts.map(t => `<button style="--c:${esc(t.color)}" data-team="${esc(t.id)}" class="${STF.team === t.id ? 'on' : ''}">${esc(t.name)}<br><small>${(D.teams || {})[t.id] || 0} نقطة</small></button>`).join('')}</div>
@@ -437,8 +467,9 @@
         <button class="btn" data-act="point">امنح النقاط</button>`);
     },
     people() {
-      const v = view('الطلاب', `<input class="srch" type="search" placeholder="ابحث بالاسم أو الرقم" id="ps"><div id="pl"></div>`);
-      const paint = q => { document.getElementById('pl').innerHTML = (D.members || []).filter(m => !q || m.n.includes(q) || String(m.no) === q).map(m => `<button class="row svrow" data-vno="${m.no}"><span style="display:flex;gap:10px;align-items:center"><span class="pav2 sm avr" style="--sc2:${STAGEC[m.g] || '#5E5CE6'};--tc2:${esc(team(m.t).color)}">${AV.of(m.av, m.n)}</span><span><b>${esc(m.n)}</b><small>#${m.no} · ${esc(m.g || '')} · ${esc(team(m.t).name)}</small></span></span>${money(m.b)}</button>`).join('') || '<p class="empty">لا نتائج.</p>'; };
+      const v = view('الطلاب', `<input class="srch" type="search" placeholder="ابحث بالاسم أو الرقم" id="ps"><div class="seg two pfil"><button class="on" data-pf="all">الكلّ</button><button data-pf="zero">لم يكسب اليوم (${(D.members || []).filter(m => !m.td).length})</button></div><div id="pl"></div>`);
+      let pf = 'all'; v.querySelectorAll('[data-pf]').forEach(b => b.onclick = () => { pf = b.dataset.pf; v.querySelectorAll('[data-pf]').forEach(x => x.classList.toggle('on', x === b)); paint(v.querySelector('#ps').value.trim()); });
+      const paint = q => { document.getElementById('pl').innerHTML = (D.members || []).filter(m => (pf === 'all' || !m.td) && (!q || m.n.includes(q) || String(m.no) === q)).map(m => `<button class="row svrow" data-vno="${m.no}"><span style="display:flex;gap:10px;align-items:center"><span class="pav2 sm avr" style="--sc2:${STAGEC[m.g] || '#5E5CE6'};--tc2:${esc(team(m.t).color)}">${AV.of(m.av, m.n)}</span><span><b>${esc(m.n)}</b><small>#${m.no} · ${esc(m.g || '')} · ${esc(team(m.t).name)}</small></span></span>${money(m.b)}</button>`).join('') || '<p class="empty">لا نتائج.</p>'; };
       paint(''); v.querySelector('#ps').oninput = e => paint(e.target.value.trim());
     },
   };
@@ -509,24 +540,22 @@
     const [h, m] = String(S.time || '17:00').split(':').map(Number), now = Date.now();
     for (let i = 0; i < 8; i++) { const r = new Date(now + 3 * 3600e3 + i * 864e5); if (!S.days.includes(r.getUTCDay())) continue; const at = Date.UTC(r.getUTCFullYear(), r.getUTCMonth(), r.getUTCDate(), h - 3, m); if (at + 15 * 60000 < now) continue;
       const day = i === 0 ? 'اليوم' : i === 1 ? 'غداً' : new Date(at).toLocaleDateString('ar-SA-u-ca-gregory', { weekday: 'long', timeZone: 'Asia/Riyadh' });
-      return `<div class="salnext"><span aria-hidden="true">💰</span><span><b>${esc(S.label || 'راتب')} القادم: ${money(S.amount)}</b><small>${day} الساعة ${h12(S.time).join(' ')}</small></span></div>`; }
+      return `<div class="salnext"><span aria-hidden="true">${I('wallet')}</span><span><b>${esc(S.label || 'راتب')} القادم: ${money(S.amount)}</b><small>${day} الساعة ${h12(S.time).join(' ')}</small></span></div>`; }
     return '';
   }
   /* ═════════ إدارة المتجر (لمدير المتجر فقط — perms.store، والخادم يتحقّق) ═════════ */
-  const EMO = ['🍔', '🍦', '🧃', '🍕', '🍫', '⚽', '🏀', '🧢', '👕', '🎒', '📚', '✏️', '🎯', '🎮', '🚌', '🔋', '🎁', '🏅', '⭐', '🎟️'];
   let MS = null;
   function storeList() {
     view('إدارة المتجر', `<button class="btn" data-act="msnew" style="margin-bottom:12px">＋ صنف جديد</button>
-      <div class="mslist">${(D.items || []).map((i, k) => `<button class="msrow${i.on === false ? ' off' : ''}" data-msedit="${k}"><span class="msth" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : esc(i.e || '🎁')}</span>
+      <div class="mslist">${(D.items || []).map((i, k) => `<button class="msrow${i.on === false ? ' off' : ''}" data-msedit="${k}"><span class="msth" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : I('gift')}</span>
         <span class="tx2"><b>${esc(i.n)}</b><small>${i.on === false ? 'مخفيّ · ' : ''}${i.s != null ? 'بقي ' + i.s : 'بلا حدّ'}</small></span>${money(i.p)}</button>`).join('') || '<p class="empty">المتجر فارغ — أضف أوّل صنف.</p>'}</div>
       <p class="note">أنت مدير المتجر — ما تضيفه يظهر للطلاب فوراً في «المتجر». الإخفاء يبقي الصنف عندك ويخفيه عن الطلاب.</p>`);
   }
   function storeEdit(k) {
-    const i = k == null ? { on: true } : Object.assign({}, D.items[k]); MS = { i, file: null };
-    view(k == null ? 'صنف جديد' : 'تعديل الصنف', `<label class="pick msimg"><input type="file" accept="image/*" id="msf" hidden><span id="msfv">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : '📷 صورة المنتج (اختياريّة)'}</span></label>
-      <div class="emos">${EMO.map(e => `<button class="${i.e === e ? 'on' : ''}" data-emo="${e}">${e}</button>`).join('')}</div>
+    const i = k == null ? { on: true } : Object.assign({}, D.items[k]); MS = { i, file: null, lib: null };
+    view(k == null ? 'صنف جديد' : 'تعديل الصنف', `<button class="btn sec" data-act="mslib" style="margin-bottom:10px">${I('image')} اختر من مكتبة الصور الجاهزة</button><div id="mslib" class="libgrid" hidden>${(window.JW_LIB ? JW_LIB.shop : []).map(([id, n]) => `<button data-libshop="${id}" aria-label="${esc(n)}"><img src="./shop/${id}.webp" alt="" loading="lazy"><small>${esc(n)}</small></button>`).join('')}</div><label class="pick msimg"><input type="file" accept="image/*" id="msf" hidden><span id="msfv">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : I('camera') + ' صورة المنتج (اختياريّة)'}</span></label>
       <label class="fld">الاسم<input id="msn" class="tx" maxlength="80" value="${esc(i.n || '')}" placeholder="مثلاً: آيس كريم"></label>
-      <label class="fld">السعر (عملة)<input id="msp" inputmode="numeric" value="${esc(i.p || '')}"></label>
+      <label class="fld">السعر (${esc(CUR().one)})<input id="msp" inputmode="numeric" value="${esc(i.p || '')}"></label>
       <label class="fld">الكمّيّة (اتركها فارغة إن كانت بلا حدّ)<input id="mss" inputmode="numeric" value="${i.s == null ? '' : esc(i.s)}"></label>
       <label class="fld">الوصف<textarea id="msd" class="tx" rows="2" maxlength="300">${esc(i.d || '')}</textarea></label>
       ${k == null ? '' : `<label class="mstog"><input type="checkbox" id="mso"${i.on === false ? '' : ' checked'}> معروض للطلاب</label>`}
@@ -537,6 +566,7 @@
     const v = id => (document.getElementById(id) || {}).value || '';
     const item = { name: v('msn').trim(), price: +v('msp').replace(/\D/g, ''), stock: v('mss').trim() === '' ? '' : +v('mss').replace(/\D/g, ''), emoji: MS.i.e || '', d: v('msd').trim(), on: document.getElementById('mso') ? document.getElementById('mso').checked : true };
     if (MS.i.id) item.id = MS.i.id;
+    if (!MS.file && MS.lib) item.img = MS.lib;
     if (item.name.length < 2 || !item.price) { toast('اكتب الاسم والسعر', 1); return; }
     btn.disabled = true; btn.textContent = 'جارٍ الحفظ…';
     try {
@@ -551,8 +581,8 @@
   const isoDay = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
   const h12 = t => { if (!t) return ['', '']; const [H, M] = String(t).split(':').map(Number); return [((H % 12) || 12) + ':' + String(M || 0).padStart(2, '0'), H < 12 ? 'ص' : 'م']; };
   const EVC = ['#FF9F0A', '#30D158', '#64D2FF', '#BF5AF2', '#FF375F', '#FFD60A'];
-  const EVE = [[/كرة|دوري|رياض|سباحة|مباراة/, '⚽'], [/رحلة|زيارة|مخيّم|مخيم/, '🚌'], [/مسابقة|حروف|مليون|تحدّي|تحدي/, '🏆'], [/صلاة|درس|قرآن|حلقة|محاضرة/, '🕌'], [/وجبة|عشاء|غداء|إفطار|فطور/, '🍽️'], [/ورشة|دورة|تصوير|برمجة|مهارة/, '🛠️'], [/استقبال|تسجيل|افتتاح/, '👋'], [/تكريم|حفل|ختام/, '🎉']];
-  const evEmoji = t => (EVE.find(([r]) => r.test(t || '')) || [0, '✨'])[1];
+  const EVE = [[/كرة|دوري|رياض|سباحة|مباراة|طائرة/, 'ball'], [/رحلة|زيارة|مخيّم|مخيم/, 'bus'], [/مسابقة|حروف|مليون|تحدّي|تحدي|تنافس/, 'trophy'], [/صلاة|درس|قرآن|حلقة|محاضرة|مجلس/, 'book'], [/وجبة|عشاء|غداء|إفطار|فطور|تموين/, 'food'], [/ورشة|دورة|تصوير|برمجة|مهارة|مهاري/, 'tool'], [/استقبال|تسجيل|افتتاح/, 'users'], [/تكريم|حفل|ختام|نوعي/, 'award']];
+  const evEmoji = t => I((EVE.find(([r]) => r.test(t || '')) || [0, 'spark'])[1]);
   const hue = s => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) % 360; return h; };
   const clk = () => new Date().toLocaleTimeString('ar-SA-u-nu-latn', { hour: 'numeric', minute: '2-digit', second: '2-digit' });
 
@@ -584,20 +614,30 @@
       view('تمّت الحوالة', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${money(XF.amt, 'xl')}</h3><p>وصلت إلى ${esc(XF.who.name)}</p><p class="note">رصيدك الآن ${money(bal)}</p><button class="btn sec" data-open="bank">البنك</button></div>`);
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }
+  const PRE = () => !!((D.season.settings || {}).preorder);
+  async function preorder(btn) {
+    const id = btn.dataset.preorder, it = (D.items || []).find(i => i.id === id); if (!it) return; btn.disabled = true;
+    try {
+      const r = DEMO ? { ok: true, order: 'o' + Date.now(), item: it.n, balance: D.me.balance - it.p } : await post('/season/order', { code: saved.code, pin: saved.pin, item: id });
+      D.me.balance = r.balance; D.me.orders = (D.me.orders || []).concat([{ id: r.order, item: r.item, p: it.p, t: new Date().toISOString() }]); if (it.s != null) it.s--;
+      view('طلبك محجوز', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${esc(r.item)}</h3><p>اذهب إلى الكاونتر وامسح بطاقتك أو قل رقمك <b>${D.me.no}</b> — طلبك جاهز باسمك.</p></div><button class="btn sec" data-open="shop">المتجر</button>`);
+    } catch (e) { toast(e.message, 1); btn.disabled = false; }
+  }
   function prod(k) {
     const i = (D.items || [])[k]; if (!i) return; const bal = MODE === 'staff' ? null : D.me.balance, can = bal == null || bal >= i.p;
-    view(i.n, `<div class="pbig" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : `<span class="pe" aria-hidden="true">${esc(i.e || '🎁')}</span>`}</div>
+    view(i.n, `<div class="pbig" style="--h:${hue(i.n)}">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : `<span class="pe" aria-hidden="true">${I('gift')}</span>`}</div>
       <div class="pdet"><h2>${esc(i.n)}</h2>${money(i.p, 'xl')}${i.s != null ? `<span class="stk${i.s ? '' : ' none'}">${i.s ? 'بقي ' + i.s + ' فقط' : 'نفدت الكمّيّة'}</span>` : ''}
         ${i.d ? `<p>${esc(i.d)}</p>` : ''}
-        ${bal == null ? '' : can ? `<div class="buyhow ok"><b>رصيدك يكفي ✓</b><span>اذهب إلى الكاونتر وقل رقمك <b>${D.me.no}</b> — يُخصم السعر من رصيدك.</span></div>`
-          : `<div class="buyhow"><b>ينقصك ${money(i.p - bal)}</b><i><u style="width:${Math.round(bal / i.p * 100)}%"></u></i><span>اجمع العملات من الأنشطة والمسابقات.</span></div>`}
+        ${bal == null ? '' : can && PRE() && i.s !== 0 ? `<div class="buyhow ok"><b>رصيدك يكفي ✓</b><span>اطلبه الآن ويُحجز لك — استلمه من الكاونتر بمسح بطاقتك.</span></div><button class="btn" data-preorder="${esc(i.id)}" style="margin-top:12px">اطلب «${esc(i.n)}» بـ ${i.p}</button>`
+          : can ? `<div class="buyhow ok"><b>رصيدك يكفي ✓</b><span>اذهب إلى الكاونتر وقل رقمك <b>${D.me.no}</b> — يُخصم السعر من رصيدك.</span></div>`
+          : `<div class="buyhow"><b>ينقصك ${money(i.p - bal)}</b><i><u style="width:${Math.round(bal / i.p * 100)}%"></u></i><span>اجمع ${esc(CUR().name)} من الأنشطة والمسابقات.</span></div>`}
         <button class="btn sec" data-open="shop" style="margin-top:14px">كلّ الأصناف</button></div>`);
   }
   async function checkin(btn) {
     const no = +btn.dataset.no; btn.disabled = true;
     try {
       const r = DEMO ? { ok: true, already: false, coins: 5, today: 37, at: new Date().toISOString() } : await post('/season/checkin', { code: saved.code, pin: saved.pin, as: 'staff', no });
-      document.getElementById('ckin').innerHTML = `<div class="vok">${r.already ? 'مسجّل من قبل' : '✓ سُجّل حضوره'} · ${fmtT(new Date(r.at))}${r.coins ? ` · +${r.coins} عملة` : ''}</div><small>الحاضرون اليوم: ${r.today}</small>`;
+      document.getElementById('ckin').innerHTML = `<div class="vok">${r.already ? 'مسجّل من قبل' : '✓ سُجّل حضوره'} · ${fmtT(new Date(r.at))}${r.coins ? ` · +${r.coins} ${esc(CUR().one)}` : ''}</div><small>الحاضرون اليوم: ${r.today}</small>`;
       const m = (D.members || []).find(x => x.no === no); if (m && r.coins && !r.already) m.b += r.coins;
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }
@@ -632,42 +672,146 @@
   }
 
   /* ═════════ نموذج المشرف: رقم الطالب ← المبلغ أو الصنف ← تنفيذ (الخادم يتحقّق من الحدود والمرحلة) ═════════ */
-  const STF = { kind: 'coin', amt: 10, reason: 'مشاركة', item: '', team: '', pts: 10 };
-  function staffForm() {
-    const lim = (D.me.perms || {}).coins || 50, sell = STF.kind === 'sell';
-    const amts = [5, 10, 25, 50, 100].filter(a => a <= lim).slice(0, 3).concat([-Math.min(10, lim)]);
+  const STF = { kind: 'coin', amt: 10, reason: 'مشاركة', item: '', team: '', pts: 10, vio: '' };
+  /* صلاحيّة إضافيّة: القائد يملكها كلّها، والضيف لا شيء منها */
+  const can = k => D.me.role === 'lead' || !!(D.me.perms && D.me.perms[k]);
+  const leftToday = () => D.me.daily ? Math.max(0, D.me.daily - (D.me.givenToday || 0)) : null;
+  /* المدينة: «أين أنا الآن» — يوم البرنامج يبدأ ٤ فجراً، وما قبل ٤ فجراً يُحسب بعد منتصف الليل */
+  const hmOf = t => { const m = /^(\d{1,2}):(\d{2})/.exec(t || ''); if (!m) return null; const h = +m[1]; return h * 60 + +m[2] + (h < 4 ? 1440 : 0); };
+  const pdayISO = () => { const d = new Date(Date.now() - 4 * 3600e3); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+  const nowHM = () => { const d = new Date(); return hmOf(String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0')); };
+  function whereNow() {
+    const day = pdayISO(), rows = (D.schedule || []).filter(x => (x.k === 'zone' || x.k === 'break') && x.d === day).sort((a, b) => hmOf(a.f) - hmOf(b.f)); if (!rows.length) return '';
+    const n = nowHM(), cur = rows.find(x => n >= hmOf(x.f) - 10 && n <= hmOf(x.e)), nx = rows.find(x => hmOf(x.f) - 10 > n);
+    const zc = id => (((D.season.settings || {}).zones || []).find(z => z.id === id) || {}).c || '#0A84FF';
+    if (!cur && !nx) return '';
+    const x = cur || nx;
+    const zim = (((D.season.settings || {}).zones || []).find(z => z.id === x.zone) || {}).img || (x.period === 'cat' ? 'lib:city/cat' : '');
+    return `<button class="widget wnow${zim ? ' hasimg' : ''}" data-open="cal" style="--zc:${esc(x.k === 'zone' ? zc(x.zone || '') : '#8E8E93')}">${zim ? `<img class="wzi" src="${esc(imgSrc(zim))}" alt="">` : ''}<small>${cur ? 'أين أنا الآن' : 'التالي · ' + fmtT2(x.f)}</small><b>${esc(x.t)}</b><small>${esc([x.p, cur ? 'حتى ' + fmtT2(x.e) : ''].filter(Boolean).join(' · '))}</small>${cur && nx ? `<small class="wnx">بعدها: ${esc(nx.t)} · ${fmtT2(nx.f)}</small>` : ''}</button>`;
+  }
+  const fmtT2 = t => { const [h, m] = String(t || '0:0').split(':').map(Number); return ((h % 12) || 12) + ':' + String(m || 0).padStart(2, '0') + (h < 12 ? ' ص' : ' م'); };
+  /* «مكاني» للمشرف: منطقته والفترة الحاليّة والمرحلة القادمة إليه + «وصلت» + مسح بطاقات الداخلين */
+  let CITY = null;
+  async function cityLoad() {
+    try { CITY = DEMO ? (CITY || { period: { id: 'p1', n: 'الفترة الأولى', f: '21:00', e: '21:45' }, zone: 'comp', here: null, expected: ['متوسط'], count: 12 }) : await post('/season/city/now', { code: saved.code, pin: saved.pin, as: 'staff' }); }
+    catch (e) { toast(e.message, 1); CITY = null; }
+  }
+  async function zoneView() {
+    await cityLoad(); if (!CITY) return;
+    const z = (((D.season.settings || {}).zones || []).find(x => x.id === CITY.zone)) || null, P = CITY.period;
+    view('مكاني', `<div class="zcard" style="--zc:${esc(z ? z.c || '#0A84FF' : '#8E8E93')}">${z && z.img ? `<img class="zci" src="${esc(imgSrc(z.img))}" alt="">` : ''}<small>موقعك</small><b>${z ? esc(z.n) : 'متنقّل — بلا منطقة ثابتة'}</b>${z && z.p ? `<small>${esc(z.p)}</small>` : ''}</div>
+      ${CITY.here ? `<div class="vok">✓ وصلت ${fmtT(new Date(CITY.here.at))}${CITY.here.late ? ` · متأخّر ${CITY.here.minutes} د` : ''}</div>` : `<button class="btn" data-act="here">وصلت — سجّل حضوري</button>`}
+      <div class="znow"><small>${P ? esc(P.n) + ' · ' + fmtT2(P.f) + '–' + fmtT2(P.e) : 'لا فترة الآن'}</small>${P && (CITY.expected || []).length ? `<b>القادمون إليك: ${CITY.expected.map(esc).join('، ')}</b><small>سُجّل دخول <b id="zc">${CITY.count || 0}</b></small>` : P ? '<small>لا مرحلة مجدولة في منطقتك هذه الفترة.</small>' : ''}</div>
+      ${P ? `${CAN_SCAN() ? `<button class="btn sec scanb" data-act="pscan">${SV.cam} امسح بطاقات الداخلين</button><video id="cam2" playsinline muted hidden></video>` : ''}
+      <label class="fld">أو رقم الطالب<input id="pn" class="big" inputmode="numeric" autocomplete="off" placeholder="—"></label><button class="btn" data-act="patt">سجّل دخوله</button><div id="plog" class="plog"></div>` : ''}
+      <p class="note">التأخّر يُحسب آليّاً من بداية الفترة — الإدارة ترى من دخل متأخّراً ومن لم يصل.</p>`);
+  }
+  async function cityAct(body, quiet) {
+    try {
+      const r = DEMO ? (body.kind === 'here' ? { ok: true, late: false, minutes: 0, at: new Date().toISOString() } : (() => { const m = (D.members || []).find(x => x.no === body.member_no); if (!m) throw new Error('لا يوجد مشارك بهذا الرقم'); CITY.count++; return { ok: true, name: m.n, stage: m.g, late: false, here: CITY.count, expected: 'متوسط' }; })())
+        : await post('/season/city', { code: saved.code, pin: saved.pin, as: 'staff', act: body });
+      if (body.kind === 'here') { CITY.here = r; zoneView(); return r; }
+      const c = document.getElementById('zc'); if (c) c.textContent = r.here;
+      const lg = document.getElementById('plog'); if (lg) lg.insertAdjacentHTML('afterbegin', `<div class="${r.late ? 'plate' : ''}">${r.late ? I('clock') : '✓'} ${esc(String(r.name).split(' ').slice(0, 2).join(' '))} <small>${esc(r.stage || '')}${r.expected && r.stage !== r.expected ? ' · ليس دوره هنا' : ''}</small></div>`);
+      if (!quiet) toast(r.late ? 'سُجّل — متأخّر' : 'سُجّل ✓'); return r;
+    } catch (e) { toast(e.message, 1); return null; }
+  }
+  async function pscanLoop() { for (;;) { const n = await scanNo('cam2'); if (!n || !document.getElementById('plog')) return; await cityAct({ kind: 'patt', member_no: n }, true); } }
+  function budgetWidget() {
+    const d = D.me.daily, g = Math.min(D.me.givenToday || 0, d), left = d - g, pct = Math.round(g / d * 100);
+    return `<button class="widget budget" data-open="give"><span class="bring" style="--p:${pct}"><b>${left}</b><small>باقي</small></span><span><small>رصيدك اليوم</small><b>${left ? 'وزّع ' + left + ' ' + esc(CUR().one) + ' قبل الختام' : 'خلّصت رصيد اليوم — بكرة رصيد جديد'}</b><small>منحتَ ${g} من ${d} · يتجدّد كلّ يوم</small></span></button>`;
+  }
+  const CAN_SCAN = () => !!NAT || 'BarcodeDetector' in window;
+  /* البطاقة تكفي: مسح رمز بطاقة الطالب يرجع رقمه (كاميرا الآيفون أو BarcodeDetector) */
+  function scanNo(vid) {
+    return new Promise(async res => {
+      if (NAT) { try { res(cardNo(await NAT.scan('امسح بطاقة الطالب')) || 0); } catch (e) { res(0); } return; }
+      const v = document.getElementById(vid); if (!v || !('BarcodeDetector' in window)) { toast('اكتب الرقم — المسح غير متاح هنا', 1); return res(0); }
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } }); v.srcObject = stream; v.hidden = false; await v.play();
+        const det = new BarcodeDetector({ formats: ['qr_code'] }), stop = () => { stream.getTracks().forEach(t => t.stop()); v.hidden = true; };
+        const loop = async () => {
+          if (!document.body.contains(v)) { stop(); return res(0); }
+          try { const c = await det.detect(v); const raw = c[0] && c[0].rawValue; if (raw) { const n = cardNo(raw); if (n) { stop(); return res(n); } } } catch (e) {}
+          requestAnimationFrame(loop);
+        };
+        loop();
+      } catch (e) { toast('تعذّر فتح الكاميرا — اكتب الرقم', 1); res(0); }
+    });
+  }
+  const TITLES = { coin: 'امنح', sell: 'الكاونتر', fine: 'مخالفة', fee: 'الجمارك' };
+  function whoHTML(no) {
+    const m = (D.members || []).find(x => String(x.no) === String(no)); if (!m) return '<small>امسح بطاقته أو اكتب رقمه.</small>';
+    const ord = (D.orders || []).filter(o => o.no === m.no);
+    return `<span class="dot" style="--c:${esc(team(m.t).color)}"></span><span><b>${esc(m.n)}</b><small> · ${esc(team(m.t).name)} · الرصيد ${m.b}${m.td != null ? ' · اليوم +' + m.td : ''}${m.f ? ' · مخالفات ' + m.f : ''}</small></span>`
+      + (STF.kind === 'sell' && ord.length ? `<div class="ords">${ord.map(o => `<div class="ord"><span>${I('receipt')} ${esc(o.item)} <small>${o.p}</small></span><button class="chip on" data-deliver="${esc(o.id)}" data-dno="${m.no}">سلّم</button><button class="chip" data-deliver="${esc(o.id)}" data-dno="${m.no}" data-cancel="1">ألغِ</button></div>`).join('')}</div>` : '');
+  }
+  function staffForm(no) {
+    const k = STF.kind, lim = (D.me.perms || {}).coins || 50, sell = k === 'sell', left = leftToday();
+    const amts = [5, 10, 25, 50, 100].filter(a => a <= lim && (left == null || a <= Math.max(left, 5))).slice(0, 3).concat(can('fine') ? [] : [-Math.min(10, lim)]);
     if (!amts.includes(STF.amt)) STF.amt = amts[0];
-    const v = view(sell ? 'الكاونتر' : 'امنح عملات', `<label class="fld">رقم الطالب<input id="sn" class="big" inputmode="numeric" autocomplete="off" placeholder="—"></label>
-      <div class="who" id="who"><small>اكتب الرقم المكتوب على بطاقته أو في «بطاقتي».</small></div>
-      ${sell ? `<div class="items">${(D.items || []).map(i => `<button class="item${STF.item === i.id ? ' on' : ''}" data-item="${esc(i.id)}"><span class="ie" aria-hidden="true">${esc(i.e || '🎁')}</span><b>${esc(i.n)}</b>${money(i.p)}${i.s != null ? `<small>بقي ${i.s}</small>` : ''}</button>`).join('') || '<p class="empty">المتجر فارغ.</p>'}</div>`
-        : `<div class="amts">${amts.map(a => `<button data-amt="${a}" class="${STF.amt === a ? 'on' : ''}">${a > 0 ? '+' + a : '−' + Math.abs(a)}</button>`).join('')}</div>
-      <div class="chips">${['حضور', 'مشاركة', 'فوز في مسابقة', 'انضباط', 'تعاون', 'إبداع', 'مخالفة'].map(r => `<button class="chip${STF.reason === r ? ' on' : ''}" data-reason="${r}">${r}</button>`).join('')}</div>`}
-      <button class="btn" data-act="${sell ? 'sell' : 'coin'}" style="margin-top:14px">${sell ? 'بيع' : 'امنح'}</button>
-      <p class="note">حدّك: ${lim} عملة في المرّة. كلّ حركة تُسجَّل باسمك.</p>`);
+    const vios = (D.season.violations || []); if (k === 'fine' && !vios.find(v => v.n === STF.vio)) STF.vio = (vios[0] || {}).n || '';
+    const cus = (D.season.settings || {}).customs || {};
+    const body = sell ? `<div class="items">${(D.items || []).filter(i => i.on !== false).map(i => `<button class="item${STF.item === i.id ? ' on' : ''}" data-item="${esc(i.id)}"><span class="ie" aria-hidden="true">${i.img ? `<img src="${esc(imgSrc(i.img))}" alt="">` : I('gift')}</span><b>${esc(i.n)}</b>${money(i.p)}${i.s != null ? `<small>بقي ${i.s}</small>` : ''}</button>`).join('') || '<p class="empty">المتجر فارغ.</p>'}</div>
+        ${(D.orders || []).length ? `<h3 class="sech">طلبات تنتظر التسليم (${D.orders.length})</h3><div class="olist">${D.orders.map(o => `<button class="row svrow" data-ono="${o.no}"><span><b>${esc(o.item)}</b><small>#${o.no} · ${esc(String(o.n).split(' ')[0])}</small></span>${money(o.p)}</button>`).join('')}</div>` : ''}`
+      : k === 'fine' ? `<div class="chips vios">${vios.map(v => `<button class="chip${STF.vio === v.n ? ' on' : ''}" data-vio="${esc(v.n)}">${esc(v.n)} <small dir="ltr">−${v.a}</small></button>`).join('')}</div><p class="note">يُخصم من رصيده (لا يصير سالباً)، ويُسجَّل في سجلّه السلوكيّ.</p>`
+      : k === 'fee' ? `<div class="feebox">${money(cus.amount || 5, 'xl')}<small>${esc(cus.name || 'الجمارك')} — رسم ثابت يُخصم من رصيده</small></div>`
+      : `<div class="amts">${amts.map(a => `<button data-amt="${a}" class="${STF.amt === a ? 'on' : ''}">${a > 0 ? '+' + a : '−' + Math.abs(a)}</button>`).join('')}</div>
+      <div class="chips">${['حضور', 'مشاركة', 'فوز في مسابقة', 'انضباط', 'تعاون', 'إبداع'].concat(can('fine') ? [] : ['مخالفة']).map(r => `<button class="chip${STF.reason === r ? ' on' : ''}" data-reason="${r}">${r}</button>`).join('')}</div>`;
+    const v = view(TITLES[k], `${CAN_SCAN() ? `<button class="btn sec scanb" data-act="scansn">${SV.cam} امسح بطاقة الطالب</button><video id="cam2" playsinline muted hidden></video>` : ''}
+      <label class="fld">رقم الطالب<input id="sn" class="big" inputmode="numeric" autocomplete="off" placeholder="—" value="${no || ''}"></label>
+      <div class="who" id="who">${whoHTML(no)}</div>${body}
+      <button class="btn" data-act="${k}" style="margin-top:14px">${{ coin: 'امنح', sell: 'بيع', fine: 'سجّل المخالفة', fee: 'حصّل الرسم' }[k]}</button>
+      <p class="note">${k === 'coin' ? `حدّك ${lim} في المرّة${left != null ? ` · باقي من رصيدك اليوم <b>${left}</b>` : ''}. ` : ''}كلّ حركة تُسجَّل باسمك.</p>`);
     const inp = v.querySelector('#sn');
-    inp.oninput = () => { const m = (D.members || []).find(x => String(x.no) === inp.value.trim()); document.getElementById('who').innerHTML = m ? `<span class="dot" style="--c:${esc(team(m.t).color)}"></span><span><b>${esc(m.n)}</b><small> · ${esc(team(m.t).name)} · الرصيد ${m.b}</small></span>` : '<small>اكتب الرقم المكتوب على بطاقته أو في «بطاقتي».</small>'; };
+    inp.oninput = () => { document.getElementById('who').innerHTML = whoHTML(inp.value.trim()); };
   }
   async function act(kind) {
     let body;
     if (kind === 'point') { if (!STF.team) { toast('اختر الفريق', 1); return; } body = { kind: 'point', team: STF.team, points: STF.pts, reason: STF.reason }; }
-    else {
-      const no = ((document.getElementById('sn') || {}).value || '').trim(); if (!no) { toast('اكتب رقم الطالب', 1); return; }
+    else if (kind === 'guest') {
+      const nm = ((document.getElementById('gn') || {}).value || '').trim(); if (nm.length < 2) { toast('اكتب اسم الضيف', 1); return; }
+      body = { kind: 'guest', name: nm, budget: STF.gb || 100 };
+    } else {
+      const no = ((document.getElementById('sn') || {}).value || '').trim(); if (!no) { toast('امسح البطاقة أو اكتب الرقم', 1); return; }
       if (kind === 'sell' && !STF.item) { toast('اختر الصنف', 1); return; }
-      body = kind === 'sell' ? { kind: 'sell', member_no: +no, item: STF.item } : { kind: 'coin', member_no: +no, amount: STF.amt, reason: STF.reason };
+      if (kind === 'fine' && !STF.vio) { toast('اختر المخالفة', 1); return; }
+      body = kind === 'sell' ? { kind: 'sell', member_no: +no, item: STF.item } : kind === 'fine' ? { kind: 'fine', member_no: +no, violation: STF.vio }
+        : kind === 'fee' ? { kind: 'fee', member_no: +no } : { kind: 'coin', member_no: +no, amount: STF.amt, reason: STF.reason };
     }
     const btn = document.querySelector('[data-act="' + kind + '"]'); if (btn) btn.disabled = true;
     try {
       const r = DEMO ? demoAct(body) : await post('/season/staff/act', { code: saved.code, pin: saved.pin, act: body });
-      if (kind === 'point') { D.teams = D.teams || {}; D.teams[STF.team] = (D.teams[STF.team] || 0) + STF.pts; toast(`${STF.pts > 0 ? '+' : ''}${STF.pts} لـ${team(STF.team).name}`); OPEN.teams(); }
-      else {
-        const m = (D.members || []).find(x => x.no === body.member_no); if (m) m.b = r.balance;
-        if (kind === 'coin' && body.amount > 0) D.me.given = (D.me.given || 0) + body.amount;
-        toast(kind === 'sell' ? `بِيع «${r.item}» — رصيده ${r.balance}` : `${body.amount > 0 ? '+' : ''}${body.amount} لـ${String(r.name).split(' ')[0]} — رصيده ${r.balance}`); staffForm();
-      }
+      if (kind === 'point') { D.teams = D.teams || {}; D.teams[STF.team] = (D.teams[STF.team] || 0) + STF.pts; toast(`${STF.pts > 0 ? '+' : ''}${STF.pts} لـ${team(STF.team).name}`); OPEN.teams(); return; }
+      if (kind === 'guest') { guestDone(r); return; }
+      const m = (D.members || []).find(x => x.no === body.member_no); if (m) { m.b = r.balance; if (kind === 'fine') m.f = (m.f || 0) + 1; if (kind === 'coin' && body.amount > 0) m.td = (m.td || 0) + body.amount; }
+      if (kind === 'coin' && body.amount > 0) { D.me.given = (D.me.given || 0) + body.amount; D.me.givenToday = (D.me.givenToday || 0) + body.amount; }
+      const first = String(r.name).split(' ')[0];
+      toast(kind === 'sell' ? `بِيع «${r.item}» — رصيده ${r.balance}` : kind === 'fine' ? `سُجّلت المخالفة على ${first} (−${r.amount}) — رصيده ${r.balance}` : kind === 'fee' ? `حُصّل ${r.amount} من ${first} — رصيده ${r.balance}` : `${body.amount > 0 ? '+' : ''}${body.amount} لـ${first} — رصيده ${r.balance}`);
+      staffForm();
     } catch (e) { toast(e.message, 1); if (btn) btn.disabled = false; }
+  }
+  async function deliver(id, no, cancel) {
+    try {
+      const r = DEMO ? (() => { const o = D.orders.find(x => x.id === id), m = D.members.find(x => x.no === no); if (cancel && m) m.b += o.p; return { ok: true, name: m.n, balance: m.b, item: o.item, cancelled: cancel ? o.item : null }; })()
+        : await post('/season/staff/act', { code: saved.code, pin: saved.pin, act: { kind: 'deliver', member_no: no, order: id, cancel: !!cancel } });
+      D.orders = (D.orders || []).filter(o => o.id !== id); const m = (D.members || []).find(x => x.no === no); if (m) m.b = r.balance;
+      toast(cancel ? `أُلغي «${r.cancelled}» ورجع المبلغ` : `سُلّم «${r.item}» ✓`); STF.kind = 'sell'; staffForm(no);
+    } catch (e) { toast(e.message, 1); }
+  }
+  /* رمز الضيف: مقدّم الورشة يمسحه فيمنح الطلاب من رصيد محدّد، وينتهي آخر يوم البرنامج */
+  function guestDone(r) {
+    const link = (NAT ? 'https://ibrahimsaud.com/charity/season/' : location.origin + location.pathname) + '?c=' + encodeURIComponent(D.season.code || '') + '&p=' + r.pin + '&as=staff';
+    view('رمز الضيف', `<div class="recv"><small>${esc(r.name)}</small><div class="rqr">${qrSVG(link)}</div><div class="rno" dir="ltr">${esc(r.pin)}</div>
+      <p>يمسح الضيف الرمز بكاميرا جواله فيدخل مباشرة. رصيده ${r.budget} ${esc(CUR().one)}، وينتهي الرمز آخر يوم البرنامج.</p></div>
+      <button class="btn" data-share="${esc(link)}" data-share-t="${esc('رمز الضيف في ' + D.season.name)}">شارك الرابط</button>`);
   }
 
   document.addEventListener('click', e => {
+    const dm = e.target.closest('[data-demo]'); if (dm) { demoGo(dm.dataset.demo); return; }
+    if (e.target.closest('[data-demo-pick]')) { location.href = location.pathname + '?demo=pick'; return; }
+    if (e.target.closest('[data-demo-exit]')) { location.href = location.pathname; return; }
+    if (e.target.closest('[data-demo-menu]')) { demoMenu(); return; }
     const rl = e.target.closest('[data-role]'); if (rl) { ROLE = rl.dataset.role; try { localStorage.setItem('jw_role', ROLE); } catch (er) {} login(); return; }
     if (e.target.closest('[data-role-reset]')) { ROLE = null; try { localStorage.removeItem('jw_role'); } catch (er) {} login(); return; }
     const lg = e.target.closest('[data-libg]'); if (lg) { libPaint(lg.dataset.libg); return; }
@@ -685,13 +829,19 @@
     const rk = e.target.closest('[data-rk]'); if (rk) { OPEN.trophy(rk.dataset.rk); return; }
     const pr = e.target.closest('[data-prod]'); if (pr) { prod(+pr.dataset.prod); return; }
     const xa = e.target.closest('[data-xamt]'); if (xa) { XF.amt = +xa.dataset.xamt; const ia = document.getElementById('xa'); if (ia) ia.value = XF.amt; xa.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === xa)); xferBtn(); return; }
+    const ls = e.target.closest('[data-libshop]'); if (ls && MS) { const L = JW_LIB.shop.find(x => x[0] === ls.dataset.libshop); MS.lib = 'lib:shop/' + L[0]; MS.file = null; MS.i.img = MS.lib; document.getElementById('msfv').innerHTML = `<img src="./shop/${L[0]}.webp" alt="">`; const f = (id, v) => { const el = document.getElementById(id); if (el && !el.value) el.value = v; }; f('msn', L[1]); f('msp', L[2]); f('msd', L[3]); ls.parentElement.hidden = true; return; }
     const me1 = e.target.closest('[data-msedit]'); if (me1) { storeEdit(+me1.dataset.msedit); return; }
     const em = e.target.closest('[data-emo]'); if (em && MS) { MS.i.e = em.dataset.emo; em.parentElement.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === em)); return; }
     const vm = e.target.closest('[data-vno]'); if (vm) { OPEN.scan(+vm.dataset.vno); return; }
     const c = e.target.closest('[data-close]'); if (c) { const au = document.getElementById('adhanAudio'); if (au && !au.paused && !document.querySelector('.adhan')) { au.pause(); au.currentTime = 0; } c.closest('.view').remove(); if (D) home(); return; }
     const pick = (attr, set) => { const b = e.target.closest('[' + attr + ']'); if (!b) return false; set(b.getAttribute(attr)); b.parentElement.querySelectorAll('[' + attr + ']').forEach(x => x.classList.toggle('on', x === b)); return true; };
+    const dl = e.target.closest('[data-deliver]'); if (dl) { deliver(dl.dataset.deliver, +dl.dataset.dno, !!dl.dataset.cancel); return; }
+    const on2 = e.target.closest('[data-ono]'); if (on2) { const i = document.getElementById('sn'); if (i) { i.value = on2.dataset.ono; i.oninput(); i.scrollIntoView({ block: 'center' }); } return; }
+    const shr = e.target.closest('[data-share]'); if (shr) { const u = shr.dataset.share; if (navigator.share) navigator.share({ title: shr.dataset.shareT, url: u }).catch(() => {}); else { try { navigator.clipboard.writeText(u); toast('نُسخ الرابط'); } catch (er) {} } return; }
+    const pre = e.target.closest('[data-preorder]'); if (pre) { preorder(pre); return; }
+    if (pick('data-vio', v => STF.vio = v) || pick('data-gb', v => STF.gb = +v)) return;
     if (pick('data-amt', v => STF.amt = +v) || pick('data-pts', v => STF.pts = +v) || pick('data-reason', v => STF.reason = v) || pick('data-item', v => STF.item = v) || pick('data-team', v => STF.team = v)) return;
-    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'msnew') { storeEdit(null); return; } if (ac && ac.dataset.act === 'mssave') { storeSave(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'pushon') { pushEnable(ac); return; } act(ac.dataset.act); }
+    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'here') { ac.disabled = true; cityAct({ kind: 'here' }); return; } if (ac && ac.dataset.act === 'pscan') { pscanLoop(); return; } if (ac && ac.dataset.act === 'patt') { const i = document.getElementById('pn'); if (i && i.value.trim()) { cityAct({ kind: 'patt', member_no: +i.value.trim() }); i.value = ''; } return; } if (ac && ac.dataset.act === 'scansn') { scanNo('cam2').then(n => { const i = document.getElementById('sn'); if (n && i) { i.value = n; i.oninput(); } }); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'msnew') { storeEdit(null); return; } if (ac && ac.dataset.act === 'mslib') { const g = document.getElementById('mslib'); if (g) g.hidden = !g.hidden; return; } if (ac && ac.dataset.act === 'mssave') { storeSave(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'pushon') { pushEnable(ac); return; } act(ac.dataset.act); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { const v = document.querySelector('.view'); if (v) { v.remove(); if (D) home(); } } });
 
@@ -701,7 +851,7 @@
   /* المتصفّحات (خاصّة الآيفون) تمنع الصوت بلا لمسة: أوّل لمسة في التطبيق «تفتح» عنصر الأذان صامتاً ليعمل وقت الصلاة */
   let audioOK = false;
   document.addEventListener('pointerdown', () => { if (audioOK) return; const a = document.getElementById('adhanAudio'); if (!a) return; a.muted = true; const p = a.play(); if (p) p.then(() => { a.pause(); a.currentTime = 0; a.muted = false; audioOK = true; }).catch(() => { a.muted = false; }); }, { passive: true });
-  function adhanTest(btn) { const a = document.getElementById('adhanAudio'); if (!a.paused) { a.pause(); a.currentTime = 0; btn.textContent = '🔊 اسمع الأذان'; return; } a.muted = false; a.play().then(() => { btn.textContent = '■ إيقاف'; a.onended = () => { btn.textContent = '🔊 اسمع الأذان'; }; }).catch(() => toast('تعذّر تشغيل الصوت', 1)); }
+  function adhanTest(btn) { const a = document.getElementById('adhanAudio'); if (!a.paused) { a.pause(); a.currentTime = 0; btn.innerHTML = I('volume') + ' اسمع الأذان'; return; } a.muted = false; a.play().then(() => { btn.textContent = '■ إيقاف'; a.onended = () => { btn.innerHTML = I('volume') + ' اسمع الأذان'; }; }).catch(() => toast('تعذّر تشغيل الصوت', 1)); }
   /* ═════════ الإشعارات الحقيقيّة (Web Push): تصل والجوال مقفل — في الآيفون بعد «إضافة إلى الشاشة الرئيسيّة» ═════════ */
   const isIOS = !/Android/i.test(navigator.userAgent) && (/iP(hone|ad|od)/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1));
   const standalone = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
@@ -719,7 +869,7 @@
     const st = await pushState();
     if (st === 'install') { installHelp(); return; }
     if (st === 'unsupported') { toast('هذا المتصفّح لا يدعم الإشعارات — جرّب سفاري أو كروم', 1); return; }
-    if (st === 'denied') { toast('الإشعارات ممنوعة — فعّلها من إعدادات الجوال', 1); return; }
+    if (st === 'denied') { toast('الإشعارات ممنوعة لـ«جوّالي» — فعّلها من إعدادات الجوال', 1); return; }
     if (btn) btn.disabled = true;
     if (NAT) {
       try { if (DEMO) throw new Error('الإشعارات تعمل بعد الدخول بحسابك'); await NAT.push.enable({ code: saved.code, pin: saved.pin, as: MODE === 'staff' ? 'staff' : 'me' }, API); toast('فُعّلت الإشعارات ✓ — يصلك الأذان والأخبار والجوال مقفل'); home(); }
@@ -737,22 +887,22 @@
     } catch (e) { toast(e.message || 'تعذّر تفعيل الإشعارات', 1); if (btn) btn.disabled = false; }
   }
   function installHelp() {
-    view('أضف النظام للشاشة', `<div class="inst"><div class="inst-ic"><img src="./icons/icon-192.png" alt=""></div>
-      <p>في الآيفون تصل الإشعارات (الأذان والأخبار والعملات) بعد إضافة النظام للشاشة الرئيسيّة:</p>
-      <ol><li>اضغط زرّ <b>المشاركة</b> <span class="shr" aria-hidden="true">⬆︎</span> أسفل سفاري</li><li>اختر <b>«إضافة إلى الشاشة الرئيسيّة»</b></li><li>افتح النظام من أيقونته ثمّ اضغط <b>«فعّل الإشعارات»</b></li></ol>
+    view('أضف «جوّالي» للشاشة', `<div class="inst"><div class="inst-ic"><img src="./icons/icon-192.png" alt=""></div>
+      <p>في الآيفون تصل الإشعارات (الأذان والأخبار والعملات) بعد إضافة «جوّالي» للشاشة الرئيسيّة:</p>
+      <ol><li>اضغط زرّ <b>المشاركة</b> <span class="shr" aria-hidden="true">${I('share')}</span> أسفل سفاري</li><li>اختر <b>«إضافة إلى الشاشة الرئيسيّة»</b></li><li>افتح «جوّالي» من أيقونته ثمّ اضغط <b>«فعّل الإشعارات»</b></li></ol>
       <p class="note">رمزك محفوظ — لن تحتاج إدخاله مرّة أخرى.</p></div>`);
   }
   async function pushBanner() {
     const el = document.getElementById('pushb'); if (!el) return;
     let hide = false; try { hide = localStorage.getItem('jw_push_x') === '1'; } catch (e) {}
     const st = await pushState(); if (hide || st === 'on' || st === 'unsupported') return;
-    el.innerHTML = `<button class="widget pushb" data-act="pushon"><span class="pb-i" aria-hidden="true">🔔</span><span><b>فعّل الإشعارات</b><small>${st === 'install' ? 'أضف النظام للشاشة الرئيسيّة ليصلك الأذان والجوال مقفل' : st === 'denied' ? 'الإشعارات ممنوعة — فعّلها من الإعدادات' : 'الأذان والأخبار وعملاتك تصلك والجوال مقفل'}</small></span></button>`;
+    el.innerHTML = `<button class="widget pushb" data-act="pushon"><span class="pb-i" aria-hidden="true">${I('bell')}</span><span><b>فعّل الإشعارات</b><small>${st === 'install' ? 'أضف «جوّالي» للشاشة الرئيسيّة ليصلك الأذان والجوال مقفل' : st === 'denied' ? 'الإشعارات ممنوعة — فعّلها من الإعدادات' : 'الأذان والأخبار وعملاتك تصلك والجوال مقفل'}</small></span></button>`;
   }
   function sound() { try { const a = document.getElementById('adhanAudio'); const p = a.play(); if (p) p.catch(tone); } catch (e) { tone(); } }
   function notify(title, body) { try { if ('Notification' in window && Notification.permission === 'granted') new Notification(title, { body, icon: '../assets/apps/default/prayer.webp' }); } catch (e) {} }
   function adhan(name) {
     const d = document.createElement('div'); d.className = 'adhan'; d.setAttribute('role', 'alertdialog'); d.setAttribute('aria-label', 'وقت الصلاة');
-    d.innerHTML = `<div class="moon" aria-hidden="true">🕌</div><h1>حان الآن وقت صلاة ${name}</h1><p>حيّ على الصلاة، حيّ على الفلاح</p><button class="btn" style="max-width:320px">حسناً</button>`;
+    d.innerHTML = `<div class="moon" aria-hidden="true">${I('moon', 'big')}</div><h1>حان الآن وقت صلاة ${name}</h1><p>حيّ على الصلاة، حيّ على الفلاح</p><button class="btn" style="max-width:320px">حسناً</button>`;
     d.querySelector('button').onclick = () => { d.remove(); try { const a = document.getElementById('adhanAudio'); a.pause(); a.currentTime = 0; } catch (e) {} };
     document.body.appendChild(d); sound(); notify('حان وقت صلاة ' + name, D ? D.season.name : '');
   }
@@ -767,39 +917,57 @@
   /* ═════════ بيانات توضيحيّة ═════════ */
   const T = [{ id: 'g', name: 'الأخضر', color: '#16A34A' }, { id: 'r', name: 'الأحمر', color: '#DC2626' }, { id: 'b', name: 'الأزرق', color: '#2563EB' }, { id: 'o', name: 'البرتقاليّ', color: '#EA580C' }];
   const iso = ms => new Date(Date.now() + ms).toISOString().slice(0, 10);
-  const SCH = () => [{ d: iso(0), f: '16:30', e: '17:15', t: 'الاستقبال والتسجيل', p: 'البوّابة', g: '' }, { d: iso(0), f: '17:30', e: '18:15', t: 'صلاة العصر ودرس قصير', p: 'المصلّى', g: '' }, { d: iso(0), f: '18:30', e: '19:30', t: 'دوري كرة القدم', p: 'الملعب', g: '' }, { d: iso(0), f: '19:45', e: '20:30', t: 'وجبة العشاء', p: 'الساحة', g: '' }, { d: iso(0), f: '20:45', e: '21:30', t: 'مسابقة خلية الحروف', p: 'القاعة', g: 'متوسط' },
+  const DZ = (dm, len, t, p, zone) => { const d = new Date(Date.now() + dm * 6e4), e = new Date(d.getTime() + len * 6e4), hh = x => String(x.getHours()).padStart(2, '0') + ':' + String(x.getMinutes()).padStart(2, '0'); return { d: pdayISO(), f: hh(d), e: hh(e), t, p, g: '', k: 'zone', zone }; };
+  const SCH = () => [DZ(-20, 45, 'المنطقة التنافسيّة', 'القاعات السفليّة', 'comp'), DZ(40, 45, 'المنطقة المهاريّة', 'القاعات العلويّة', 'skill'), { d: iso(0), f: '16:30', e: '17:15', t: 'الاستقبال والتسجيل', p: 'البوّابة', g: '' }, { d: iso(0), f: '17:30', e: '18:15', t: 'صلاة العصر ودرس قصير', p: 'المصلّى', g: '' }, { d: iso(0), f: '18:30', e: '19:30', t: 'دوري كرة القدم', p: 'الملعب', g: '' }, { d: iso(0), f: '19:45', e: '20:30', t: 'وجبة العشاء', p: 'الساحة', g: '' }, { d: iso(0), f: '20:45', e: '21:30', t: 'مسابقة خلية الحروف', p: 'القاعة', g: 'متوسط' },
     { d: iso(864e5), f: '16:00', e: '21:00', t: 'رحلة البحر', p: 'شاطئ نصف القمر', g: '' }, { d: iso(0), r: new Date(Date.now() + 2 * 864e5).getDay(), f: '19:30', e: '20:15', t: 'مجلس السيرة النبويّة', p: 'المصلّى', g: '' }, { d: iso(0), r: new Date(Date.now() + 2 * 864e5).getDay(), f: '20:30', e: '21:30', t: 'كرة طائرة', p: 'الملعب', g: '' }, { d: iso(12 * 864e5), k: 'trip', f: '06:00', e: '22:00', t: 'رحلة المدينة المنورة', p: 'من مقرّ الجمعيّة', g: '' }, { d: iso(2 * 864e5), f: '17:00', e: '18:30', t: 'ورشة تصوير بالجوال', p: 'المعمل', g: '' }, { d: iso(2 * 864e5), f: '19:00', e: '20:00', t: 'مسابقة السيرة', p: 'القاعة', g: '' }];
-  const ITM = [{ id: 'i1', n: 'وجبة عشاء', p: 30, e: '🍔', d: 'برجر مع بطاطس وعصير من مطعم الموسم.' }, { id: 'i5', n: 'آيس كريم', p: 15, e: '🍦', d: 'كوب آيس كريم بالنكهة التي تختارها.' }, { id: 'i2', n: 'كرة قدم', p: 150, s: 3, e: '⚽', d: 'كرة مقاس ٥ — لك أن تأخذها للبيت.' },
-    { id: 'i6', n: 'قبّعة الموسم', p: 80, s: 12, e: '🧢', d: 'قبّعة بشعار الموسم ولون فريقك.' }, { id: 'i3', n: 'اختيار النشاط', p: 100, e: '🎯', d: 'فريقك يختار نشاط يوم الخميس.' }, { id: 'i4', n: 'الصفّ الأوّل في الرحلة', p: 200, s: 1, e: '🚌', d: 'مقعدك محجوز في الصفّ الأوّل في رحلة البحر.' },
-    { id: 'i7', n: 'شاحن متنقّل', p: 250, s: 2, e: '🔋', d: '١٠ آلاف ملّي أمبير — للرحلات الطويلة.' }, { id: 'i8', n: 'كتاب قصص', p: 60, s: 5, e: '📚', d: 'قصص الأنبياء للناشئة — طبعة مصوّرة.' }];
+  const ITM = [{ id: 'i1', n: 'وجبة عشاء', p: 30, img: 'lib:shop/dinner', d: 'برجر مع بطاطس وعصير من مطعم الموسم.' }, { id: 'i5', n: 'آيس كريم', p: 15, img: 'lib:shop/icecream', d: 'كوب آيس كريم بالنكهة التي تختارها.' }, { id: 'i2', n: 'كرة قدم', p: 150, img: 'lib:shop/football', s: 3, d: 'كرة مقاس ٥ — لك أن تأخذها للبيت.' },
+    { id: 'i6', n: 'قبّعة الموسم', p: 80, img: 'lib:shop/cap', s: 12, d: 'قبّعة بشعار الموسم ولون فريقك.' }, { id: 'i3', n: 'اختيار النشاط', p: 100, img: 'lib:shop/pick', d: 'فريقك يختار نشاط يوم الخميس.' }, { id: 'i4', n: 'الصفّ الأوّل في الرحلة', p: 200, img: 'lib:shop/bus', s: 1, d: 'مقعدك محجوز في الصفّ الأوّل في رحلة البحر.' },
+    { id: 'i7', n: 'شاحن متنقّل', p: 250, img: 'lib:shop/powerbank', s: 2, d: '١٠ آلاف ملّي أمبير — للرحلات الطويلة.' }, { id: 'i8', n: 'كتاب قصص', p: 60, img: 'lib:shop/storybook', s: 5, d: 'قصص الأنبياء للناشئة — طبعة مصوّرة.' }];
   function sample() {
     const t = new Date().toISOString();
-    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', code: 'DEMO42', teams: T, settings: { city: 'الأحساء', salary: { on: true, amount: 20, days: [4, 0], time: '17:00', label: 'راتب' } } }, me: { name: 'يزن عمر الحربي', no: 8, team: 'r', stage: Q.get('stage') || (WALL[ROLE] ? ROLE : 'متوسط'), att: 14, attd: [0, 7, 9, 14, 16, 21, 28].map(n => iso(-n * 864e5)), avatar: AVSAVED(), grade: 'الثاني المتوسّط', school: 'متوسّطة الملك فهد', photo: '', balance: 145, sentToday: 1,
+    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', code: 'DEMO42', teams: T, settings: Object.assign(DEMO_SET(), { salary: { on: true, amount: 20, days: [4, 0], time: '17:00', label: 'راتب' } }) }, me: { name: 'يزن عمر الحربي', orders: [{ id: 'o9', item: 'آيس كريم', p: 15, t }], today: 35, no: 8, team: 'r', stage: Q.get('stage') || (WALL[ROLE] ? ROLE : 'متوسط'), att: 14, attd: [0, 7, 9, 14, 16, 21, 28].map(n => iso(-n * 864e5)), avatar: AVSAVED(), grade: 'الثاني المتوسّط', school: 'متوسّطة الملك فهد', photo: '', balance: 145, sentToday: 1,
       tx: [{ a: 20, r: 'حوالة من فهد #3 — شكراً', t }, { a: 50, r: 'فوز في مسابقة', t }, { a: -30, r: 'شراء: وجبة عشاء', t: new Date(Date.now() - 864e5).toISOString() }, { a: -10, r: 'حوالة إلى بدر #7', t: new Date(Date.now() - 864e5).toISOString() }, { a: 25, r: 'انضباط', t: new Date(Date.now() - 2 * 864e5).toISOString() }, { a: 90, r: 'إبداع', t: new Date(Date.now() - 2 * 864e5).toISOString() }] },
       teams: { r: 120, g: 95, b: 80, o: 40 }, teamsMonth: { g: 45, r: 30, b: 25, o: 10 }, richMonth: [{ n: 'نواف', team: 'g', g: 'ابتدائي', b: 70 }, { n: 'يزن', team: 'r', g: 'متوسط', b: 55 }, { n: 'فهد', team: 'g', g: 'ثانوي', b: 40 }], rich: [{ n: 'فهد', team: 'g', g: 'ثانوي', b: 210 }, { n: 'يزن', team: 'r', g: 'متوسط', b: 145 }, { n: 'بدر', team: 'b', g: 'ابتدائي', b: 120 }, { n: 'سلمان', team: 'o', g: 'متوسط', b: 95 }, { n: 'نواف', team: 'g', g: 'ابتدائي', b: 70 }, { n: 'مشاري', team: 'b', g: 'ثانوي', b: 40 }], items: ITM, schedule: SCH() };
   }
+  /* التجربة بقصّة «مدينة القيم»: الدنانير والبنك المركزيّ والجمارك والطلب المسبق */
+  function DEMO_SET() { return { city: 'الأحساء', zones: [{ id: 'skill', n: 'المنطقة المهاريّة', p: 'القاعات العلويّة', c: '#0A84FF', img: 'lib:city/skill' }, { id: 'comp', n: 'المنطقة التنافسيّة', p: 'القاعات السفليّة', c: '#FF9F0A', img: 'lib:city/comp' }, { id: 'fun', n: 'المنطقة الترفيهيّة', p: 'الملعب وغرفة الألعاب', c: '#30D158', img: 'lib:city/fun' }], story: 'bank', currency: { name: 'الريالات', one: 'ريال', icon: '' }, preorder: true, customs: { name: 'الجمارك', amount: 5 }, daily: { staff: 300, member: 50 } }; }
   function AVSAVED() { try { return JSON.parse(localStorage.getItem('jw_demo_av') || '{}'); } catch (e) { return {}; } }
   function sampleStaff() {
     const names = ['محمد أحمد', 'عبدالله سعد', 'فهد خالد', 'سلمان علي', 'نواف ماجد', 'يزن عمر', 'بدر سامي', 'مشاري حمد'];
-    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', teams: T, settings: { city: 'الأحساء' } }, me: { name: 'عبدالرحمن المشرف', avatar: AVSAVED(), role: 'staff', stage: 'متوسط', perms: { coins: 50, points: true, sell: true, store: true }, given: 340 },
-      members: names.map((n, i) => ({ id: 'm' + i, no: i + 1, n, g: ['متوسط', 'ابتدائي', 'ثانوي'][i % 3], av: {}, t: T[i % 4].id, b: [40, 120, 210, 15, 60, 145, 90, 0][i] })), teams: { r: 120, g: 95, b: 80, o: 40 }, items: ITM, schedule: SCH() };
+    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', code: 'DEMO42', teams: T, settings: DEMO_SET(), violations: [{ n: 'إزعاج', a: 10 }, { n: 'تسيّب من البرنامج', a: 15 }, { n: 'تأخّر', a: 5 }, { n: 'لباس غير مناسب', a: 5 }, { n: 'عدم احترام', a: 20 }] }, me: { name: 'عبدالرحمن المشرف', avatar: AVSAVED(), role: 'staff', stage: 'متوسط', perms: { coins: 50, points: true, sell: true, store: true, fine: true, customs: true, guests: true }, given: 340, daily: 300, givenToday: 110 }, orders: [{ id: 'o1', no: 2, n: 'عبدالله سعد', item: 'آيس كريم', p: 15, t: new Date().toISOString() }],
+      members: names.map((n, i) => ({ id: 'm' + i, no: i + 1, n, g: ['متوسط', 'ابتدائي', 'ثانوي'][i % 3], av: {}, t: T[i % 4].id, b: [40, 120, 210, 15, 60, 145, 90, 0][i], td: [10, 0, 25, 0, 15, 30, 0, 0][i], f: [0, 0, 1, 2, 0, 0, 0, 1][i] })), teams: { r: 120, g: 95, b: 80, o: 40 }, items: ITM, schedule: SCH() };
   }
   function sampleFeed() {
     const h = n => new Date(Date.now() - n * 3600e3).toISOString();
     return [
       { id: 'f1', k: 'honor', t: 'نجم اليوم: الانضباط والصلاة في وقتها', b: 'حافظ على صلاة الجماعة طوال الأسبوع وكان قدوةً لفريقه. بارك الله فيه.', img: '', at: h(1), by: 'عبدالرحمن الخالدي', staff: true, hon: { n: 'يزن عمر', g: 'متوسط' }, r: { 'متوسط': 24, 'ابتدائي': 9, 'ثانوي': 6, 'جامعي': 4 }, mine: false },
-      { id: 'f2', k: 'program', t: 'غداً: رحلة البحر 🌊', b: 'التجمّع الساعة ٤ عصراً عند البوّابة. أحضر قبّعتك وماءك. الحضور يُحسب بـ٢٠ عملة.', img: './walls/primary-wave.jpg', at: h(3), by: 'الإدارة', staff: false, r: { 'ابتدائي': 31, 'متوسط': 18, 'ثانوي': 11 }, mine: true },
-      { id: 'f3', k: 'teaser', t: 'شيءٌ كبير قادم يوم الخميس… 👀', b: 'خمّنوا!', img: './walls/middle-sunset.jpg', at: h(6), by: 'الإدارة', staff: false, r: { 'متوسط': 40, 'ثانوي': 22, 'ابتدائي': 15, 'جامعي': 7 }, mine: false },
+      { id: 'f2', k: 'program', t: 'غداً: رحلة البحر', b: 'التجمّع الساعة ٤ عصراً عند البوّابة. أحضر قبّعتك وماءك. الحضور يُحسب بـ٢٠ عملة.', img: './walls/primary-wave.jpg', at: h(3), by: 'الإدارة', staff: false, r: { 'ابتدائي': 31, 'متوسط': 18, 'ثانوي': 11 }, mine: true },
+      { id: 'f3', k: 'teaser', t: 'شيءٌ كبير قادم يوم الخميس…', b: 'خمّنوا!', img: './walls/middle-sunset.jpg', at: h(6), by: 'الإدارة', staff: false, r: { 'متوسط': 40, 'ثانوي': 22, 'ابتدائي': 15, 'جامعي': 7 }, mine: false },
       { id: 'f4', k: 'news', t: 'الأحمر يتصدّر دوري كرة القدم', b: 'فوز ٣–١ على الأزرق في مباراة حماسيّة. الترتيب في تطبيق «الترتيب».', img: './walls/secondary-forest.jpg', at: h(26), by: 'فيصل العتيبي', staff: true, r: { 'ثانوي': 17, 'متوسط': 12 }, mine: false },
     ];
   }
   function demoMember(no) { const m = (D.members || []).find(x => x.no === no); return m ? { found: true, no: m.no, n: m.n, g: m.g, grade: '', t: m.t, photo: '', b: m.b } : { found: false }; }
   function demoAct(b) {
     if (b.kind === 'point') return { ok: true };
+    if (b.kind === 'guest') return { ok: true, name: b.name, pin: String(100000 + Math.floor(Math.random() * 899999)), budget: b.budget, expires: '' };
     const m = (D.members || []).find(x => x.no === b.member_no); if (!m) throw new Error('لا يوجد مشارك بهذا الرقم');
-    if (b.kind === 'coin') { if (Math.abs(b.amount) > D.me.perms.coins) throw new Error('الحدّ المسموح لك ' + D.me.perms.coins + ' عملة'); if (m.b + b.amount < 0) throw new Error('الرصيد لا يكفي للخصم'); return { ok: true, name: m.n, balance: m.b + b.amount }; }
+    if (b.kind === 'fine') { const v = D.season.violations.find(x => x.n === b.violation), a = Math.min(v.a, m.b); return { ok: true, name: m.n, balance: m.b - a, amount: a }; }
+    if (b.kind === 'fee') { const a = D.season.settings.customs.amount; if (m.b < a) throw new Error('الرصيد لا يكفي للرسم (' + m.b + ')'); return { ok: true, name: m.n, balance: m.b - a, amount: a }; }
+    if (b.kind === 'coin' && b.amount > 0 && D.me.daily && (D.me.givenToday || 0) + b.amount > D.me.daily) throw new Error('باقي من رصيدك اليوم ' + (D.me.daily - D.me.givenToday) + ' فقط');
+    if (b.kind === 'coin') { if (Math.abs(b.amount) > D.me.perms.coins) throw new Error('الحدّ المسموح لك ' + D.me.perms.coins + ' في المرّة'); if (m.b + b.amount < 0) throw new Error('الرصيد لا يكفي للخصم'); return { ok: true, name: m.n, balance: m.b + b.amount }; }
     const it = ITM.find(i => i.id === b.item); if (m.b < it.p) throw new Error('الرصيد لا يكفي (' + m.b + ')'); return { ok: true, name: m.n, balance: m.b - it.p, item: it.n };
   }
+  /* ═════════ وضع التجربة: كلّ الأدوار ببيانات توضيحيّة بلا رمز — للعرض على الجمعيّات ═════════ */
+  function demoGo(k) {
+    if (k === 'admin') { location.href = WEB + 'index.html?demo=1'; return; }
+    location.href = location.pathname + '?demo=1&as=' + (k === 'staff' ? 'staff' : 'me&stage=' + encodeURIComponent(k));
+  }
+  function demoMenu() {
+    view('وضع التجربة', `<p class="note">تتصفّح بيانات جمعيّة توضيحيّة — لا شيء يُحفظ ولا يصل لأحد.</p>
+      <div class="roles">${ROLES.map(([k, n, , av]) => `<button class="role" data-demo="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
+      <button class="btn sec" style="margin-top:16px" data-demo-exit>خروج من التجربة</button>`);
+  }
+  if (DEMO) { const c = document.createElement('button'); c.className = 'demochip'; c.dataset.demoMenu = ''; c.setAttribute('aria-label', 'وضع التجربة — بدّل الدور أو اخرج'); c.innerHTML = 'تجربة <span aria-hidden="true">⇄</span>'; document.body.appendChild(c); }
   const L0 = loginLink(location.href);
   AV.lib().then(g => { if (g.length && D && !document.querySelector('.view')) home(); });
   if (L0 && !DEMO) { MODE = L0.staff ? 'staff' : 'me'; ROLE = L0.staff ? 'staff' : ROLE; history.replaceState(null, '', location.pathname); fetchData(L0.c, L0.p, true); }

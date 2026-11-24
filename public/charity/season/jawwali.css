@@ -1,4 +1,4 @@
-/* نظام الجمعيات الشبابية — شاشة الطالب والمشرف: الطالب بلون مرحلته، والمشرف بالجرافيت الداكن (نظام الجمعيات الشبابية) */
+/* «جوّالي» — جوال افتراضيّ للموسم: الطالب بلون مرحلته، والميسّر بالجرافيت الداكن (نظام الجمعيات الشبابية) */
 @font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Regular.woff2) format("woff2");font-weight:400;font-display:swap}
 @font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Bold.woff2) format("woff2");font-weight:700;font-display:swap}
 @font-face{font-family:TS;src:url(/fonts/thmanyah/thmanyahsans-Black.woff2) format("woff2");font-weight:900;font-display:swap}
@@ -348,3 +348,73 @@ textarea.tx{resize:vertical;min-height:90px;border:1.5px solid var(--line);backg
 .avo .av{border-radius:50%}
 .libit{border-radius:50%;padding:3px}
 .libit img{border-radius:50%;object-fit:cover;background:rgba(255,255,255,.12)}
+/* سفاري (الآيفون وتطبيقه): aspect-ratio على <button> داخل شبكة لا يرفع ارتفاع الصفّ قبل تحميل الصور الكسولة
+   فتنهار الصفوف وتطفو الشخصيّات فوق «احفظ شخصيّتي» — مربّع ثابت بالحشو بدل aspect-ratio */
+.libit{position:relative;display:block;aspect-ratio:auto;height:auto;padding:0;overflow:hidden}
+.libit::before{content:"";display:block;padding-top:100%}
+.libit img{position:absolute;inset:4px;width:calc(100% - 8px);height:calc(100% - 8px)}
+/* وضع التجربة */
+.demo-cta{display:flex;flex-direction:column;align-items:center;gap:2px;width:100%;margin-top:18px;min-height:56px;padding:10px 16px;border-radius:18px;border:1.5px dashed rgba(255,255,255,.45);background:rgba(255,255,255,.06);color:#fff;cursor:pointer;font:inherit}
+.demo-cta b{font-size:16px}.demo-cta small{font-size:13px;color:rgba(255,255,255,.75)}
+.demochip{position:fixed;top:calc(env(safe-area-inset-top) + 8px);left:50%;transform:translateX(-50%);z-index:4;min-height:32px;padding:0 14px;border-radius:99px;border:0;background:rgba(255,255,255,.92);color:#111;font:inherit;font-size:13px;font-weight:800;box-shadow:0 4px 14px rgba(0,0,0,.25);cursor:pointer}
+body:has(.view) .demochip{display:none}
+
+/* ═════════ حقيبة الموسم ١: العملة، رصيد المشرف اليوميّ، المخالفات، الجمارك، الطلب المسبق، رمز الضيف ═════════ */
+.cico{font-style:normal;font-size:.9em;line-height:1}
+.widget.budget{display:flex;align-items:center;gap:14px}
+.widget.budget>span:last-child b{font-size:17px;line-height:1.35}
+.bring{flex:none;width:74px;height:74px;border-radius:50%;display:grid;place-content:center;text-align:center;
+  background:radial-gradient(closest-side,var(--card-solid,#1c1c1e) 76%,transparent 78% 100%),conic-gradient(#30D158 calc((100 - var(--p)) * 1%),rgba(255,255,255,.14) 0)}
+.bring b{display:block;font-size:22px!important;margin:0!important;line-height:1}.bring small{font-size:11px}
+.scanb{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px}.scanb svg{width:20px;height:20px}
+#cam2{width:100%;border-radius:18px;margin-bottom:12px;background:#000}
+.ords{display:grid;gap:8px;margin-top:10px;width:100%}
+.ord{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:14px;background:rgba(255,214,10,.14)}
+.ord span{flex:1}.ord .chip{min-height:38px;padding:6px 14px}
+.sech{font-size:15px;margin:18px 0 8px;color:var(--l2)}
+.olist{display:grid;gap:8px}
+.vios .chip small{opacity:.8;margin-inline-start:4px}
+.feebox{text-align:center;padding:18px 0 6px}.feebox small{display:block;color:var(--l2);margin-top:8px}
+.pfil{margin:10px 0}.pfil button{border:0;background:transparent;color:inherit;padding:9px 6px;border-radius:11px;font-weight:700;min-height:40px;cursor:pointer}.pfil button.on{background:rgba(255,255,255,.18)}
+.myords{display:grid;gap:4px;padding:14px 16px;margin:0 0 14px;border-radius:20px;background:rgba(255,214,10,.16);border:1px solid rgba(255,214,10,.35)}
+.myords span{font-weight:800}.myords small{color:var(--l2)}
+/* المدينة: أين أنا الآن + مكاني */
+.widget.wnow{border-inline-start:6px solid var(--zc)}.widget.wnow .wnx{display:block;margin-top:6px}
+.zcard{padding:18px;border-radius:22px;background:color-mix(in srgb,var(--zc) 28%,rgba(0,0,0,.3));border:1px solid color-mix(in srgb,var(--zc) 60%,transparent);margin-bottom:12px}
+.zcard small{display:block;color:var(--l2)}.zcard b{display:block;font-size:24px;margin:2px 0}
+.znow{padding:14px 16px;border-radius:18px;background:var(--card);margin:12px 0}.znow small{display:block;color:var(--l2)}.znow b{display:block;font-size:18px;margin:4px 0}
+.plog{display:grid;gap:6px;margin-top:12px}.plog div{padding:8px 12px;border-radius:12px;background:rgba(48,209,88,.14)}.plog div.plate{background:rgba(255,159,10,.18)}.plog small{color:var(--l2)}
+/* المتجر: الصورة تملأ المربّع، وتدرّج من الأسفل عليه الاسم والسعر (الصور تُرفع بلا كتابة — الاسم والسعر من النظام فيبقيان صحيحين إذا تغيّر السعر) */
+.prod{position:relative;aspect-ratio:1;background:#1c1c1e;color:#fff}
+.prod .pimg2{position:absolute;inset:0;aspect-ratio:auto}
+.prod .pinf{position:absolute;inset:auto 0 0 0;padding:34px 12px 12px;background:linear-gradient(to top,rgba(0,0,0,.82),rgba(0,0,0,.5) 55%,transparent)}
+.prod .pinf b{color:#fff;font-size:15.5px;text-shadow:0 1px 6px rgba(0,0,0,.45)}
+.prod .pinf .money{color:#fff;font-size:20px}
+.prod.far .pinf .money{color:rgba(255,255,255,.7)}
+.cimg{width:1em;height:1em;border-radius:50%;object-fit:cover;flex:none}
+.prod .pe{transform:translateY(-16%)}
+/* مكتبة الصور: الشارات، صور المناطق، اختيار صورة الصنف */
+.bdg{width:1.35em;height:1.35em;vertical-align:-.3em;object-fit:contain}
+.lv-i .bdg{width:44px;height:44px}
+.widget.wnow.hasimg{display:grid;grid-template-columns:1fr 64px;column-gap:12px;align-items:center}.widget.wnow.hasimg>*:not(.wzi){grid-column:1}
+.wzi{grid-column:2;grid-row:1/span 4;width:64px;height:64px;border-radius:16px;object-fit:cover}
+.zci{float:inline-end;width:84px;height:84px;border-radius:20px;object-fit:cover;margin-inline-start:12px}
+.libgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px;max-height:46vh;overflow:auto}
+.libgrid button{border:0;padding:0;background:transparent;color:inherit;display:grid;gap:3px;cursor:pointer}.libgrid img{width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}.libgrid small{font-size:11px;line-height:1.25;color:var(--l2)}
+/* بطاقة البنك بخلفيّة قصّة الموسم (داكنة دائماً) — النصّ أبيض مهما كان لون المرحلة */
+.wcard.story{--sf:#fff;color:#fff!important;background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.42)),var(--story) center/cover no-repeat!important}
+.wcard.story *{color:#fff!important;text-shadow:0 1px 8px rgba(0,0,0,.45)}
+.wcard.story .wchip{background:rgba(255,255,255,.2);text-shadow:none}
+/* أيقونات خطّيّة بدل الإيموجي */
+.ico{width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}
+.ico.big{width:64px;height:64px;stroke-width:1.6}
+.moon .ico.big{width:84px;height:84px}
+.svthanks .ico.big{color:#30D158}
+.pe .ico{width:56px;height:56px;stroke-width:1.5;color:#fff;filter:drop-shadow(0 6px 10px rgba(0,0,0,.25))}
+.ie .ico{width:30px;height:30px}.ie img{width:44px;height:44px;border-radius:12px;object-fit:cover}
+.eve .ico{width:22px;height:22px}
+.hav i img{width:26px;height:26px}
+.salnext .ico,.pb-i .ico{width:26px;height:26px}
+.lv-i .ico.lvl0{width:40px;height:40px;color:#30D158}
+.shr .ico{width:18px;height:18px}
+.myords .ico{color:#FFD60A}
