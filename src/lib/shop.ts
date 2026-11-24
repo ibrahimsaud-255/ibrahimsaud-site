@@ -28,12 +28,12 @@ export type ShopItem = {
   inside: { title: string; text: string }[];
   forWho: string[];
   steps: string[];         // كيف يشتغل بعد الشراء
-  faqs: { q: string; a: string }[];
+  faqs: { q: string; a: string; link?: { label: string; href: string } }[];
   presale?: boolean;       // يُعرض «قريباً» بلا زرّ شراء ما لم يكن نشطاً في الجدول
   iconImg?: string;        // أيقونة صورة بدل الرمز (للبرامج)
   logo?: string;           // شعار كلمة (يظهر بدل الاسم المكتوب في رأس الصفحة)
   shots?: { src: string; alt: string }[];   // لقطات حقيقيّة من البرنامج
-  platforms?: { key: "windows" | "mac" | "android" | "ios"; name: string; note: string; soon?: string; href?: string; hrefLabel?: string }[];
+  platforms?: { key: "windows" | "mac" | "linux" | "android" | "ios"; name: string; note: string; soon?: string; href?: string; hrefLabel?: string }[];
   buyNote?: string;        // سطر تنبيه تحت «الصيغة» في لوحة الشراء (مثل: الآيفون شراء مستقلّ من App Store)
   platCaptions?: { incl: string; sep: string };   // عنوانا مجموعتي المنصّات: «بشراء واحد من هنا» و«شراء منفصل»
   specs?: { title: string; rows: [string, string][] }[];
@@ -49,6 +49,8 @@ export type ShopItem = {
 
 // آيفون: تطبيق App Store (يُشترى هناك) — بطاقة رابط في صفحات النسخة العالميّة.
 const APP_STORE = "https://apps.apple.com/app/id6836200953";
+// لينكس (١٫٠٦): AppImage يشتغل على أيّ توزيعة، وdeb لأوبونتو/ديبيان — الاسم نفسه بكلّ اللغات.
+const LINUX_CARD = { key: "linux" as const, name: "Linux", note: "Ubuntu · Debian · Mint · Fedora — AppImage / deb" };
 const IOS_CARD = { key: "ios" as const, name: "iPhone · iPad", note: "App Store", href: APP_STORE, hrefLabel: "App Store" };
 
 export const shopItems: ShopItem[] = [
@@ -63,7 +65,7 @@ export const shopItems: ShopItem[] = [
       { n: "+٨٥٠٠", l: "كتاب من الشاملة داخله" },
       { n: "٨", l: "مشاهد جاهزة" },
       { n: "٣", l: "منصّات في نفس الوقت" },
-      { n: "٣", l: "أجهزة بشراء واحد: ويندوز · ماك · أندرويد" },
+      { n: "٤", l: "أجهزة بشراء واحد: ويندوز · ماك · لينكس · أندرويد" },
     ],
     contrast: {
       before: [
@@ -84,7 +86,7 @@ export const shopItems: ShopItem[] = [
     stack: {
       title: "كلّ هذا بدفعة واحدة",
       items: [
-        "البرنامج على ويندوز وماك وأندرويد",
+        "البرنامج على ويندوز وماك ولينكس وأندرويد",
         "المكتبة الشاملة داخله: أكثر من ٨٥٠٠ كتاب",
         "٨ مشاهد وتصاميم عربيّة إسلاميّة بألوان جهتك",
         "بثّ لثلاث منصّات معاً + تسجيل Full HD أو 4K",
@@ -113,15 +115,17 @@ export const shopItems: ShopItem[] = [
     // عرض الإطلاق: الأسعار الفعليّة في shop_products (١٤٩/٩٩/٧٩/٤٩)، وترجع ٢٩٩/١٩٩/١٢٩/٦٩ بمهمّة pg_cron
     // «lb-launch-offer-end» فجر ٢ ديسمبر ٢٠٢٦ بتوقيت الرياض. العرض هنا يختفي وحده بعد until.
     sale: { label: "عرض الإطلاق", until: "2026-12-01T21:00:00Z", was: { 149: 299, 99: 199, 79: 129, 49: 69 } },
-    format: "ويندوز · ماك · أندرويد — تنزيل فوريّ بعد الدفع",
+    format: "ويندوز · ماك · لينكس · أندرويد — تنزيل فوريّ بعد الدفع",
     platforms: [
       { key: "windows", name: "ويندوز", note: "ويندوز ١٠ و١١" },
       { key: "mac", name: "ماك", note: "macOS 12 فما فوق" },
+      { key: "linux", name: "لينكس", note: "أوبونتو وديبيان ومنت وغيرها — AppImage أو deb" },
       { key: "android", name: "أندرويد", note: "ملفّ APK للجوّال والتابلت — وقريباً على Google Play" },
       IOS_CARD,
     ],
     inside: [
       { title: "المكتبة الشاملة داخل البرنامج", text: "أكثر من ٨٥٠٠ كتاب تتصفّحها بسهولة وتعرضها بصفحات الطبعة المصوّرة، أو نصّاً مرتّباً بترقيم المطبوع — وأيّ كتاب PDF من جهازك." },
+      { title: "عرض باوربوينت بضغطة", text: "ترفع ملفّ العرض (PowerPoint أو Keynote) ويشتغل مباشرة: الشريحة بجانب المتحدّث، أو الشريحة وحدها على الشاشة كاملة — وتكبّرها وتتنقّل بين الشرائح من البرنامج." },
       { title: "المتحدّث والكتاب في الشاشة", text: "ثمانية مشاهد جاهزة: المتحدّث، الكتاب مع المتحدّث، صفحة كاملة، كتاب مفتوح يتقلّب، القارئ، قبل البثّ، الاستراحة، والختام." },
       { title: "شريط القراءة", text: "شريط ذهبيّ يمشي مع القارئ سطراً سطراً، والتكبير على الصفحة بضغطة." },
       { title: "تصاميم عربيّة إسلاميّة", text: "ألوان ونقوش هندسيّة وإطار محراب، أو ألوان جهتك — والاسم يكتب نفسه من اليمين." },
@@ -165,9 +169,11 @@ export const shopItems: ShopItem[] = [
       ] },
     ],
     faqs: [
+      { q: "اشتريت؟ من وين أحمّل آخر تحديث؟", a: "من «حسابي»: تدخل بالإيميل اللي اشتريت فيه، يوصلك رمز على بريدك، وتلقى كلّ مشترياتك بآخر نسخة لكلّ جهاز — ويندوز وماك وأندرويد. حمّلها متى ما بغيت، والتحديثات مجّانيّة لنسختك.", link: { label: "افتح «حسابي» وحمّل آخر نسخة", href: "/account/" } },
       { q: "هل أحتاج خبرة تقنيّة؟", a: "لا. البرنامج عربيّ وأزراره كبيرة وواضحة: تختار الكتاب، تكتب اسم الشيخ، وتضغط «بثّ مباشر». وإذا احتجت أحد يضبطه معك راسلني." },
-      { q: "على أيّ جهاز يشتغل؟", a: "ويندوز وماك وأندرويد — تنزّلها من صفحة طلبك بعد الشراء من هنا (أندرويد ملفّ APK، وقريباً على Google Play). والآيفون والآيباد تطبيق مستقلّ يُشترى من App Store. شوف «المتطلّبات» تحت." },
+      { q: "على أيّ جهاز يشتغل؟", a: "ويندوز وماك ولينكس وأندرويد — تنزّلها من صفحة طلبك بعد الشراء من هنا (أندرويد ملفّ APK، وقريباً على Google Play). والآيفون والآيباد تطبيق مستقلّ يُشترى من App Store. شوف «المتطلّبات» تحت." },
       { q: "كيف أثبّت نسخة الأندرويد؟", a: "نزّل ملفّ APK من صفحة طلبك على الجوّال وافتحه. أوّل مرّة يطلب الجوّال السماح بالتثبيت من المتصفّح: اضغط «الإعدادات» ثمّ فعّل «السماح من هذا المصدر» وارجع اضغط «تثبيت»." },
+      { q: "كيف أثبّت نسخة لينكس؟", a: "على أوبونتو وديبيان ومنت: نزّل ملفّ deb وافتحه بـ«تثبيت البرمجيات» (أو: sudo apt install ./BathAlDurus-linux-amd64.deb). على غيرها: نزّل AppImage، فعّل «السماح بتشغيله كبرنامج» من خصائصه، وافتحه. أوّل تشغيل اضغط «جهّز المحرّك» مرّة وحدة واكتب كلمة مرور جهازك — يثبّت اللي يحتاجه البرنامج تلقائيّاً." },
       { q: "كيف أبثّ درساً علميّاً مباشراً من المسجد؟", a: "تحتاج كمبيوتر أو جوّال، وكاميرا (أو كاميرا الجوّال)، ومايك لاسلكيّ للشيخ، وإنترنت ثابت. في البرنامج تختار الكتاب، تكتب اسم الشيخ وعنوان الدرس، تلصق مفتاح البثّ من يوتيوب أو فيسبوك أو تيليجرام مرّة وحدة، وتضغط «بثّ مباشر»." },
       { q: "أقدر أسجّل الدرس بدون بثّ مباشر؟", a: "نعم. نفس المشاهد والكتاب واسم الشيخ، وتضغط «تسجيل» بدل «بثّ مباشر» فيُحفظ الدرس كاملاً على جهازك بجودة Full HD أو 4K لترفعه لاحقاً. وإذا بثّيت، يُسجَّل الدرس مع البثّ تلقائيّاً." },
       { q: "هل فيه تطبيق لبثّ الدروس من الجوّال؟", a: "نعم: نسخة أندرويد تنزّلها من صفحة طلبك، وتطبيق مستقلّ للآيفون والآيباد في App Store. تضع الجوّال على حامل، وتختار الكتاب، وتكتب اسم الشيخ، وتبثّ." },
@@ -176,8 +182,8 @@ export const shopItems: ShopItem[] = [
       { q: "تطلع رسالة تحذير أوّل ما أفتحه؟", a: "طبيعيّ في أوّل تشغيل: على ويندوز اضغط «مزيد من المعلومات» ثمّ «تشغيل على أيّ حال»، وعلى ماك: انقل البرنامج لمجلّد «التطبيقات» وافتحه مرّة (تطلع رسالة، اضغط «موافق»)، ثمّ افتح «إعدادات النظام» ← «الخصوصية والأمن»، انزل تحت واضغط «فتح على أيّ حال». مرّة وحدة فقط." },
       { q: "هل الطريقة مجّانيّة؟", a: "نعم، شرحت الطريقة كاملة مجّاناً على يوتيوب مع حقيبة أوامر لكلود لمن يحبّ يسوّيها بنفسه. البرنامج للي يبي الاختصار: كل شي جاهز من أوّل يوم." },
       { q: "على كم جهاز أقدر أستخدمه؟", a: "رابط طلبك يفتح على أجهزتك (حتى ٥ أجهزة)، وتنزّل النسخ اللي تحتاجها منه. للجمعيّات بأكثر من مقرّ راسلني." },
-      { q: "ضيّعت رابط التحميل؟", a: "ولا يهمّك: افتح «استرجع طلبك» واكتب إيميلك، ويوصلك رابط طلبك من جديد. الطلب لك دائماً وتنزّل منه البرنامج وتحديثاته متى ما بغيت." },
-      { q: "إذا نزل تحديث؟", a: "التحديثات مجّانيّة لنسختك، وتنزّلها من نفس صفحة طلبك." },
+      { q: "ضيّعت رابط التحميل؟", a: "ولا يهمّك: ادخل «حسابي» بإيميلك وتلقى طلبك وملفّاته بآخر نسخة. الطلب لك دائماً وتنزّل منه البرنامج وتحديثاته متى ما بغيت.", link: { label: "حسابي", href: "/account/" } },
+      { q: "إذا نزل تحديث؟", a: "التحديثات مجّانيّة لنسختك، وتنزّلها من «حسابي» (أو من نفس صفحة طلبك)." },
     ],
     seo: {
       title: "بث الدروس العلمية وتصويرها وتسجيلها — بدون فريق.",
@@ -215,15 +221,17 @@ export const shopItems: ShopItem[] = [
       title: "Вы просили — я сделал.",
       text: "Моё видео о трансляции уроков собрало больше 100 комментариев с одной и той же просьбой — поэтому вместо сложных настроек я сделал готовую программу: выберите книгу, впишите имя шейха и нажмите «Прямой эфир». С компьютера или телефона.",
     },
-    format: "Windows · Mac · Android — скачивание сразу после оплаты",
+    format: "Windows · Mac · Linux · Android — скачивание сразу после оплаты",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 и 11" },
       { key: "mac", name: "Mac", note: "macOS 12 и новее" },
+      { key: "linux", name: "Linux", note: "Ubuntu, Debian, Mint и др. — AppImage или deb" },
       { key: "android", name: "Android", note: "APK-файл для телефона и планшета" },
       IOS_CARD,
     ],
     inside: [
       { title: "Библиотека «Шамиля» внутри", text: "Более 8500 книг на арабском: удобный просмотр, страницы печатного издания или аккуратный текст с нумерацией издания — а также любая PDF-книга с вашего компьютера, в том числе на русском." },
+      { title: "Презентации PowerPoint", text: "Загрузите файл презентации (PowerPoint или Keynote), и он сразу готов: слайд рядом с лектором или слайд на весь экран — с увеличением и переключением слайдов прямо в программе." },
       { title: "Лектор и книга на экране", text: "Восемь готовых сцен: лектор, книга с лектором, страница целиком, раскрытая книга с перелистыванием, чтец, перед эфиром, перерыв и завершение." },
       { title: "Строка чтения", text: "Золотая полоса движется за чтецом строка за строкой, увеличение страницы — одним нажатием." },
       { title: "Исламский дизайн", text: "Цвета и геометрические орнаменты, рамка-михраб или цвета вашей организации; имя лектора появляется с анимацией." },
@@ -240,7 +248,7 @@ export const shopItems: ShopItem[] = [
     ],
     steps: [
       "Оплачиваете картой или Apple Pay",
-      "Скачиваете версию для Windows, Mac или Android со страницы заказа",
+      "Скачиваете версию для Windows, Mac, Linux или Android со страницы заказа",
       "Выбираете книгу, пишете имя шейха и нажимаете «Прямой эфир»",
     ],
     specs: [
@@ -269,8 +277,9 @@ export const shopItems: ShopItem[] = [
     faqs: [
       { q: "Нужен ли технический опыт?", a: "Нет. Кнопки крупные и понятные: выбираете книгу, пишете имя шейха и нажимаете «Прямой эфир». Интерфейс на русском, с переключением на арабский." },
       { q: "Книги на русском есть?", a: "Библиотека «Шамиля» — это книги на арабском. Любую книгу в PDF, в том числе на русском, можно открыть со своего компьютера и показать в эфире." },
-      { q: "На каких устройствах работает?", a: "Windows, Mac и Android (APK-файл со страницы заказа). Смотрите «Системные требования» выше." },
+      { q: "На каких устройствах работает?", a: "Windows, Mac, Linux и Android (APK-файл со страницы заказа). Смотрите «Системные требования» выше." },
       { q: "Как установить версию для Android?", a: "Скачайте APK со страницы заказа на телефоне и откройте его. В первый раз телефон попросит разрешить установку из браузера: нажмите «Настройки», включите «Разрешить из этого источника» и вернитесь к «Установить»." },
+      { q: "Как установить на Linux?", a: "На Ubuntu, Debian или Mint скачайте файл .deb и откройте его через «Установку приложений» (или: sudo apt install ./BathAlDurus-linux-amd64.deb). На других дистрибутивах скачайте AppImage, разрешите запуск как программы в его свойствах и откройте. При первом запуске один раз нажмите «Установить движок» и введите пароль компьютера." },
       { q: "Как провести прямую трансляцию урока из мечети?", a: "Нужны компьютер или телефон, камера, беспроводной микрофон для шейха и стабильный интернет. В программе выберите книгу, впишите имя шейха и тему урока, один раз вставьте ключ трансляции YouTube, Facebook или Telegram и нажмите «Прямой эфир»." },
       { q: "Нужна ли программа OBS?", a: "Программа использует бесплатный движок OBS с открытым исходным кодом в фоне — открывать его не нужно. В Windows движок уже внутри установщика, на Mac он устанавливается один раз кнопкой из программы." },
       { q: "При первом запуске появляется предупреждение?", a: "Это нормально: в Windows нажмите «Подробнее» → «Выполнить в любом случае», на Mac — перенесите программу в «Программы», откройте её один раз (появится сообщение, нажмите «OK»), затем «Системные настройки» → «Конфиденциальность и безопасность», прокрутите вниз и нажмите «Всё равно открыть». Только один раз." },
@@ -306,15 +315,17 @@ export const shopItems: ShopItem[] = [
       text: "My lesson-streaming video got over 100 comments asking for the same thing — so instead of complicated setups, I built a ready program: pick the book, type the shaykh's name and press \"Go live\". From a computer or a phone.",
     },
     sale: { label: "Launch offer", until: "2026-12-01T21:00:00Z", was: { 149: 299, 99: 199, 79: 129, 49: 69 } },
-    format: "Windows · Mac · Android — download right after payment",
+    format: "Windows · Mac · Linux · Android — download right after payment",
     platforms: [
       { key: "windows", name: "Windows", note: "Windows 10 and 11" },
       { key: "mac", name: "Mac", note: "macOS 12 and later" },
+      { key: "linux", name: "Linux", note: "Ubuntu, Debian, Mint and more — AppImage or deb" },
       { key: "android", name: "Android", note: "APK file for phones and tablets" },
       IOS_CARD,
     ],
     inside: [
       { title: "The Shamela library built in", text: "More than 8,500 Arabic books: a clean reader, the printed edition's pages or neat text with the edition's page numbers — plus any PDF book from your computer, in any language." },
+      { title: "PowerPoint slides in one click", text: "Upload your presentation (PowerPoint or Keynote) and it plays right away: the slide beside the teacher, or the slide alone full screen — zoom in and move between slides from the program." },
       { title: "The teacher and the book on screen", text: "Eight ready scenes: teacher, book with teacher, full page, an open book that turns its pages, reciter, before the lesson, break, and closing." },
       { title: "Reading line", text: "A golden bar follows the reader line by line, and zooms into the page with one tap." },
       { title: "Islamic design", text: "Islamic colors and geometric patterns, a mihrab frame or your organization's colors; the teacher's name appears with a smooth animation." },
@@ -331,7 +342,7 @@ export const shopItems: ShopItem[] = [
     ],
     steps: [
       "Pay by card or Apple Pay",
-      "Download the Windows, Mac or Android version from your order page",
+      "Download the Windows, Mac, Linux or Android version from your order page",
       "Choose the book, type the shaykh's name and press \"Go live\"",
     ],
     specs: [
@@ -360,8 +371,9 @@ export const shopItems: ShopItem[] = [
     faqs: [
       { q: "Do I need technical experience?", a: "No. The buttons are large and clear: choose the book, type the shaykh's name and press \"Go live\". The interface is in English, with a switch to Arabic." },
       { q: "Are there books in English?", a: "The Shamela library is Arabic books. Any PDF book, including English ones, can be opened from your computer and shown on the stream." },
-      { q: "Which devices does it run on?", a: "Windows, Mac and Android (an APK file from your order page). See \"Requirements\" above." },
+      { q: "Which devices does it run on?", a: "Windows, Mac, Linux and Android (an APK file from your order page). See \"Requirements\" above." },
       { q: "How do I install the Android version?", a: "Download the APK from your order page on the phone and open it. The first time, the phone asks you to allow installs from the browser: tap \"Settings\", turn on \"Allow from this source\" and go back to \"Install\"." },
+      { q: "How do I install it on Linux?", a: "On Ubuntu, Debian or Mint download the .deb and open it with \"Software Install\" (or run: sudo apt install ./BathAlDurus-linux-amd64.deb). On other distributions download the AppImage, allow it to run as a program from its Properties, and open it. On first launch press \"Set up the engine\" once and enter your computer password — it installs what the program needs." },
       { q: "How do I stream a lesson live from the mosque?", a: "You need a computer or phone, a camera, a wireless microphone for the shaykh and a stable internet connection. In the program choose the book, enter the shaykh's name and the lesson title, paste your YouTube, Facebook or Telegram stream key once, and press \"Go live\"." },
       { q: "Do I need OBS?", a: "The program uses the free, open-source OBS engine in the background — you never need to open it. On Windows the engine is inside the installer; on Mac it installs once with a button in the program." },
       { q: "I get a warning the first time I open it?", a: "That's normal: on Windows click \"More info\" → \"Run anyway\"; on Mac move the program to Applications, open it once (a message appears, click \"OK\"), then go to System Settings → Privacy & Security, scroll down and click \"Open Anyway\". Only once." },
@@ -403,7 +415,7 @@ export const shopItems: ShopItem[] = [
       ...en, lang: code, slug: `lessons-broadcast-${code}`, publicPath: `/${code}/lessons-broadcast/`,
       name: j.name, kicker: j.kicker, tagline: j.tagline, sub: j.sub, format: j.format,
       sale: en.sale && { ...en.sale, label: j.saleLabel || en.sale.label },
-      platforms: [...j.platforms, IOS_CARD], inside: j.inside, forWho: j.forWho, steps: j.steps, specs: j.specs, faqs: j.faqs,
+      platforms: [...j.platforms.flatMap((p) => p.key === "android" ? [LINUX_CARD, p] : [p]), IOS_CARD], inside: j.inside, forWho: j.forWho, steps: j.steps, specs: j.specs, faqs: j.faqs,
       promo: { src: `/shop/lessons-broadcast/promo-${code}.mp4`, poster: `/shop/lessons-broadcast/promo-poster-${code}.jpg`, title: j.promo.title, text: j.promo.text },
     });
   }
@@ -412,8 +424,8 @@ export const shopItems: ShopItem[] = [
 // الآيفون شراء مستقلّ من App Store (بسعره هناك) — الشراء من الموقع يعطي ويندوز وماك وأندرويد فقط.
 // نوضّحه بلغة كل صفحة: ملاحظة بطاقة الآيفون، وسطر في لوحة الشراء، وسؤال في الأسئلة الشائعة.
 const IOS_SEP: Record<string, { name?: string; label?: string; note: string; buy: string; q: string; a: string; incl?: string; sep?: string }> = {
-  ar: { name: "آيفون وآيباد", label: "حمّله من App Store", note: "تطبيق مستقلّ — يُشترى من App Store", buy: "يشمل: ويندوز · ماك · أندرويد. الآيفون والآيباد غير مشمولة — تطبيقها يُشترى منفصلاً من App Store.", q: "الشراء من هنا يشمل تطبيق الآيفون؟", a: "لا. الشراء من الموقع يعطيك ثلاث نسخ: ويندوز وماك وأندرويد. تطبيق الآيفون والآيباد يُباع من App Store نفسه، فهو شراء منفصل بسعره هناك. لو جهازك آيفون فقط، اشترِه من App Store مباشرة بدل الموقع.", incl: "بشراء واحد من هنا — الثلاث كلّها", sep: "شراء منفصل" },
-  en: { incl: "One purchase here — all three", sep: "Separate purchase", note: "Separate app — sold on the App Store", buy: "Includes Windows · Mac · Android. iPhone & iPad are not included — that app is bought separately on the App Store.", q: "Does this purchase include the iPhone app?", a: "No. Buying here gives you the Windows, Mac and Android versions. The iPhone and iPad app is a separate purchase on the App Store." },
+  ar: { name: "آيفون وآيباد", label: "حمّله من App Store", note: "تطبيق مستقلّ — يُشترى من App Store", buy: "يشمل: ويندوز · ماك · لينكس · أندرويد. الآيفون والآيباد غير مشمولة — تطبيقها يُشترى منفصلاً من App Store.", q: "الشراء من هنا يشمل تطبيق الآيفون؟", a: "لا. الشراء من الموقع يعطيك ثلاث نسخ: ويندوز وماك وأندرويد. تطبيق الآيفون والآيباد يُباع من App Store نفسه، فهو شراء منفصل بسعره هناك. لو جهازك آيفون فقط، اشترِه من App Store مباشرة بدل الموقع.", incl: "بشراء واحد من هنا — الثلاث كلّها", sep: "شراء منفصل" },
+  en: { incl: "One purchase here — all four", sep: "Separate purchase", note: "Separate app — sold on the App Store", buy: "Includes Windows · Mac · Linux · Android. iPhone & iPad are not included — that app is bought separately on the App Store.", q: "Does this purchase include the iPhone app?", a: "No. Buying here gives you the Windows, Mac and Android versions. The iPhone and iPad app is a separate purchase on the App Store." },
   ru: { note: "Отдельное приложение — продаётся в App Store", buy: "iPhone и iPad: отдельное приложение, покупается в App Store — в эту покупку не входит.", q: "Входит ли в покупку приложение для iPhone?", a: "Нет. Покупка здесь даёт версии для Windows, Mac и Android. Приложение для iPhone и iPad покупается отдельно в App Store." },
   fr: { note: "Application séparée — vendue sur l’App Store", buy: "iPhone et iPad : application séparée, achetée sur l’App Store — non incluse ici.", q: "L’achat inclut-il l’application iPhone ?", a: "Non. L’achat ici vous donne les versions Windows, Mac et Android. L’application iPhone et iPad s’achète séparément sur l’App Store." },
   de: { note: "Separate App – im App Store erhältlich", buy: "iPhone und iPad: separate App, Kauf im App Store – hier nicht enthalten.", q: "Ist die iPhone-App im Kauf enthalten?", a: "Nein. Mit dem Kauf hier erhalten Sie die Versionen für Windows, Mac und Android. Die App für iPhone und iPad wird separat im App Store gekauft." },
@@ -430,10 +442,46 @@ for (const it of shopItems) {
   it.platforms = it.platforms.map((p) => p.key === "ios" ? { ...IOS_CARD, name: t.name || IOS_CARD.name, hrefLabel: t.label || IOS_CARD.hrefLabel, note: t.note } : p);
   it.buyNote = t.buy;
   it.platCaptions = t.incl && t.sep ? { incl: t.incl, sep: t.sep } : undefined;
-  it.faqs = [...it.faqs.slice(0, 2), { q: t.q, a: t.a }, ...it.faqs.slice(2)];
+  const at = it.lang && it.lang !== "ar" ? 2 : 3;   // العربيّة: بعد سؤال «حسابي» في الأوّل
+  it.faqs = [...it.faqs.slice(0, at), { q: t.q, a: t.a }, ...it.faqs.slice(at)];
 }
 
 export const itemBySlug = (slug: string) => shopItems.find((i) => i.slug === slug);
+
+// ── «قريباً» في المتجر (/shop/#soon) ─────────────────────────────────────
+// منتجات لم تنزل بعد: لا سعر ولا موعد — فقط «سجّل إيميلك ونبلّغك أوّل ما ينزل».
+// التسجيل يُحفظ عبر الدالّة shop_interest_add في جدول shop_interest (supabase/shop_interest.sql)،
+// ويظهر عدد كلّ منتج وقائمته في «المتجر الرقميّ» باللوحة (26-dshop.js — DSH_SOON بنفس المفاتيح).
+// المفتاح: حروف إنجليزيّة صغيرة وأرقام وشرطة فقط (٢–٤٠) — منتج جديد هنا لا يحتاج هجرة.
+export type SoonItem = { key: string; kind: string; name: string; tagline: string; points: string[]; icon: "course" | "clips" | "ai" };
+export const shopSoon: SoonItem[] = [
+  {
+    key: "course-lessons-broadcast",
+    kind: "دورة أونلاين",
+    name: "دورة بث وتصوير الدروس العلمية",
+    tagline: "كيف تبثّ درس المسجد وتصوّره وتسجّله بنفسك — من الجوّال إلى غرفة الإعلام.",
+    points: ["تجهيز الصوت والكاميرا والإنترنت في المسجد", "البثّ على يوتيوب وفيسبوك وتيليجرام معاً", "تسجيل الدرس وأرشفته ونشره بعد البثّ"],
+    icon: "course",
+  },
+  {
+    key: "lessons-publish",
+    kind: "برنامج — بالذكاء الاصطناعي",
+    name: "نشر الدروس العلمية",
+    tagline: "دروسكم وخطبكم الطويلة تصير مقاطع قصيرة جاهزة للنشر — بدون مونتير.",
+    points: ["فيديو أو صوت فقط: الدرس، المحاضرة، خطبة الجمعة", "الكلام مكتوب على الشاشة كلمة كلمة، والآية بالرسم العثمانيّ منسوخة من المصحف لا يكتبها الذكاء الاصطناعي", "قوالب إسلاميّة بالطول بشعار جهتك ولونها"],
+    icon: "clips",
+  },
+  {
+    key: "ai-dev-course",
+    kind: "دورة أونلاين",
+    name: "دورة التطوير بالذكاء الاصطناعي",
+    tagline: "من فكرة إلى موقع أو تطبيق منشور باسمك — مع Claude، بدون ما تكتب كوداً بيدك.",
+    points: ["دومين وقاعدة بيانات باسمك", "GitHub والنشر خطوة خطوة", "App Store وGoogle Play للتطبيقات"],
+    icon: "ai",
+  },
+];
+export const SOON_RPC = `${SUPA_URL}/rest/v1/rpc/shop_interest_add`;
+export const SOON_KEY = SUPA_KEY;
 
 export type LiveProduct = { sku: string; price_sar: number; active: boolean };
 

@@ -95,8 +95,10 @@ html.v2-menu-open, html.v2-menu-open body { overflow: hidden; }
 .v2-mmenu a.small { font-size: 17px; color: var(--blue); margin-top: 18px; }
 @keyframes v2-in { from { opacity: 0; transform: translateY(-8px); } }
 @media (max-width: 833px) {
-  .v2-gnav .items, .v2-gnav .book, .v2-gnav .acct { display: none; }
-  .v2-gnav .burger { display: block; }
+  .v2-gnav .items, .v2-gnav .book { display: none; }
+  /* «حسابي» ظاهر على الجوال بجانب القائمة — المشتري يلقى تحديثاته بدون ما يفتح القائمة */
+  .v2-gnav .acct { margin-inline: auto 0; padding: 10px 4px; opacity: 1; color: var(--blue); }
+  .v2-gnav .burger { display: block; margin-inline-start: 0; }
 }
 
 /* ---------- شريط المنتج اللاصق ---------- */

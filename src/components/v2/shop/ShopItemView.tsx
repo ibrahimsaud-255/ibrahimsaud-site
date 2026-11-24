@@ -6,6 +6,7 @@ import LocalNav from "@/components/v2/LocalNav";
 import Footer from "@/components/v2/Footer";
 import WindowLight from "@/components/v2/WindowLight";
 import ShopPrice from "@/components/v2/shop/ShopPrice";
+import OwnedStrip from "@/components/v2/shop/OwnedStrip";
 import BuyPanel from "@/components/v2/shop/BuyPanel";
 import StickyBuy from "@/components/v2/shop/StickyBuy";
 import { PlatformCards } from "@/components/v2/shop/Platforms";
@@ -52,6 +53,7 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
               <a className="v2-btn v2-btn-ghost" href="#inside">{T.whatsInside}</a>
             </div>
             <p className="from"><ShopPrice sku={i.sku} fallback={i.fallbackPrice} lang={i.lang} /> · {i.format}</p>
+            {!foreign && !i.presale && <div className="v2-shop-hero-owned"><OwnedStrip /></div>}
           </div>
           {i.shots && (
             <div className="v2-wrap v2-shop-shots">
@@ -176,6 +178,7 @@ export default function ShopItemView({ item: i, promo }: { item: ShopItem; promo
                 <details key={f.q}>
                   <summary>{f.q}</summary>
                   <p>{f.a}</p>
+                  {f.link && <p><a className="v2-link" href={f.link.href}>{f.link.label} <span className="chev">‹</span></a></p>}
                 </details>
               ))}
             </div>

@@ -44,15 +44,44 @@ async function sendEmail(to: string, subject: string, html: string) {
   if (!r.ok) throw new Error("resend " + r.status + ": " + (await r.text()).slice(0, 200));
 }
 
-function shell(title: string, body: string, cta: { href: string; label: string } | null, foot: string) {
-  return `<div dir="rtl" style="font-family:-apple-system,Tahoma,Arial,sans-serif;background:#F5F5F7;padding:32px 16px">
-  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:34px 28px;color:#1D1D1F;text-align:right">
-    <div style="font-size:13px;color:#6E6E73;font-weight:bold;margin-bottom:18px">إبراهيم سعود</div>
-    <h1 style="font-size:24px;line-height:1.4;margin:0 0 14px">${esc(title)}</h1>
-    <div style="font-size:16px;line-height:1.9;color:#3A3A3C">${body}</div>
-    ${cta ? `<div style="margin:28px 0 8px"><a href="${esc(cta.href)}" style="background:#2F66FF;color:#fff;text-decoration:none;font-weight:bold;padding:13px 28px;border-radius:999px;display:inline-block">${esc(cta.label)}</a></div>` : ""}
-    <p style="font-size:12px;color:#86868B;line-height:1.8;margin-top:26px;border-top:1px solid #E5E5EA;padding-top:16px">${foot}</p>
+// ── قالب الإيميل بهويّة إبراهيم سعود (ضوء الاستوديو) ─────────────────────────
+// نسخة واحدة متطابقة في shop وshop-account وshop-remind (كلّ دالّة تُنشر وحدها).
+// ضوء النافذة الأزرق مربّعات
+// بدرجات أزرق مخفّفة جاهزة — عملاء البريد لا يدعمون blur ولا opacity ولا transform.
+// الشعار «ملصق»: حروف بيضاء بحدّ أسود — يبين على الخلفيّة الفاتحة والداكنة (وضع الجوال الليليّ) بصورة وحدة،
+// لأنّ Gmail وغيره يقلبون خلفيّة الإيميل للداكن ولا يدعمون تبديل الصور. تخدمه دالّة shop (?asset=logo)، ونسخته في public/v2/ibrahim-saud-logo-sticker.png
+const BRAND_LOGO = "https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop?asset=logo";
+const BRAND_FONT = "'Thmanyah Sans',-apple-system,BlinkMacSystemFont,'SF Arabic','Segoe UI',Tahoma,Arial,sans-serif";
+function windowLight(rtl: boolean) {
+  // ستّ مربّعات (٣×٢) بمنظور: الأكبر والأقوى في الزاوية الخارجيّة ثمّ تصغر وتخفت للداخل،
+  // مثل ضوء النافذة على ستارة الاستوديو (WindowLight في الموقع).
+  const cols = [{ w: 16, h: 19, c: ["#8FAEFF", "#B4C8FF"] }, { w: 13, h: 15, c: ["#B4C8FF", "#D3DFFF"] }, { w: 10, h: 11, c: ["#D3DFFF", "#E8EEFF"] }];
+  const order = rtl ? cols : [...cols].reverse();
+  const row = (i: number) => `<tr>${order.map((k) => `<td style="padding:0;vertical-align:${i ? "top" : "bottom"};font-size:0;line-height:0"><div style="width:${k.w}px;height:${k.h}px;background:${k.c[i]};border-radius:3px;font-size:0;line-height:0">&nbsp;</div></td>`).join("")}</tr>`;
+  return `<table role="presentation" dir="ltr" cellpadding="0" cellspacing="3" border="0" style="border-collapse:separate;display:inline-table">${row(0)}${row(1)}</table>`;
+}
+function brandMail(o: { rtl: boolean; label: string; title: string; body: string; cta?: { href: string; label: string }; foot: string }) {
+  const side = o.rtl ? "right" : "left", other = o.rtl ? "left" : "right";
+  const btn = o.cta
+    ? `<div style="margin:28px 0 8px"><a href="${esc(o.cta.href)}" style="background:#2F66FF;color:#fff;text-decoration:none;font-weight:bold;padding:13px 28px;border-radius:999px;display:inline-block">${esc(o.cta.label)}</a></div>`
+    : "";
+  return `<div dir="${o.rtl ? "rtl" : "ltr"}" style="font-family:${BRAND_FONT};background:#F5F5F7;padding:32px 16px">
+  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:28px 28px 30px;color:#1D1D1F;text-align:${side}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 26px"><tr>
+      <td align="${side}" style="text-align:${side};vertical-align:middle"><a href="https://ibrahimsaud.com" style="text-decoration:none;display:inline-block"><img src="${BRAND_LOGO}" width="84" height="55" alt="${o.rtl ? "إبراهيم سعود" : "Ibrahim Saud"}" style="display:block;border:0;outline:none;width:84px;height:55px;font-size:14px;font-weight:bold;color:#1D1D1F;color-scheme:light only"></a></td>
+      <td align="${other}" style="text-align:${other};vertical-align:middle">${windowLight(o.rtl)}</td>
+    </tr></table>
+    <div style="font-size:13px;color:#2F66FF;font-weight:bold;margin:0 0 6px">${o.label}</div>
+    <h1 style="font-size:24px;line-height:1.4;margin:0 0 14px;color:#1D1D1F">${esc(o.title)}</h1>
+    <div style="font-size:16px;line-height:1.9;color:#3A3A3C">${o.body}</div>
+    ${btn}
+    <p style="font-size:12px;color:#86868B;line-height:1.8;margin:26px 0 0;border-top:1px solid #E5E5EA;padding-top:16px">${o.foot}</p>
   </div></div>`;
+}
+// ── /قالب الإيميل ─────────────────────────────────────────────────────────────
+// الإيميلات هنا عربيّة دائماً (الإنجليزيّ والروسيّ لهم إعلانهم) — بقالب إبراهيم سعود نفسه
+function shell(title: string, body: string, cta: { href: string; label: string } | null, foot: string) {
+  return brandMail({ rtl: true, label: "برنامج بث الدروس العلمية", title, body, cta: cta || undefined, foot });
 }
 
 // ── سلسلة «قائمة تجهيز المسجد لبث الدروس» — ٧ إيميلات (اليوم ٠ … ٦) ──────────

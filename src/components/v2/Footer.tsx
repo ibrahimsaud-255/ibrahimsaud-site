@@ -4,7 +4,7 @@ import { bookHref, waHref } from "@/lib/v2";
 
 const cols: { title: string; links: { label: string; href: string; ext?: boolean }[] }[] = [
   { title: "استكشف", links: [{ label: "صناعة المحتوى", href: "/content/" }, { label: "برنامج بث الدروس العلمية", href: "/lessons-broadcast/" }, { label: "نظام الجمعيات الشبابية", href: "/systems/charities/" }, { label: "التطبيق للطلاب", href: "/systems/charities/#jawwali" }, { label: "جرّب نظام الجمعيات", href: "/systems/charities/#try" }, { label: "الذكاء الاصطناعي", href: "/ai/" }, { label: "الاستوديو", href: "/video/" }] },
-  { title: "اطلب", links: [{ label: "مكالمة تعارف مجّانيّة", href: bookHref, ext: true }, { label: "إعلانات المتاجر", href: "/ad-packages/" }] },
+  { title: "اطلب", links: [{ label: "مكالمة تعارف مجّانيّة", href: bookHref, ext: true }, { label: "إعلانات المتاجر", href: "/ad-packages/" }, { label: "المتجر", href: "/shop/" }, { label: "حسابي — حمّل مشترياتك", href: "/account/" }] },
   { title: "عن إبراهيم", links: [{ label: "حروف ودروس", href: "https://huroofduroos.com", ext: true }, { label: "بودكاست سَعي", href: site.podcast.youtube, ext: true }, { label: "المدوّنة", href: "/blog/" }, { label: "تيك توك", href: site.social.tiktok, ext: true }] },
   { title: "تواصل", links: [{ label: "احجز مكالمة", href: bookHref, ext: true }, { label: "واتساب", href: waHref(), ext: true }, { label: "البريد", href: `mailto:${site.email}` }] },
 ];

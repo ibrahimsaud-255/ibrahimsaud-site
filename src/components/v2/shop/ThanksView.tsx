@@ -62,7 +62,15 @@ export default function ThanksView() {
   const search = useSyncExternalStore(noSub, () => location.search, () => null);
   const [lang, setLang] = useState<ShopLang>("ar");
   useEffect(() => { setLang(hintLang(search)); }, [search]);
+  // اشتراك «نظام الجمعيات» يمرّ بنفس بوّابة تلر (الوسيط يفرض العودة هنا) — رمزه يبدأ بـ charity-
+  // فنعيده لنظامه، وهناك يُتحقَّق من الدفع عند الخادم (لا يُصدَّق الرابط).
+  const charity = useMemo(() => {
+    const p = search ? new URLSearchParams(search) : null;
+    return p && (p.get("t") || "").startsWith("charity-") && p.get("o") ? `/charity/?paid=${encodeURIComponent(p.get("o")!)}` : "";
+  }, [search]);
+  useEffect(() => { if (charity) location.replace(charity); }, [charity]);
   const T = shopT(lang);
+  if (charity) return null;
   return (
     <div dir={T.dir} lang={lang}>
       <ThanksInner T={T} lang={lang} onLang={setLang} />

@@ -73,6 +73,7 @@ export default function AccountView() {
 
       <div className="v2-account-foot">
         <a className="v2-link" href={waHref("السلام عليكم، عندي استفسار عن مشترياتي من المتجر")} target="_blank" rel="noopener">تحتاج مساعدة؟ راسلني على واتساب <span className="chev">‹</span></a>
+        <a className="v2-link" href="/shop/#soon">المتجر — وش الجديد والقادم <span className="chev">‹</span></a>
         {!demo && <button className="v2-btn v2-btn-ghost sm" onClick={logout}>تسجيل الخروج</button>}
       </div>
     </div>

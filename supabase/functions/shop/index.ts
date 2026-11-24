@@ -117,27 +117,49 @@ const langOf = (sku?: string | null): Lang => {
   return m ? (m[1] as Lang) : "ar";
 };
 const MAIL_UI = {
-  ru: { head: "Ibrahim Saud — Store", foot: "Эта ссылка личная — не делитесь ею. Скачивание работает только на ваших подтверждённых устройствах.<br>Вопросы: ответьте на это письмо или напишите мне через ibrahimsaud.com" },
-  en: { head: "Ibrahim Saud — Store", foot: "This link is yours — don't share it. Downloads work only on your verified devices.<br>Questions: reply to this email or message me from ibrahimsaud.com" },
-  ar: { head: "إبراهيم سعود — المتجر", foot: "هذا الرابط خاصّ بك — لا تشاركه. التنزيل يعمل على أجهزتك الموثّقة فقط.<br>أيّ استفسار: ردّ على هذا الإيميل أو راسلني من ibrahimsaud.com" },
+  ru: { head: "Магазин", foot: "Эта ссылка личная — не делитесь ею. Скачивание работает только на ваших подтверждённых устройствах.<br>Вопросы: ответьте на это письмо или напишите мне через ibrahimsaud.com" },
+  en: { head: "Store", foot: "This link is yours — don't share it. Downloads work only on your verified devices.<br>Questions: reply to this email or message me from ibrahimsaud.com" },
+  ar: { head: "المتجر", foot: "هذا الرابط خاصّ بك — لا تشاركه. التنزيل يعمل على أجهزتك الموثّقة فقط.<br>أيّ استفسار: ردّ على هذا الإيميل أو راسلني من ibrahimsaud.com" },
 };
 
-// قالب إيميل بهويّة الموقع (أبيض بأسلوب آبل، أزرق ضوء الاستوديو)
-function mail(title: string, body: string, cta?: { href: string; label: string }, lang: Lang = "ar") {
-  const ui = MAIL_UI[lang], ltr = lang !== "ar";
-  const btn = cta
-    ? `<div style="margin:28px 0 8px"><a href="${esc(cta.href)}" style="background:#2F66FF;color:#fff;text-decoration:none;font-weight:bold;padding:13px 28px;border-radius:999px;display:inline-block">${esc(cta.label)}</a></div>`
+// ── قالب الإيميل بهويّة إبراهيم سعود (ضوء الاستوديو) ─────────────────────────
+// نسخة واحدة متطابقة في shop وshop-account وshop-remind (كلّ دالّة تُنشر وحدها).
+// ضوء النافذة الأزرق مربّعات
+// بدرجات أزرق مخفّفة جاهزة — عملاء البريد لا يدعمون blur ولا opacity ولا transform.
+// الشعار «ملصق»: حروف بيضاء بحدّ أسود — يبين على الخلفيّة الفاتحة والداكنة (وضع الجوال الليليّ) بصورة وحدة،
+// لأنّ Gmail وغيره يقلبون خلفيّة الإيميل للداكن ولا يدعمون تبديل الصور. تخدمه دالّة shop (?asset=logo)، ونسخته في public/v2/ibrahim-saud-logo-sticker.png
+const BRAND_LOGO = "https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop?asset=logo";
+const BRAND_FONT = "'Thmanyah Sans',-apple-system,BlinkMacSystemFont,'SF Arabic','Segoe UI',Tahoma,Arial,sans-serif";
+function windowLight(rtl: boolean) {
+  // ستّ مربّعات (٣×٢) بمنظور: الأكبر والأقوى في الزاوية الخارجيّة ثمّ تصغر وتخفت للداخل،
+  // مثل ضوء النافذة على ستارة الاستوديو (WindowLight في الموقع).
+  const cols = [{ w: 16, h: 19, c: ["#8FAEFF", "#B4C8FF"] }, { w: 13, h: 15, c: ["#B4C8FF", "#D3DFFF"] }, { w: 10, h: 11, c: ["#D3DFFF", "#E8EEFF"] }];
+  const order = rtl ? cols : [...cols].reverse();
+  const row = (i: number) => `<tr>${order.map((k) => `<td style="padding:0;vertical-align:${i ? "top" : "bottom"};font-size:0;line-height:0"><div style="width:${k.w}px;height:${k.h}px;background:${k.c[i]};border-radius:3px;font-size:0;line-height:0">&nbsp;</div></td>`).join("")}</tr>`;
+  return `<table role="presentation" dir="ltr" cellpadding="0" cellspacing="3" border="0" style="border-collapse:separate;display:inline-table">${row(0)}${row(1)}</table>`;
+}
+function brandMail(o: { rtl: boolean; label: string; title: string; body: string; cta?: { href: string; label: string }; foot: string }) {
+  const side = o.rtl ? "right" : "left", other = o.rtl ? "left" : "right";
+  const btn = o.cta
+    ? `<div style="margin:28px 0 8px"><a href="${esc(o.cta.href)}" style="background:#2F66FF;color:#fff;text-decoration:none;font-weight:bold;padding:13px 28px;border-radius:999px;display:inline-block">${esc(o.cta.label)}</a></div>`
     : "";
-  return `<div dir="${ltr ? "ltr" : "rtl"}" style="font-family:-apple-system,Tahoma,Arial,sans-serif;background:#F5F5F7;padding:32px 16px">
-  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:34px 28px;color:#1D1D1F;text-align:${ltr ? "left" : "right"}">
-    <div style="font-size:13px;color:#6E6E73;font-weight:bold;margin-bottom:18px">${ui.head}</div>
-    <h1 style="font-size:24px;line-height:1.4;margin:0 0 14px">${esc(title)}</h1>
-    <div style="font-size:16px;line-height:1.9;color:#3A3A3C">${body}</div>
+  return `<div dir="${o.rtl ? "rtl" : "ltr"}" style="font-family:${BRAND_FONT};background:#F5F5F7;padding:32px 16px">
+  <div style="max-width:560px;margin:auto;background:#fff;border-radius:22px;padding:28px 28px 30px;color:#1D1D1F;text-align:${side}">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin:0 0 26px"><tr>
+      <td align="${side}" style="text-align:${side};vertical-align:middle"><a href="https://ibrahimsaud.com" style="text-decoration:none;display:inline-block"><img src="${BRAND_LOGO}" width="84" height="55" alt="${o.rtl ? "إبراهيم سعود" : "Ibrahim Saud"}" style="display:block;border:0;outline:none;width:84px;height:55px;font-size:14px;font-weight:bold;color:#1D1D1F;color-scheme:light only"></a></td>
+      <td align="${other}" style="text-align:${other};vertical-align:middle">${windowLight(o.rtl)}</td>
+    </tr></table>
+    <div style="font-size:13px;color:#2F66FF;font-weight:bold;margin:0 0 6px">${o.label}</div>
+    <h1 style="font-size:24px;line-height:1.4;margin:0 0 14px;color:#1D1D1F">${esc(o.title)}</h1>
+    <div style="font-size:16px;line-height:1.9;color:#3A3A3C">${o.body}</div>
     ${btn}
-    <p style="font-size:12px;color:#86868B;line-height:1.8;margin-top:26px;border-top:1px solid #E5E5EA;padding-top:16px">
-      ${ui.foot}
-    </p>
+    <p style="font-size:12px;color:#86868B;line-height:1.8;margin:26px 0 0;border-top:1px solid #E5E5EA;padding-top:16px">${o.foot}</p>
   </div></div>`;
+}
+// ── /قالب الإيميل ─────────────────────────────────────────────────────────────
+function mail(title: string, body: string, cta?: { href: string; label: string }, lang: Lang = "ar") {
+  const ui = MAIL_UI[lang];
+  return brandMail({ rtl: lang === "ar", label: ui.head, title, body, cta, foot: ui.foot });
 }
 
 // ── أنواع ─────────────────────────────────────────────────────────────────
@@ -654,8 +676,12 @@ async function readBody(req: Request): Promise<Record<string, unknown>> {
   }
 }
 
+const LOGO_PNG = "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";
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
+  // شعار الإيميلات (صورة عامّة صغيرة) — GET ?asset=logo
+  if (req.method === "GET" && new URL(req.url).searchParams.get("asset") === "logo")
+    return new Response(Uint8Array.from(atob(LOGO_PNG), (c) => c.charCodeAt(0)), { headers: { "Content-Type": "image/png", "Cache-Control": "public, max-age=604800", "Access-Control-Allow-Origin": "*" } });
   if (req.method !== "POST") return j({ error: "POST only" }, 405);
   const url = new URL(req.url);
   const b = await readBody(req);

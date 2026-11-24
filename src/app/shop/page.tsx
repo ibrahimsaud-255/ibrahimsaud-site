@@ -5,14 +5,19 @@ import Shell from "@/components/v2/Shell";
 import Nav from "@/components/v2/Nav";
 import Footer from "@/components/v2/Footer";
 import ShopPrice from "@/components/v2/shop/ShopPrice";
+import OwnedStrip from "@/components/v2/shop/OwnedStrip";
+import ShopSoon from "@/components/v2/shop/ShopSoon";
 import { shopItems } from "@/lib/shop";
 
-// المتجر الرقميّ — منتجات رقميّة فقط (حزم، ملفّات، دورات). غير معلَن: لا في القائمة ولا في خريطة الموقع.
+// المتجر الرقميّ — منتجات إبراهيم: المتوفّر الآن (بطاقة ← صفحته العامّة إن وُجدت)، و«قريباً» بتسجيل اهتمام.
+// noindex كما هو (الصفحات العامّة للمنتجات هي اللي تُفهرَس)، ورابطه في الفوتر و«حسابي» للمشترين.
 export const metadata: Metadata = {
   title: "المتجر — إبراهيم سعود",
-  description: "أدوات وحزم ودورات رقميّة جاهزة — تنزيل فوريّ بعد الدفع.",
+  description: "برامج ودورات رقميّة لنشر العلم — تنزيل فوريّ بعد الدفع، وآخر نسخة دائماً من «حسابي».",
   robots: { index: false, follow: false },
 };
+
+const live = shopItems.filter((i) => !i.hidden && !i.presale);
 
 export default function Shop() {
   return (
@@ -21,26 +26,35 @@ export default function Shop() {
       <main>
         <section className="v2-shop-head">
           <div className="v2-wrap">
-            <h1>المتجر. <span>أدوات جاهزة تشتغل من اليوم.</span></h1>
-            <p>حلول صغيرة لمشاكل حقيقيّة — تدفع مرّة، وتنزّل فوراً.</p>
+            <h1>المتجر. <span>برامج ودورات لنشر العلم.</span></h1>
+            <p>تدفع مرّة، وتنزّل فوراً — وآخر نسخة دائماً في «حسابي».</p>
+            <OwnedStrip />
           </div>
         </section>
-        <section className="v2-shop-grid-sec">
+        <section className="v2-shop-grid-sec v2-shop-live" aria-labelledby="live-h">
           <div className="v2-wrap">
+            <h2 id="live-h" className="v2-shop-sec-h">متوفّر الآن</h2>
             <div className="v2-shop-grid">
-              {shopItems.filter((i) => !i.hidden).map((i) => (
-                <a key={i.sku} href={`/shop/${i.slug}/`} className="v2-shop-card">
+              {live.map((i) => (
+                <a key={i.sku} href={i.publicPath || `/shop/${i.slug}/`} className="v2-shop-card">
                   {i.iconImg ? <img className="art-img" src={i.iconImg} alt="" width={72} height={72} /> : <span className="art" aria-hidden>{i.icon}</span>}
                   <span className="kicker">{i.kicker}</span>
                   <h2>{i.name}</h2>
                   <p>{i.tagline}</p>
                   <span className="foot">
                     <b><ShopPrice sku={i.sku} fallback={i.fallbackPrice} /></b>
-                    <span className="v2-link">{i.presale ? "التفاصيل" : "اشترِ"} <span className="chev">‹</span></span>
+                    <span className="v2-link">التفاصيل والشراء <span className="chev">‹</span></span>
                   </span>
                 </a>
               ))}
             </div>
+          </div>
+        </section>
+        <section className="v2-sec alt" id="soon" aria-labelledby="soon-h">
+          <div className="v2-wrap">
+            <h2 id="soon-h" className="v2-title">قريباً.</h2>
+            <p className="v2-soon-lead">إذا مهتمّ سجّل إيميلك ونبلّغك أوّل ما ينزل — بدون التزام.</p>
+            <ShopSoon source="shop" />
           </div>
         </section>
       </main>
