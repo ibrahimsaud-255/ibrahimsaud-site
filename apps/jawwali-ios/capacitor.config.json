@@ -1,0 +1,38 @@
+{
+  "appId": "com.ibrahimsaud.jawwali",
+  "appName": "جوّالي",
+  "webDir": "www",
+  "backgroundColor": "#0B0B14",
+  "ios": {
+    "contentInset": "never",
+    "allowsLinkPreview": false,
+    "scrollEnabled": true,
+    "limitsNavigationsToAppBoundDomains": false,
+    "appendUserAgent": "Jawwali-iOS"
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "banner",
+        "list"
+      ]
+    },
+    "SplashScreen": {
+      "launchShowDuration": 0,
+      "launchAutoHide": true,
+      "backgroundColor": "#0B0B14",
+      "showSpinner": false
+    },
+    "StatusBar": {
+      "overlaysWebView": true,
+      "style": "DARK"
+    }
+  },
+  "server": {
+    "allowNavigation": [
+      "ibrahimsaud.com"
+    ],
+    "iosScheme": "jawwali"
+  }
+}
