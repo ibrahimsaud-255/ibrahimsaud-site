@@ -157,8 +157,8 @@
 .yl-app { display: grid; gap: clamp(28px, 5vw, 72px); align-items: center; }
 .yl-app.phone { grid-template-columns: minmax(200px, 300px) 1fr; max-width: 980px; }
 .yl-app.wide { grid-template-columns: 1.3fr 1fr; }
-.yl-app.phone img { width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; border-radius: 34px; border: 6px solid var(--bezel, #1d1d1f); background: #111; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .35); }
-.yl-app.wide img { width: 100%; border-radius: 18px; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .35); }
+.yl-app.phone > img { width: 100%; aspect-ratio: 9 / 19.5; object-fit: cover; object-position: top; border-radius: 34px; border: 6px solid var(--bezel, #1d1d1f); background: #111; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .35); }
+.yl-app.wide > img { width: 100%; border-radius: 18px; box-shadow: 0 24px 50px -20px rgba(0, 0, 0, .35); }
 .yl-app h2 { font-size: clamp(32px, 4.4vw, 48px); margin-bottom: 14px; }
 .yl-app p { font-size: 19px; line-height: 1.75; color: var(--fg-2); margin-bottom: 18px !important; }
 .yl-pts { grid-template-columns: 1fr 1fr; margin-bottom: 24px !important; }
@@ -166,6 +166,14 @@
 .yl-hero .v2-shop-logo img { width: clamp(260px, 40vw, 480px); }
 @media (max-width: 860px) {
   .yl-app.phone, .yl-app.wide { grid-template-columns: 1fr; }
-  .yl-app.phone img { max-width: 260px; justify-self: center; }
+  .yl-app.phone > img { max-width: 260px; justify-self: center; }
   .yl-pts { grid-template-columns: 1fr; }
 }
+
+/* صورة المدينة تحت الواجهة، وصورة «البطاقة تكفي» في حقيبة الموسم */
+.yl-hero-art { display: block; width: min(100%, 1040px); height: auto; margin: 40px auto 0; border-radius: 28px; box-shadow: 0 40px 80px -40px rgba(16, 3, 189, .35); }
+.yl-kit-art { display: block; width: min(70%, 320px); height: auto; margin: 0 auto 28px; border-radius: 28px; }
+
+/* زرّ التجربة وشارة App Store جنباً إلى جنب في أقسام «للطلاب» و«للمشرفين» */
+.yl-app-ctas { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.yl-app-ctas .v2-appstore img { height: 40px; width: auto; aspect-ratio: auto; border: 1px solid #A6A6A6; border-radius: 9px; box-shadow: none; background: none; }

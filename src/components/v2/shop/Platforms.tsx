@@ -53,7 +53,11 @@ function PlatformList({ item, list }: { item: ShopItem; list: NonNullable<ShopIt
             <PlatformLogo k={p.key} size={26} />
             <h3>{p.name}</h3>
             <p>{p.note}</p>
-            <span className="tag">{p.hrefLabel} ↗</span>
+            {p.key === "ios"
+              // شارة آبل الرسميّة «Download on the App Store» بدل النصّ — زرّ تحميل واضح أنّه من متجر آبل
+              // eslint-disable-next-line @next/next/no-img-element
+              ? <img src="/v2/badges/app-store.webp" alt="Download on the App Store" width={674} height={210} style={{ height: 40, width: "auto", border: "1px solid #A6A6A6", borderRadius: 9, marginTop: 12 }} />
+              : <span className="tag">{p.hrefLabel} ↗</span>}
           </a>
         ) : (
         <div key={p.key} className={"v2-plat" + (p.soon ? " soon" : "")}>

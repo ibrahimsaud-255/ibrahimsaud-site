@@ -199,7 +199,7 @@
         <div class="apps">${app('news', 'الأخبار', 'w-news')}${app('bank', 'البنك', 'finance')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('shop', 'المتجر', 'procurement')}${(D.season.settings || {}).league ? app('league', 'الدوري', 'w-programs') : ''}${app('trophy', 'الترتيب', 'season')}${app('id', 'بطاقتي', 'hr')}${app('survey', 'رأيك', 'requests')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="bank"><small>رصيدك</small><b>${money(D.me.balance)}</b></button><button class="widget" data-open="trophy"><small>فريقك</small><b>${esc(t.name)}</b></button></div>
         ${whereNow()}${(() => { const lv = level(D.me.att || 0), st = streak(D.me.attd); return `<button class="widget lvl" data-open="id"><span class="lv-i" aria-hidden="true">${lv.icon}</span><span><small>مستوى الحضور</small><b>${lv.name}${st ? ` · ${BDG('flame')} ${st} ${st === 1 ? 'أسبوع' : st <= 10 ? 'أسابيع' : 'أسبوعاً'}` : ''}</b>${lv.next ? `<small>باقي ${lv.left} حضور للمستوى ${lv.next}</small><i class="lv-bar"><u style="width:${lv.pct}%"></u></i>` : '<small>أعلى مستوى — ما شاء الله</small>'}</span></button>`; })()}
-        ${trip ? `<button class="widget trip" data-open="cal"><small>${I('bus')} الرحلة القادمة · ${esc(fmtDay(trip.d))}</small><b>${esc(trip.t)}</b><small>${(() => { const n = Math.round((new Date(trip.d + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 864e5); return n === 0 ? 'اليوم!' : n === 1 ? 'غداً' : 'بعد ' + n + ' يوماً'; })()}${trip.p ? ' · ' + esc(trip.p) : ''}</small></button>` : ''}
+        ${trip ? `<button class="widget trip hasimg" data-open="cal"><img class="wzi" src="./city/trips.webp" alt=""><small>${I('bus')} الرحلة القادمة · ${esc(fmtDay(trip.d))}</small><b>${esc(trip.t)}</b><small>${(() => { const n = Math.round((new Date(trip.d + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 864e5); return n === 0 ? 'اليوم!' : n === 1 ? 'غداً' : 'بعد ' + n + ' يوماً'; })()}${trip.p ? ' · ' + esc(trip.p) : ''}</small></button>` : ''}
         ${pw}${next ? `<button class="widget" data-open="cal"><small>النشاط القادم · ${esc(fmtDay(next.d))}</small><b>${esc(next.t)}</b><small>${esc([next.f && next.f + (next.e ? '–' + next.e : ''), next.p].filter(Boolean).join(' · '))}</small></button>` : ''}
         <div id="pushb"></div></div>`;
     }
@@ -226,7 +226,7 @@
       <div class="pb">${p.k === 'honor' && p.hon && p.img ? `<span class="hchip" style="--c:${STAGEC[p.hon.g] || '#FF9000'}">${I('award')} ${esc(p.hon.n)}</span>` : ''}<b>${esc(p.t)}</b>${p.b ? `<p>${esc(p.b)}</p>` : ''}</div>
       <footer><button class="heart${p.mine ? ' on' : ''}" style="--hc:${hc}" data-react="${esc(p.id)}" aria-pressed="${!!p.mine}" aria-label="أعجبني">${HEART}</button><span class="rsum">${sum}</span>${total ? `<small class="rt">${total}</small>` : ''}</footer></article>`;
   }
-  function paintFeed() { const el = document.getElementById('feed'); if (el) el.innerHTML = FEED.map(postHTML).join('') || '<p class="empty">لا منشورات بعد.</p>'; }
+  function paintFeed() { const el = document.getElementById('feed'); if (el) el.innerHTML = FEED.map(postHTML).join('') || '<div class="emptyimg"><img src="./states/news.webp" alt=""></div><p class="empty">لا منشورات بعد.</p>'; }
   async function react(id) {
     const p = FEED.find(x => x.id === id); if (!p) return;
     const g = MODE === 'staff' ? 'جامعي' : (D.me.stage || 'متوسط'); p.r = p.r || {};
@@ -357,7 +357,7 @@
     cal(sel) {
       const days = {}; occ(28).forEach(x => (days[x.d] = days[x.d] || []).push(x));
       const keys = Object.keys(days).sort(), today = isoDay(new Date()), tomorrow = isoDay(new Date(Date.now() + 864e5));
-      if (!keys.length) { view('الجدول', '<p class="empty">لم يُنشر الجدول بعد.</p>'); return; }
+      if (!keys.length) { view('الجدول', '<div class="emptyimg"><img src="./states/schedule.webp" alt=""></div><p class="empty">لم يُنشر الجدول بعد.</p>'); return; }
       sel = sel && days[sel] ? sel : (keys.find(d => d >= today) || keys[keys.length - 1]);
       const nowD = new Date(), list = days[sel].slice().sort((a, b) => String(a.f).localeCompare(String(b.f)));
       const at = (d, t) => t ? new Date(d + 'T' + t + ':00') : null;
@@ -617,7 +617,7 @@
       const first = String(XF.who.name).split(' ')[0];
       D.me.balance = bal; D.me.sentToday = (D.me.sentToday || 0) + 1;
       (D.me.tx = D.me.tx || []).unshift({ a: -XF.amt, r: `حوالة إلى ${first} #${XF.to}${note ? ' — ' + note : ''}`, t: new Date().toISOString() });
-      view('تمّت الحوالة', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${money(XF.amt, 'xl')}</h3><p>وصلت إلى ${esc(XF.who.name)}</p><p class="note">رصيدك الآن ${money(bal)}</p><button class="btn sec" data-open="bank">البنك</button></div>`);
+      view('تمّت الحوالة', `<div class="done2"><img class="okimg" src="./states/done.webp" alt=""><h3>${money(XF.amt, 'xl')}</h3><p>وصلت إلى ${esc(XF.who.name)}</p><p class="note">رصيدك الآن ${money(bal)}</p><button class="btn sec" data-open="bank">البنك</button></div>`);
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }
   const PRE = () => !!((D.season.settings || {}).preorder);
@@ -626,7 +626,7 @@
     try {
       const r = DEMO ? { ok: true, order: 'o' + Date.now(), item: it.n, balance: D.me.balance - it.p } : await post('/season/order', { code: saved.code, pin: saved.pin, item: id });
       D.me.balance = r.balance; D.me.orders = (D.me.orders || []).concat([{ id: r.order, item: r.item, p: it.p, t: new Date().toISOString() }]); if (it.s != null) it.s--;
-      view('طلبك محجوز', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${esc(r.item)}</h3><p>اذهب إلى الكاونتر وامسح بطاقتك أو قل رقمك <b>${D.me.no}</b> — طلبك جاهز باسمك.</p></div><button class="btn sec" data-open="shop">المتجر</button>`);
+      view('طلبك محجوز', `<div class="done2"><img class="okimg" src="./states/done.webp" alt=""><h3>${esc(r.item)}</h3><p>اذهب إلى الكاونتر وامسح بطاقتك أو قل رقمك <b>${D.me.no}</b> — طلبك جاهز باسمك.</p></div><button class="btn sec" data-open="shop">المتجر</button>`);
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }
   function prod(k) {
@@ -873,7 +873,7 @@
     try {
       const r = DEMO ? { id: null } : await post('/season/cert', { code: saved.code, pin: saved.pin, as: 'staff', cert: body });
       const url = (NAT ? 'https://ibrahimsaud.com/charity/season/' : location.origin + location.pathname.replace(/[^/]*$/, '')) + 'cert/?' + (DEMO ? 'demo=1' : 'id=' + r.id);
-      view('أُصدرت الشهادة', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${esc(body.name)}</h3><p>${esc(body.reason)}</p></div>
+      view('أُصدرت الشهادة', `<div class="done2"><img class="okimg" src="./states/done.webp" alt=""><h3>${esc(body.name)}</h3><p>${esc(body.reason)}</p></div>
         <a class="btn" href="${esc(url)}" target="_blank" rel="noopener">اعرض الشهادة واطبعها</a><button class="btn sec" style="margin-top:10px" data-share="${esc(url)}" data-share-t="${esc('شهادة ' + body.name)}">أرسل الرابط</button>`);
     } catch (e) { toast(e.message, 1); btn.disabled = false; }
   }

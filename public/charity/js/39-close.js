@@ -22,7 +22,7 @@ function snCloseView() {
   const S = snEvalStats(), notes = (SN.evals || []).filter(x => x.kind === 'note').sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   const ev = (SN.evals || []).filter(x => x.kind === 'event').sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
   const prev = snPrevSeason(), pl = prev ? snLessons(prev) : [], K = (v, l) => `<span><small>${l}</small><b>${v == null ? '—' : v}</b></span>`;
-  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snClosePrint()"><i data-lucide="file-text"></i> وثيقة الإغلاق</button><button class="btn btn-ghost" onclick="snLessonsSheet()"><i data-lucide="lightbulb"></i> الدروس المستفادة</button><button class="btn btn-ghost" onclick="SN.tab='surveys';snPaint()"><i data-lucide="clipboard-list"></i> الاستبيانات</button></div>
+  return `<div class="sn-acts"><button class="btn btn-gold" onclick="snExpert()"><i data-lucide="sparkles"></i> خبير الموسم</button><button class="btn btn-ghost" onclick="snClosePrint()"><i data-lucide="file-text"></i> وثيقة الإغلاق</button><button class="btn btn-ghost" onclick="snLessonsSheet()"><i data-lucide="lightbulb"></i> الدروس المستفادة</button><button class="btn btn-ghost" onclick="SN.tab='surveys';snPaint()"><i data-lucide="clipboard-list"></i> الاستبيانات</button></div>
     ${pl.length ? `<div class="card sn-prevl"><h3><i data-lucide="history"></i> دروس «${esc(prev.name)}»</h3><p class="r-sub">كتبتموها عند إغلاق الموسم السابق — راجعوها قبل التخطيط:</p><ol>${pl.map(l => `<li>${esc(l)}</li>`).join('')}</ol></div>` : ''}
     <div class="card"><div class="sn-sal-h"><h3><i data-lucide="clipboard-check"></i> تقييم الفعاليّات</h3><span class="r-sub">${S.n} تقييم</span></div>
       <p class="r-sub">يسجّله أعضاء «المتابعة والتقييم» من جوّالهم بأسئلة سلوكيّة — رقم يقيس، لا انطباع.</p>
@@ -118,4 +118,56 @@ function snCertSet() {
     <div class="field"><label>لون الشهادة</label><input id="cs_c" type="color" value="${esc(cs.color || '#1003BD')}"></div>`, async () => {
       try { await snSaveSeason({ settings: Object.assign({}, snSeason().settings || {}, { cert: { signer: fval('cs_s').trim(), title: fval('cs_t').trim(), color: fval('cs_c') } }) }); closeModal(); snPaint(); } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
     });
+}
+
+/* ═════════ «خبير الموسم» — نسخة عرض بلا ذكاء اصطناعيّ ولا تكلفة: يجيب من بيانات الموسم مباشرة ═════════
+ * أسئلة جاهزة + سؤال حرّ يُطابَق بكلمات مفتاحيّة. لاحقاً يُربط بنموذج لغويّ يقرأ الوثائق نفسها. */
+const SN_XQ = [
+  ['members', 'كم مشاركاً عندنا، وكيف توزيعهم؟', /مشارك|طالب|طلاب|عدد|توزيع|مرحل/],
+  ['zero', 'من لم يكسب شيئاً اليوم؟', /كسب|اليوم|منسي|ما اخذ|ما أخذ|لم يكسب/],
+  ['money', 'كيف ماليّة الموسم؟', /مال|ميزاني|صرف|مصروف|إيراد|ايراد|رصيد الموسم|فلوس/],
+  ['issues', 'ما أكثر المشكلات تكراراً؟', /مشكل|مشاكل|شكو|ملاحظ|تأخ/],
+  ['staff', 'كيف التزام المشرفين؟', /مشرف|التزام|حضور المشرف|اعتذار|متأخ/],
+  ['lessons', 'ما الدروس المستفادة؟', /درس|دروس|توصي|نكرر|نغير|السابق/],
+  ['rich', 'من الأعلى رصيداً؟', /أعلى|اعلى|أغنى|اغنى|رصيد|ترتيب الطلاب/],
+  ['league', 'كيف وضع الدوري؟', /دوري|مباراة|فريق|هداف|هدّاف|كرة/],
+];
+const snPl = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : n >= 3 && n <= 10 ? n + ' ' + few : n + ' ' + many;
+function snExpertAns(k) {
+  const L = s => `<p>${s}</p>`, li = a => a.length ? `<ul>${a.map(x => `<li>${x}</li>`).join('')}</ul>` : '';
+  if (k === 'members') { const by = {}; SN.members.forEach(m => by[m.stage || 'غير محدّد'] = (by[m.stage || 'غير محدّد'] || 0) + 1); const regs = (SN.regs || []).filter(r => r.status === 'new' || r.status === 'paid').length;
+    return L(`عندكم <b>${snPl(SN.members.length, 'مشارك واحد', 'مشاركان', 'مشاركين', 'مشاركاً')}</b>.`) + li(Object.entries(by).map(([g, n]) => `${esc(g)}: ${n}`)) + (regs ? L(`وفي التسجيل ${regs} طلباً ينتظر الاعتماد.`) : ''); }
+  if (k === 'zero') { const today = snPday(Date.now()), earn = new Set(SN.coins.filter(c => c.amount > 0 && snPday(c.created_at) === today).map(c => c.member_id)), z = SN.members.filter(m => !earn.has(m.id));
+    return L(`<b>${z.length}</b> من ${SN.members.length} لم يكسبوا شيئاً اليوم.`) + li(z.slice(0, 12).map(m => `#${m.no || ''} ${esc(m.name)} — ${esc(m.stage || '')}`)) + (z.length ? L('أرسل القائمة لمشرفي المراحل قبل الختام.') : ''); }
+  if (k === 'money') { const F = snFin(), hot = (SN.coms || []).map(c => ({ c, k: snCom(c) })).filter(x => x.k.budget && x.k.pct >= 80);
+    return L(`الإيرادات <b>${snSAR(F.income)}</b> ر.س، والمصروف <b>${snSAR(F.spent)}</b>، والرصيد <b>${snSAR(F.balance)}</b>.`) + (SN.members.length && F.spent ? L(`تكلفة المشارك حتى الآن ${snSAR(F.spent / SN.members.length)} ر.س.`) : '') + (hot.length ? L('لجان تجاوزت ٨٠٪ من ميزانيّتها:') + li(hot.map(x => `${esc(x.c.name)}: ${x.k.pct}٪`)) : L('لا لجنة تجاوزت ٨٠٪ من ميزانيّتها.')); }
+  if (k === 'issues') { const N = (SN.evals || []).filter(x => x.kind === 'note' && x.cat === 'issue'), E = (SN.evals || []).filter(x => x.kind === 'event'), S = snEvalStats();
+    const words = {}; N.forEach(n => String(n.body).split(/[\s،.]+/).filter(w => w.length > 3).forEach(w => words[w] = (words[w] || 0) + 1)); const top = Object.entries(words).sort((a, b) => b[1] - a[1]).slice(0, 5).filter(x => x[1] > 1);
+    return L(N.length ? `سُجّلت <b>${snPl(N.length, 'مشكلة واحدة', 'مشكلتان', 'مشكلات', 'مشكلة')}</b> في الملاحظات اليوميّة.` : 'لا مشكلات مسجّلة في الملاحظات اليوميّة بعد.') + (top.length ? L('أكثر الكلمات تكراراً: ' + top.map(([w, n]) => `«${esc(w)}» (${n})`).join('، ')) : '') + li(N.slice(-5).reverse().map(n => esc(n.body)))
+      + (S.n ? L(`ومن تقييم ${S.n} فعاليّة: بدأت في وقتها ${S.onTime ?? '—'}٪، والتجهيز جاهز ${S.ready ?? '—'}٪${S.lateAvg ? `، ومتوسّط التأخّر ${S.lateAvg} دقيقة` : ''}.`) : ''); }
+  if (k === 'staff') { const A = SN.statt || [], late = A.filter(a => a.late), by = {}; late.forEach(a => by[a.staff_id] = (by[a.staff_id] || 0) + 1);
+    const worst = Object.entries(by).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([id, n]) => `${esc((SN.staff.find(x => x.id === id) || {}).name || '')}: ${n} مرّات`);
+    const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Riyadh' }), ex = (SN.excuses || []).filter(e => e.day >= today);
+    return L(A.length ? `سُجّل وصول المشرفين <b>${A.length}</b> مرّة، تأخّروا في <b>${Math.round(late.length / A.length * 100)}٪</b> منها.` : 'لم يُسجّل المشرفون «وصلت» بعد — فعّلوا المناطق والفترات من «المدينة».') + (worst.length ? L('الأكثر تأخّراً:') + li(worst) : '') + (ex.length ? L(`و${ex.length} اعتذاراً مسبقاً في الأيّام القادمة.`) : ''); }
+  if (k === 'lessons') { const prev = snPrevSeason(), pl = prev ? snLessons(prev) : [], cur = snLessons();
+    return (pl.length ? L(`من «${esc(prev.name)}»:`) + li(pl.map(esc)) : L('لا دروس محفوظة من موسم سابق.')) + (cur.length ? L('ومن هذا الموسم:') + li(cur.map(esc)) : L('اكتبوا دروس هذا الموسم من «الدروس المستفادة» قبل الإغلاق.')); }
+  if (k === 'rich') { const r = SN.members.map(m => ({ m, b: snBal(m.id) })).sort((a, b) => b.b - a.b).slice(0, 5);
+    return L(`الأعلى رصيداً من ${esc(snCur().name)}:`) + li(r.map(x => `${esc(x.m.name)} — ${x.b}`)); }
+  if (k === 'league') { const lg = (SN.leagues || [])[0]; if (!lg) return L('لا دوري بعد — أنشئه من تبويب «الدوري».'); const G = snLg(lg), S = LGE.standings(G), sc = LGE.scorers(G);
+    return L(`${esc(lg.name)}: لُعبت ${G.matches.filter(m => m.s === 'done').length} من ${G.matches.length} مباراة.`) + li(S.slice(0, 4).map((r, i) => `${i + 1}. ${esc(r.name)} — ${r.pts} نقطة`)) + (sc.length ? L('الهدّاف: ' + esc(sc[0].n) + ' (' + sc[0].g + ')') : ''); }
+  return L('لم أفهم السؤال — جرّب أحد الأسئلة الجاهزة.');
+}
+function snExpert() {
+  openModal('خبير الموسم', `<p class="r-sub">نسخة عرض: يجيب من بيانات موسمك مباشرة — بلا ذكاء اصطناعيّ ولا تكلفة.</p>
+    <div class="sn-xq">${SN_XQ.map(([k, q]) => `<button type="button" class="sn-rs" onclick="snExpertAsk('${k}')">${q}</button>`).join('')}</div>
+    <div id="snXL" class="sn-xl"></div>
+    <div class="sn-xin"><input id="snXI" placeholder="اسأل عن موسمك…" onkeydown="if(event.key==='Enter')snExpertFree()"><button type="button" class="btn btn-gold btn-sm" onclick="snExpertFree()">اسأل</button></div>`);
+}
+function snExpertAsk(k, q) {
+  const box = document.getElementById('snXL'); if (!box) return; const Q = q || (SN_XQ.find(x => x[0] === k) || [])[1] || '';
+  box.insertAdjacentHTML('beforeend', `<div class="sn-xm q">${esc(Q)}</div><div class="sn-xm a">${snExpertAns(k)}</div>`); box.lastElementChild.scrollIntoView({ block: 'nearest' });
+}
+function snExpertFree() {
+  const i = document.getElementById('snXI'), q = (i.value || '').trim(); if (!q) return; i.value = '';
+  const hit = SN_XQ.find(x => x[2].test(q)); snExpertAsk(hit ? hit[0] : '', q);
 }

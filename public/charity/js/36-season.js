@@ -359,7 +359,7 @@ async function snImpact() {
     <h1>تقرير الأثر — ${esc(s.name)}</h1><p class="sub">${esc(org)}${s.start_date ? ' · ' + fmtD(s.start_date) + (s.end_date ? ' — ' + fmtD(s.end_date) : '') : ''} · أُعدّ ${fmtD(snToday())}</p>
     <h2>المشاركة</h2><div class="g">${K(SN.members.length, 'مشاركاً', prevN != null ? `${SN.members.length >= prevN ? '+' : ''}${SN.members.length - prevN} عن «${esc(prevS.name)}»` : '')}${K(avgAtt == null ? '—' : avgAtt + '٪', 'متوسّط الحضور', days.length ? days.length + ' أيّام مسجّلة' : 'لم يُسجَّل حضور')}${K(SN.staff.length, 'مشرفاً متطوّعاً')}${K(SN.sched.length, 'نشاطاً في الجدول')}</div>
     <p class="sub">بالمراحل: ${Object.entries(byStage).map(([g, n]) => `${esc(g)} ${n}`).join(' · ') || '—'}</p>
-    <h2>التفاعل والتحفيز</h2><div class="g">${K(given.toLocaleString('en'), 'عملة مُنحت', 'على الحضور والمشاركة والإنجاز')}${K(sold, 'عمليّة شراء', spent ? spent.toLocaleString('en') + ' عملة صُرفت في المتجر' : '')}${K(SN.posts.length, 'منشوراً في الأخبار')}${K(SN.reacts.length, 'تفاعلاً')}</div>
+    <h2>التفاعل والتحفيز</h2><div class="g">${K(given.toLocaleString('en'), snCur().one + ' مُنحت', 'على الحضور والمشاركة والإنجاز')}${K(sold, 'عمليّة شراء', spent ? spent.toLocaleString('en') + ' ' + snCur().one + ' صُرفت في المتجر' : '')}${K(SN.posts.length, 'منشوراً في الأخبار')}${K(SN.reacts.length, 'تفاعلاً')}</div>
     <h2>الفرق</h2><table><tr><th>#</th><th>الفريق</th><th>المشاركون</th><th>النقاط</th></tr>${teams.map((t, i) => `<tr><td>${i + 1}</td><td><span class="dot" style="background:${esc(t.color)}"></span>${esc(t.name)}</td><td>${t.n}</td><td>${t.pts}</td></tr>`).join('')}</table>
     <h2>الرضا</h2>${sv.length ? `<div class="g">${K(satAvg == null ? '—' : satAvg + '٪', 'متوسّط الرضا العامّ')}${K(sv.reduce((a, x) => a + x.n, 0), 'إجابة على الاستبيانات')}</div><table><tr><th>الاستبيان</th><th>الجمهور</th><th>الإجابات</th><th>الرضا</th><th>صافي التوصية</th></tr>${sv.map(x => `<tr><td>${esc(x.v.title)}</td><td>${SN_SV_AUD[x.v.audience] || ''}</td><td>${x.n}</td><td>${x.st.sat == null ? '—' : x.st.sat + '٪'}</td><td>${x.st.nps == null ? '—' : x.st.nps}</td></tr>`).join('')}</table>` : '<p class="sub">لم تُجمع استبيانات بعد — تبويب «الاستبيانات».</p>'}
     <p class="sub" style="margin-top:30px;font-size:12px">الأرقام من «نظام الجمعيّات الشبابيّة» مباشرة. الرضا العامّ = متوسّط أسئلة النجوم ÷ ٥؛ صافي التوصية = نسبة ٩–١٠ ناقص نسبة ٠–٦. الإجابات بلا أسماء.</p>
@@ -449,7 +449,7 @@ function snBankView() {
       <button class="btn btn-gold sn-give" onclick="snCoin()"><i data-lucide="coins"></i> امنح ${esc(C.name)}</button></div>
     <div class="sn-stat"><span><b>${total}</b> ${esc(C.one)} مُنحت</span><span><b>${SN.coins.filter(c => c.amount < 0 && c.item_id).length}</b> عمليّة شراء</span></div>
     <h3 class="sn-h">الأغنى في الموسم</h3>
-    <div class="r-list">${rich.map((r, i) => { const t = snTeam(r.x.team_id); return `<div class="r-item"><span class="sn-no">${i + 1}</span><span class="r-item-t"><b>${esc(r.x.name)}</b><small>${t ? esc(t.name) : ''} · رقم ${r.x.no || ''}</small></span><span class="sn-mp">${r.b}</span></div>`; }).join('') || '<div class="r-empty"><p>لا عملات بعد.</p></div>'}</div>`;
+    <div class="r-list">${rich.map((r, i) => { const t = snTeam(r.x.team_id); return `<div class="r-item"><span class="sn-no">${i + 1}</span><span class="r-item-t"><b>${esc(r.x.name)}</b><small>${t ? esc(t.name) : ''} · رقم ${r.x.no || ''}</small></span><span class="sn-mp">${r.b}</span></div>`; }).join('') || '<div class="r-empty"><p>لا أرصدة بعد.</p></div>'}</div>`;
 }
 /* ═════════ الرواتب: عملات تنزل في بنوك المشاركين تلقائياً في أيّام ووقت تحدّدها الإدارة (تدفعها مهمّة الخادم كلّ دقيقة) ═════════ */
 const SN_DAYS = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
@@ -459,19 +459,19 @@ function snSalaryCard() {
   const last = Object.keys(runs).sort().reverse().slice(0, 3);
   const [h, mi] = String(S.time).split(':').map(Number), t = `${((h % 12) || 12)}:${String(mi || 0).padStart(2, '0')} ${h < 12 ? 'ص' : 'م'}`;
   return `<div class="card sn-sal"><div class="sn-sal-h"><h3><i data-lucide="wallet"></i> الرواتب</h3><span class="r-badge" style="--c:${S.on ? '#34C759' : '#8E8E93'}">${S.on ? 'مفعّلة' : 'متوقّفة'}</span></div>
-    <p class="r-sub">${S.on ? `<b>${S.amount}</b> عملة «${esc(S.label)}» ${S.stage ? 'لطلاب ' + esc(S.stage) : 'لكلّ المشاركين'} — كلّ ${S.days.map(d => SN_DAYS[d]).join('، ') || '—'} الساعة ${t}` : 'عملات تنزل في بنك كلّ مشارك تلقائياً في أيّام ووقت تحدّدها — مثل الراتب.'}</p>
+    <p class="r-sub">${S.on ? `<b>${S.amount}</b> ${esc(snCur().one)} «${esc(S.label)}» ${S.stage ? 'لطلاب ' + esc(S.stage) : 'لكلّ المشاركين'} — كلّ ${S.days.map(d => SN_DAYS[d]).join('، ') || '—'} الساعة ${t}` : 'رواتب تنزل في بنك كلّ مشارك تلقائياً في أيّام ووقت تحدّدها — مثل الراتب.'}</p>
     ${last.length ? `<p class="r-sub">آخر الدفعات: ${last.map(d => `${fmtD(d)} (${runs[d]})`).join(' · ')}</p>` : ''}
     <div class="sn-acts"><button class="btn btn-ghost" onclick="snSalarySheet()"><i data-lucide="settings-2"></i> إعداد الرواتب</button><button class="btn btn-ghost" onclick="snPayNow()"><i data-lucide="send"></i> ادفع الآن</button></div></div>`;
 }
 function snSalarySheet() {
   const S = snSal();
   openModal('الرواتب', `<label class="r-check"><input type="checkbox" id="sal_on"${S.on ? ' checked' : ''}> <b>فعّل الرواتب التلقائيّة</b></label>
-    <div class="field"><label>المبلغ (عملة لكلّ مشارك)</label><input id="sal_a" type="number" min="1" max="1000" inputmode="numeric" value="${esc(S.amount)}"></div>
+    <div class="field"><label>المبلغ (${esc(snCur().one)} لكلّ مشارك)</label><input id="sal_a" type="number" min="1" max="1000" inputmode="numeric" value="${esc(S.amount)}"></div>
     <div class="field"><label>الأيّام</label><div class="sn-days">${SN_DAYS.map((d, i) => `<label><input type="checkbox" data-day="${i}"${S.days.includes(i) ? ' checked' : ''}><span>${d}</span></label>`).join('')}</div></div>
     <div class="field"><label>الوقت (بتوقيت الرياض)</label><input id="sal_t" type="time" value="${esc(S.time)}"></div>
     <div class="field"><label>لمن</label><select id="sal_g"><option value="">كلّ المشاركين</option>${SN_STAGES.slice(0, 3).map(g => `<option${g === S.stage ? ' selected' : ''}>${g}</option>`).join('')}</select></div>
     <div class="field"><label>اسم الدفعة (يظهر في بنك الطالب)</label><input id="sal_l" maxlength="40" value="${esc(S.label)}" placeholder="راتب"></div>
-    <div class="r-hint">تُدفع مرّة في كلّ يوم محدّد خلال ربع ساعة من الوقت، ويصل الطالبَ إشعار «+${esc(S.amount)} عملة». الموسم يجب أن يكون في مرحلة «التنفيذ».</div>`, async () => {
+    <div class="r-hint">تُدفع مرّة في كلّ يوم محدّد خلال ربع ساعة من الوقت، ويصل الطالبَ إشعار «+${esc(S.amount)} ${esc(snCur().one)}». الموسم يجب أن يكون في مرحلة «التنفيذ».</div>`, async () => {
     const salary = { on: !!fval('sal_on'), amount: Math.max(1, Math.min(1000, parseInt(fval('sal_a'), 10) || 0)), days: [...document.querySelectorAll('.sn-days [data-day]')].filter(x => x.checked).map(x => +x.dataset.day), time: fval('sal_t') || '17:00', stage: fval('sal_g'), label: fval('sal_l') || 'راتب' };
     if (salary.on && !salary.days.length) { rToast('اختر يوماً واحداً على الأقلّ', 1); return; }
     try { await snSaveSeason({ settings: Object.assign({}, snSeason().settings || {}, { salary }) }); closeModal(); snPaint(); rToast(salary.on ? 'فُعّلت الرواتب' : 'حُفظت'); }
@@ -481,7 +481,7 @@ function snSalarySheet() {
 async function snPayNow() {
   const S = snSal(), list = SN.members.filter(m => !S.stage || m.stage === S.stage);
   if (!list.length) { rToast('لا مشاركين', 1); return; }
-  if (!await snAsk(`ادفع ${S.amount} عملة الآن؟`, `لـ${list.length} مشاركاً باسم «${S.label}» — دفعة إضافيّة خارج الجدول.`, 'ادفع', false)) return;
+  if (!await snAsk(`ادفع ${S.amount} ${esc(snCur().one)} الآن؟`, `لـ${list.length} مشاركاً باسم «${S.label}» — دفعة إضافيّة خارج الجدول.`, 'ادفع', false)) return;
   try { for (const m of list) SN.coins.push(await RDB.insert('season_coins', { season_id: SN.cur, member_id: m.id, amount: S.amount, reason: S.label })); snPaint(); rToast(`دُفعت لـ${list.length} مشاركاً`); }
   catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
 }
@@ -493,7 +493,7 @@ async function snCoin(o) {
   if (B.amt < 0 && snBal(m.id) + B.amt < 0) { rToast('الرصيد لا يكفي للخصم', 1); return; }
   try {
     SN.coins.push(await RDB.insert('season_coins', { season_id: SN.cur, member_id: m.id, amount: B.amt, reason: B.reason, by_member: ME.id }));
-    rToast(`${B.amt > 0 ? '+' : ''}${B.amt} عملة لـ${m.name.split(' ')[0]} — رصيده ${snBal(m.id)}`);
+    rToast(`${B.amt > 0 ? '+' : ''}${B.amt} ${esc(snCur().one)} لـ${m.name.split(' ')[0]} — رصيده ${snBal(m.id)}`);
     SN.bank.no = ''; snPaint(); const i = document.getElementById('snNo'); if (i && !o) i.focus();
   } catch (e) { rToast('تعذّر: ' + (e.message || e), 1); }
 }
@@ -502,7 +502,7 @@ async function snCoin(o) {
 function snStoreView() {
   return `<div class="sn-acts"><button class="btn btn-gold" onclick="snItemSheet()"><i data-lucide="plus"></i> صنف</button></div>
     ${SN.items.length ? `<div class="sn-items">${SN.items.map(it => `<div class="sn-item${it.active ? '' : ' off'}">
-      <button type="button" class="sn-item-b" onclick="snItemSheet('${it.id}')">${it.image_url ? `<img src="${esc(snImg(it.image_url))}" alt="">` : `<span class="sn-emo"><i data-lucide="gift"></i></span>`}<b>${esc(it.name)}</b><span>${it.price} عملة${it.stock != null ? ` · بقي ${it.stock}` : ''}</span></button>
+      <button type="button" class="sn-item-b" onclick="snItemSheet('${it.id}')">${it.image_url ? `<img src="${esc(snImg(it.image_url))}" alt="">` : `<span class="sn-emo"><i data-lucide="gift"></i></span>`}<b>${esc(it.name)}</b><span>${it.price} ${esc(snCur().one)}${it.stock != null ? ` · بقي ${it.stock}` : ''}</span></button>
       <button class="btn btn-ghost btn-sm" onclick="snSell('${it.id}')"${it.active && (it.stock == null || it.stock > 0) ? '' : ' disabled'}><i data-lucide="shopping-bag"></i> بيع</button></div>`).join('')}</div>`
       : `<div class="card">${rEmpty('gift', 'أضف ما يشتريه المشاركون بعملاتهم: جوائز، وجبات، امتيازات (اختيار النشاط، الصفّ الأوّل…).', '')}</div>`}`;
 }
@@ -515,7 +515,7 @@ function snItemSheet(id) {
       <div class="r-hint">صورة مربّعة على خلفيّة نظيفة تبدو أجمل في المتجر. بلا صورة؟ يظهر الرمز أدناه على خلفيّة ملوّنة.</div></div>
     <input type="hidden" id="sni_emoji" value="">
     <div class="field"><label>الوصف</label><textarea id="sni_desc" rows="2" maxlength="300" placeholder="مثلاً: كرة مقاس ٥ — لك أن تأخذها للبيت.">${esc(it.description || '')}</textarea></div>
-    <div class="field"><label>السعر بالعملات</label><input id="sni_price" type="number" inputmode="numeric" min="1" value="${esc(it.price || '')}"></div>
+    <div class="field"><label>السعر (${esc(snCur().one)})</label><input id="sni_price" type="number" inputmode="numeric" min="1" value="${esc(it.price || '')}"></div>
     <div class="field"><label>الكمّيّة (اتركها فارغة إن كانت بلا حدّ)</label><input id="sni_stock" type="number" inputmode="numeric" min="0" value="${it.stock == null ? '' : esc(it.stock)}"></div>
     <label class="r-check"><input type="checkbox" id="sni_on"${it.active ? ' checked' : ''}> معروض في المتجر</label>`, async () => {
       const row = { name: fval('sni_name'), image_url: fval('sni_img'), emoji: fval('sni_emoji'), description: fval('sni_desc'), price: parseInt(fval('sni_price'), 10), stock: fval('sni_stock') === '' ? null : parseInt(fval('sni_stock'), 10), active: !!fval('sni_on') };
@@ -537,7 +537,7 @@ async function snItemImg(inp) {
 }
 async function snSell(itemId) {
   const it = SN.items.find(x => x.id === itemId); if (!it) return;
-  const v = await apPrompt('بيع «' + it.name + '» (' + it.price + ' عملة) — رقم المشارك:', ''); if (v == null) return;
+  const v = await apPrompt('بيع «' + it.name + '» (' + it.price + ' ' + snCur().one + ') — رقم المشارك:', ''); if (v == null) return;
   const m = snByNo(v); if (!m) { rToast('لم أجد المشارك', 1); return; }
   try {
     if (snLocal()) {
@@ -612,7 +612,7 @@ function snStaffSheet(id) {
     <div class="field"><label>الدور</label><select id="sst_r"><option value="staff"${x.role === 'staff' ? ' selected' : ''}>مشرف — يرى طلاب مرحلته</option><option value="lead"${x.role === 'lead' ? ' selected' : ''}>قائد — يرى الجميع</option></select></div>
     <div class="field"><label>المرحلة</label><select id="sst_g"><option value="">كلّ المراحل</option>${SN_STAGES.map(g => `<option${g === x.stage ? ' selected' : ''}>${g}</option>`).join('')}</select></div>
     ${snZones().length ? `<div class="field"><label>موقعه في المدينة (المنطقة)</label><select id="sst_z"><option value="">متنقّل — بلا منطقة ثابتة</option>${snZones().map(z => `<option value="${esc(z.id)}"${z.id === x.zone ? ' selected' : ''}>${esc(z.n)}</option>`).join('')}</select><div class="r-hint">يظهر له في «جوّالي»: مكانه، والمرحلة القادمة إليه، وزرّ تسجيل حضور الفترة.</div></div>` : ''}
-    <div class="field"><label>أقصى عملات في المرّة</label><input id="sst_c" type="number" inputmode="numeric" min="1" max="1000" value="${esc(P.coins || 50)}"></div>
+    <div class="field"><label>أقصى منحة في المرّة (${esc(snCur().one)})</label><input id="sst_c" type="number" inputmode="numeric" min="1" max="1000" value="${esc(P.coins || 50)}"></div>
     <label class="r-check"><input type="checkbox" id="sst_pt"${P.points ? ' checked' : ''}> يمنح نقاط الفرق</label>
     <label class="r-check"><input type="checkbox" id="sst_s"${P.sell ? ' checked' : ''}> يبيع من المتجر (الكاونتر)</label>
     <label class="r-check"><input type="checkbox" id="sst_st"${P.store ? ' checked' : ''}> <b>مدير المتجر</b> — يضيف المنتجات ويعدّل أسعارها وصورها من جوّاله</label>

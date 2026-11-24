@@ -9,6 +9,7 @@ import LocalNav from "@/components/v2/LocalNav";
 import Footer from "@/components/v2/Footer";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
+import AppStoreBadge from "@/components/v2/AppStoreBadge";
 import PackageCards from "@/components/v2/PackageCards";
 import BlogLinks from "@/components/v2/BlogLinks";
 import ServiceSchema from "@/components/v2/ServiceSchema";
@@ -44,7 +45,10 @@ export default function CharitiesPage() {
               <a className="v2-btn v2-btn-primary" href={c.signup}>ابدأ ١٤ يوماً مجّاناً</a>
               <a className="v2-btn v2-btn-ghost" href="#jawwali">جرّبه بدون تسجيل</a>
             </div>
+            <div className="v2-appstore-row"><AppStoreBadge app="jawwali" large /><small>«جوّالي» للطلاب والمشرفين — حمّله وجرّبه بدون حساب</small></div>
             <p className="from">{c.from}</p>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="yl-hero-art" src={c.heroArt.src} alt={c.heroArt.alt} width={1920} height={1072} />
           </div>
         </section>
 
@@ -76,11 +80,26 @@ export default function CharitiesPage() {
                 <h2>{a.name}</h2>
                 <p>{a.text}</p>
                 <ul className="v2-checks yl-pts">{a.points.map((p) => <li key={p}>{p}</li>)}</ul>
-                <a className="v2-btn v2-btn-primary sm" href={a.href} target="_blank" rel="noopener">{a.cta}</a>
+                <div className="yl-app-ctas">
+                  <a className="v2-btn v2-btn-primary sm" href={a.href} target="_blank" rel="noopener">{a.cta}</a>
+                  {(a.id === "jawwali" || a.id === "staff") && <AppStoreBadge app="jawwali" />}
+                </div>
               </div>
             </div>
           </section>
         ))}
+
+        {/* ===== حقيبة الموسم: البرنامج الصيفيّ كلّه ===== */}
+        <section className="v2-sec alt" id="kit">
+          <div className="v2-wrap">
+            <div className="v2-head" data-rise><h2>{c.kit.title}</h2><p>{c.kit.sub}</p></div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="yl-kit-art" src={c.kit.img} alt={c.kit.imgAlt} width={800} height={800} loading="lazy" />
+            <div className="v2-needs">
+              {c.kit.items.map((f) => <div key={f.title} data-rise><h3>{f.title}</h3><p>{f.text}</p></div>)}
+            </div>
+          </div>
+        </section>
 
         {/* ===== برامج طوال السنة ===== */}
         <section className="v2-sec" id="programs">

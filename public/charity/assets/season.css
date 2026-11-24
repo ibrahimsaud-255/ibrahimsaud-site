@@ -186,3 +186,9 @@ html.ap-dark .sn-tag{color:#FFC46B}
 .sn-lgteams{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}.sn-lgt{border-top:4px solid var(--cc)}
 .sn-live{color:#30D158}.sn-sel{min-height:40px;border-radius:12px;padding:0 10px}
 .sn-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sn-row2 input{width:100%}
+/* خبير الموسم (نسخة عرض) */
+.sn-xq{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0 12px}
+.sn-xl{display:grid;gap:8px;max-height:46vh;overflow:auto;margin-bottom:10px}
+.sn-xm{padding:10px 14px;border-radius:16px;line-height:1.7;max-width:92%}.sn-xm p{margin:0 0 4px}.sn-xm ul{margin:4px 0;padding-inline-start:20px}
+.sn-xm.q{justify-self:start;background:var(--accent-fill,#1003BD);color:#fff}.sn-xm.a{justify-self:end;background:var(--surface-2,rgba(120,120,128,.12))}
+.sn-xin{display:flex;gap:8px}.sn-xin input{flex:1;min-height:44px;border-radius:12px;padding:0 12px}

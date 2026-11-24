@@ -6,6 +6,7 @@ import Nav from "@/components/v2/Nav";
 import Footer from "@/components/v2/Footer";
 import Memoji3D from "@/components/v2/Memoji3D";
 import WindowLight from "@/components/v2/WindowLight";
+import AppStoreBadge from "@/components/v2/AppStoreBadge";
 import Manifesto from "@/components/v2/Manifesto";
 import { brands } from "@/lib/site";
 import { aiPage, bookHref, manifesto, tools, waHref } from "@/lib/v2";
@@ -65,6 +66,7 @@ export default function Home() {
             <div className="ctas">
               <a className="v2-btn v2-btn-primary sm" href="https://huroofduroos.com" target="_blank" rel="noopener">زُر المنصّة</a>
             </div>
+            <div className="v2-appstore-row"><AppStoreBadge app="huroof" /></div>
             <div className="art phones two">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {["/v2/shots/huroof-home.jpg", "/v2/shots/huroof-moon3d.jpg"].map((s) => <img key={s} src={s} alt="" loading="lazy" />)}
@@ -83,6 +85,7 @@ export default function Home() {
               <a className="v2-btn v2-btn-primary sm" href="/systems/charities/">اعرف أكثر</a>
               <a className="v2-btn v2-btn-ghost sm" href="/charity/?demo=1">جرّبه</a>
             </div>
+            <div className="v2-appstore-row"><AppStoreBadge app="jawwali" /><small>تطبيق «جوّالي» للطلاب والمشرفين</small></div>
             <div className="art phones two">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               {["/v2/shots/youth-stu-home.jpg", "/v2/shots/youth-staff.jpg"].map((s) => <img key={s} src={s} alt="" loading="lazy" />)}
