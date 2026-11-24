@@ -6,7 +6,18 @@
 import { cpSync, rmSync, mkdirSync, readFileSync, writeFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-const here = dirname(dirname(fileURLToPath(import.meta.url))), CH = join(here, "../../public/charity"), W = join(here, "www");
+import { execSync } from "node:child_process";
+import { tmpdir } from "node:os";
+// المصدر = آخر commit (git archive HEAD) لا نسخة العمل: جلسات أخرى تعدّل season/ ولا يُحزَم عمل لم يُعتمد بعد.
+//   JW_WORKTREE=1 npm run www  ← للتجربة المحلّيّة من نسخة العمل
+const here = dirname(dirname(fileURLToPath(import.meta.url))), repo = join(here, "../.."), W = join(here, "www");
+let CH = join(repo, "public/charity");
+if (!process.env.JW_WORKTREE) {
+  const t = join(tmpdir(), "jawwali-head"); rmSync(t, { recursive: true, force: true }); mkdirSync(t, { recursive: true });
+  execSync(`git -C "${repo}" archive HEAD public/charity | tar -x -C "${t}"`);
+  CH = join(t, "public/charity");
+  console.log("المصدر: " + execSync(`git -C "${repo}" log --oneline -1`).toString().trim().slice(0, 60));
+}
 rmSync(W, { recursive: true, force: true });
 mkdirSync(join(W, "season"), { recursive: true });
 cpSync(join(CH, "season"), join(W, "season"), { recursive: true, filter: s => !/(sw\.js|manifest\.webmanifest)$/.test(s) });
