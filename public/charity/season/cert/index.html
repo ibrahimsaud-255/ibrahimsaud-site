@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>شهادة</title>
+<link rel="icon" href="../icons/icon-192.png" type="image/png">
+<style>
+@page{size:A4 landscape;margin:0}
+:root{--c:#1003BD}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:#E9E9EE;font-family:-apple-system,"SF Arabic","Geeza Pro",system-ui,sans-serif;color:#1C1C1E;display:grid;place-items:center;min-height:100vh;padding:16px}
+.cert{width:min(100%,1123px);aspect-ratio:297/210;background:#fff;position:relative;overflow:hidden;box-shadow:0 30px 60px -30px rgba(0,0,0,.35);border-radius:6px;
+  display:grid;grid-template-rows:auto 1fr auto;padding:5.5% 7%;text-align:center}
+.cert::before{content:"";position:absolute;inset:2.2%;border:2px solid color-mix(in srgb,var(--c) 70%,#fff);border-radius:4px;pointer-events:none}
+.cert::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 50% at 100% 0,color-mix(in srgb,var(--c) 14%,transparent),transparent),radial-gradient(50% 45% at 0 100%,color-mix(in srgb,var(--c) 10%,transparent),transparent);pointer-events:none}
+.top{display:flex;justify-content:space-between;align-items:center;gap:20px;position:relative;z-index:1}
+.org{font-weight:800;font-size:clamp(13px,1.9vw,22px)}.org small{display:block;font-weight:600;color:#6E6E73;font-size:.75em}
+.logo{height:clamp(40px,7vw,84px)}
+.mid{align-self:center;position:relative;z-index:1}
+.kind{letter-spacing:.02em;color:var(--c);font-weight:800;font-size:clamp(20px,3.6vw,44px);margin:0}
+.lead{color:#6E6E73;font-size:clamp(12px,1.6vw,19px);margin:1.6% 0 .4%}
+.name{font-size:clamp(28px,5.6vw,68px);font-weight:900;margin:.2% 0 1.2%;line-height:1.15}
+.reason{font-size:clamp(13px,1.9vw,23px);max-width:80%;margin:0 auto;line-height:1.7}
+.foot{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;position:relative;z-index:1}
+.sig{text-align:center;min-width:24%}.sig b{display:block;font-size:clamp(13px,1.7vw,20px)}.sig small{color:#6E6E73;font-size:clamp(10px,1.2vw,14px)}.sig i{display:block;border-top:1.5px solid #c7c7cc;margin-bottom:6px}
+.qr{display:flex;align-items:center;gap:10px;text-align:start}.qr svg{width:clamp(56px,8vw,96px);height:auto}.qr small{color:#6E6E73;font-size:clamp(9px,1.1vw,13px);line-height:1.5}
+.date{color:#6E6E73;font-size:clamp(11px,1.3vw,15px)}
+.bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;gap:10px}
+.bar button{border:0;border-radius:99px;padding:12px 22px;font:inherit;font-weight:700;font-size:15px;background:var(--c);color:#fff;cursor:pointer;min-height:44px}
+.bar button.sec{background:#fff;color:#1C1C1E}
+.msg{text-align:center;color:#6E6E73}
+@media print{body{background:#fff;padding:0;display:block}.cert{width:297mm;height:210mm;box-shadow:none;border-radius:0;aspect-ratio:auto}.bar{display:none}*{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style>
+</head>
+<body>
+<div id="app" class="msg">جارٍ التحميل…</div>
+<script src="../../vendor/qrcode.min.js?v=1"></script>
+<script>
+/* شهادة شكر/تقدير/مشاركة من «نظام الجمعيات الشبابية» — الصفحة نفسها هي الشهادة للطباعة وهي صفحة التحقّق (رمز QR عليها يفتحها).
+ * GET /cert?id= (عامّ) — تصدرها لجنة البرامج من «جوّالي» أو الإدارة من «التقييم والإغلاق». ?demo=1 للعرض. */
+(function () {
+  'use strict';
+  const Q = new URLSearchParams(location.search), id = Q.get('id') || '', DEMO = Q.get('demo') === '1';
+  const API = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? 'https://br-red-smoke-baq7yp0d-api.compute.c-8.eu-central-1.aws.neon.tech' : 'https://br-dark-band-bajth6rv-api.compute.c-8.eu-central-1.aws.neon.tech';
+  const MEDIA = /^(localhost|127\.0\.0\.1)$/.test(location.hostname) ? '' : '';
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const KIND = { thanks: ['شهادة شكر وتقدير', 'تتقدّم بالشكر والتقدير إلى'], merit: ['شهادة تميّز', 'تمنح شهادة التميّز إلى'], participation: ['شهادة مشاركة', 'تشهد بمشاركة'] };
+  const qr = t => { try { const q = qrcode(0, 'M'); q.addData(t); q.make(); const n = q.getModuleCount(); let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`; return `<svg viewBox="-1 -1 ${n + 2} ${n + 2}" aria-hidden="true"><path d="${d}" fill="#1C1C1E"/></svg>`; } catch (e) { return ''; } };
+  async function go() {
+    let C;
+    try { C = DEMO ? { id: '00000000-0000-0000-0000-000000000000', kind: 'thanks', name: 'أ. خالد سعد العتيبي', reason: 'على تقديمه ورشة «التصوير بالجوال» لطلاب المرحلة المتوسّطة، وما قدّمه من علمٍ نافعٍ وأثرٍ طيّب.', signer: 'مدير البرنامج', season: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة الشباب التجريبيّة', at: new Date().toISOString(), color: '', logo: '' }
+      : await (await fetch(API + '/cert?id=' + encodeURIComponent(id))).json(); } catch (e) { C = { error: 'تعذّر الاتّصال' }; }
+    const $ = document.getElementById('app');
+    if (!C || C.error) { $.innerHTML = `<h1>الشهادة غير موجودة</h1><p>${esc((C || {}).error || '')}</p>`; return; }
+    if (C.color) document.documentElement.style.setProperty('--c', C.color);
+    const K = KIND[C.kind] || KIND.thanks, d = new Date(C.at);
+    const hij = d.toLocaleDateString('ar-SA-u-ca-islamic-umalqura-nu-arab', { day: 'numeric', month: 'long', year: 'numeric' }), greg = d.toLocaleDateString('ar-SA-u-ca-gregory-nu-arab', { day: 'numeric', month: 'long', year: 'numeric' });
+    document.title = K[0] + ' — ' + C.name; $.className = '';
+    $.innerHTML = `<div class="cert"><div class="top"><div class="org">${esc(C.org)}<small>${esc(C.season)}</small></div>${C.logo ? `<img class="logo" src="${esc(C.logo)}" alt="">` : ''}</div>
+      <div class="mid"><p class="kind">${esc(C.title || K[0])}</p><p class="lead">${esc(C.org)} ${K[1]}</p><p class="name">${esc(C.name)}</p>${C.reason ? `<p class="reason">${esc(C.reason)}</p>` : ''}</div>
+      <div class="foot"><div class="qr">${qr(location.origin + location.pathname + '?id=' + C.id)}<small>للتحقّق من الشهادة<br>امسح الرمز<br><span dir="ltr">${esc(String(C.id).slice(0, 8).toUpperCase())}</span></small></div>
+        <div class="date">${esc(hij)}<br>${esc(greg)}</div>
+        <div class="sig"><i></i><b>${esc(C.signer || 'إدارة البرنامج')}</b><small>${esc(C.org)}</small></div></div></div>
+      <div class="bar"><button onclick="print()">اطبع أو احفظ PDF</button>${navigator.share ? `<button class="sec" onclick="navigator.share({title:document.title,url:location.href}).catch(()=>{})">شارك</button>` : ''}</div>`;
+  }
+  go();
+})();
+</script>
+</body>
+</html>

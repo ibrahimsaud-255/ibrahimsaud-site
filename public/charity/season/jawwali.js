@@ -27,7 +27,7 @@
     book: '<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>', food: '<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3zm0 0v7"/>',
     tool: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94z"/>', users: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
     spark: '<path d="M12 3l1.9 5.8L20 10l-5 3.9L16.6 20 12 16.6 7.4 20 9 13.9 4 10l6.1-1.2z"/>', sprout: '<path d="M7 20h10M10 20c5.5-2.5.8-6.4 3-10M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8zM14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
-    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>' };
+    check: '<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>', sq: '<rect x="3" y="3" width="18" height="18" rx="5"/>', sqok: '<rect x="3" y="3" width="18" height="18" rx="5"/><path d="m8 12 3 3 5-6"/>', cal: '<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>' };
   const I = (k, cls) => `<svg class="ico${cls ? ' ' + cls : ''}" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${IP[k] || IP.spark}</svg>`;
   /* رمز QR يُرسم SVG من مكتبة qrcode-generator (vendor/qrcode.min.js) */
   function qrSVG(text) { try { const q = qrcode(0, 'M'); q.addData(text); q.make(); const n = q.getModuleCount(); let d = ''; for (let r = 0; r < n; r++) for (let c = 0; c < n; c++) if (q.isDark(r, c)) d += `M${c} ${r}h1v1h-1z`; return `<svg viewBox="-2 -2 ${n + 4} ${n + 4}" role="img" aria-label="رمز التحقّق" shape-rendering="crispEdges"><rect x="-2" y="-2" width="${n + 4}" height="${n + 4}" fill="#fff"/><path d="${d}" fill="#000"/></svg>`; } catch (e) { return ''; } }
@@ -77,13 +77,15 @@
     ['ثانوي', 'طالب ثانوي', 'عملاتك، جدولك، صلاتك، وفريقك', { w: 1, ws: 5, c: 0, b: 10, s: 3, e: 4, m: 2, fs: 2 }],
     ['staff', 'مشرف', 'امنح، تحقّق من الدخول، انشر — دخول سريع بالرمز', { w: 2, ws: 0, c: 0, b: 11, s: 5, f: 7, g: 6, fs: 3, e: 0, m: 0 }],
     ['admin', 'الإدارة', 'المدير التنفيذي والمدراء — بالبريد وكلمة المرور', { w: 1, ws: 1, c: 1, b: 6, s: 2, f: 8, fs: 2, e: 0, m: 0 }]];
+  const ROLE_ART = { 'ابتدائي': 'pro3d/020.webp', 'متوسط': '3d/029.webp', 'ثانوي': 'pro3d/024.webp', staff: 'pro3d/025.webp', admin: 'pro3d/022.webp' };
+  const roleArt = (k, av) => ROLE_ART[k] ? `<img src="./avatars/${ROLE_ART[k]}" alt="" decoding="async">` : AV.svg(av);
   const roleColor = k => STAGEC[k] || (k === 'staff' ? '#1C1C1E' : '#1003BD');
   function rolePick() {
     const dk = document.getElementById('dock'); if (dk) dk.remove();
-    setWall('staff');
+    setWall('staff', 'wave');
     const attr = DPICK ? 'data-demo' : 'data-role';
     $.innerHTML = `<div class="scr"><div class="onb">${DPICK ? `<button class="rback" data-demo-exit>‹ رجوع</button><h1>جرّب التطبيق</h1><p>بيانات توضيحيّة لجمعيّة تجريبيّة — تصفّح بحرّيّة، لا شيء يُحفظ. اختر الدور:</p>` : `<h1>جوّالي</h1><p>أهلاً بك في الموسم. من أنت؟</p>`}
-      <div class="roles">${ROLES.map(([k, n, d, av]) => `<button class="role" ${attr}="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b><small>${DPICK && k === 'admin' ? 'النظام كاملاً: الموقع، الحوكمة، المالية، الموسم' : d}</small></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
+      <div class="roles">${ROLES.map(([k, n, d, av]) => `<button class="role" ${attr}="${k}" style="--rc:${roleColor(k)}"><span class="rav">${roleArt(k, av)}</span><span class="rtx"><b>${n}</b><small>${DPICK && k === 'admin' ? 'النظام كاملاً: الموقع، الحوكمة، المالية، الموسم' : d}</small></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
       ${DPICK ? '' : `<button class="demo-cta" data-demo-pick><b>جرّب التطبيق بدون حساب</b><small>طالب، مشرف، أو إدارة — ببيانات توضيحيّة</small></button>`}</div></div>`;
   }
   function login(msg) {
@@ -92,8 +94,8 @@
     const r = ROLES.find(x => x[0] === ROLE) || ROLES[1], staff = ROLE === 'staff', admin = ROLE === 'admin';
     MODE = staff ? 'staff' : 'me';
     if (DEMO && !admin) { fetchData(); return; }
-    setWall(staff || admin ? 'staff' : null);
-    const head = `<button class="rback" data-role-reset>‹ تغيير</button><div class="lhead"><span class="rav big" style="--rc:${roleColor(ROLE)}">${AV.svg(r[3])}</span><h1>${r[1]}</h1></div>`;
+    setWall(staff || admin ? 'staff' : null, 'wave');
+    const head = `<button class="rback" data-role-reset>‹ تغيير</button><div class="lhead"><span class="rav big" style="--rc:${roleColor(ROLE)}">${roleArt(ROLE, r[3])}</span><h1>${r[1]}</h1></div>`;
     if (admin) {
       $.innerHTML = `<div class="scr"><div class="login">${head}<p>المدير التنفيذي وفريق الإدارة يدخلون النظام كاملاً بالبريد وكلمة المرور: الموقع، الحوكمة، المال، والموسم.</p>
         <a class="btn" href="${WEB}${DEMO ? 'index.html?demo=1' : ''}">الدخول بالبريد وكلمة المرور</a><p class="note">نسيت كلمة المرور؟ تستعيدها من شاشة الدخول نفسها.</p></div></div>`;
@@ -142,11 +144,11 @@
   }
   let linked = false, PEND = null;
   function deepLink() { const op = Q.get('open'); if (op && ['pray', 'cal', 'news', 'bank'].includes(op) && !linked) { linked = true; OPEN[op](); return; } const v = +Q.get('v'); if (!v || linked) return; linked = true; if (MODE === 'staff') OPEN.scan(v); else if (v !== D.me.no) OPEN.xfer(v); }
-  function setWall(kind) {
+  function setWall(kind, fixed) {
     const w = document.getElementById('wall');
-    if (kind === 'staff') { const sty = STY_STAFF.some(x => x[0] === wallStyle) ? wallStyle : 'graphite'; w.style.backgroundImage = `url(./walls/staff-${sty}.jpg)`; document.documentElement.style.setProperty('--tc', '#48484A'); document.documentElement.style.setProperty('--sc', '#1C1C1E'); return; }
+    if (kind === 'staff') { const sty = fixed || (STY_STAFF.some(x => x[0] === wallStyle) ? wallStyle : 'graphite'); w.style.backgroundImage = `url(./walls/staff-${sty}.jpg)`; document.documentElement.style.setProperty('--tc', '#48484A'); document.documentElement.style.setProperty('--sc', '#1C1C1E'); return; }
     const st = (D && D.me && D.me.stage) || (WALL[ROLE] ? ROLE : ''), x = WALL[st] || WALL['متوسط'], c = ((((D || {}).season || {}).settings) || {}).stages || {};
-    const sty = STY_ME.some(y => y[0] === wallStyle) ? wallStyle : 'wave';
+    const sty = fixed || (STY_ME.some(y => y[0] === wallStyle) ? wallStyle : 'wave');
     w.style.backgroundImage = `url(./walls/${x[0]}-${sty}.jpg)`;
     document.documentElement.style.setProperty('--tc', c[st] || x[1]); document.documentElement.style.setProperty('--sc', STAGEC[st] || x[1]); document.documentElement.style.setProperty('--sf', onColor(STAGEC[st] || x[1]));
   }
@@ -188,13 +190,13 @@
     if (MODE === 'staff') {
       const me = D.me;
       $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(me.avatar, me.name)}</button><p class="hello">أهلاً ${esc(me.name.split(' ')[0])}</p><p class="sub">${me.role === 'lead' ? 'قائد' : me.role === 'guest' ? 'ضيف' : 'مشرف'}${me.stage ? ' · ' + esc(me.stage) : ''} · ${esc(D.season.name)}</p>
-        ${me.daily ? budgetWidget() : ''}<div class="apps">${app('news', 'الأخبار', 'w-news')}${me.perms && me.perms.post === false ? '' : app('publish', 'انشر', 'w-testimonials')}${app('give', 'امنح', 'finance')}${can('fine') ? app('fine', 'مخالفة', 'governance') : ''}${can('customs') ? app('customs', esc(((D.season.settings || {}).customs || {}).name || 'الجمارك'), 'ledger') : ''}${me.perms && me.perms.points === false ? '' : app('teams', 'نقاط الفرق', 'season')}${me.perms && me.perms.sell ? app('counter', 'الكاونتر' + ((D.orders || []).length ? ' (' + D.orders.length + ')' : ''), 'procurement') : ''}${can('guests') ? app('guest', 'رمز ضيف', 'myhr') : ''}${((D.season.settings || {}).zones || []).length ? app('zone', 'مكاني', 'site') : ''}${me.perms && me.perms.store ? app('mstore', 'إدارة المتجر', 'library') : ''}${app('scan', 'تحقّق', 'comply')}${app('people', 'الطلاب', 'beneficiaries')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('games', 'الألعاب', 'letters')}${app('survey', 'رأيك', 'requests')}${app('trophy', 'الترتيب', 'team')}${app('id', 'بطاقتي', 'hr')}${app('wall', 'الخلفيّة', '_wall')}</div>
+        ${me.daily ? budgetWidget() : ''}<div class="apps">${app('news', 'الأخبار', 'w-news')}${me.perms && me.perms.post === false ? '' : app('publish', 'انشر', 'w-testimonials')}${app('give', 'امنح', 'finance')}${can('fine') ? app('fine', 'مخالفة', 'governance') : ''}${can('customs') ? app('customs', esc(((D.season.settings || {}).customs || {}).name || 'الجمارك'), 'ledger') : ''}${me.perms && me.perms.points === false ? '' : app('teams', 'نقاط الفرق', 'season')}${me.perms && me.perms.sell ? app('counter', 'الكاونتر' + ((D.orders || []).length ? ' (' + D.orders.length + ')' : ''), 'procurement') : ''}${can('guests') ? app('guest', 'رمز ضيف', 'myhr') : ''}${((D.season.settings || {}).zones || []).length ? app('zone', 'مكاني', 'site') : ''}${D.me.role === 'guest' ? '' : app('com', D.me.committee ? 'لجنتي' : 'اعتذار', D.me.committee ? 'team' : 'calendar')}${D.me.role === 'guest' ? '' : app('follow', 'المتابعة', 'tasks')}${(D.season.settings || {}).league && D.me.role !== 'guest' ? app('league', 'الدوري', 'w-programs') : ''}${canCert() ? app('cert', 'شهادة شكر', 'w-documents') : ''}${me.perms && me.perms.store ? app('mstore', 'إدارة المتجر', 'library') : ''}${app('scan', 'تحقّق', 'comply')}${app('people', 'الطلاب', 'beneficiaries')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('games', 'الألعاب', 'letters')}${app('survey', 'رأيك', 'requests')}${app('trophy', 'الترتيب', 'team')}${app('id', 'بطاقتي', 'hr')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="give"><small>منحتَ هذا الموسم</small><b>${money(me.given || 0)}</b></button><button class="widget" data-open="people"><small>طلابك</small><b>${(D.members || []).length}</b></button></div>
         ${pw}<div id="pushb"></div></div>`;
     } else {
       const t = team(D.me.team);
       $.innerHTML = `<div class="scr">${top}<button class="meav" data-open="avatar" aria-label="شخصيّتي">${AV.of(D.me.avatar, D.me.name)}</button><p class="hello">أهلاً ${esc(D.me.name.split(' ')[0])}</p><p class="sub">${esc(t.name)} · رقمك ${esc(D.me.no)}${D.me.stage ? ' · ' + esc(D.me.stage) : ''}</p>
-        <div class="apps">${app('news', 'الأخبار', 'w-news')}${app('bank', 'البنك', 'finance')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('shop', 'المتجر', 'procurement')}${app('trophy', 'الترتيب', 'season')}${app('id', 'بطاقتي', 'hr')}${app('survey', 'رأيك', 'requests')}${app('wall', 'الخلفيّة', '_wall')}</div>
+        <div class="apps">${app('news', 'الأخبار', 'w-news')}${app('bank', 'البنك', 'finance')}${app('cal', 'الجدول', 'calendar')}${app('pray', 'الصلاة', 'prayer')}${app('shop', 'المتجر', 'procurement')}${(D.season.settings || {}).league ? app('league', 'الدوري', 'w-programs') : ''}${app('trophy', 'الترتيب', 'season')}${app('id', 'بطاقتي', 'hr')}${app('survey', 'رأيك', 'requests')}${app('wall', 'الخلفيّة', '_wall')}</div>
         <div class="wrow"><button class="widget" data-open="bank"><small>رصيدك</small><b>${money(D.me.balance)}</b></button><button class="widget" data-open="trophy"><small>فريقك</small><b>${esc(t.name)}</b></button></div>
         ${whereNow()}${(() => { const lv = level(D.me.att || 0), st = streak(D.me.attd); return `<button class="widget lvl" data-open="id"><span class="lv-i" aria-hidden="true">${lv.icon}</span><span><small>مستوى الحضور</small><b>${lv.name}${st ? ` · ${BDG('flame')} ${st} ${st === 1 ? 'أسبوع' : st <= 10 ? 'أسابيع' : 'أسبوعاً'}` : ''}</b>${lv.next ? `<small>باقي ${lv.left} حضور للمستوى ${lv.next}</small><i class="lv-bar"><u style="width:${lv.pct}%"></u></i>` : '<small>أعلى مستوى — ما شاء الله</small>'}</span></button>`; })()}
         ${trip ? `<button class="widget trip" data-open="cal"><small>${I('bus')} الرحلة القادمة · ${esc(fmtDay(trip.d))}</small><b>${esc(trip.t)}</b><small>${(() => { const n = Math.round((new Date(trip.d + 'T00:00:00') - new Date(todayISO + 'T00:00:00')) / 864e5); return n === 0 ? 'اليوم!' : n === 1 ? 'غداً' : 'بعد ' + n + ' يوماً'; })()}${trip.p ? ' · ' + esc(trip.p) : ''}</small></button>` : ''}
@@ -451,6 +453,10 @@
     counter() { STF.kind = 'sell'; staffForm(); },
     fine() { STF.kind = 'fine'; staffForm(); },
     zone() { zoneView(); },
+    com() { comView(); },
+    follow() { followView(); },
+    league() { leagueView(); },
+    cert() { certView(); },
     customs() { STF.kind = 'fee'; staffForm(); },
     guest() {
       STF.gb = STF.gb || 100;
@@ -717,6 +723,160 @@
     } catch (e) { toast(e.message, 1); return null; }
   }
   async function pscanLoop() { for (;;) { const n = await scanNo('cam2'); if (!n || !document.getElementById('plog')) return; await cityAct({ kind: 'patt', member_no: n }, true); } }
+  /* «لجنتي»: ميزانيّة اللجنة ومصروفاتها بفواتير مصوّرة (القائد يحمل السلفة)، ومهامّ الخطّة، والاعتذار المسبق */
+  const sar = v => (Math.round((+v || 0) * 100) / 100).toLocaleString('en-US', { maximumFractionDigits: 2 });
+  let EXF = null;
+  function comView() {
+    const c = D.me.committee, ex = D.me.excuses || [];
+    const exc = `<h3 class="sech">${I('cal')} اعتذار مسبق</h3><p class="note">إن عرفت أنّك لن تحضر يوماً فاعتذر مبكراً — تجهّز الإدارة بديلاً من قائمة الاحتياط.</p>
+      <label class="fld">اليوم<input id="exd" type="date" class="tx" min="${isoDay(new Date())}"></label><label class="fld">السبب (اختياريّ)<input id="exr" class="tx" maxlength="120"></label>
+      <button class="btn sec" data-act="excuse">أرسل الاعتذار</button>${ex.length ? `<p class="note">اعتذاراتك القادمة: ${ex.map(d => esc(fmtDay(d))).join('، ')}</p>` : ''}`;
+    if (!c) { view('اعتذار', exc); return; }
+    const spent = +c.spent || 0, bud = +c.budget || 0, cash = (+c.advanced || 0) - spent - (+c.returned || 0), pct = bud ? Math.min(100, Math.round(spent / bud * 100)) : 0;
+    view('لجنتي', `<div class="zcard" style="--zc:${esc(c.color || '#0A84FF')}"><small>${esc(c.dept || 'لجنة')}${c.lead ? ' · أنت القائد' : ''}</small><b>${esc(c.name)}</b><small>${c.members} ${c.members === 1 ? 'عضو' : c.members === 2 ? 'عضوان' : c.members <= 10 ? 'أعضاء' : 'عضواً'}${c.status === 'closed' ? ' · الماليّة مُقفلة' : ''}</small></div>
+      ${bud ? `<div class="znow"><small>الميزانيّة</small><b>صُرف ${sar(spent)} من ${sar(bud)} ر.س</b><i class="lv-bar"><u style="width:${pct}%"></u></i>${c.lead ? `<small>معك من السُّلَف: <b>${sar(cash)}</b> ر.س</small>` : ''}</div>` : ''}
+      ${c.lead && c.status !== 'closed' ? `<h3 class="sech">${I('receipt')} سجّل مصروفاً</h3>
+        <label class="pick msimg"><input type="file" accept="image/*" capture="environment" id="exf" hidden><span id="exfv">${I('camera')} صوّر الفاتورة</span></label>
+        <label class="fld">المبلغ (ر.س)<input id="exa" class="big" inputmode="decimal" placeholder="—"></label>
+        <label class="fld">المورّد<input id="exp" class="tx" maxlength="80" placeholder="مثلاً: مكتبة جرير"></label>
+        <label class="fld">البيان<input id="exn" class="tx" maxlength="160" placeholder="مثلاً: جوائز اليوم"></label>
+        <button class="btn" data-act="expense">سجّل المصروف</button>` : ''}
+      ${(c.tasks || []).length ? `<h3 class="sech">مهامّ اللجنة</h3><div class="tasks">${c.tasks.map((t, i) => `<button class="task${t.done ? ' done' : ''}" data-task="${i}">${I(t.done ? 'sqok' : 'sq')}<span>${esc(t.t)}</span></button>`).join('')}</div>` : ''}
+      ${(c.mine || []).length ? `<h3 class="sech">مصروفاتك</h3><div class="olist">${c.mine.map(x => `<div class="row svrow"><span><b>${esc(x.p || x.n || 'مصروف')}</b><small>${esc(fmtDay(x.d))}${x.r ? ' · بفاتورة' : ''}</small></span><b dir="ltr">${sar(x.a)}</b></div>`).join('')}</div>` : ''}
+      ${exc}`);
+    EXF = null; const f = document.getElementById('exf'); if (f) f.onchange = e => { EXF = e.target.files[0] || null; if (EXF) document.getElementById('exfv').innerHTML = `<img src="${URL.createObjectURL(EXF)}" alt="">`; };
+  }
+  async function comAct(body, btn) {
+    if (btn) btn.disabled = true;
+    try {
+      if (body.kind === 'expense' && EXF && !DEMO) { const blob = await shrink(EXF); const r = await fetch(API + '/season/upload?' + new URLSearchParams({ code: saved.code, pin: saved.pin }), { method: 'POST', headers: { 'Content-Type': 'image/webp' }, body: blob }); const j = await r.json(); if (j.error) throw new Error(j.error); body.receipt = j.path; }
+      const r = DEMO ? demoCom(body) : await post('/season/committee', { code: saved.code, pin: saved.pin, as: 'staff', act: body });
+      if (body.kind === 'expense') { D.me.committee = r.committee; toast('سُجّل المصروف ✓'); }
+      else if (body.kind === 'task') { D.me.committee.tasks[body.i].done = body.done; }
+      else if (body.kind === 'excuse') { D.me.excuses = [...new Set((D.me.excuses || []).concat([r.day]))].sort(); toast('وصل اعتذارك'); }
+      comView();
+    } catch (e) { toast(e.message, 1); if (btn) btn.disabled = false; }
+  }
+  function demoCom(b) {
+    const c = D.me.committee;
+    if (b.kind === 'expense') { c.spent = (+c.spent || 0) + b.amount; c.mine = [{ a: b.amount, p: b.party, n: b.note, d: isoDay(new Date()), r: !!EXF }].concat(c.mine || []); return { ok: true, committee: c }; }
+    if (b.kind === 'excuse') return { ok: true, day: b.day };
+    return { ok: true };
+  }
+  /* «المتابعة»: ملاحظة اليوم لكلّ مشرف، وتقييم الفعاليّة بأسئلة سلوكيّة لأعضاء «المتابعة والتقييم» */
+  const canEval = () => D.me.role === 'lead' || !!(D.me.perms || {}).eval || /تقييم/.test((D.me.committee || {}).name || '');
+  const EV = { kind: 'note', cat: 'issue', on_time: null, staff_ok: null, ready: null, engage: 0 };
+  let EVF = null;
+  const yn = (k, l) => `<div class="ynrow"><span>${l}</span><div class="seg two yn"><button class="${EV[k] === true ? 'on' : ''}" data-yn="${k}" data-v="1">نعم</button><button class="${EV[k] === false ? 'on' : ''}" data-yn="${k}" data-v="0">لا</button></div></div>`;
+  function followView() {
+    const ev = canEval() && EV.kind === 'event', now = (D.schedule || []).filter(x => x.d === pdayISO() && x.k !== 'break'), n = nowHM();
+    const cur = now.find(x => n >= hmOf(x.f) - 10 && n <= hmOf(x.e) + 30);
+    view('المتابعة', `${canEval() ? `<div class="seg two"><button class="${!ev ? 'on' : ''}" data-evk="note">ملاحظة اليوم</button><button class="${ev ? 'on' : ''}" data-evk="event">تقييم فعاليّة</button></div>` : ''}
+      ${ev ? `<label class="fld">الفعاليّة<input id="evt" class="tx" maxlength="80" value="${esc(cur ? cur.t : '')}" placeholder="مثلاً: ورشة التصوير"></label>
+        ${yn('on_time', 'بدأت في وقتها؟')}${EV.on_time === false ? `<label class="fld">كم تأخّرت؟ (دقائق)<input id="evl" class="big" inputmode="numeric" placeholder="—"></label>` : ''}
+        ${yn('staff_ok', 'المشرف حاضر من البداية؟')}${yn('ready', 'التجهيز جاهز؟ (أدوات، بروجكتر، موادّ)')}
+        <p class="note">التفاعل</p><div class="amts">${[1, 2, 3, 4, 5].map(v => `<button data-eng="${v}" class="${EV.engage === v ? 'on' : ''}">${v}</button>`).join('')}</div>
+        <label class="fld">عدد الحضور<input id="evc" class="big" inputmode="numeric" placeholder="—"></label>`
+      : `<div class="chips">${[['issue', 'مشكلة'], ['idea', 'فكرة'], ['good', 'إيجابيّة']].map(([k, l]) => `<button class="chip${EV.cat === k ? ' on' : ''}" data-evc="${k}">${l}</button>`).join('')}</div>`}
+      <label class="fld">${ev ? 'ملاحظات' : 'الملاحظة'}<textarea id="evb" class="tx" rows="3" maxlength="500" placeholder="${ev ? 'مثلاً: البروجكتر مشوّش، نفدت الموادّ' : 'ما الذي رأيته اليوم؟'}"></textarea></label>
+      <label class="pick msimg"><input type="file" accept="image/*" capture="environment" id="evf" hidden><span id="evfv">${I('camera')} صورة (اختياريّة)</span></label>
+      <button class="btn" data-act="evsend" style="margin-top:12px">${ev ? 'سجّل التقييم' : 'أرسل الملاحظة'}</button>
+      <p class="note">${ev ? 'أسئلة «نعم/لا» تقيس ما حدث فعلاً — أصدق من «ممتاز جدّاً» للجميع.' : 'الملاحظات تتجمّع في «التقييم والإغلاق» عند الإدارة، وأفضلها يصير درساً للموسم القادم.'}</p>`);
+    EVF = null; const f = document.getElementById('evf'); if (f) f.onchange = e => { EVF = e.target.files[0] || null; if (EVF) document.getElementById('evfv').innerHTML = `<img src="${URL.createObjectURL(EVF)}" alt="">`; };
+  }
+  async function evSend(btn) {
+    const v = id => (document.getElementById(id) || {}).value || '', ev = canEval() && EV.kind === 'event';
+    const body = ev ? { kind: 'event', title: v('evt').trim(), on_time: EV.on_time, late_min: v('evl'), staff_ok: EV.staff_ok, ready: EV.ready, engage: EV.engage || '', count: v('evc'), body: v('evb').trim() } : { kind: 'note', cat: EV.cat, body: v('evb').trim() };
+    if (ev && body.title.length < 2) { toast('اكتب اسم الفعاليّة', 1); return; }
+    if (!ev && body.body.length < 3) { toast('اكتب الملاحظة', 1); return; }
+    btn.disabled = true;
+    try {
+      if (EVF && !DEMO) { const blob = await shrink(EVF); const r = await fetch(API + '/season/upload?' + new URLSearchParams({ code: saved.code, pin: saved.pin }), { method: 'POST', headers: { 'Content-Type': 'image/webp' }, body: blob }); const j = await r.json(); if (j.error) throw new Error(j.error); body.photo = j.path; }
+      if (!DEMO) await post('/season/eval', { code: saved.code, pin: saved.pin, as: 'staff', eval: body });
+      Object.assign(EV, { on_time: null, staff_ok: null, ready: null, engage: 0 }); toast(ev ? 'سُجّل التقييم ✓' : 'وصلت ملاحظتك ✓'); followView();
+    } catch (e) { toast(e.message, 1); btn.disabled = false; }
+  }
+  /* «الدوري»: الطالب يرى نفسه على ملعب فريقه ومركزه ومباراته القادمة والترتيب — والمشرف الرياضيّ يسجّل النتيجة الحيّة */
+  let LGD = null, LGM = null, LGP = null;
+  const lgAv = p => AV.of(p.av, p.n);
+  async function lgLoad() {
+    try { LGD = DEMO ? (LGD || demoLeague()) : await post('/season/league', { code: saved.code, pin: saved.pin, as: MODE === 'staff' ? 'staff' : 'me' }); } catch (e) { toast(e.message, 1); LGD = null; }
+  }
+  const lgTeam = (L, id) => (L.teams || []).find(t => t.id === id) || { name: '؟', color: '#888', players: [] };
+  async function leagueView() {
+    if (!LGD) await lgLoad(); if (!LGD) return; const LS = LGD.leagues || [];
+    if (!LS.length) { view('الدوري', '<p class="empty">لم يبدأ الدوري بعد.</p>'); return; }
+    const today = pdayISO();
+    view('الدوري', LS.map(L => {
+      const mine = L.mine ? lgTeam(L, L.mine) : null, myId = MODE === 'staff' ? null : (mine && (mine.players.find(p => p.no === D.me.no) || {}).id);
+      const ms = (L.matches || []), next = mine ? ms.find(m => m.s !== 'done' && (m.h === mine.id || m.a === mine.id)) : null, S = LGE.standings(L), sc = LGE.scorers(L);
+      const row = m => { const h = lgTeam(L, m.h), a = lgTeam(L, m.a); return `<button class="lgm${m.s === 'live' ? ' live' : ''}" ${LGD.sports ? `data-lgm="${esc(m.id)}" data-lgl="${esc(L.id)}"` : 'disabled'}><span><i class="dot" style="--c:${esc(h.color)}"></i> ${esc(h.name)}</span><b dir="ltr">${m.s === 'scheduled' ? esc(m.f || 'vs') : m.hs + ' – ' + m.as}</b><span>${esc(a.name)} <i class="dot" style="--c:${esc(a.color)}"></i></span><small>${m.s === 'live' ? 'مباشر الآن' : m.s === 'done' ? 'انتهت' : esc(m.d ? fmtDay(m.d) : 'الجولة ' + m.r)}${m.p ? ' · ' + esc(m.p) : ''}</small></button>`; };
+      return `<h3 class="sech">${esc(L.name)}</h3>
+        ${mine && myId ? `<div class="znow"><small>فريقك</small><b style="color:${esc(mine.color)}">${esc(mine.name)}</b><small>مركزك: <b>${esc(LGE.posName(L.sport, (mine.pos || {})[myId]) || 'احتياط')}</b></small></div>${LGE.pitch(L.sport, mine, { me: myId, avatar: lgAv })}` : ''}
+        ${next ? `<div class="znow"><small>مباراتك القادمة</small><b>${esc(lgTeam(L, next.h).name)} × ${esc(lgTeam(L, next.a).name)}</b><small>${esc([next.d ? fmtDay(next.d) : '', next.f ? fmtT2(next.f) : '', next.p].filter(Boolean).join(' · '))}</small></div>` : ''}
+        ${LGD.sports ? `<p class="note">اضغط على المباراة لتسجيل نتيجتها.</p>` : ''}
+        <div class="lglist">${ms.filter(m => m.s === 'live').concat(ms.filter(m => m.s === 'scheduled' && (!m.d || m.d >= today)).slice(0, 6), ms.filter(m => m.s === 'done').slice(-4).reverse()).map(row).join('') || '<p class="empty">لا مباريات بعد.</p>'}</div>
+        <table class="lgt"><tr><th>#</th><th>الفريق</th><th>لعب</th><th>${L.sport === 'volleyball' ? 'أشواط' : 'أهداف'}</th><th>النقاط</th></tr>${S.map((r, i) => `<tr${mine && r.id === mine.id ? ' class="me"' : ''}><td>${i + 1}</td><td><i class="dot" style="--c:${esc(r.color)}"></i> ${esc(r.name)}</td><td>${r.p}</td><td dir="ltr">${r.gf}:${r.ga}</td><td><b>${r.pts}</b></td></tr>`).join('')}</table>
+        ${sc.length ? `<p class="note">الهدّافون: ${sc.slice(0, 5).map(p => `${esc(p.n)} (${p.g})`).join(' · ')}</p>` : ''}`;
+    }).join(''));
+  }
+  /* تسجيل النتيجة: كرة القدم (هدف بالهدّاف، تراجع، إنهاء برجل المباراة) · الطائرة (نقطة بنقطة، الأشواط آليّة) */
+  function matchView(lid, mid) {
+    const L = (LGD.leagues || []).find(x => x.id === lid), m = L && (L.matches || []).find(x => x.id === mid); if (!m) return; LGM = { lid, mid };
+    const h = lgTeam(L, m.h), a = lgTeam(L, m.a), vb = L.sport === 'volleyball', cur = vb ? (m.sets || []).slice(-1)[0] || [0, 0] : null;
+    const side = (t, s) => `<div class="msd" style="--c:${esc(t.color)}"><b>${esc(t.name)}</b><div class="msc" dir="ltr">${vb ? (s === 'h' ? cur[0] : cur[1]) : (s === 'h' ? m.hs : m.as)}</div>${m.s !== 'done' ? `<button class="btn" data-lgact="${vb ? 'point' : 'goal'}" data-side="${s}">${vb ? '+ نقطة' : '+ هدف'}</button>` : ''}</div>`;
+    view(L.name, `<div class="mboard">${side(h, 'h')}<span class="mvs">${vb ? `<small>الأشواط</small><b dir="ltr">${m.hs} – ${m.as}</b>` : '–'}</span>${side(a, 'a')}</div>
+      ${vb && (m.sets || []).length ? `<p class="note" dir="ltr" style="text-align:center">${m.sets.map(x => x[0] + '-' + x[1]).join('  ·  ')}</p>` : ''}
+      ${!vb && (m.ev || []).length ? `<div class="mev">${m.ev.map(e => { const t = e.s === 'h' ? h : a, p = (t.players || []).find(x => x.id === e.m); return `<span><i class="dot" style="--c:${esc(t.color)}"></i> ${p ? esc(p.n) : 'هدف'}</span>`; }).join('')}</div>` : ''}
+      ${m.s === 'done' ? `<div class="vok">انتهت المباراة</div><button class="btn sec" data-lgact="reopen">أعد فتحها للتصحيح</button>`
+        : `<div class="mact">${!vb && (m.ev || []).length ? `<button class="btn sec" data-lgact="undo">تراجع عن آخر هدف</button>` : ''}<button class="btn sec" data-lgact="finishask">إنهاء المباراة</button></div>`}`);
+  }
+  function pickPlayer(title, players, cb, none) {
+    LGP = cb;
+    view(title, `<div class="ppick">${players.map(p => `<button data-lgp="${esc(p.id)}"><span class="pav2 sm avr">${lgAv(p)}</span><b>${esc(p.n)}</b></button>`).join('')}${none ? `<button data-lgp=""><b>${none}</b></button>` : ''}</div>`);
+  }
+  async function lgAct(kind, extra) {
+    const L = (LGD.leagues || []).find(x => x.id === LGM.lid), m = (L.matches || []).find(x => x.id === LGM.mid), body = Object.assign({ kind, match: m.id }, extra || {});
+    try {
+      if (DEMO) demoLgAct(L, m, body); else { const r = await post('/season/league/act', { code: saved.code, pin: saved.pin, as: 'staff', act: body }); LGD.leagues = r.leagues; }
+      if (kind === 'finish') { toast('انتهت المباراة ✓'); document.querySelectorAll('.view').forEach(v => v.remove()); leagueView(); return; }
+      document.querySelectorAll('.view').forEach(v => v.remove()); matchView(LGM.lid, LGM.mid);
+    } catch (e) { toast(e.message, 1); }
+  }
+  function demoLgAct(L, m, b) {
+    if (b.kind === 'goal') { m.s = 'live'; if (b.side === 'h') m.hs++; else m.as++; m.ev = (m.ev || []).concat([{ t: 'goal', s: b.side, m: b.member || null }]); }
+    else if (b.kind === 'point') { m.s = 'live'; m.sets = m.sets && m.sets.length ? m.sets : [[0, 0]]; const c = m.sets[m.sets.length - 1]; c[b.side === 'h' ? 0 : 1]++; const tg = m.sets.length >= 3 ? 15 : 25; if ((c[0] >= tg || c[1] >= tg) && Math.abs(c[0] - c[1]) >= 2) { m.hs = m.sets.filter(x => x[0] > x[1]).length; m.as = m.sets.filter(x => x[1] > x[0]).length; if (m.hs < 2 && m.as < 2) m.sets.push([0, 0]); } }
+    else if (b.kind === 'undo') { const e = (m.ev || []).pop(); if (e) { if (e.s === 'h') m.hs--; else m.as--; } }
+    else if (b.kind === 'finish') { m.s = 'done'; m.mvp = b.mvp || null; } else if (b.kind === 'reopen') m.s = 'live';
+  }
+  function demoLeague() {
+    const ps = (D.members || []).slice(0, 8).map(m => ({ id: m.id, n: m.n, av: m.av, no: m.no }));
+    if (MODE === 'me') ps[0] = { id: 'me', n: D.me.name.split(' ').slice(0, 2).join(' '), av: D.me.avatar, no: D.me.no };
+    while (ps.length < 8) ps.push({ id: 'p' + ps.length, n: ['فهد سعد', 'بدر علي', 'نواف ماجد', 'سلمان خالد', 'مشاري حمد', 'يزن عمر', 'عبدالله فيصل', 'ريان محمد'][ps.length], av: {}, no: 20 + ps.length });
+    const A = ps.slice(0, 4), B = ps.slice(4, 8), pos = (arr, k) => Object.fromEntries(arr.map((p, i) => [p.id, k[i]]));
+    return { sports: MODE === 'staff', leagues: [{ id: 'L1', name: 'دوري المتوسّط', sport: 'football', rules: { win: 3, draw: 1 }, mine: MODE === 'me' ? 'A' : null,
+      teams: [{ id: 'A', name: 'النسور', color: '#16A34A', players: A, pos: pos(A, ['GK', 'RB', 'LB', 'ST']) }, { id: 'B', name: 'الصقور', color: '#DC2626', players: B, pos: pos(B, ['GK', 'CB', 'RM', 'ST']) }, { id: 'C', name: 'الفهود', color: '#EA580C', players: [], pos: {} }],
+      matches: [{ id: 'm1', h: 'A', a: 'B', r: 1, d: pdayISO(), f: '22:00', p: 'الملعب', s: 'live', hs: 1, as: 0, ev: [{ t: 'goal', s: 'h', m: A[3].id }] }, { id: 'm2', h: 'B', a: 'C', r: 2, d: pdayISO(), f: '23:00', p: 'الملعب', s: 'scheduled', hs: 0, as: 0, ev: [] }, { id: 'm3', h: 'C', a: 'A', r: 3, s: 'scheduled', hs: 0, as: 0, ev: [] }] }] };
+  }
+  /* شهادة شكر من الجوال بعد الورشة مباشرة: تُصدر برقم تحقّق، وتُطبع أو تُرسل رابطها (season/cert/?id=) */
+  const canCert = () => D.me.role === 'lead' || !!(D.me.perms || {}).certs || /برامج|نوعي|علاقات/.test((D.me.committee || {}).name || '');
+  let CK = 'thanks';
+  function certView() {
+    view('شهادة شكر', `<div class="seg three ck">${[['thanks', 'شكر'], ['merit', 'تميّز'], ['participation', 'مشاركة']].map(([k, l]) => `<button class="${CK === k ? 'on' : ''}" data-ck="${k}">${l}</button>`).join('')}</div>
+      <label class="fld">الاسم<input id="cn" class="tx" maxlength="80" list="cnl" placeholder="مثلاً: أ. خالد العتيبي"><datalist id="cnl">${(D.members || []).map(m => `<option value="${esc(m.n)}">`).join('')}</datalist></label>
+      <label class="fld">السبب<textarea id="cr" class="tx" rows="3" maxlength="160" placeholder="مثلاً: على تقديمه ورشة التصوير بالجوال"></textarea></label>
+      <button class="btn" data-act="certgo">أصدر الشهادة</button><p class="note">تُصدر برقم تحقّق ورمز QR — تطبعها أو ترسل رابطها للمكرَّم في الحال.</p>`);
+  }
+  async function certGo(btn) {
+    const v = id => ((document.getElementById(id) || {}).value || '').trim(), body = { kind: CK, name: v('cn'), reason: v('cr') };
+    if (body.name.length < 3) { toast('اكتب الاسم', 1); return; } btn.disabled = true;
+    try {
+      const r = DEMO ? { id: null } : await post('/season/cert', { code: saved.code, pin: saved.pin, as: 'staff', cert: body });
+      const url = (NAT ? 'https://ibrahimsaud.com/charity/season/' : location.origin + location.pathname.replace(/[^/]*$/, '')) + 'cert/?' + (DEMO ? 'demo=1' : 'id=' + r.id);
+      view('أُصدرت الشهادة', `<div class="done2"><div class="ok" aria-hidden="true">✓</div><h3>${esc(body.name)}</h3><p>${esc(body.reason)}</p></div>
+        <a class="btn" href="${esc(url)}" target="_blank" rel="noopener">اعرض الشهادة واطبعها</a><button class="btn sec" style="margin-top:10px" data-share="${esc(url)}" data-share-t="${esc('شهادة ' + body.name)}">أرسل الرابط</button>`);
+    } catch (e) { toast(e.message, 1); btn.disabled = false; }
+  }
   function budgetWidget() {
     const d = D.me.daily, g = Math.min(D.me.givenToday || 0, d), left = d - g, pct = Math.round(g / d * 100);
     return `<button class="widget budget" data-open="give"><span class="bring" style="--p:${pct}"><b>${left}</b><small>باقي</small></span><span><small>رصيدك اليوم</small><b>${left ? 'وزّع ' + left + ' ' + esc(CUR().one) + ' قبل الختام' : 'خلّصت رصيد اليوم — بكرة رصيد جديد'}</b><small>منحتَ ${g} من ${d} · يتجدّد كلّ يوم</small></span></button>`;
@@ -835,13 +995,25 @@
     const vm = e.target.closest('[data-vno]'); if (vm) { OPEN.scan(+vm.dataset.vno); return; }
     const c = e.target.closest('[data-close]'); if (c) { const au = document.getElementById('adhanAudio'); if (au && !au.paused && !document.querySelector('.adhan')) { au.pause(); au.currentTime = 0; } c.closest('.view').remove(); if (D) home(); return; }
     const pick = (attr, set) => { const b = e.target.closest('[' + attr + ']'); if (!b) return false; set(b.getAttribute(attr)); b.parentElement.querySelectorAll('[' + attr + ']').forEach(x => x.classList.toggle('on', x === b)); return true; };
+    const ckb = e.target.closest('[data-ck]'); if (ckb) { CK = ckb.dataset.ck; ckb.parentElement.querySelectorAll('[data-ck]').forEach(b => b.classList.toggle('on', b === ckb)); return; }
+    const ek = e.target.closest('[data-evk]'); if (ek) { EV.kind = ek.dataset.evk; followView(); return; }
+    const ec = e.target.closest('[data-evc]'); if (ec) { EV.cat = ec.dataset.evc; ec.parentElement.querySelectorAll('[data-evc]').forEach(b => b.classList.toggle('on', b === ec)); return; }
+    const ey = e.target.closest('[data-yn]'); if (ey) { const keep = (document.getElementById('evb') || {}).value, t = (document.getElementById('evt') || {}).value; EV[ey.dataset.yn] = ey.dataset.v === '1'; followView(); if (keep) document.getElementById('evb').value = keep; if (t != null && document.getElementById('evt')) document.getElementById('evt').value = t; return; }
+    const eg = e.target.closest('[data-eng]'); if (eg) { EV.engage = +eg.dataset.eng; eg.parentElement.querySelectorAll('[data-eng]').forEach(b => b.classList.toggle('on', b === eg)); return; }
+    const lm = e.target.closest('[data-lgm]'); if (lm) { matchView(lm.dataset.lgl, lm.dataset.lgm); return; }
+    const la = e.target.closest('[data-lgact]'); if (la) { const k = la.dataset.lgact, L = (LGD.leagues || []).find(x => x.id === LGM.lid), m = (L.matches || []).find(x => x.id === LGM.mid);
+      if (k === 'goal') { const t = lgTeam(L, la.dataset.side === 'h' ? m.h : m.a); pickPlayer('من سجّل؟ — ' + t.name, t.players || [], id => lgAct('goal', { side: la.dataset.side, member: id }), 'بدون تحديد'); return; }
+      if (k === 'finishask') { pickPlayer('رجل المباراة', (lgTeam(L, m.h).players || []).concat(lgTeam(L, m.a).players || []), id => lgAct('finish', { mvp: id }), 'بدون رجل مباراة'); return; }
+      lgAct(k, k === 'point' ? { side: la.dataset.side } : {}); return; }
+    const lpk = e.target.closest('[data-lgp]'); if (lpk && LGP) { const cb = LGP; LGP = null; lpk.closest('.view').remove(); cb(lpk.dataset.lgp || ''); return; }
+    const tk = e.target.closest('[data-task]'); if (tk) { const i = +tk.dataset.task; comAct({ kind: 'task', i, done: !D.me.committee.tasks[i].done }); return; }
     const dl = e.target.closest('[data-deliver]'); if (dl) { deliver(dl.dataset.deliver, +dl.dataset.dno, !!dl.dataset.cancel); return; }
     const on2 = e.target.closest('[data-ono]'); if (on2) { const i = document.getElementById('sn'); if (i) { i.value = on2.dataset.ono; i.oninput(); i.scrollIntoView({ block: 'center' }); } return; }
     const shr = e.target.closest('[data-share]'); if (shr) { const u = shr.dataset.share; if (navigator.share) navigator.share({ title: shr.dataset.shareT, url: u }).catch(() => {}); else { try { navigator.clipboard.writeText(u); toast('نُسخ الرابط'); } catch (er) {} } return; }
     const pre = e.target.closest('[data-preorder]'); if (pre) { preorder(pre); return; }
     if (pick('data-vio', v => STF.vio = v) || pick('data-gb', v => STF.gb = +v)) return;
     if (pick('data-amt', v => STF.amt = +v) || pick('data-pts', v => STF.pts = +v) || pick('data-reason', v => STF.reason = v) || pick('data-item', v => STF.item = v) || pick('data-team', v => STF.team = v)) return;
-    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'here') { ac.disabled = true; cityAct({ kind: 'here' }); return; } if (ac && ac.dataset.act === 'pscan') { pscanLoop(); return; } if (ac && ac.dataset.act === 'patt') { const i = document.getElementById('pn'); if (i && i.value.trim()) { cityAct({ kind: 'patt', member_no: +i.value.trim() }); i.value = ''; } return; } if (ac && ac.dataset.act === 'scansn') { scanNo('cam2').then(n => { const i = document.getElementById('sn'); if (n && i) { i.value = n; i.oninput(); } }); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'msnew') { storeEdit(null); return; } if (ac && ac.dataset.act === 'mslib') { const g = document.getElementById('mslib'); if (g) g.hidden = !g.hidden; return; } if (ac && ac.dataset.act === 'mssave') { storeSave(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'pushon') { pushEnable(ac); return; } act(ac.dataset.act); }
+    const ac = e.target.closest('[data-act]'); if (ac && ac.dataset.act === 'publish') { publish(); return; } if (ac && ac.dataset.act === 'svsend') { survSend(ac); return; } if (ac && ac.dataset.act === 'xsend') { xferSend(ac); return; } if (ac && ac.dataset.act === 'camera') { scanCam(); return; } if (ac && ac.dataset.act === 'scanlogin') { scanLogin(); return; } if (ac && ac.dataset.act === 'checkin') { checkin(ac); return; } if (ac && ac.dataset.act === 'certgo') { certGo(ac); return; } if (ac && ac.dataset.act === 'evsend') { evSend(ac); return; } if (ac && ac.dataset.act === 'expense') { const a = +String((document.getElementById('exa') || {}).value || '').replace(/[^\d.]/g, ''); if (!a) { toast('اكتب المبلغ', 1); return; } comAct({ kind: 'expense', amount: a, party: (document.getElementById('exp') || {}).value || '', note: (document.getElementById('exn') || {}).value || '' }, ac); return; } if (ac && ac.dataset.act === 'excuse') { const d = (document.getElementById('exd') || {}).value; if (!d) { toast('اختر اليوم', 1); return; } comAct({ kind: 'excuse', day: d, reason: (document.getElementById('exr') || {}).value || '' }, ac); return; } if (ac && ac.dataset.act === 'here') { ac.disabled = true; cityAct({ kind: 'here' }); return; } if (ac && ac.dataset.act === 'pscan') { pscanLoop(); return; } if (ac && ac.dataset.act === 'patt') { const i = document.getElementById('pn'); if (i && i.value.trim()) { cityAct({ kind: 'patt', member_no: +i.value.trim() }); i.value = ''; } return; } if (ac && ac.dataset.act === 'scansn') { scanNo('cam2').then(n => { const i = document.getElementById('sn'); if (n && i) { i.value = n; i.oninput(); } }); return; } if (ac && ac.dataset.act === 'adhantest') { adhanTest(ac); return; } if (ac && ac.dataset.act === 'msnew') { storeEdit(null); return; } if (ac && ac.dataset.act === 'mslib') { const g = document.getElementById('mslib'); if (g) g.hidden = !g.hidden; return; } if (ac && ac.dataset.act === 'mssave') { storeSave(ac); return; } if (ac && ac.dataset.act === 'avsave') { avSave(ac); return; } if (ac) { if (ac.dataset.act === 'pushon') { pushEnable(ac); return; } act(ac.dataset.act); }
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { const v = document.querySelector('.view'); if (v) { v.remove(); if (D) home(); } } });
 
@@ -930,11 +1102,11 @@
       teams: { r: 120, g: 95, b: 80, o: 40 }, teamsMonth: { g: 45, r: 30, b: 25, o: 10 }, richMonth: [{ n: 'نواف', team: 'g', g: 'ابتدائي', b: 70 }, { n: 'يزن', team: 'r', g: 'متوسط', b: 55 }, { n: 'فهد', team: 'g', g: 'ثانوي', b: 40 }], rich: [{ n: 'فهد', team: 'g', g: 'ثانوي', b: 210 }, { n: 'يزن', team: 'r', g: 'متوسط', b: 145 }, { n: 'بدر', team: 'b', g: 'ابتدائي', b: 120 }, { n: 'سلمان', team: 'o', g: 'متوسط', b: 95 }, { n: 'نواف', team: 'g', g: 'ابتدائي', b: 70 }, { n: 'مشاري', team: 'b', g: 'ثانوي', b: 40 }], items: ITM, schedule: SCH() };
   }
   /* التجربة بقصّة «مدينة القيم»: الدنانير والبنك المركزيّ والجمارك والطلب المسبق */
-  function DEMO_SET() { return { city: 'الأحساء', zones: [{ id: 'skill', n: 'المنطقة المهاريّة', p: 'القاعات العلويّة', c: '#0A84FF', img: 'lib:city/skill' }, { id: 'comp', n: 'المنطقة التنافسيّة', p: 'القاعات السفليّة', c: '#FF9F0A', img: 'lib:city/comp' }, { id: 'fun', n: 'المنطقة الترفيهيّة', p: 'الملعب وغرفة الألعاب', c: '#30D158', img: 'lib:city/fun' }], story: 'bank', currency: { name: 'الريالات', one: 'ريال', icon: '' }, preorder: true, customs: { name: 'الجمارك', amount: 5 }, daily: { staff: 300, member: 50 } }; }
+  function DEMO_SET() { return { city: 'الأحساء', league: true, zones: [{ id: 'skill', n: 'المنطقة المهاريّة', p: 'القاعات العلويّة', c: '#0A84FF', img: 'lib:city/skill' }, { id: 'comp', n: 'المنطقة التنافسيّة', p: 'القاعات السفليّة', c: '#FF9F0A', img: 'lib:city/comp' }, { id: 'fun', n: 'المنطقة الترفيهيّة', p: 'الملعب وغرفة الألعاب', c: '#30D158', img: 'lib:city/fun' }], story: 'bank', currency: { name: 'الريالات', one: 'ريال', icon: '' }, preorder: true, customs: { name: 'الجمارك', amount: 5 }, daily: { staff: 300, member: 50 } }; }
   function AVSAVED() { try { return JSON.parse(localStorage.getItem('jw_demo_av') || '{}'); } catch (e) { return {}; } }
   function sampleStaff() {
     const names = ['محمد أحمد', 'عبدالله سعد', 'فهد خالد', 'سلمان علي', 'نواف ماجد', 'يزن عمر', 'بدر سامي', 'مشاري حمد'];
-    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', code: 'DEMO42', teams: T, settings: DEMO_SET(), violations: [{ n: 'إزعاج', a: 10 }, { n: 'تسيّب من البرنامج', a: 15 }, { n: 'تأخّر', a: 5 }, { n: 'لباس غير مناسب', a: 5 }, { n: 'عدم احترام', a: 20 }] }, me: { name: 'عبدالرحمن المشرف', avatar: AVSAVED(), role: 'staff', stage: 'متوسط', perms: { coins: 50, points: true, sell: true, store: true, fine: true, customs: true, guests: true }, given: 340, daily: 300, givenToday: 110 }, orders: [{ id: 'o1', no: 2, n: 'عبدالله سعد', item: 'آيس كريم', p: 15, t: new Date().toISOString() }],
+    return { season: { name: 'النادي الصيفيّ ١٤٤٨', org: 'جمعيّة تجريبيّة', code: 'DEMO42', teams: T, settings: DEMO_SET(), violations: [{ n: 'إزعاج', a: 10 }, { n: 'تسيّب من البرنامج', a: 15 }, { n: 'تأخّر', a: 5 }, { n: 'لباس غير مناسب', a: 5 }, { n: 'عدم احترام', a: 20 }] }, me: { name: 'عبدالرحمن المشرف', avatar: AVSAVED(), role: 'staff', stage: 'متوسط', perms: { coins: 50, points: true, sell: true, store: true, fine: true, customs: true, guests: true, eval: true, sports: true, certs: true }, given: 340, daily: 300, givenToday: 110, committee: { id: 'c1', name: 'لجنة التحفيز', dept: 'إدارة الفعاليّات', color: '#EAB308', lead: true, budget: 20000, advanced: 5000, returned: 0, spent: 3650, members: 6, status: 'approved', tasks: [{ t: 'قصّة العملة وتصميمها', done: true }, { t: 'شراء الجوائز اليوميّة والختاميّة' }, { t: 'تكريم الأعلى كسباً' }], mine: [{ a: 350, p: 'مكتبة جرير', n: 'جوائز اليوم', d: iso(-864e5), r: true }] }, excuses: [] }, orders: [{ id: 'o1', no: 2, n: 'عبدالله سعد', item: 'آيس كريم', p: 15, t: new Date().toISOString() }],
       members: names.map((n, i) => ({ id: 'm' + i, no: i + 1, n, g: ['متوسط', 'ابتدائي', 'ثانوي'][i % 3], av: {}, t: T[i % 4].id, b: [40, 120, 210, 15, 60, 145, 90, 0][i], td: [10, 0, 25, 0, 15, 30, 0, 0][i], f: [0, 0, 1, 2, 0, 0, 0, 1][i] })), teams: { r: 120, g: 95, b: 80, o: 40 }, items: ITM, schedule: SCH() };
   }
   function sampleFeed() {
@@ -964,7 +1136,7 @@
   }
   function demoMenu() {
     view('وضع التجربة', `<p class="note">تتصفّح بيانات جمعيّة توضيحيّة — لا شيء يُحفظ ولا يصل لأحد.</p>
-      <div class="roles">${ROLES.map(([k, n, , av]) => `<button class="role" data-demo="${k}" style="--rc:${roleColor(k)}"><span class="rav">${AV.svg(av)}</span><span class="rtx"><b>${n}</b></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
+      <div class="roles">${ROLES.map(([k, n, , av]) => `<button class="role" data-demo="${k}" style="--rc:${roleColor(k)}"><span class="rav">${roleArt(k, av)}</span><span class="rtx"><b>${n}</b></span><span class="chev" aria-hidden="true">‹</span></button>`).join('')}</div>
       <button class="btn sec" style="margin-top:16px" data-demo-exit>خروج من التجربة</button>`);
   }
   if (DEMO) { const c = document.createElement('button'); c.className = 'demochip'; c.dataset.demoMenu = ''; c.setAttribute('aria-label', 'وضع التجربة — بدّل الدور أو اخرج'); c.innerHTML = 'تجربة <span aria-hidden="true">⇄</span>'; document.body.appendChild(c); }

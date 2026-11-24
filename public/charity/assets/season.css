@@ -167,3 +167,22 @@ html.ap-dark .sn-tag{color:#FFC46B}
 .sn-libgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-top:8px;max-height:300px;overflow:auto}
 .sn-libgrid button{border:0;padding:0;background:none;display:grid;gap:3px;cursor:pointer;color:inherit}.sn-libgrid img{width:100%;aspect-ratio:1;border-radius:14px;object-fit:cover}.sn-libgrid small{font-size:11px}
 .sn-zimg{width:44px;height:44px;border-radius:12px;object-fit:cover;flex:none}
+/* اللجان والماليّة والتسجيل (حقيبة الموسم ٣) */
+.sn-fin{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin:12px 0}
+.sn-fin span{padding:12px 14px;border-radius:14px;background:var(--surface-2,rgba(120,120,128,.12))}.sn-fin small{display:block;color:var(--muted,#6e6e73)}.sn-fin b{font-size:20px;font-variant-numeric:tabular-nums}
+.sn-alerts p{margin:6px 0;padding:8px 12px;border-radius:12px;background:rgba(255,159,10,.14)}.sn-alerts p.red{background:rgba(255,69,58,.14)}
+.sn-coms{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin-bottom:14px}
+.sn-com{display:grid;gap:4px;text-align:start;padding:14px 16px;border-radius:18px;border:1px solid color-mix(in srgb,var(--cc) 40%,transparent);background:color-mix(in srgb,var(--cc) 9%,var(--card,#fff));cursor:pointer;color:inherit;font:inherit}
+.sn-com b{font-size:16px}.sn-com small{color:var(--muted,#6e6e73)}
+.sn-bar{display:block;height:6px;border-radius:9px;background:rgba(120,120,128,.2);overflow:hidden;margin-top:4px}.sn-bar u{display:block;height:100%;background:#30D158}.sn-bar.amb u{background:#FF9F0A}.sn-bar.red u{background:#FF453A}
+.sn-mp.pos{color:#1f9d55}.sn-chk{display:grid;gap:2px;max-height:240px;overflow:auto}
+.sn-reg{flex-wrap:wrap;gap:8px}.sn-noreceipt{color:#FF453A}
+/* التقييم والإغلاق (حقيبة الموسم ٤) */
+.sn-prevl{border:1px solid rgba(255,214,10,.45);background:rgba(255,214,10,.08)}.sn-prevl ol,.sn-lessons{margin:8px 0 0;padding-inline-start:22px}.sn-prevl li,.sn-lessons li{margin:4px 0}
+.sn-notecats{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 10px}
+/* الدوري */
+.sn-tbl{width:100%;border-collapse:collapse;font-size:14px;margin-top:8px}.sn-tbl th,.sn-tbl td{padding:8px 6px;border-bottom:1px solid var(--line,rgba(0,0,0,.08));text-align:right}.sn-tbl th{color:var(--muted,#6e6e73);font-weight:600}
+.sn-tbl .sn-zdot{display:inline-block;vertical-align:middle;width:10px;height:10px}
+.sn-lgteams{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}.sn-lgt{border-top:4px solid var(--cc)}
+.sn-live{color:#30D158}.sn-sel{min-height:40px;border-radius:12px;padding:0 10px}
+.sn-row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.sn-row2 input{width:100%}

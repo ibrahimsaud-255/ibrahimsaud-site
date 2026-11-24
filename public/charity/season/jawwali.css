@@ -418,3 +418,26 @@ body:has(.view) .demochip{display:none}
 .lv-i .ico.lvl0{width:40px;height:40px;color:#30D158}
 .shr .ico{width:18px;height:18px}
 .myords .ico{color:#FFD60A}
+/* صور الأدوار في شاشات البداية: شخصيّات ثلاثيّة الأبعاد على دائرة بلون الدور */
+.rav{background:var(--rc,#2C2C2E)}.rav img{width:100%;height:100%;object-fit:cover;object-position:center 15%;display:block}
+/* لجنتي */
+.sech .ico{vertical-align:-.25em}
+.tasks{display:grid;gap:8px}.task{display:flex;align-items:center;gap:10px;text-align:start;border:0;padding:12px 14px;min-height:48px;border-radius:14px;background:var(--card);color:inherit;font:inherit;cursor:pointer}
+.task .ico{width:24px;height:24px}.task.done{opacity:.7}.task.done span{text-decoration:line-through}.task.done .ico{color:#30D158}
+.znow .lv-bar{margin:8px 0}
+/* المتابعة */
+.ynrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0}.ynrow span{font-weight:700}.ynrow .yn{min-width:140px}
+
+/* الدوري */
+.lglist{display:grid;gap:8px;margin:10px 0}
+.lgm{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;border:0;padding:12px 14px;border-radius:16px;background:var(--card);color:inherit;font:inherit;text-align:center;cursor:pointer}
+.lgm:disabled{cursor:default;opacity:1}.lgm span:first-child{text-align:start}.lgm span:nth-child(3){text-align:end}.lgm b{font-size:20px}.lgm small{grid-column:1/-1;color:var(--l2)}
+.lgm.live{box-shadow:inset 0 0 0 2px #30D158}
+.lgt{width:100%;border-collapse:collapse;margin:8px 0;font-size:14px}.lgt th,.lgt td{padding:8px 6px;border-bottom:1px solid var(--line);text-align:start}.lgt th{color:var(--l2);font-weight:600}.lgt tr.me td{background:rgba(255,214,10,.14)}
+.mboard{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:start;text-align:center;margin:10px 0}
+.msd{display:grid;gap:8px;padding:14px 10px;border-radius:20px;background:color-mix(in srgb,var(--c) 30%,rgba(0,0,0,.3));border:1px solid color-mix(in srgb,var(--c) 60%,transparent)}
+.msc{font-size:64px;font-weight:900;line-height:1}.mvs{align-self:center;font-size:30px;display:grid}.mvs small{font-size:12px;color:var(--l2)}.mvs b{font-size:22px}
+.mev{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 12px}.mev span{background:var(--card);padding:6px 12px;border-radius:99px;font-size:14px}
+.mact{display:grid;gap:8px}
+.ppick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.ppick button{display:grid;justify-items:center;gap:6px;border:0;padding:12px 6px;border-radius:16px;background:var(--card);color:inherit;font:inherit;cursor:pointer}.ppick b{font-size:13px}
+.seg.three{grid-template-columns:1fr 1fr 1fr}.seg.ck{margin-bottom:12px}

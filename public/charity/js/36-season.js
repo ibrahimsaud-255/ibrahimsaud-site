@@ -25,9 +25,9 @@ async function renderSeason() {
 async function snLoad() {
   if (!SN.cur) { SN.members = []; SN.points = []; return; }
   const L = (t, o) => RDB.list(t, Object.assign({ eq: { season_id: SN.cur } }, o)).catch(() => []);
-  const [m, p, c, it, sc, st, po, rx, at, pa, sa] = await Promise.all([L('season_members', { order: 'no', asc: true }), L('season_points', { order: 'created_at' }), L('season_coins', { order: 'created_at' }),
-    L('season_items', { order: 'sort', asc: true }), L('season_schedule', { order: 'day', asc: true }), L('season_staff', { order: 'created_at', asc: true }), L('season_posts', { order: 'publish_at' }), L('season_reactions', {}), L('season_attendance', { order: 'day' }), L('season_period_att', { order: 'at' }), L('season_staff_att', { order: 'day' })]);
-  SN.members = m; SN.points = p; SN.coins = c; SN.items = it; SN.sched = sc; SN.staff = st; SN.posts = po.sort((x, y) => String(y.publish_at).localeCompare(String(x.publish_at))); SN.reacts = rx; SN.att = at; SN.patt = pa; SN.statt = sa;
+  const [m, p, c, it, sc, st, po, rx, at, pa, sa, cm, mo, ex, rg, ev, lg, mt, ce] = await Promise.all([L('season_members', { order: 'no', asc: true }), L('season_points', { order: 'created_at' }), L('season_coins', { order: 'created_at' }),
+    L('season_items', { order: 'sort', asc: true }), L('season_schedule', { order: 'day', asc: true }), L('season_staff', { order: 'created_at', asc: true }), L('season_posts', { order: 'publish_at' }), L('season_reactions', {}), L('season_attendance', { order: 'day' }), L('season_period_att', { order: 'at' }), L('season_staff_att', { order: 'day' }), L('season_committees', { order: 'sort', asc: true }), L('season_money', { order: 'created_at', asc: true }), L('season_excuses', { order: 'day', asc: true }), L('season_regs', { order: 'created_at', asc: true }), L('season_evals', { order: 'created_at', asc: true }), L('season_leagues', { order: 'created_at', asc: true }), L('season_matches', { order: 'round', asc: true }), L('season_certs', { order: 'created_at', asc: true })]);
+  SN.members = m; SN.points = p; SN.coins = c; SN.items = it; SN.sched = sc; SN.staff = st; SN.posts = po.sort((x, y) => String(y.publish_at).localeCompare(String(x.publish_at))); SN.reacts = rx; SN.att = at; SN.patt = pa; SN.statt = sa; SN.coms = cm; SN.money = mo; SN.excuses = ex; SN.regs = rg; SN.evals = ev; SN.leagues = lg; SN.matches = mt; SN.certs = ce;
 }
 const snSeason = () => SN.seasons.find(s => s.id === SN.cur) || null;
 const snTeams = () => (snSeason() || {}).teams || [];
@@ -46,7 +46,7 @@ function snPaint() {
       <div class="card sn-start">${rEmpty('trophy', 'ابدأ موسمك الأوّل: اكتب اسمه وتاريخه، ثمّ أضف المشاركين ووزّعهم على الفرق بضغطة.', `<button class="btn btn-gold" onclick="snNewSeason()"><i data-lucide="plus"></i> موسم جديد</button>`)}</div></div>`;
     refreshIcons(); return;
   }
-  const tabs = [{ id: 'teams', name: 'الفرق' }, { id: 'city', name: 'المدينة' }, { id: 'members', name: 'المشاركون' }, { id: 'att', name: 'الحضور' }, { id: 'points', name: 'النقاط' }, { id: 'bank', name: 'البنك' }, { id: 'store', name: 'المتجر' }, { id: 'sched', name: 'الجدول' }, { id: 'staff', name: 'المشرفون' }, { id: 'news', name: 'الأخبار' }, { id: 'surveys', name: 'الاستبيانات' }];
+  const tabs = [{ id: 'teams', name: 'الفرق' }, { id: 'city', name: 'المدينة' }, { id: 'league', name: 'الدوري' }, { id: 'members', name: 'المشاركون' }, { id: 'att', name: 'الحضور' }, { id: 'points', name: 'النقاط' }, { id: 'bank', name: 'البنك' }, { id: 'store', name: 'المتجر' }, { id: 'sched', name: 'الجدول' }, { id: 'staff', name: 'المشرفون' }, { id: 'coms', name: 'اللجان والماليّة' }, { id: 'reg', name: 'التسجيل' }, { id: 'close', name: 'التقييم والإغلاق' }, { id: 'news', name: 'الأخبار' }, { id: 'surveys', name: 'الاستبيانات' }];
   main.innerHTML = `<div class="r-page sn">
     <div class="page-head"><div><h1>${esc(s.name)}</h1><p class="r-sub">${SN_PHASES[s.phase] || ''}${s.start_date ? ' · ' + fmtD(s.start_date) + (s.end_date ? ' — ' + fmtD(s.end_date) : '') : ''}</p>
       ${s.code ? `<button type="button" class="sn-code" onclick="snShareCode()"><i data-lucide="smartphone"></i> «جوّالي» للمشاركين — رمز الموسم <b dir="ltr">${esc(s.code)}</b></button>` : ''}</div>
@@ -57,7 +57,7 @@ function snPaint() {
 }
 function snGo(t) { SN.tab = t; snPaint(); }
 async function snPick(id) { SN.cur = id; await snLoad(); snPaint(); }
-function snBody() { return ({ city: snCityView, att: snAttView, surveys: snSvView, news: snNewsView, staff: snStaffView, members: snMembersView, points: snPointsView, bank: snBankView, store: snStoreView, sched: snSchedView }[SN.tab] || snTeamsView)(); }
+function snBody() { return ({ league: snLeagueView, close: snCloseView, coms: snComView, reg: snRegView, city: snCityView, att: snAttView, surveys: snSvView, news: snNewsView, staff: snStaffView, members: snMembersView, points: snPointsView, bank: snBankView, store: snStoreView, sched: snSchedView }[SN.tab] || snTeamsView)(); }
 
 /* ═════════ الفرق ═════════ */
 function snTeamsView() {
@@ -253,13 +253,13 @@ function snEditSeason(isNew) {
     <div class="field"><label>عملات الحضور (تُمنح تلقائياً عند تسجيل حضور الطالب)</label><input id="sns_attc" type="number" min="0" max="50" inputmode="numeric" value="${esc((s.settings || {}).attend_coins || 0)}"><div class="r-hint">٠ = بلا عملات. الحضور يُسجَّل مرّة في اليوم.</div></div>
     <label class="r-check"><input type="checkbox" id="sns_xfer"${(s.settings || {}).transfers === false ? '' : ' checked'}> السماح بالحوالات بين المشاركين في «البنك» (١–١٠٠ عملة، ٥ في اليوم)</label>
     ${isNew && SN.seasons.length ? `<div class="field"><label>تسليم الموسم — انسخ من «${esc((snSeason() || {}).name || '')}»</label>
-      ${[['sns_copy', 'الفرق (الأسماء والألوان)'], ['sns_c_items', 'أصناف المتجر وأسعارها'], ['sns_c_sched', 'الجدول (يُزاح لتاريخ البداية الجديد)'], ['sns_c_surv', 'الاستبيانات (مسوّدات)'], ['sns_c_staff', 'المشرفون وصلاحيّاتهم (برموز جديدة)']].map(([k, n]) => `<label class="r-check"><input type="checkbox" id="${k}" checked> ${n}</label>`).join('')}
+      ${[['sns_copy', 'الفرق (الأسماء والألوان)'], ['sns_c_items', 'أصناف المتجر وأسعارها'], ['sns_c_sched', 'الجدول (يُزاح لتاريخ البداية الجديد)'], ['sns_c_surv', 'الاستبيانات (مسوّدات)'], ['sns_c_coms', 'اللجان وخططها (بلا الماليّة)'], ['sns_c_staff', 'المشرفون وصلاحيّاتهم (برموز جديدة)']].map(([k, n]) => `<label class="r-check"><input type="checkbox" id="${k}" checked> ${n}</label>`).join('')}
       <div class="r-hint">الدفعة الجديدة تبدأ من حيث انتهت السابقة — لا يضيع شيء مع تغيّر المتطوّعين.</div></div>` : ''}`, async () => {
       const stages = {}; document.querySelectorAll('.sn-stcol input[data-stage]').forEach(i => stages[i.dataset.stage] = i.value);
       const row = { name: fval('sns_name'), start_date: fval('sns_start') || null, end_date: fval('sns_end') || null, phase: fval('sns_phase'), settings: Object.assign({}, s.settings || {}, { city: fval('sns_city'), stages, kind: fval('sns_kind'), transfers: !!fval('sns_xfer'), attend_coins: Math.max(0, Math.min(50, parseInt(fval('sns_attc'), 10) || 0)) }) };
       if (row.name.length < 2) { rToast('اكتب اسم الموسم', 1); return; }
       try {
-        if (isNew) { const prev = snSeason(), cp = { items: fval('sns_c_items'), sched: fval('sns_c_sched'), surv: fval('sns_c_surv'), staff: fval('sns_c_staff') }, old = { items: SN.items.slice(), sched: SN.sched.slice(), staff: SN.staff.slice() };
+        if (isNew) { const prev = snSeason(), cp = { items: fval('sns_c_items'), sched: fval('sns_c_sched'), surv: fval('sns_c_surv'), staff: fval('sns_c_staff'), coms: fval('sns_c_coms') }, old = { items: SN.items.slice(), sched: SN.sched.slice(), staff: SN.staff.slice() };
           if (fval('sns_copy') && prev) row.teams = snTeams(); if (RUSO_DEMO || !RUSO_LIVE) row.code = snCode(); const n = await RDB.insert('seasons', row); SN.seasons.unshift(n); SN.cur = n.id; SN.tab = 'members';
           if (prev) await snHandover(prev, n, old, cp); await snLoad(); }
         else await snSaveSeason(row);
@@ -327,6 +327,11 @@ async function snHandover(prev, n, old, cp) {
     if (cp.items) for (const it of old.items) await RDB.insert('season_items', Object.assign({ season_id: n.id }, pick(it, ['name', 'price', 'stock', 'image_url', 'emoji', 'description', 'active', 'sort'])));
     if (cp.sched) for (const x of old.sched) await RDB.insert('season_schedule', Object.assign({ season_id: n.id }, pick(x, ['title', 'place', 'starts', 'ends', 'stage', 'kind', 'repeat_dow']), { day: x.repeat_dow != null && n.start_date ? n.start_date : mv(x.day) }));
     if (cp.surv) { const sv = await RDB.list('season_surveys', { eq: { season_id: prev.id } }).catch(() => []); for (const v of sv) { const r = Object.assign({ season_id: n.id, status: 'draft' }, pick(v, ['title', 'intro', 'audience', 'questions'])); if (snLocal()) r.token = Array.from({ length: 16 }, () => '0123456789abcdef'[Math.floor(Math.random() * 16)]).join(''); await RDB.insert('season_surveys', r); } }
+    /* حقيبة الموسم: المدينة والاقتصاد والتسجيل (بلا الرابط) والدروس تُورَّث، واللجان بخططها (المهامّ غير منجزة، بلا ماليّة) */
+    const K0 = prev.settings || {}, kit = {}; ['currency', 'story', 'daily', 'violations', 'customs', 'preorder', 'zones', 'periods', 'late'].forEach(k => { if (K0[k] !== undefined) kit[k] = K0[k]; });
+    if (K0.reg) kit.reg = Object.assign({}, K0.reg, { open: false, token: '' });
+    if (Object.keys(kit).length) { const ns = Object.assign({}, kit, n.settings || {}); Object.assign(n, await RDB.update('seasons', n.id, { settings: ns })); }
+    if (cp.coms) { const oc = await RDB.list('season_committees', { eq: { season_id: prev.id } }).catch(() => []); for (const c of oc) await RDB.insert('season_committees', { season_id: n.id, name: c.name, dept: c.dept, color: c.color, budget: c.budget, sort: c.sort, status: 'draft', plan: Object.assign({}, c.plan || {}, { tasks: ((c.plan || {}).tasks || []).map(t => ({ t: t.t })) }) }); }
     if (cp.staff) for (const x of old.staff) { const r = Object.assign({ season_id: n.id }, pick(x, ['name', 'role', 'stage', 'perms', 'active', 'phone'])); if (snLocal()) r.pin = String(Math.floor(Math.random() * 1e6)).padStart(6, '0'); await RDB.insert('season_staff', r); }
     rToast('سُلِّم الموسم — راجع الجدول والأسعار');
   } catch (e) { rToast('نُسخ جزء فقط: ' + (e.message || e), 1); }
@@ -615,9 +620,12 @@ function snStaffSheet(id) {
     <div class="field"><label>رصيده اليوميّ (يتجدّد كلّ يوم برنامج)</label><input id="sst_d" type="number" inputmode="numeric" min="0" max="5000" value="${esc(P.daily != null ? P.daily : '')}" placeholder="الافتراضيّ: ${esc(((snSeason() || {}).settings || {}).daily ? (snSeason().settings.daily.staff || 'بلا حدّ') : 'بلا حدّ')}"><div class="r-hint">فارغ = رصيد الموسم الافتراضيّ من «اقتصاد الموسم». ما لا يوزّعه يضيع، فيتحمّس لمنح الطلاب.</div></div>
     <label class="r-check"><input type="checkbox" id="sst_fi"${P.fine ? ' checked' : ''}> يسجّل المخالفات (لجنة الضبط والإرشاد)</label>
     <label class="r-check"><input type="checkbox" id="sst_cu"${P.customs ? ' checked' : ''}> يحصّل رسم «${esc((((snSeason() || {}).settings || {}).customs || {}).name || 'الجمارك')}»</label>
+    <label class="r-check"><input type="checkbox" id="sst_sp"${P.sports ? ' checked' : ''}> يسجّل نتائج الدوري (اللجنة الرياضيّة)</label>
+    <label class="r-check"><input type="checkbox" id="sst_ce"${P.certs ? ' checked' : ''}> يصدر شهادات الشكر (لجنة البرامج)</label>
+    <label class="r-check"><input type="checkbox" id="sst_ev"${P.eval ? ' checked' : ''}> يقيّم الفعاليّات (لجنة المتابعة والتقييم)</label>
     <label class="r-check"><input type="checkbox" id="sst_gu"${P.guests ? ' checked' : ''}> ينشئ «رمز ضيف» لمقدّمي الورش (لجنة البرامج)</label>
     <label class="r-check"><input type="checkbox" id="sst_a"${x.active ? ' checked' : ''}> مفعّل</label>`, async () => {
-      const row = { name: fval('sst_n'), phone: fval('sst_p'), role: fval('sst_r'), stage: fval('sst_g'), zone: fval('sst_z') || '', active: !!fval('sst_a'), perms: Object.assign({}, P, { coins: Math.max(1, Math.min(1000, parseInt(fval('sst_c'), 10) || 50)), points: !!fval('sst_pt'), sell: !!fval('sst_s'), store: !!fval('sst_st'), post: !!fval('sst_po'), fine: !!fval('sst_fi'), customs: !!fval('sst_cu'), guests: !!fval('sst_gu'), daily: fval('sst_d') === '' ? null : Math.max(0, Math.min(5000, parseInt(fval('sst_d'), 10) || 0)) }) };
+      const row = { name: fval('sst_n'), phone: fval('sst_p'), role: fval('sst_r'), stage: fval('sst_g'), zone: fval('sst_z') || '', active: !!fval('sst_a'), perms: Object.assign({}, P, { coins: Math.max(1, Math.min(1000, parseInt(fval('sst_c'), 10) || 50)), points: !!fval('sst_pt'), sell: !!fval('sst_s'), store: !!fval('sst_st'), post: !!fval('sst_po'), fine: !!fval('sst_fi'), customs: !!fval('sst_cu'), guests: !!fval('sst_gu'), eval: !!fval('sst_ev'), sports: !!fval('sst_sp'), certs: !!fval('sst_ce'), daily: fval('sst_d') === '' ? null : Math.max(0, Math.min(5000, parseInt(fval('sst_d'), 10) || 0)) }) };
       if (row.name.length < 2) { rToast('اكتب الاسم', 1); return; }
       try {
         if (id) Object.assign(x, await RDB.update('season_staff', id, row));
@@ -683,9 +691,10 @@ const SN_SV_AUD = { students: 'المشاركون', staff: 'المشرفون', p
 const SN_SV_T = { stars: 'تقييم بالنجوم', nps: 'هل تنصح؟ (٠–١٠)', choice: 'اختيار', text: 'نصّ حرّ' };
 const SN_SV_ST = { draft: ['مسودّة', '#8E8E93'], open: ['مفتوح', '#34C759'], closed: ['مغلق', '#FF9500'] };
 const snQ = (t, l, o) => Object.assign({ id: 'q' + Math.random().toString(36).slice(2, 7), t, l }, o ? { o } : {});
+const SN_SKILLS = ['العمل ضمن فريق', 'اتّخاذ القرار', 'إدارة الوقت', 'التحدّث أمام الآخرين', 'حلّ المشكلات', 'تحمّل المسؤوليّة'];
 const SN_SV_TPL = [
   { k: 'season', icon: 'sparkles', title: 'رضا المستفيدين عن الموسم', audience: 'students', intro: 'رأيك يصنع الموسم القادم — دقيقتان فقط.',
-    q: () => [snQ('stars', 'البرامج والأنشطة'), snQ('stars', 'المشرفون وتعاملهم'), snQ('stars', 'المكان والتنظيم'), snQ('stars', 'الضيافة والوجبات'),
+    q: () => [snQ('stars', 'البرامج والأنشطة'), snQ('stars', 'المشرفون وتعاملهم'), snQ('stars', 'المكان والتنظيم'), snQ('stars', 'الضيافة والوجبات'), snQ('stars', 'وضوح فكرة الموسم والمنافسة'), snQ('stars', 'وقت الفترات كافٍ'),
       snQ('choice', 'أكثر شيء أعجبك', ['الرحلات', 'المسابقات', 'الدورات والمهارات', 'الرياضة']), snQ('nps', 'هل تنصح صديقك بالتسجيل معنا؟'), snQ('text', 'ماذا تتمنّى في الموسم القادم؟')] },
   { k: 'activity', icon: 'calendar-check', title: 'تقييم برنامج أو نشاط', audience: 'students', intro: 'قيّم نشاط اليوم.',
     q: () => [snQ('stars', 'استمتعت بالنشاط'), snQ('stars', 'تعلّمت شيئاً جديداً'), snQ('choice', 'مدّة النشاط', ['قصيرة', 'مناسبة', 'طويلة']), snQ('text', 'ملاحظة أو اقتراح')] },
@@ -697,6 +706,17 @@ const SN_SV_TPL = [
       snQ('choice', 'هل ترغب بالمشاركة في الموسم القادم؟', ['نعم بالتأكيد', 'ربّما', 'لا']), snQ('text', 'ما الذي يجعل تجربتك أفضل؟')] },
   { k: 'needs', icon: 'compass', title: 'اهتمامات المشاركين (قبل الموسم)', audience: 'students', intro: 'ساعدنا نصمّم موسماً على ذوقك.',
     q: () => [snQ('choice', 'أيّ الأنشطة تفضّل؟', ['رياضيّة', 'ثقافيّة ومسابقات', 'مهارات وتقنية', 'رحلات وكشافة', 'تطوّع وخدمة مجتمع']), snQ('choice', 'أنسب وقت للبرامج', ['العصر', 'المغرب', 'بعد العشاء']), snQ('text', 'مهارة تتمنّى تتعلّمها')] },
+  /* من أدوات «مدينة القيم» الستّ: القياس القبليّ والبعديّ بنفس الأسئلة (للمقارنة في وثيقة الإغلاق)، والضيوف، والمشرفون بعد الإعداد */
+  { k: 'skills_pre', icon: 'gauge', title: 'القياس القبليّ للمهارات', audience: 'students', intro: 'قيّم نفسك بصدق قبل بداية الموسم — نعيد السؤال في آخره لنرى الفرق.',
+    q: () => SN_SKILLS.map(l => snQ('stars', l)) },
+  { k: 'skills_post', icon: 'trending-up', title: 'القياس البعديّ للمهارات', audience: 'students', intro: 'نفس أسئلة بداية الموسم — كيف ترى نفسك الآن؟',
+    q: () => SN_SKILLS.map(l => snQ('stars', l)) },
+  { k: 'guests', icon: 'presentation', title: 'رضا الضيوف ومقدّمي الورش', audience: 'parents', intro: 'شكراً لمشاركتك أبناءنا خبرتك — رأيك يحسّن استضافتنا.',
+    q: () => [snQ('stars', 'التواصل والتذكير قبل الموعد'), snQ('stars', 'وضوح الفكرة والمطلوب منك'), snQ('stars', 'الاستضافة'), snQ('stars', 'المكان والتجهيزات'),
+      snQ('choice', 'عدد الحضور', ['قليل', 'مناسب', 'كثير على القاعة']), snQ('text', 'ما الذي نحسّنه؟')] },
+  { k: 'prep', icon: 'clipboard-check', title: 'المشرفون بعد الإعداد', audience: 'staff', intro: 'قبل الانطلاق: كيف كانت مرحلة التجهيز؟',
+    q: () => [snQ('stars', 'وضوح خطّة لجنتك'), snQ('stars', 'تعاون أعضاء اللجنة'), snQ('stars', 'كفاية وقت التجهيز'), snQ('stars', 'التواصل مع الإدارة'),
+      snQ('choice', 'أبرز عائق', ['تأخّر ردود الأعضاء', 'وقت الاختبارات', 'الميزانيّة', 'المكان', 'لا عوائق']), snQ('text', 'اقتراحك قبل الانطلاق')] },
   { k: 'blank', icon: 'file-plus', title: 'استبيان فارغ', audience: 'students', intro: '', q: () => [snQ('stars', 'سؤالك الأوّل')] }];
 
 async function snSvLoad() {
