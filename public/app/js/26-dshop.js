@@ -7,7 +7,7 @@
  */
 let DSH={orders:null,products:null,dl:null,views:null,codes:null,kit:null,soon:null,err:null,loading:false,filter:'paid',q:''};
 // «قريباً» في /shop/#soon — نفس مفاتيح shopSoon في src/lib/shop.ts (مفتاح غير معروف يظهر كما هو)
-const DSH_SOON={'course-lessons-broadcast':'دورة بث وتصوير الدروس العلمية','lessons-publish':'نشر الدروس العلمية','ai-dev-course':'دورة التطوير بالذكاء الاصطناعي'};
+const DSH_SOON={'course-lessons-broadcast':'دورة بث وتصوير الدروس العلمية','lessons-publish':'نشر الدروس العلمية','ai-dev-course':'دورة التطوير بالذكاء الاصطناعي','tahsili-3d':'تحصيلي 3D (قائمة الانتظار)'};
 const DSH_ST={paid:['مدفوع','#22c55e'],pending:['بانتظار الدفع','#f59e0b'],failed:['فشل','#ef4444'],cancelled:['أُلغي','#64748b']};
 const DSH_FN='https://rrerwhhxrjyzmnnjsfev.supabase.co/functions/v1/shop';
 

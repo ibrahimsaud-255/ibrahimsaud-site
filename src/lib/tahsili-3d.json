@@ -1,0 +1,2261 @@
+[
+{
+"slug": "sponge-cnidarian",
+"title": "الإسفنج وقنديل البحر: جدول المقارنة حيًّا",
+"subject": "biology",
+"grade": 10,
+"unit": "الإسفنجيات واللاسعات",
+"glossary": false,
+"href": "sponge-cnidarian/"
+},
+{
+"slug": "bacteria-lab",
+"title": "البكتيريا: الاقتران والأبواغ ومقاومة المضادات",
+"subject": "biology",
+"grade": 10,
+"unit": "البكتيريا",
+"glossary": false,
+"href": "bacteria-lab/"
+},
+{
+"slug": "mutualism-partners",
+"title": "شركاء المنفعة: البكتيريا والفطريات مع النبات والإنسان",
+"subject": "biology",
+"grade": 10,
+"unit": "البكتيريا",
+"glossary": false,
+"href": "mutualism-partners/"
+},
+{
+"slug": "six-kingdoms",
+"title": "ممالك الحياة الست",
+"subject": "biology",
+"grade": 10,
+"unit": "التصنيف الحديث",
+"glossary": false,
+"href": "six-kingdoms/"
+},
+{
+"slug": "insect-metamorphosis",
+"title": "التحول الكامل والتحول الناقص",
+"subject": "biology",
+"grade": 10,
+"unit": "الحشرات وأشباهها",
+"glossary": false,
+"href": "insect-metamorphosis/"
+},
+{
+"slug": "insect-metamorphosis-complete",
+"title": "التحول الكامل: دورة الفراشة",
+"subject": "biology",
+"grade": 10,
+"unit": "الحشرات وأشباهها",
+"glossary": false,
+"href": "insect-metamorphosis/?m=complete"
+},
+{
+"slug": "insect-metamorphosis-incomplete",
+"title": "التحول غير الكامل: دورة الجرادة",
+"subject": "biology",
+"grade": 10,
+"unit": "الحشرات وأشباهها",
+"glossary": false,
+"href": "insect-metamorphosis/?m=incomplete"
+},
+{
+"slug": "earthworm-anatomy",
+"title": "دودة الأرض: حلقات وهيكل مائي",
+"subject": "biology",
+"grade": 10,
+"unit": "الديدان الحلقية",
+"glossary": false,
+"href": "earthworm-anatomy/"
+},
+{
+"slug": "planaria-regeneration",
+"title": "البلاناريا: التجديد والخلايا اللهبية",
+"subject": "biology",
+"grade": 10,
+"unit": "الديدان المفلطحة",
+"glossary": false,
+"href": "planaria-regeneration/"
+},
+{
+"slug": "schistosoma-cycle",
+"title": "البلهارسيا: عائلان وماء عذب",
+"subject": "biology",
+"grade": 10,
+"unit": "الديدان المفلطحة",
+"glossary": false,
+"href": "schistosoma-cycle/"
+},
+{
+"slug": "mollusk-anatomy",
+"title": "داخل الرخويات",
+"subject": "biology",
+"grade": 10,
+"unit": "الرخويات",
+"glossary": false,
+"href": "mollusk-anatomy/"
+},
+{
+"slug": "prion-fold",
+"title": "البريونات: بروتين يُطوى خطأ",
+"subject": "biology",
+"grade": 10,
+"unit": "الفيروسات والبريونات",
+"glossary": false,
+"href": "prion-fold/"
+},
+{
+"slug": "virus-replication",
+"title": "دورة تكاثر الفيروس: التحلّل والاندماج",
+"subject": "biology",
+"grade": 10,
+"unit": "الفيروسات والبريونات",
+"glossary": false,
+"href": "virus-replication/"
+},
+{
+"slug": "virus-replication-hiv",
+"title": "الفيروسات الارتجاعية: فيروس الإيدز",
+"subject": "biology",
+"grade": 10,
+"unit": "الفيروسات والبريونات",
+"glossary": false,
+"href": "virus-replication/?m=hiv"
+},
+{
+"slug": "taxonomy-ladder",
+"title": "فئات التصنيف: صناديق داخل صناديق",
+"subject": "biology",
+"grade": 10,
+"unit": "تاريخ التصنيف",
+"glossary": false,
+"href": "six-kingdoms/?m=ranks"
+},
+{
+"slug": "alternation-generations",
+"title": "تعاقب الأجيال: خس البحر",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوع الطلائعيات",
+"glossary": false,
+"href": "alternation-generations/"
+},
+{
+"slug": "protist-lab",
+"title": "مختبر الطلائعيات",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوع الطلائعيات",
+"glossary": false,
+"href": "protist-lab/"
+},
+{
+"slug": "fairy-ring",
+"title": "الحلقات المخفية: الفطر تحت الأرض",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوع الفطريات وبيئتها",
+"glossary": false,
+"href": "fairy-ring/"
+},
+{
+"slug": "fungi-reproduction",
+"title": "تكاثر الفطريات: عفن الخبز والفطريات الكيسية والمشروم",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوع الفطريات وبيئتها",
+"glossary": false,
+"href": "fungi-reproduction/"
+},
+{
+"slug": "spider-web",
+"title": "كيف يبني العنكبوت شبكته؟",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوع المفصليات",
+"glossary": false,
+"href": "spider-web/"
+},
+{
+"slug": "malaria-cycle",
+"title": "الملاريا: طفيل بين عائلين",
+"subject": "biology",
+"grade": 10,
+"unit": "تنوّع الطلائعيات",
+"glossary": false,
+"href": "malaria-cycle/"
+},
+{
+"slug": "embryo-gastrulation",
+"title": "من البيضة المخصبة إلى الجاسترولا",
+"subject": "biology",
+"grade": 10,
+"unit": "خصائص الحيوانات",
+"glossary": false,
+"href": "embryo-gastrulation/"
+},
+{
+"slug": "arthropod-breathing",
+"title": "كيف تتنفس المفصليات؟",
+"subject": "biology",
+"grade": 10,
+"unit": "خصائص المفصليات",
+"glossary": false,
+"href": "arthropod-breathing/"
+},
+{
+"slug": "arthropod-breathing-booklungs",
+"title": "الرئات الكتبية: كيف يتنفس العنكبوت؟",
+"subject": "biology",
+"grade": 10,
+"unit": "خصائص المفصليات",
+"glossary": false,
+"href": "arthropod-breathing/?m=booklungs"
+},
+{
+"slug": "arthropod-breathing-gills",
+"title": "الخياشيم: كيف يتنفس جراد البحر في الماء؟",
+"subject": "biology",
+"grade": 10,
+"unit": "خصائص المفصليات",
+"glossary": false,
+"href": "arthropod-breathing/?m=gills"
+},
+{
+"slug": "arthropod-breathing-tracheae",
+"title": "القصبات الهوائية: كيف يصل الهواء إلى عضلات الخنفساء؟",
+"subject": "biology",
+"grade": 10,
+"unit": "خصائص المفصليات",
+"glossary": false,
+"href": "arthropod-breathing/?m=tracheae"
+},
+{
+"slug": "wing-homology",
+"title": "جناح الخفاش: يشبه يد الإنسان أم جناح الطائر؟",
+"subject": "biology",
+"grade": 10,
+"unit": "طبيعة العلم وطرائقه",
+"glossary": false,
+"href": "wing-homology/"
+},
+{
+"slug": "protostome-deuterostome",
+"title": "بدائية الفم وثانوية الفم",
+"subject": "biology",
+"grade": 10,
+"unit": "مستويات بناء جسم الحيوان",
+"glossary": false,
+"href": "embryo-gastrulation/?m=mouth"
+},
+{
+"slug": "photoperiod-flowering",
+"title": "الفترة الضوئية: متى يزهر النبات؟",
+"subject": "biology",
+"grade": 11,
+"unit": "الأزهار",
+"glossary": false,
+"href": "photoperiod-flowering/"
+},
+{
+"slug": "fin-to-limb",
+"title": "من الزعنفة إلى الطرف",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "wing-homology/?g=11"
+},
+{
+"slug": "fish-explorer",
+"title": "السمكة العظمية: الزعانف والقشور والعوم والحركة",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "fish-explorer/"
+},
+{
+"slug": "gill-countercurrent",
+"title": "الخياشيم والتيار المعاكس",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "gill-countercurrent/"
+},
+{
+"slug": "jaws-from-arches",
+"title": "من الأقواس الخيشومية إلى الفكوك",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "jaws-from-arches/"
+},
+{
+"slug": "vertebrate-brains",
+"title": "أدمغة الفقاريات: من السمكة إلى الثديي",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "vertebrate-brains/"
+},
+{
+"slug": "vertebrate-hearts",
+"title": "من قلب السمكة إلى قلب الثديي",
+"subject": "biology",
+"grade": 11,
+"unit": "الأسماك",
+"glossary": false,
+"href": "vertebrate-hearts/"
+},
+{
+"slug": "calvin-cycle",
+"title": "حلقة كالفن",
+"subject": "biology",
+"grade": 11,
+"unit": "البناء الضوئي",
+"glossary": false,
+"href": "calvin-cycle/"
+},
+{
+"slug": "chloroplast-light",
+"title": "التفاعلات الضوئية: من الضوء إلى ATP",
+"subject": "biology",
+"grade": 11,
+"unit": "البناء الضوئي",
+"glossary": false,
+"href": "chloroplast-light/"
+},
+{
+"slug": "cell-structure-g11",
+"title": "العضيات وخطّ إنتاج البروتين",
+"subject": "biology",
+"grade": 11,
+"unit": "التراكيب الخلوية والعضيات",
+"glossary": false,
+"href": "cell-structure-g11/"
+},
+{
+"slug": "digestive-compare",
+"title": "أجهزة هضمية مختلفة لأغذية مختلفة",
+"subject": "biology",
+"grade": 11,
+"unit": "التغذية والهضم في الفقاريات",
+"glossary": false,
+"href": "digestive-compare/"
+},
+{
+"slug": "cellular-respiration",
+"title": "التنفس الخلوي",
+"subject": "biology",
+"grade": 11,
+"unit": "التنفس الخلوي",
+"glossary": false,
+"href": "cellular-respiration/"
+},
+{
+"slug": "amniotic-egg",
+"title": "البيضة الرهلية: بركة على اليابسة",
+"subject": "biology",
+"grade": 11,
+"unit": "الزواحف",
+"glossary": false,
+"href": "amniotic-egg/"
+},
+{
+"slug": "dino-hips",
+"title": "ورك الديناصورات: إلى الأمام أم إلى الخلف؟",
+"subject": "biology",
+"grade": 11,
+"unit": "الزواحف",
+"glossary": false,
+"href": "dino-hips/"
+},
+{
+"slug": "reptile-thermoregulation",
+"title": "السحلية تنظّم حرارتها بسلوكها",
+"subject": "biology",
+"grade": 11,
+"unit": "الزواحف",
+"glossary": false,
+"href": "reptile-thermoregulation/"
+},
+{
+"slug": "snake-senses-jaws",
+"title": "الأفعى: لسانٌ يشمّ وفكٌّ يتمدّد",
+"subject": "biology",
+"grade": 11,
+"unit": "الزواحف",
+"glossary": false,
+"href": "snake-senses-jaws/"
+},
+{
+"slug": "bird-air-sacs",
+"title": "تنفّس الطائر: الهواء في اتجاه واحد",
+"subject": "biology",
+"grade": 11,
+"unit": "الطيور",
+"glossary": false,
+"href": "bird-air-sacs/"
+},
+{
+"slug": "bird-flight-adaptations",
+"title": "تكيّفات الطيران: الريش والعظام",
+"subject": "biology",
+"grade": 11,
+"unit": "الطيور",
+"glossary": false,
+"href": "bird-flight-adaptations/"
+},
+{
+"slug": "chordates-tree-g11",
+"title": "صفات الحبليات الأربع واللافقاريات الحبلية",
+"subject": "biology",
+"grade": 11,
+"unit": "اللافقاريات الحبلية",
+"glossary": false,
+"href": "chordates-tree/?g=11"
+},
+{
+"slug": "double-fertilization",
+"title": "الإخصاب المزدوج: من البوغ الكبير إلى البذرة",
+"subject": "biology",
+"grade": 11,
+"unit": "النباتات الزهرية",
+"glossary": false,
+"href": "double-fertilization/"
+},
+{
+"slug": "body-thermostat-g11",
+"title": "الأوعية الدموية تحفظ حرارة الثديي",
+"subject": "biology",
+"grade": 11,
+"unit": "خصائص الثدييات",
+"glossary": false,
+"href": "body-thermostat-g11/"
+},
+{
+"slug": "sea-urchin",
+"title": "قنفذ البحر: الجهاز الوعائي المائي ومصباح أرسطو",
+"subject": "biology",
+"grade": 11,
+"unit": "خصائص شوكيات الجلد",
+"glossary": false,
+"href": "sea-urchin/"
+},
+{
+"slug": "plant-growth-meristems",
+"title": "الأنسجة المولّدة: النمو في الطول والقطر",
+"subject": "biology",
+"grade": 11,
+"unit": "خلايا النبات وأنسجته",
+"glossary": false,
+"href": "plant-growth-meristems/"
+},
+{
+"slug": "xylem-phloem",
+"title": "أنابيب النبات: الخشب واللحاء",
+"subject": "biology",
+"grade": 11,
+"unit": "خلايا النبات وأنسجته",
+"glossary": false,
+"href": "xylem-phloem/"
+},
+{
+"slug": "lipids-membrane-bio",
+"title": "الدهون: المشبعة وغير المشبعة والدهون المفسفرة",
+"subject": "biology",
+"grade": 11,
+"unit": "كيمياء الخلية",
+"glossary": false,
+"href": "lipids-membrane/?subj=bio"
+},
+{
+"slug": "auxin-acid-growth",
+"title": "الأكسين: كيف تستطيل خلية النبات؟",
+"subject": "biology",
+"grade": 11,
+"unit": "هرمونات النباتات واستجاباتها",
+"glossary": false,
+"href": "auxin-acid-growth/"
+},
+{
+"slug": "tissue-types",
+"title": "أنسجة الجسم الأربعة",
+"subject": "biology",
+"grade": 12,
+"unit": "أنسجة الجسم",
+"glossary": false,
+"href": "tissue-types/"
+},
+{
+"slug": "sarcomere-contraction",
+"title": "انقباض العضلة: نظريّة الخيوط المنزلقة",
+"subject": "biology",
+"grade": 12,
+"unit": "أنواع العضلات في جسم الإنسان",
+"glossary": false,
+"href": "sarcomere-contraction/"
+},
+{
+"slug": "blood-sugar-balance",
+"title": "ميزان سكر الدم: الإنسولين والجلوكاجون",
+"subject": "biology",
+"grade": 12,
+"unit": "البنكرياس",
+"glossary": false,
+"href": "blood-sugar-balance/"
+},
+{
+"slug": "brain-cns",
+"title": "الجهاز العصبي المركزي: الدماغ والحبل الشوكي",
+"subject": "biology",
+"grade": 12,
+"unit": "الجهاز العصبي المركزي",
+"glossary": false,
+"href": "brain-cns/"
+},
+{
+"slug": "digestive-journey-g12",
+"title": "رحلة اللقمة: البلعوم والأمعاء الغليظة بأجزائها",
+"subject": "biology",
+"grade": 12,
+"unit": "الجهاز الهضمي",
+"glossary": false,
+"href": "digestive-journey/?g=12"
+},
+{
+"slug": "skeleton-explorer",
+"title": "الهيكل العظمي: المحوري والطرفي",
+"subject": "biology",
+"grade": 12,
+"unit": "الهيكل العظمي المحوري",
+"glossary": false,
+"href": "skeleton-explorer/"
+},
+{
+"slug": "skin-functions",
+"title": "الجلد: درعٌ وحسّاسٌ ومكيّف",
+"subject": "biology",
+"grade": 12,
+"unit": "بنية جلد الإنسان",
+"glossary": false,
+"href": "skin-functions/"
+},
+{
+"slug": "kidney-nephron-g12",
+"title": "الكلية من الداخل: الأهرام والكؤوس والحالب",
+"subject": "biology",
+"grade": 12,
+"unit": "تركيب الجهاز البولي",
+"glossary": false,
+"href": "kidney-nephron/?g=12"
+},
+{
+"slug": "endocrine-map",
+"title": "خريطة الغدد الصماء: رسائل في الدم",
+"subject": "biology",
+"grade": 12,
+"unit": "علم الغدد الصماء",
+"glossary": false,
+"href": "endocrine-map/"
+},
+{
+"slug": "microscope-scale",
+"title": "من الطفل إلى الذرة: المجهر وقوّة التمييز",
+"subject": "biology",
+"grade": 12,
+"unit": "علم وظائف الأعضاء والتشريح",
+"glossary": false,
+"href": "microscope-scale/"
+},
+{
+"slug": "neuron-reflex",
+"title": "العصبون: من عضو الإحساس إلى عضو الاستجابة",
+"subject": "biology",
+"grade": 12,
+"unit": "مقدمة عن الجهاز العصبي",
+"glossary": false,
+"href": "neuron-reflex/"
+},
+{
+"slug": "lymph-node",
+"title": "من السائل البيني إلى العقدة اللمفاوية",
+"subject": "biology",
+"grade": 12,
+"unit": "مكونات الجهاز اللمفاوي",
+"glossary": false,
+"href": "lymph-node/"
+},
+{
+"slug": "digestive-accessories",
+"title": "ملحقات القناة الهضمية: الكبد والمرارة والبنكرياس",
+"subject": "biology",
+"grade": 12,
+"unit": "ملحقات القناة الهضمية",
+"glossary": false,
+"href": "digestive-accessories/"
+},
+{
+"slug": "circulation-system-g12",
+"title": "الدورتان وضغط الدم",
+"subject": "biology",
+"grade": 12,
+"unit": "وظائف الجهاز الدوري والقلب",
+"glossary": false,
+"href": "circulation-system/?g=12"
+},
+{
+"slug": "radiation-types",
+"title": "أنواع الإشعاع: ألفا وبيتا وجاما",
+"subject": "chemistry",
+"grade": 10,
+"unit": "الأنوية غير المستقرة والتحلل الإشعاعي",
+"glossary": false,
+"href": "radiation-types/"
+},
+{
+"slug": "equation-balancing",
+"title": "وزن المعادلات الكيميائية بالجسيمات",
+"subject": "chemistry",
+"grade": 10,
+"unit": "التفاعلات والمعادلات",
+"glossary": false,
+"href": "equation-balancing/"
+},
+{
+"slug": "elements-compounds-mixtures-g10",
+"title": "تصنيف المادة وقانون النسب الثابتة",
+"subject": "chemistry",
+"grade": 10,
+"unit": "العناصر والمركبات",
+"glossary": false,
+"href": "elements-compounds-mixtures/?g=10"
+},
+{
+"slug": "electron-configuration",
+"title": "التوزيع الإلكتروني: سلّم مستويات الطاقة",
+"subject": "chemistry",
+"grade": 10,
+"unit": "تعريف الذرة",
+"glossary": false,
+"href": "electron-configuration/"
+},
+{
+"slug": "millikan-oil-drop",
+"title": "تجربة قطرة الزيت: شحنة الإلكترون وكتلته",
+"subject": "chemistry",
+"grade": 10,
+"unit": "تعريف الذرة",
+"glossary": false,
+"href": "millikan-oil-drop/"
+},
+{
+"slug": "ozone-layer",
+"title": "الغلاف الجوي وطبقة الأوزون",
+"subject": "chemistry",
+"grade": 10,
+"unit": "قصة مادتين",
+"glossary": false,
+"href": "ozone-layer/"
+},
+{
+"slug": "mole-concept",
+"title": "المول: عدد أفوجادرو تراه بعينيك",
+"subject": "chemistry",
+"grade": 10,
+"unit": "قياس المادة",
+"glossary": false,
+"href": "mole-concept/"
+},
+{
+"slug": "mass-spectrometer",
+"title": "مطياف الكتلة: كيف تعمل الأشياء؟",
+"subject": "chemistry",
+"grade": 10,
+"unit": "كيف تختلف الذرات",
+"glossary": false,
+"href": "mass-spectrometer/"
+},
+{
+"slug": "alkane-series",
+"title": "السلسلة المتماثلة والتسمية",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الألكانات",
+"glossary": false,
+"href": "alkane-series/"
+},
+{
+"slug": "peptide-protein",
+"title": "من الحمض الأميني إلى البروتين: الرابطة الببتيدية",
+"subject": "chemistry",
+"grade": 11,
+"unit": "البروتينات",
+"glossary": false,
+"href": "peptide-protein/"
+},
+{
+"slug": "polymerization",
+"title": "البلمرة بالإضافة وبالتكثف",
+"subject": "chemistry",
+"grade": 11,
+"unit": "البوليمرات",
+"glossary": false,
+"href": "polymerization/"
+},
+{
+"slug": "specific-heat-calorimeter",
+"title": "المسعر والحرارة النوعية: ما هذا الفلز؟",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الحرارة",
+"glossary": false,
+"href": "calorimeter/"
+},
+{
+"slug": "le-chatelier-piston",
+"title": "مبدأ لوتشاتلييه: اضغط المكبس فيتكوّن المزيد من الميثان",
+"subject": "chemistry",
+"grade": 11,
+"unit": "العوامل المؤثرة في الاتزان الكيميائي",
+"glossary": false,
+"href": "le-chatelier-piston/"
+},
+{
+"slug": "functional-groups",
+"title": "المجموعات الوظيفية: بدّل ذرة واحدة فيتغيّر المركّب",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الكحولات والإيثرات والأمينات",
+"glossary": false,
+"href": "functional-groups/"
+},
+{
+"slug": "sugars-polysaccharides",
+"title": "السكريات: من الجلوكوز إلى النشا والسليلوز",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الكربوهيدرات",
+"glossary": false,
+"href": "sugars-polysaccharides/"
+},
+{
+"slug": "lipids-membrane",
+"title": "الأحماض الدهنية والطبقة الفوسفوليبيدية المزدوجة",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الليبيدات",
+"glossary": false,
+"href": "lipids-membrane/"
+},
+{
+"slug": "benzene-aromatic",
+"title": "البنزين: من حلم كيكولي إلى الحلقات الملتحمة",
+"subject": "chemistry",
+"grade": 11,
+"unit": "الهيدروكربونات الأروماتية",
+"glossary": false,
+"href": "benzene-aromatic/"
+},
+{
+"slug": "equilibrium-ammonia",
+"title": "الاتزان الديناميكي: الأمونيا",
+"subject": "chemistry",
+"grade": 11,
+"unit": "حالة الاتزان الديناميكي",
+"glossary": false,
+"href": "equilibrium-ammonia/"
+},
+{
+"slug": "collision-theory",
+"title": "نظرية التصادم وطاقة التنشيط",
+"subject": "chemistry",
+"grade": 11,
+"unit": "سرعة التفاعلات الكيميائية",
+"glossary": false,
+"href": "collision-theory/"
+},
+{
+"slug": "reaction-rate-flasks",
+"title": "متوسط سرعة التفاعل: الدوارق الأربعة والساعة",
+"subject": "chemistry",
+"grade": 11,
+"unit": "سرعة التفاعلات الكيميائية",
+"glossary": false,
+"href": "reaction-rate-flasks/"
+},
+{
+"slug": "chirality-mirror",
+"title": "الكيرالية والضوء المستقطب",
+"subject": "chemistry",
+"grade": 11,
+"unit": "متشكلات الهيدروكربونات",
+"glossary": false,
+"href": "chirality-mirror/"
+},
+{
+"slug": "isomers-lab",
+"title": "المتشكّلات البنائية والهندسية",
+"subject": "chemistry",
+"grade": 11,
+"unit": "متشكلات الهيدروكربونات",
+"glossary": false,
+"href": "isomers-lab/"
+},
+{
+"slug": "fractional-distillation",
+"title": "برج التقطير التجزيئي",
+"subject": "chemistry",
+"grade": 11,
+"unit": "مقدمة إلى الهيدروكربونات",
+"glossary": false,
+"href": "fractional-distillation/"
+},
+{
+"slug": "hydrocarbon-models",
+"title": "نماذج الجزيء والروابط المضاعفة",
+"subject": "chemistry",
+"grade": 11,
+"unit": "مقدمة إلى الهيدروكربونات",
+"glossary": false,
+"href": "hydrocarbon-models/"
+},
+{
+"slug": "colloids-lab",
+"title": "المخاليط الغروية: لماذا لا يترسّب الحليب؟",
+"subject": "chemistry",
+"grade": 12,
+"unit": "أنواع المخاليط",
+"glossary": false,
+"href": "colloids-lab/"
+},
+{
+"slug": "terms-s3-chem-acids",
+"title": "مصطلحات: الأحماض والقواعد",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الأحماض والقواعد",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-chem-acids"
+},
+{
+"slug": "terms-s3-chem-redox",
+"title": "مصطلحات: الأكسدة والاختزال",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الأكسدة والاختزال",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-chem-redox"
+},
+{
+"slug": "battery-cutaways",
+"title": "داخل البطاريات: من عمود فولتا إلى الليثيوم",
+"subject": "chemistry",
+"grade": 12,
+"unit": "البطاريات",
+"glossary": false,
+"href": "battery-cutaways/"
+},
+{
+"slug": "corrosion-protection",
+"title": "تآكل الحديد وطرائق حمايته",
+"subject": "chemistry",
+"grade": 12,
+"unit": "البطاريات",
+"glossary": false,
+"href": "corrosion-protection/"
+},
+{
+"slug": "fuel-cell",
+"title": "خلية الوقود: كهرباء لا تنفد ما دام الوقود",
+"subject": "chemistry",
+"grade": 12,
+"unit": "البطاريات",
+"glossary": false,
+"href": "fuel-cell/"
+},
+{
+"slug": "pacemaker",
+"title": "منظم ضربات القلب: بطارية في الصدر",
+"subject": "chemistry",
+"grade": 12,
+"unit": "البطاريات",
+"glossary": false,
+"href": "pacemaker/"
+},
+{
+"slug": "electrolysis-cells",
+"title": "التحليل الكهربائي",
+"subject": "chemistry",
+"grade": 12,
+"unit": "التحليل الكهربائي",
+"glossary": false,
+"href": "electrolysis-cells/"
+},
+{
+"slug": "galvanic-cell",
+"title": "الخلية الجلفانية: الخارصين والنحاس",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الخلايا الجلفانية",
+"glossary": false,
+"href": "galvanic-cell/"
+},
+{
+"slug": "galvanic-cell-she",
+"title": "جهد الاختزال وقطب الهيدروجين القياسي",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الخلايا الجلفانية",
+"glossary": false,
+"href": "galvanic-cell/?m=she"
+},
+{
+"slug": "colligative-properties",
+"title": "الخواص الجامعة والملح على الجليد",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الخواص الجامعة للمحاليل",
+"glossary": false,
+"href": "colligative-properties/"
+},
+{
+"slug": "terms-s3-chem-electro",
+"title": "مصطلحات: الكيمياء الكهربائية",
+"subject": "chemistry",
+"grade": 12,
+"unit": "الكيمياء الكهربائية",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-chem-electro"
+},
+{
+"slug": "terms-s3-chem-solutions",
+"title": "مصطلحات: المخاليط والمحاليل",
+"subject": "chemistry",
+"grade": 12,
+"unit": "المخاليط والمحاليل",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-chem-solutions"
+},
+{
+"slug": "dilution-flask",
+"title": "تخفيف المحاليل: عدد المولات لا يتغيّر",
+"subject": "chemistry",
+"grade": 12,
+"unit": "تركيز المحلول",
+"glossary": false,
+"href": "dilution-flask/"
+},
+{
+"slug": "conjugate-pairs",
+"title": "برونستد–لوري: من يمنح أيون الهيدروجين؟",
+"subject": "chemistry",
+"grade": 12,
+"unit": "مقدمة في الأحماض والقواعد",
+"glossary": false,
+"href": "conjugate-pairs/"
+},
+{
+"slug": "congruent-triangles-sss-sas",
+"title": "السبورة المزدوجة والساعة: التطابق بـ SSS و SAS",
+"subject": "math",
+"grade": 10,
+"unit": "إثبات تطابق المثلثات SSS وSAS",
+"glossary": false,
+"href": "congruent-triangles/?m=sss-sas"
+},
+{
+"slug": "transversal-angles-scissors",
+"title": "المقصّ: الزوايا المتجاورة على مستقيم والمتقابلة بالرأس",
+"subject": "math",
+"grade": 10,
+"unit": "إثبات علاقات بين الزوايا",
+"glossary": false,
+"href": "transversal-angles/?m=scissors"
+},
+{
+"slug": "perpendicular-distance",
+"title": "البعد بين نقطة ومستقيم: الشاقول وأنبوب التصريف",
+"subject": "math",
+"grade": 10,
+"unit": "الأعمدة والمسافة",
+"glossary": false,
+"href": "perpendicular-distance/"
+},
+{
+"slug": "perpendicular-distance-parallel",
+"title": "البعد بين مستقيمين متوازيين: السلّم الممدود",
+"subject": "math",
+"grade": 10,
+"unit": "الأعمدة والمسافة",
+"glossary": false,
+"href": "perpendicular-distance/?m=parallel"
+},
+{
+"slug": "centroid-balance",
+"title": "مركز المثلث: طاولة على ساقٍ واحدة",
+"subject": "math",
+"grade": 10,
+"unit": "القطع المتوسطة والارتفاعات في المثلث",
+"glossary": false,
+"href": "centroid-balance/"
+},
+{
+"slug": "hinge-jack",
+"title": "الرافعة المقصّيّة: متباينة SAS",
+"subject": "math",
+"grade": 10,
+"unit": "المتباينات في مثلثين",
+"glossary": false,
+"href": "hinge-jack/"
+},
+{
+"slug": "congruent-triangles",
+"title": "المثلثات المتطابقة: تنطبق تماماً",
+"subject": "math",
+"grade": 10,
+"unit": "المثلثات المتطابقة",
+"glossary": false,
+"href": "congruent-triangles/"
+},
+{
+"slug": "transversal-angles",
+"title": "المستقيمان والقاطع: الزوايا الثماني",
+"subject": "math",
+"grade": 10,
+"unit": "المستقيمان والقاطع",
+"glossary": false,
+"href": "transversal-angles/"
+},
+{
+"slug": "planes-postulates",
+"title": "النقاط والمستقيمات والمستويات: المسلّمات",
+"subject": "math",
+"grade": 10,
+"unit": "المسلمات والبراهين الحرة",
+"glossary": false,
+"href": "planes-postulates/"
+},
+{
+"slug": "triangle-angles",
+"title": "زوايا المثلث: مسار الروبوت",
+"subject": "math",
+"grade": 10,
+"unit": "زوايا المثلثات",
+"glossary": false,
+"href": "triangle-angles/"
+},
+{
+"slug": "slope-lab-forms",
+"title": "صيغة الميل والمقطع: عرض الاتصالات",
+"subject": "math",
+"grade": 10,
+"unit": "صيغ معادلة المستقيم",
+"glossary": false,
+"href": "slope-lab/?m=forms"
+},
+{
+"slug": "hinge-jack-inequality",
+"title": "متباينة المثلث: طريق خالد",
+"subject": "math",
+"grade": 10,
+"unit": "متباينة المثلث",
+"glossary": false,
+"href": "hinge-jack/?m=inequality"
+},
+{
+"slug": "slope-lab",
+"title": "الميل: معدّل التغيّر",
+"subject": "math",
+"grade": 10,
+"unit": "ميل المستقيم",
+"glossary": false,
+"href": "slope-lab/"
+},
+{
+"slug": "slope-lab-roof",
+"title": "ميل السطح: بوصة لكل قدم",
+"subject": "math",
+"grade": 10,
+"unit": "ميل المستقيم",
+"glossary": false,
+"href": "slope-lab/?m=roof"
+},
+{
+"slug": "probability-dice-venn",
+"title": "احتمال حادثتين غير متنافيتين: مكعّبٌ وشكل فن",
+"subject": "math",
+"grade": 11,
+"unit": "احتمالات الحوادث المتنافية",
+"glossary": false,
+"href": "probability-dice/?m=venn"
+},
+{
+"slug": "geometric-probability",
+"title": "الاحتمال الهندسيّ: هدف المظلّيّ",
+"subject": "math",
+"grade": 11,
+"unit": "الاحتمال الهندسي",
+"glossary": false,
+"href": "geometric-probability/"
+},
+{
+"slug": "geometric-probability-spinner",
+"title": "القرص ذو المؤشّر الدوّار",
+"subject": "math",
+"grade": 11,
+"unit": "الاحتمال الهندسي",
+"glossary": false,
+"href": "geometric-probability/?m=spinner"
+},
+{
+"slug": "circular-permutations",
+"title": "التباديل الدائريّة: منضدة التوابل",
+"subject": "math",
+"grade": 11,
+"unit": "الاحتمال باستعمال التباديل والتوافيق",
+"glossary": false,
+"href": "circular-permutations/"
+},
+{
+"slug": "induction-cubes",
+"title": "مجموع المكعّبات: برهان بالمربّعات",
+"subject": "math",
+"grade": 11,
+"unit": "البرهان باستعمال مبدأ الاستقراء الرياضي",
+"glossary": false,
+"href": "induction-dominoes/?m=cubes"
+},
+{
+"slug": "induction-dominoes",
+"title": "مبدأ الاستقراء الرياضيّ: الدومينو",
+"subject": "math",
+"grade": 11,
+"unit": "البرهان باستعمال مبدأ الاستقراء الرياضي",
+"glossary": false,
+"href": "induction-dominoes/"
+},
+{
+"slug": "unit-circle-pedal",
+"title": "دوّاسة الدرّاجة: دالة دورية",
+"subject": "math",
+"grade": 11,
+"unit": "الدوال الدائرية",
+"glossary": false,
+"href": "unit-circle-wave/?m=pedal"
+},
+{
+"slug": "unit-circle-piston",
+"title": "المكبس والعمود المرفقي: دالة دورية",
+"subject": "math",
+"grade": 11,
+"unit": "الدوال الدائرية",
+"glossary": false,
+"href": "unit-circle-wave/?m=piston"
+},
+{
+"slug": "unit-circle-wave",
+"title": "دائرة الوحدة تُفرَد موجة",
+"subject": "math",
+"grade": 11,
+"unit": "الدوال الدائرية",
+"glossary": false,
+"href": "unit-circle-wave/"
+},
+{
+"slug": "series-staircase",
+"title": "المتسلسلة الحسابيّة: درج جاوس",
+"subject": "math",
+"grade": 11,
+"unit": "المتتابعات والمتسلسلات الحسابية",
+"glossary": false,
+"href": "series-staircase/"
+},
+{
+"slug": "geometric-series",
+"title": "المتسلسلة الهندسيّة اللانهائيّة",
+"subject": "math",
+"grade": 11,
+"unit": "المتسلسلات الهندسية اللانهائية",
+"glossary": false,
+"href": "geometric-series/"
+},
+{
+"slug": "reciprocal-hyperbola",
+"title": "دالّة المقلوب: 5000 ريال للخير",
+"subject": "math",
+"grade": 11,
+"unit": "تمثيل دوال المقلوب بيانيا",
+"glossary": false,
+"href": "reciprocal-hyperbola/"
+},
+{
+"slug": "probability-dice",
+"title": "فضاء العيّنة: المؤشّر والقطعة النقديّة والمكعّب",
+"subject": "math",
+"grade": 11,
+"unit": "تمثيل فضاء العينة",
+"glossary": false,
+"href": "probability-dice/"
+},
+{
+"slug": "binomial-cube",
+"title": "مكعّب ذات الحدين",
+"subject": "math",
+"grade": 11,
+"unit": "نظرية ذات الحدين",
+"glossary": false,
+"href": "pascal-galton/?m=cube"
+},
+{
+"slug": "pascal-galton",
+"title": "مثلّث باسكال ولوح جالتون",
+"subject": "math",
+"grade": 11,
+"unit": "نظرية ذات الحدين",
+"glossary": false,
+"href": "pascal-galton/"
+},
+{
+"slug": "sampling-island",
+"title": "العيّنة الإحصائيّة: جزيرة المجتمع",
+"subject": "math",
+"grade": 12,
+"unit": "أنواع العينات",
+"glossary": false,
+"href": "sampling-island/"
+},
+{
+"slug": "lamp-factory-g12",
+"title": "قانون بيز: مصنع المصابيح",
+"subject": "math",
+"grade": 12,
+"unit": "الاحتمالات",
+"glossary": false,
+"href": "lamp-factory/"
+},
+{
+"slug": "correlation-scatter-g12",
+"title": "الارتباط وخط الانحدار",
+"subject": "math",
+"grade": 12,
+"unit": "الارتباط",
+"glossary": false,
+"href": "correlation-scatter/"
+},
+{
+"slug": "frequency-graphs-g12",
+"title": "التمثيلات البيانية: المدرج التكراري والقطاعات",
+"subject": "math",
+"grade": 12,
+"unit": "التمثيلات البيانية للتوزيعات التكرارية",
+"glossary": false,
+"href": "frequency-graphs/"
+},
+{
+"slug": "normal-bell-g12",
+"title": "التوزيع الطبيعي: منحنى الجرس",
+"subject": "math",
+"grade": 12,
+"unit": "التوزيعات الاحتمالية المتصلة",
+"glossary": false,
+"href": "normal-bell/"
+},
+{
+"slug": "poisson-port-g12",
+"title": "توزيع بواسون: بواخر الميناء",
+"subject": "math",
+"grade": 12,
+"unit": "التوزيعات الاحتمالية المنفصلة",
+"glossary": false,
+"href": "poisson-port/"
+},
+{
+"slug": "function-machines",
+"title": "تركيب دالّتين: آلتان على خطّ إنتاج",
+"subject": "math",
+"grade": 12,
+"unit": "العمليات على الدوال وتركيب دالتين",
+"glossary": false,
+"href": "function-machines/"
+},
+{
+"slug": "coin-tree-g12",
+"title": "المتغير العشوائي: شجرة قطعة النقود",
+"subject": "math",
+"grade": 12,
+"unit": "المتغيرات العشوائية",
+"glossary": false,
+"href": "coin-tree/"
+},
+{
+"slug": "inequality-probe",
+"title": "حلّ المتباينات الأسية بيانياً: مسبار القيم",
+"subject": "math",
+"grade": 12,
+"unit": "معمل الحاسبة البيانية: حل المعادلات والمتباينات الأسية",
+"glossary": false,
+"href": "inequality-probe/"
+},
+{
+"slug": "inequality-probe-log",
+"title": "حلّ المتباينات اللوغاريتمية بيانياً: مسبار القيم",
+"subject": "math",
+"grade": 12,
+"unit": "معمل الحاسبة البيانية: حل المعادلات والمتباينات اللوغاريتمية",
+"glossary": false,
+"href": "inequality-probe/?m=log"
+},
+{
+"slug": "dispersion-squares-g12",
+"title": "مقاييس التشتت: مربّعات الانحرافات",
+"subject": "math",
+"grade": 12,
+"unit": "مقاييس التشتت",
+"glossary": false,
+"href": "dispersion-squares/"
+},
+{
+"slug": "central-tendency-g12",
+"title": "مقاييس النزعة المركزية: اجمع واقسم ورتّب",
+"subject": "math",
+"grade": 12,
+"unit": "مقاييس النزعة المركزية",
+"glossary": false,
+"href": "central-tendency/"
+},
+{
+"slug": "spacetime-sheet",
+"title": "انحناء الزمكان: الشبكة المطاطيّة وانحراف الضوء",
+"subject": "physics",
+"grade": 11,
+"unit": "استخدام قانون الجذب الكوني",
+"glossary": false,
+"href": "spacetime-sheet/"
+},
+{
+"slug": "bike-gears",
+"title": "مبدّلات السرعة في الدرّاجة",
+"subject": "physics",
+"grade": 11,
+"unit": "الآلات",
+"glossary": false,
+"href": "bike-gears/"
+},
+{
+"slug": "simple-machines-11",
+"title": "الآلات البسيطة والفائدة الميكانيكية والكفاءة",
+"subject": "physics",
+"grade": 11,
+"unit": "الآلات",
+"glossary": false,
+"href": "simple-machines-11/"
+},
+{
+"slug": "diver-rotation",
+"title": "الغطّاس والبلبل: طاقة حركية خطية ودورانية",
+"subject": "physics",
+"grade": 11,
+"unit": "الأشكال المتعددة للطاقة",
+"glossary": false,
+"href": "diver-rotation/"
+},
+{
+"slug": "center-of-mass",
+"title": "مركز الكتلة: مفتاح الشدّ والمضرب ولاعب الجمباز",
+"subject": "physics",
+"grade": 11,
+"unit": "الاتزان",
+"glossary": false,
+"href": "center-of-mass/"
+},
+{
+"slug": "coriolis-turntable",
+"title": "القرص الدوّار وقوّة كوريوليس",
+"subject": "physics",
+"grade": 11,
+"unit": "الاتزان",
+"glossary": false,
+"href": "coriolis-turntable/"
+},
+{
+"slug": "tipping-stability",
+"title": "الاستقرار والانقلاب",
+"subject": "physics",
+"grade": 11,
+"unit": "الاتزان",
+"glossary": false,
+"href": "tipping-stability/"
+},
+{
+"slug": "entropy-arrow",
+"title": "الإنتروبي وسهم الزمن",
+"subject": "physics",
+"grade": 11,
+"unit": "تغيرات حالة المادة وقوانين الديناميكا الحرارية",
+"glossary": false,
+"href": "entropy-arrow/"
+},
+{
+"slug": "heat-engine",
+"title": "المحرّك الحراري",
+"subject": "physics",
+"grade": 11,
+"unit": "تغيرات حالة المادة وقوانين الديناميكا الحرارية",
+"glossary": false,
+"href": "heat-engine/"
+},
+{
+"slug": "heat-pump",
+"title": "مضخّة الحرارة والثلاجة",
+"subject": "physics",
+"grade": 11,
+"unit": "تغيرات حالة المادة وقوانين الديناميكا الحرارية",
+"glossary": false,
+"href": "heat-pump/"
+},
+{
+"slug": "cavendish-balance",
+"title": "ميزان كافندش: كيف وُزنت قوّة الجاذبيّة بين كرتين؟",
+"subject": "physics",
+"grade": 11,
+"unit": "حركة الكواكب والجاذبية",
+"glossary": false,
+"href": "cavendish-balance/"
+},
+{
+"slug": "kepler-orbits",
+"title": "قوانين كبلر: المدار الإهليلجي والمساحات المتساوية",
+"subject": "physics",
+"grade": 11,
+"unit": "حركة الكواكب والجاذبية",
+"glossary": false,
+"href": "kepler-orbits/"
+},
+{
+"slug": "kepler-third-law",
+"title": "قانون كبلر الثالث: الأبعاد والأزمنة الدورية",
+"subject": "physics",
+"grade": 11,
+"unit": "حركة الكواكب والجاذبية",
+"glossary": false,
+"href": "kepler-orbits/?m=third"
+},
+{
+"slug": "momentum-collisions",
+"title": "حفظ الزخم: تصادم كرتين",
+"subject": "physics",
+"grade": 11,
+"unit": "حفظ الزخم",
+"glossary": false,
+"href": "momentum-collisions/"
+},
+{
+"slug": "collision-types",
+"title": "أنواع التصادم والطاقة",
+"subject": "physics",
+"grade": 11,
+"unit": "حفظ الطاقة",
+"glossary": false,
+"href": "momentum-collisions/?m=energy"
+},
+{
+"slug": "energy-conservation-g11",
+"title": "مستوى الإسناد: أين نضع الصفر؟",
+"subject": "physics",
+"grade": 11,
+"unit": "حفظ الطاقة",
+"glossary": false,
+"href": "energy-conservation/?g=11"
+},
+{
+"slug": "pendulum-energy",
+"title": "البندول: الطاقة الميكانيكيّة ثابتة",
+"subject": "physics",
+"grade": 11,
+"unit": "حفظ الطاقة",
+"glossary": false,
+"href": "pendulum-energy/"
+},
+{
+"slug": "calorimeter",
+"title": "المسعر: قياس الطاقة الحرارية",
+"subject": "physics",
+"grade": 11,
+"unit": "درجة الحرارة والطاقة الحرارية",
+"glossary": false,
+"href": "thermal-equilibrium/?m=calorimeter"
+},
+{
+"slug": "temperature-scales",
+"title": "مقاييس الحرارة: من الصفر المطلق إلى السوبرنوفا",
+"subject": "physics",
+"grade": 11,
+"unit": "درجة الحرارة والطاقة الحرارية",
+"glossary": false,
+"href": "temperature-scales/"
+},
+{
+"slug": "thermal-equilibrium",
+"title": "الاتزان الحراري",
+"subject": "physics",
+"grade": 11,
+"unit": "درجة الحرارة والطاقة الحرارية",
+"glossary": false,
+"href": "thermal-equilibrium/"
+},
+{
+"slug": "door-torque",
+"title": "عزم القوة والباب",
+"subject": "physics",
+"grade": 11,
+"unit": "ديناميكا الحركة الدورانية",
+"glossary": false,
+"href": "door-torque/"
+},
+{
+"slug": "radian-disc",
+"title": "الراديان وقرص CD",
+"subject": "physics",
+"grade": 11,
+"unit": "وصف الحركة الدورانية",
+"glossary": false,
+"href": "radian-disc/"
+},
+{
+"slug": "terms-s3-physics-light",
+"title": "مصطلحات: أساسيات الضوء",
+"subject": "physics",
+"grade": 12,
+"unit": "أساسيات الضوء",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-light"
+},
+{
+"slug": "inverse-square-light",
+"title": "الاستضاءة وقانون التربيع العكسيّ",
+"subject": "physics",
+"grade": 12,
+"unit": "الاستضاءة",
+"glossary": false,
+"href": "inverse-square-light/"
+},
+{
+"slug": "romer-light-speed",
+"title": "رومر وأقمار المشتري: أوّل قياسٍ لسرعة الضوء",
+"subject": "physics",
+"grade": 12,
+"unit": "الاستضاءة",
+"glossary": false,
+"href": "romer-light-speed/"
+},
+{
+"slug": "nuclear-reactor",
+"title": "المفاعل النووي: قضبان التحكم والتفاعل المتسلسل",
+"subject": "physics",
+"grade": 12,
+"unit": "الاضمحلال النووي والتفاعلات النووية",
+"glossary": false,
+"href": "nuclear-reactor/"
+},
+{
+"slug": "plane-mirror",
+"title": "المرآة المستوية: أين تقع الصورة؟",
+"subject": "physics",
+"grade": 12,
+"unit": "الانعكاس عن المرايا المستوية",
+"glossary": false,
+"href": "plane-mirror/"
+},
+{
+"slug": "terms-s3-physics-mirrors",
+"title": "مصطلحات: الانعكاس والمرايا",
+"subject": "physics",
+"grade": 12,
+"unit": "الانعكاس والمرايا",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-mirrors"
+},
+{
+"slug": "terms-s3-physics-lenses",
+"title": "مصطلحات: الانكسار والعدسات",
+"subject": "physics",
+"grade": 12,
+"unit": "الانكسار والعدسات",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-lenses"
+},
+{
+"slug": "optics-thin-film",
+"title": "ألوان الأغشية الرقيقة: فقاعة الصابون وجناح فراشة المورفو",
+"subject": "physics",
+"grade": 12,
+"unit": "التداخل",
+"glossary": false,
+"href": "optics-thin-film/"
+},
+{
+"slug": "optics-thin-film-morpho",
+"title": "جناح فراشة المورفو: لونٌ بلا صبغة",
+"subject": "physics",
+"grade": 12,
+"unit": "التداخل",
+"glossary": false,
+"href": "optics-thin-film/?m=morpho"
+},
+{
+"slug": "terms-s3-physics-interference",
+"title": "مصطلحات: التداخل والحيود",
+"subject": "physics",
+"grade": 12,
+"unit": "التداخل والحيود",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-interference"
+},
+{
+"slug": "terms-s3-physics-current",
+"title": "مصطلحات: التيار الكهربائي",
+"subject": "physics",
+"grade": 12,
+"unit": "التيار الكهربائي",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-current"
+},
+{
+"slug": "em-faraday-induction",
+"title": "الحثّ الكهرومغناطيسيّ: حرّك السلك أو المغناطيس، وقانون لنز",
+"subject": "physics",
+"grade": 12,
+"unit": "التيار الكهربائي الناتج عن تغير المجالات المغناطيسية",
+"glossary": false,
+"href": "em-faraday-induction/"
+},
+{
+"slug": "em-faraday-induction-mic",
+"title": "الميكروفون: كيف يحوّل الصوت إلى جهد؟",
+"subject": "physics",
+"grade": 12,
+"unit": "التيار الكهربائي الناتج عن تغير المجالات المغناطيسية",
+"glossary": false,
+"href": "em-faraday-induction/?m=mic"
+},
+{
+"slug": "elec-circuit-lab",
+"title": "مختبر الدوائر: التيار وقانون أوم",
+"subject": "physics",
+"grade": 12,
+"unit": "التيار الكهربائي والدوائر الكهربائية",
+"glossary": false,
+"href": "elec-circuit-lab/"
+},
+{
+"slug": "hooke-spring",
+"title": "النابض: قانون هوك والحركة التوافقية",
+"subject": "physics",
+"grade": 12,
+"unit": "الحركة الدورية",
+"glossary": false,
+"href": "hooke-spring/"
+},
+{
+"slug": "terms-s3-physics-waves",
+"title": "مصطلحات: الحركة الدورية وخصائص الموجات",
+"subject": "physics",
+"grade": 12,
+"unit": "الحركة الدورية وخصائص الموجات",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-waves"
+},
+{
+"slug": "optics-diffraction",
+"title": "الحيود: الشقّ الأحاديّ",
+"subject": "physics",
+"grade": 12,
+"unit": "الحيود",
+"glossary": false,
+"href": "optics-diffraction/"
+},
+{
+"slug": "optics-diffraction-grating",
+"title": "المحزوز والمطياف: قِس الطول الموجي",
+"subject": "physics",
+"grade": 12,
+"unit": "الحيود",
+"glossary": false,
+"href": "optics-diffraction/?m=grating"
+},
+{
+"slug": "optics-diffraction-rayleigh",
+"title": "قوّة التمييز ومعيار ريليه",
+"subject": "physics",
+"grade": 12,
+"unit": "الحيود",
+"glossary": false,
+"href": "optics-diffraction/?m=rayleigh"
+},
+{
+"slug": "optics-hologram",
+"title": "كيف يعمل الهولوغرافي؟",
+"subject": "physics",
+"grade": 12,
+"unit": "الحيود",
+"glossary": false,
+"href": "optics-hologram/"
+},
+{
+"slug": "elec-circuit-lab-parallel",
+"title": "مختبر الدوائر: دوائر التوازي",
+"subject": "physics",
+"grade": 12,
+"unit": "الدوائر الكهربائية البسيطة",
+"glossary": false,
+"href": "elec-circuit-lab/?m=parallel"
+},
+{
+"slug": "elec-circuit-lab-series",
+"title": "مختبر الدوائر: دوائر التوالي",
+"subject": "physics",
+"grade": 12,
+"unit": "الدوائر الكهربائية البسيطة",
+"glossary": false,
+"href": "elec-circuit-lab/?m=series"
+},
+{
+"slug": "resonance-tube",
+"title": "أنبوب الرنين",
+"subject": "physics",
+"grade": 12,
+"unit": "الرنين في الأعمدة الهوائية والأوتار",
+"glossary": false,
+"href": "resonance-tube/"
+},
+{
+"slug": "resonance-tube-open",
+"title": "الأنبوب المفتوح الطرفين",
+"subject": "physics",
+"grade": 12,
+"unit": "الرنين في الأعمدة الهوائية والأوتار",
+"glossary": false,
+"href": "resonance-tube/?m=open"
+},
+{
+"slug": "string-resonance",
+"title": "الأوتار وجودة الصوت",
+"subject": "physics",
+"grade": 12,
+"unit": "الرنين في الأعمدة الهوائية والأوتار",
+"glossary": false,
+"href": "standing-waves/?m=string"
+},
+{
+"slug": "estatic-electroscope",
+"title": "الكشّاف الكهربائيّ: الدلك والتوصيل والحثّ والتأريض",
+"subject": "physics",
+"grade": 12,
+"unit": "الشحنة الكهربائية",
+"glossary": false,
+"href": "estatic-electroscope/"
+},
+{
+"slug": "estatic-electroscope-rub",
+"title": "سلسلة الدلك الكهربائيّ: من يصبح سالباً؟",
+"subject": "physics",
+"grade": 12,
+"unit": "الشحنة الكهربائية",
+"glossary": false,
+"href": "estatic-electroscope/?m=rub"
+},
+{
+"slug": "terms-s3-physics-sound",
+"title": "مصطلحات: الصوت",
+"subject": "physics",
+"grade": 12,
+"unit": "الصوت",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-sound"
+},
+{
+"slug": "color-mixing",
+"title": "جمع الألوان: الأحمر والأخضر والأزرق يصنعون الأبيض",
+"subject": "physics",
+"grade": 12,
+"unit": "الطبيعة الموجية للضوء",
+"glossary": false,
+"href": "color-mixing/"
+},
+{
+"slug": "doppler-effect-light",
+"title": "الانزياح نحو الأحمر: المجرّات المبتعدة",
+"subject": "physics",
+"grade": 12,
+"unit": "الطبيعة الموجية للضوء",
+"glossary": false,
+"href": "doppler-effect/?m=light"
+},
+{
+"slug": "polarization-filters",
+"title": "الاستقطاب وقانون مالوس: حبلٌ عبر شقّ",
+"subject": "physics",
+"grade": 12,
+"unit": "الطبيعة الموجية للضوء",
+"glossary": false,
+"href": "polarization-filters/"
+},
+{
+"slug": "prism-rainbow-prism",
+"title": "التفريق: تجربة نيوتن والمنشور",
+"subject": "physics",
+"grade": 12,
+"unit": "الطبيعة الموجية للضوء",
+"glossary": false,
+"href": "prism-rainbow/?m=prism"
+},
+{
+"slug": "ripple-tank-huygens",
+"title": "مبدأ هيجنز والحيود",
+"subject": "physics",
+"grade": 12,
+"unit": "الطبيعة الموجية للضوء",
+"glossary": false,
+"href": "ripple-tank/?m=huygens"
+},
+{
+"slug": "thin-lenses",
+"title": "العدسات المحدّبة والمقعّرة: أين تتكوّن الصورة؟",
+"subject": "physics",
+"grade": 12,
+"unit": "العدسات المحدبة والمقعرة",
+"glossary": false,
+"href": "thin-lenses/"
+},
+{
+"slug": "thin-lenses-concave",
+"title": "العدسة المقعّرة: صورة خيالية مصغّرة",
+"subject": "physics",
+"grade": 12,
+"unit": "العدسات المحدبة والمقعرة",
+"glossary": false,
+"href": "thin-lenses/?m=concave"
+},
+{
+"slug": "estatic-coulomb-balance",
+"title": "ميزان كولوم: هل تقلّ القوّة بالبعد؟",
+"subject": "physics",
+"grade": 12,
+"unit": "القوة الكهربائية",
+"glossary": false,
+"href": "estatic-coulomb-balance/"
+},
+{
+"slug": "em-magnetic-stripe-disk",
+"title": "تخزين المعلومات على قرص الحاسوب مغناطيسيًّا",
+"subject": "physics",
+"grade": 12,
+"unit": "القوى الناتجة عن المجالات المغناطيسية",
+"glossary": false,
+"href": "em-magnetic-stripe/?m=disk"
+},
+{
+"slug": "em-motor-force",
+"title": "القوّة على سلكٍ يحمل تياراً: من القاعدة الثالثة إلى الجلفانومتر والمحرّك",
+"subject": "physics",
+"grade": 12,
+"unit": "القوى الناتجة عن المجالات المغناطيسية",
+"glossary": false,
+"href": "em-motor-force/"
+},
+{
+"slug": "terms-s3-physics-static",
+"title": "مصطلحات: الكهرباء الساكنة والمجالات الكهربائية",
+"subject": "physics",
+"grade": 12,
+"unit": "الكهرباء الساكنة والمجالات الكهربائية",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-static"
+},
+{
+"slug": "em-wave-spectrum",
+"title": "الموجة الكهرومغناطيسيّة وطيفها",
+"subject": "physics",
+"grade": 12,
+"unit": "المجالات الكهربائية والمغناطيسية في الفضاء",
+"glossary": false,
+"href": "em-wave-spectrum/"
+},
+{
+"slug": "terms-s3-physics-magnetism",
+"title": "مصطلحات: المجالات المغناطيسية",
+"subject": "physics",
+"grade": 12,
+"unit": "المجالات المغناطيسية",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-magnetism"
+},
+{
+"slug": "curved-mirrors",
+"title": "المرايا الكرويّة: أين يقع الجسم؟ وما صفات صورته؟",
+"subject": "physics",
+"grade": 12,
+"unit": "المرايا الكروية",
+"glossary": false,
+"href": "curved-mirrors/"
+},
+{
+"slug": "curved-mirrors-convex",
+"title": "المرآة المحدّبة ومجال الرؤية",
+"subject": "physics",
+"grade": 12,
+"unit": "المرايا الكروية",
+"glossary": false,
+"href": "curved-mirrors/?m=convex"
+},
+{
+"slug": "em-magnetic-field-3d",
+"title": "المجال المغناطيسيّ في الأبعاد الثلاثة: المغناطيس والسلك والحلقة والملفّ",
+"subject": "physics",
+"grade": 12,
+"unit": "المغانط الدائمة والمؤقتة",
+"glossary": false,
+"href": "em-magnetic-field-3d/"
+},
+{
+"slug": "bernoulli-venturi",
+"title": "مبدأ برنولي: لماذا ينخفض الضغط في الجزء الضيّق؟",
+"subject": "physics",
+"grade": 12,
+"unit": "الموائع الساكنة والموائع المتحركة",
+"glossary": false,
+"href": "bernoulli-venturi/"
+},
+{
+"slug": "terms-s3-physics-fluids",
+"title": "مصطلحات: الموائع والمواد الصلبة",
+"subject": "physics",
+"grade": 12,
+"unit": "الموائع والمواد الصلبة",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-fluids"
+},
+{
+"slug": "quantum-compton",
+"title": "تأثير كومبتون: الفوتون له زخم",
+"subject": "physics",
+"grade": 12,
+"unit": "النموذج الجسيمي للموجات",
+"glossary": false,
+"href": "quantum-compton/"
+},
+{
+"slug": "quantum-laser",
+"title": "الليزر: الانبعاث المحفّز والمرآتان",
+"subject": "physics",
+"grade": 12,
+"unit": "النموذج الكمي للذرة",
+"glossary": false,
+"href": "quantum-laser/"
+},
+{
+"slug": "mirage-road",
+"title": "السراب: بركةٌ تختفي حين تصل إليها",
+"subject": "physics",
+"grade": 12,
+"unit": "انكسار الضوء",
+"glossary": false,
+"href": "mirage-road/"
+},
+{
+"slug": "mirage-road-polar",
+"title": "السراب القطبيّ: قاربٌ مقلوب فوق القارب",
+"subject": "physics",
+"grade": 12,
+"unit": "انكسار الضوء",
+"glossary": false,
+"href": "mirage-road/?m=polar"
+},
+{
+"slug": "prism-rainbow",
+"title": "التفريق: قوس المطر",
+"subject": "physics",
+"grade": 12,
+"unit": "انكسار الضوء",
+"glossary": false,
+"href": "prism-rainbow/"
+},
+{
+"slug": "snell-refraction",
+"title": "قانون سنل والانعكاس الكلّيّ الداخليّ",
+"subject": "physics",
+"grade": 12,
+"unit": "انكسار الضوء",
+"glossary": false,
+"href": "snell-refraction/"
+},
+{
+"slug": "snell-refraction-wave",
+"title": "النموذج الموجيّ للانكسار: لماذا ينحرف الضوء؟",
+"subject": "physics",
+"grade": 12,
+"unit": "انكسار الضوء",
+"glossary": false,
+"href": "snell-refraction/?m=wave"
+},
+{
+"slug": "elec-breaker-gfci",
+"title": "أدوات السلامة: المنصهر وقاطع الدائرة",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات الدوائر الكهربائية",
+"glossary": false,
+"href": "elec-breaker-gfci/"
+},
+{
+"slug": "elec-breaker-gfci-gfci",
+"title": "كيف يعمل قاطع التفريغ الأرضي الخاطئ؟",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات الدوائر الكهربائية",
+"glossary": false,
+"href": "elec-breaker-gfci/?m=gfci"
+},
+{
+"slug": "optical-instruments",
+"title": "الأدوات البصريّة: التلسكوب والمنظار والكاميرا والمجهر",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات العدسات",
+"glossary": false,
+"href": "optical-instruments/"
+},
+{
+"slug": "efield-charge-sharing",
+"title": "توزيع الشحنات: التلامس والتأريض",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات المجالات الكهربائية",
+"glossary": false,
+"href": "efield-charge-sharing/"
+},
+{
+"slug": "efield-charge-sharing-shape",
+"title": "الرؤوس المدبّبة: أين تتكدّس الشحنات؟",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات المجالات الكهربائية",
+"glossary": false,
+"href": "efield-charge-sharing/?m=shape"
+},
+{
+"slug": "efield-potential",
+"title": "فرق الجهد الكهربائيّ: الشغل لنقل شحنة اختبار",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات المجالات الكهربائية",
+"glossary": false,
+"href": "efield-potential/"
+},
+{
+"slug": "millikan-oil-drop-g12",
+"title": "قطرة الزيت لمليكان: الشحنة مكمّاة",
+"subject": "physics",
+"grade": 12,
+"unit": "تطبيقات المجالات الكهربائية",
+"glossary": false,
+"href": "millikan-oil-drop/?g=12"
+},
+{
+"slug": "em-faraday-induction-lenz",
+"title": "قانون لنز: مغناطيسٌ يقترب من ملفّ",
+"subject": "physics",
+"grade": 12,
+"unit": "تغير المجالات المغناطيسية يولد قوة دافعة كهربائية حثية",
+"glossary": false,
+"href": "em-faraday-induction/?m=lenz"
+},
+{
+"slug": "em-faraday-induction-self",
+"title": "الحثّ الذاتيّ والقوّة الدافعة العكسيّة",
+"subject": "physics",
+"grade": 12,
+"unit": "تغير المجالات المغناطيسية يولد قوة دافعة كهربائية حثية",
+"glossary": false,
+"href": "em-faraday-induction/?m=self"
+},
+{
+"slug": "em-magnetic-stripe",
+"title": "كيف يعمل قارئ بطاقات الائتمان؟",
+"subject": "physics",
+"grade": 12,
+"unit": "تغير المجالات المغناطيسية يولد قوة دافعة كهربائية حثية",
+"glossary": false,
+"href": "em-magnetic-stripe/"
+},
+{
+"slug": "em-transformer",
+"title": "المحوّل الكهربائيّ: الرافع والخافض",
+"subject": "physics",
+"grade": 12,
+"unit": "تغير المجالات المغناطيسية يولد قوة دافعة كهربائية حثية",
+"glossary": false,
+"href": "em-transformer/"
+},
+{
+"slug": "mass-spectrometer-g12",
+"title": "مطياف الكتلة: النظائر بانحراف الأيونات",
+"subject": "physics",
+"grade": 12,
+"unit": "تفاعلات المجالات الكهربائية والمغناطيسية والمادة",
+"glossary": false,
+"href": "mass-spectrometer/?g=12"
+},
+{
+"slug": "doppler-effect",
+"title": "تأثير دوبلر: صفّارة الإسعاف",
+"subject": "physics",
+"grade": 12,
+"unit": "خصائص الصوت والكشف عنه",
+"glossary": false,
+"href": "doppler-effect/"
+},
+{
+"slug": "sound-waves",
+"title": "الجرس يهتزّ: موجات الصوت",
+"subject": "physics",
+"grade": 12,
+"unit": "خصائص الصوت والكشف عنه",
+"glossary": false,
+"href": "sound-waves/"
+},
+{
+"slug": "wave-longitudinal",
+"title": "الموجة الطوليّة في النابض",
+"subject": "physics",
+"grade": 12,
+"unit": "خصائص الموجات",
+"glossary": false,
+"href": "wave-properties/?m=longitudinal"
+},
+{
+"slug": "wave-properties",
+"title": "تشريح الموجة المستعرضة",
+"subject": "physics",
+"grade": 12,
+"unit": "خصائص الموجات",
+"glossary": false,
+"href": "wave-properties/"
+},
+{
+"slug": "wave-surface",
+"title": "الموجات السطحيّة في الماء",
+"subject": "physics",
+"grade": 12,
+"unit": "خصائص الموجات",
+"glossary": false,
+"href": "wave-properties/?m=surface"
+},
+{
+"slug": "terms-s3-physics-circuits",
+"title": "مصطلحات: دوائر التوالي والتوازي",
+"subject": "physics",
+"grade": 12,
+"unit": "دوائر التوالي والتوازي",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-circuits"
+},
+{
+"slug": "ripple-tank",
+"title": "حوض الموجات: مقدّمات الموجة والانعكاس",
+"subject": "physics",
+"grade": 12,
+"unit": "سلوك الموجات",
+"glossary": false,
+"href": "ripple-tank/"
+},
+{
+"slug": "ripple-tank-refract",
+"title": "انكسار الموجات في الماء الضحل",
+"subject": "physics",
+"grade": 12,
+"unit": "سلوك الموجات",
+"glossary": false,
+"href": "ripple-tank/?m=refract"
+},
+{
+"slug": "standing-waves",
+"title": "الموجات الموقوفة",
+"subject": "physics",
+"grade": 12,
+"unit": "سلوك الموجات",
+"glossary": false,
+"href": "standing-waves/"
+},
+{
+"slug": "terms-s3-physics-wave-behavior",
+"title": "مصطلحات: سلوك الموجات",
+"subject": "physics",
+"grade": 12,
+"unit": "سلوك الموجات",
+"glossary": true,
+"href": "terms-cards-3d/?pack=s3-physics-wave-behavior"
+},
+{
+"slug": "wave-boundaries",
+"title": "الحدّ الفاصل وتراكب النبضات",
+"subject": "physics",
+"grade": 12,
+"unit": "سلوك الموجات",
+"glossary": false,
+"href": "standing-waves/?m=pulses"
+},
+{
+"slug": "quantum-stm",
+"title": "كيف يعمل المجهر الأنبوبي الماسح (STM)؟",
+"subject": "physics",
+"grade": 12,
+"unit": "موجات المادة",
+"glossary": false,
+"href": "quantum-stm/"
+},
+{
+"slug": "quantum-bohr-hydrogen",
+"title": "نموذج بور: سلّم مستويات الطاقة وسلاسل ذرّة الهيدروجين",
+"subject": "physics",
+"grade": 12,
+"unit": "نموذج بور الذري",
+"glossary": false,
+"href": "quantum-bohr-hydrogen/"
+},
+{
+"slug": "quantum-spectra",
+"title": "طيف الانبعاث وطيف الامتصاص: بصمة كلّ غاز",
+"subject": "physics",
+"grade": 12,
+"unit": "نموذج بور الذري",
+"glossary": false,
+"href": "quantum-spectra/"
+},
+{
+"slug": "nuclear-particles",
+"title": "السنكروترون: تسارع الجسيمات والكواشف",
+"subject": "physics",
+"grade": 12,
+"unit": "وحدات بناء المادة",
+"glossary": false,
+"href": "nuclear-particles/"
+},
+{
+"slug": "nuclear-particles-quarks",
+"title": "الكواركات وضديد المادة",
+"subject": "physics",
+"grade": 12,
+"unit": "وحدات بناء المادة",
+"glossary": false,
+"href": "nuclear-particles/?m=quarks"
+}
+]
