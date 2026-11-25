@@ -26,7 +26,7 @@ export default function CharitiesPage() {
   return (
     <Shell>
       <SoftwareSchema />
-      <ServiceSchema path={c.path} name="نظام الجمعيات الشبابية — نظام إدارة الجمعيات الأهلية" description={c.meta.description} serviceType="نظام إدارة جمعيّات شبابيّة وأهليّة" packages={[pkgs.charitySub]} faqs={c.faqs} />
+      <ServiceSchema path={c.path} name="نظام الجمعيات الشبابية — نظام إدارة الجمعيات الأهلية" description={c.meta.description} serviceType="نظام إدارة جمعيّات شبابيّة وأهليّة" packages={[pkgs.charity150, pkgs.charity400, pkgs.charityMax]} faqs={c.faqs} />
       <Nav sticky={false} />
       <LocalNav name="نظام الجمعيات الشبابية" links={[{ label: "للطلاب", href: "#jawwali" }, { label: "للمشرفين", href: "#staff" }, { label: "الإدارة", href: "#admin" }, { label: "الألعاب", href: "#games" }, { label: "السعر", href: "#buy" }]} buy="ابدأ مجّاناً" />
       <main id="top">
@@ -146,10 +146,11 @@ export default function CharitiesPage() {
         <section className="v2-sec" id="buy">
           <div className="v2-wrap">
             <div className="v2-head center" data-rise>
-              <h2>سعر واحد، فيه كلّ شي.</h2>
-              <p>جرّبوا ١٤ يوماً بدون بطاقة، وبعدها ٧٩٩ ريال في السنة: التطبيق للطلاب والمشرفين والإدارة والموسم والألعاب والموقع.</p>
+              <h2>كلّ شي في كلّ باقة.</h2>
+              <p>الفرق عدد المشاركين فقط: التطبيق للطلاب والمشرفين والإدارة، والموسم والألعاب، والماليّة والموقع والإفصاح في الثلاث. جرّبوا ١٤ يوماً بدون بطاقة، وأوّل ٢٠ جمعيّة بسعر المؤسّسين ما دامت تجدّد.</p>
             </div>
-            <div className="yl-pkg"><PackageCards items={[pkgs.charitySub]} /></div>
+            <PackageCards items={[pkgs.charity150, pkgs.charity400, pkgs.charityMax]} />
+            <p className="ch-setup" data-rise>تبون نجهّز موسمكم؟ «تجهيز الموسم» بـ١,٥٠٠ ريال: ندخل المشاركين والفرق، ونطبع البطاقات، وندرّب المشرفين. <a href={waHref("السلام عليكم، أبي خدمة «تجهيز الموسم» لجمعيّتنا")} target="_blank" rel="noopener">اطلبها واتساب</a></p>
           </div>
         </section>
 

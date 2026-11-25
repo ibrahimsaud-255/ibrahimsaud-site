@@ -27,7 +27,15 @@ const CONFIG = {
   siteDomainTarget: '',
 
   /* ═══════ الاشتراك ═══════ */
-  plan: { price: 799, currency: 'ر.س', period: 'سنة', trialDays: 14, payFn: 'charity-pay' },
+  /* الباقات بعدد المشاركين (docs/نظام-الجمعيات/دراسة-التسعير.md) — للعرض فقط؛ السعر الذي يُدفع فعلاً
+     في shop_products (أصناف charity-year…) والحدّ تتحقّق منه الدالّة api (PLANS). غيّرها معاً.
+     founder = سعر المؤسّسين لأوّل ٢٠ جمعيّة، ويبقى لها ما دامت تجدّد. cap 0 = بلا حدّ. */
+  plan: { price: 1490, currency: 'ر.س', period: 'سنة', trialDays: 14, payFn: 'charity-pay', founderSeats: 20,
+    tiers: [
+      { id: '150', name: '١٥٠ مشاركاً', cap: 150, price: 1490, founder: 990 },
+      { id: '400', name: '٤٠٠ مشارك',  cap: 400, price: 2490, founder: 1690 },
+      { id: 'max', name: 'بلا حدّ',     cap: 0,   price: 3990, founder: 2690 },
+    ] },
   salesUrl: '/systems/charities/',
 
   /* ═══════ الجمعية — قيم افتراضيّة تُستبدل ببيانات الجمعيّة بعد الدخول ═══════ */

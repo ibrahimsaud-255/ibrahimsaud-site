@@ -42,7 +42,8 @@ function saasStatus() {
   if (trial > now) return { state: 'trial', days: Math.ceil((trial - now) / 864e5), until: o.trial_ends };
   return { state: 'expired', days: 0 };
 }
-const saasPriceTxt = () => `${CONFIG.plan.price} ${CONFIG.plan.currency} / ${CONFIG.plan.period}`;
+const saasN = n => Number(n).toLocaleString('en-US');
+const saasPriceTxt = () => `من ${saasN(Math.min(...CONFIG.plan.tiers.map(t => t.founder)))} ${CONFIG.plan.currency} / ${CONFIG.plan.period}`;
 function saasBar() {
   let b = document.getElementById('saasBar');
   const st = saasStatus();
@@ -57,11 +58,35 @@ function saasBar() {
 }
 
 /* ═════════ الدفع (الدالّة الحافّة charity-pay → تلر) ═════════ */
+let SAAS_PLAN = '150';
 async function saasPay() {
   if (RUSO_DEMO) { location.href = './?signup=1'; return; }
+  let q = { plan: (SAAS_ORG && SAAS_ORG.plan) || '150', founder: !!(SAAS_ORG && SAAS_ORG.founder), participants: 0, seats: 0 };
+  try { const { data, error } = await sb.functions.invoke(CONFIG.plan.payFn, { body: { action: 'quote' } }); if (!error && data && !data.error) q = data; } catch (e) {}
+  const T = CONFIG.plan.tiers, fits = t => !t.cap || q.participants <= t.cap, fnd = q.founder || q.seats > 0;
+  const cur = T.find(t => t.id === q.plan && fits(t)) || T.find(fits) || T[T.length - 1];
+  SAAS_PLAN = cur.id;
+  const row = t => {
+    const ok = fits(t), pay = fnd ? t.founder : t.price;
+    return `<button type="button" class="saas-plan${t.id === SAAS_PLAN ? ' on' : ''}" data-plan="${t.id}" ${ok ? '' : 'disabled'} onclick="saasPick('${t.id}')">
+      <span class="sp-n"><b>${t.cap ? 'حتى ' + t.name : t.name}</b><small>${ok ? (t.cap ? `${saasN(Math.round(pay / t.cap))} ${CONFIG.plan.currency} للمشارك تقريباً` : 'أيّ عدد من المشاركين') : `عندكم ${saasN(q.participants)} مشاركاً`}</small></span>
+      <span class="sp-p"><b>${saasN(pay)}</b><small>${CONFIG.plan.currency} / ${CONFIG.plan.period}${fnd ? ` · بدل ${saasN(t.price)}` : ''}</small></span></button>`;
+  };
+  openModal('اختر الباقة', `
+    <p class="r-sub" style="margin:0 0 12px">كلّ شي في كلّ باقة: التطبيق للطلاب والمشرفين، والموسم، والماليّة، والموقع. الفرق عدد المشاركين فقط${q.participants ? ` — عندكم الآن <b>${saasN(q.participants)}</b>` : ''}.</p>
+    <div class="saas-plans">${T.map(row).join('')}</div>
+    ${fnd ? `<p class="saas-fnd">${q.founder ? 'جمعيّتكم من المؤسّسين: سعركم ثابت ما دمتم تجدّدون.' : `سعر المؤسّسين لأوّل ${saasN(CONFIG.plan.founderSeats)} جمعيّة، ويبقى لكم ما دمتم تجدّدون. باقي ${saasN(q.seats)} مقعداً.`}</p>` : ''}`,
+  () => saasPayStart(SAAS_PLAN));
+  const b = document.getElementById('mSave'); if (b) b.textContent = 'ادفع';
+}
+function saasPick(id) {
+  SAAS_PLAN = id;
+  document.querySelectorAll('.saas-plan').forEach(x => x.classList.toggle('on', x.dataset.plan === id));
+}
+async function saasPayStart(plan) {
   rToast('جارٍ تجهيز صفحة الدفع…');
   try {
-    const { data, error } = await sb.functions.invoke(CONFIG.plan.payFn, { body: { action: 'start', return_url: location.origin + location.pathname } });
+    const { data, error } = await sb.functions.invoke(CONFIG.plan.payFn, { body: { action: 'start', plan, return_url: location.origin + location.pathname } });
     if (error) throw error;
     if (!data || !data.url) throw new Error((data && data.error) || 'تعذّر إنشاء رابط الدفع');
     location.href = data.url;
@@ -89,7 +114,7 @@ function saasProfileModal() {
   if (!isAdmin()) { rToast('بيانات الجمعيّة يعدّلها المدير التنفيذي', true); return; }
   const o = SAAS_ORG || { name: CONFIG.companyName, profile: {} }, p = o.profile || {};
   const st = saasStatus();
-  const stTxt = RUSO_DEMO ? 'نسخة تجريبيّة' : st.state === 'active' ? `مشترك حتى ${fmtD(st.until)}` : st.state === 'trial' ? `تجربة مجانيّة حتى ${fmtD(st.until)}` : 'منتهٍ';
+  const stTxt = RUSO_DEMO ? 'نسخة تجريبيّة' : st.state === 'active' ? `مشترك حتى ${fmtD(st.until)}${(CONFIG.plan.tiers.find(t => t.id === o.plan) || {}).name ? ' · باقة ' + CONFIG.plan.tiers.find(t => t.id === o.plan).name : ''}${o.founder ? ' · من المؤسّسين' : ''}` : st.state === 'trial' ? `تجربة مجانيّة حتى ${fmtD(st.until)}` : 'منتهٍ';
   openModal('بيانات الجمعيّة', `
     <p class="r-sub" style="margin:0 0 12px">تظهر في السندات والتقارير المطبوعة. الاشتراك: <b>${stTxt}</b></p>
     <div class="field"><label>اسم الجمعيّة</label><input id="sp_name" value="${esc(o.name || '')}"></div>

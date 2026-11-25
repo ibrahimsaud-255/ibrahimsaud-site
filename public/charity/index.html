@@ -729,6 +729,14 @@
   .saas-bar .r-sub{color:inherit;opacity:.7}
   .saas-bar span{display:flex;align-items:center;gap:6px}.saas-bar svg{width:16px;height:16px}
   .saas-bar .saas-btn{padding:7px 14px;font-size:13px;white-space:nowrap}
+  .saas-plans{display:grid;gap:8px}
+  .saas-plan{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:64px;padding:12px 16px;border-radius:14px;border:2px solid rgba(120,120,128,.22);background:rgba(120,120,128,.12);color:inherit;font:inherit;text-align:start;cursor:pointer}
+  #modalRoot .saas-plan{background:rgba(120,120,128,.16);color:inherit;box-shadow:none}
+  #modalRoot .saas-plan.on{border-color:var(--accent,#1003BD);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent,#1003BD) 15%,transparent)}
+  .saas-plan:disabled{opacity:.45;cursor:not-allowed}
+  .saas-plan span{display:flex;flex-direction:column;gap:2px}.saas-plan .sp-p{align-items:flex-end;text-align:end}
+  .saas-plan b{font-size:16px}.saas-plan .sp-p b{font-size:20px}.saas-plan small{font-size:12px;opacity:.7}
+  .saas-fnd{margin:12px 0 0;font-size:13px;opacity:.8}
 </style>
 </head>
 <body>
@@ -809,7 +817,7 @@
 <div id="modalRoot"></div>
 
 <!-- الإعدادات المركزية — يُحمَّل أولاً قبل كلّ شيء -->
-<script src="./config.js?v=32"></script>
+<script src="./config.js?v=33"></script>
 <script>
 document.title=CONFIG.brandName||'نظام إدارة الأعمال';
 if(CONFIG.brandLogoLight||CONFIG.brandLogo){document.querySelectorAll('.brand-logo').forEach(i=>i.src=CONFIG.brandLogoLight||CONFIG.brandLogo)}
@@ -845,7 +853,7 @@ document.querySelectorAll('.tagline').forEach(t=>t.textContent=CONFIG.brandTagli
 <script src="./js/26-org-erp.js?v=7ba"></script>
 <script src="./js/27-org-trello.js?v=1ba"></script>
 <script src="./js/28-org-calendar.js?v=1ba"></script>
-<script src="./js/29-saas.js?v=6"></script>
+<script src="./js/29-saas.js?v=7"></script>
 <script src="./js/30-compliance.js?v=4"></script>
 <script src="./js/31-desk.js?v=9"></script>
 <script src="./js/32-website.js?v=14"></script>

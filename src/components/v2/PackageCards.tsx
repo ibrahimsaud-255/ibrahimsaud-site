@@ -11,6 +11,7 @@ export default function PackageCards({ items, compact = false }: { items: Pkg[];
           <h3>{p.name}</h3>
           <div className="price">{p.price}{!p.free && <small>ريال{p.unit ? ` ${p.unit}` : ""}</small>}</div>
           {!p.approved && <span className="draft">سعر مقترح — ينتظر الاعتماد</span>}
+          {p.was && <span className="half">بدل {p.was} ريال{p.wasNote ? ` · ${p.wasNote}` : ""}</span>}
           {p.half && <span className="half">أو ابدأ بنصف المبلغ: {p.half} ريال</span>}
           <ul>{p.items.map((it) => <li key={it}>{it}</li>)}</ul>
           {(() => {

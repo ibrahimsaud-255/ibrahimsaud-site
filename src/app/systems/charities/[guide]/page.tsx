@@ -74,7 +74,7 @@ function Product({ first }: { first: boolean }) {
     <div className="cg-product" id={first ? "buy" : undefined} data-rise>
       <div>
         <span className="cg-pk">{charityApp.name}</span>
-        <p className="cg-price"><b>٧٩٩</b> ريال سنويّاً</p>
+        <p className="cg-price">من <b>٩٩٠</b> ريالاً سنويّاً</p>
         <p className="cg-pnote">تجربة مجّانيّة ١٤ يوماً بلا بطاقة. تسجّل جمعيّتك بنفسك وتبدأ خلال دقيقة، من الجوال أو الكمبيوتر.</p>
       </div>
       <div className="cg-pctas">
@@ -119,7 +119,7 @@ export default async function GuidePage({ params }: Props) {
                 </>
               )}
             </div>
-            <p className="from">{g.kind === "product" ? "١٤ يوماً مجّاناً بلا بطاقة · ثمّ ٧٩٩ ريال في السنة" : `آخر تحديث: ${AR(g.updated)}`}</p>
+            <p className="from">{g.kind === "product" ? "١٤ يوماً مجّاناً بلا بطاقة · ثمّ من ٩٩٠ ريالاً في السنة" : `آخر تحديث: ${AR(g.updated)}`}</p>
           </div>
         </section>
 
@@ -147,7 +147,7 @@ export default async function GuidePage({ params }: Props) {
           <div className="v2-wrap">
             <div className="v2-head" data-rise><h2>أدلّة أخرى لجمعيّتك.</h2></div>
             <ul className="v2-reads" data-rise>
-              <li><a href={charityApp.path}><b>{charityApp.name}: نظام إدارة الجمعيات الأهلية</b><span>الموسم والامتثال والموقع والماليّة في نظام واحد، بـ٧٩٩ ريالاً سنويّاً.</span></a></li>
+              <li><a href={charityApp.path}><b>{charityApp.name}: نظام إدارة الجمعيات الأهلية</b><span>الموسم والامتثال والموقع والماليّة في نظام واحد، من ٩٩٠ ريالاً سنويّاً.</span></a></li>
               {others.map((o) => <li key={o.slug}><a href={o.path}><b>{o.crumb}</b><span>{o.meta.description.slice(0, 120)}…</span></a></li>)}
             </ul>
           </div>
@@ -169,7 +169,7 @@ export default async function GuidePage({ params }: Props) {
           <WindowLight style={{ top: 0, left: "50%", width: 900, height: 600, marginLeft: -450 }} />
           <div className="v2-wrap" style={{ position: "relative" }}>
             <h2>جمعيّتك على نظام واحد، من اليوم.</h2>
-            <p>سجّلوا خلال دقيقة، وجرّبوا ١٤ يوماً مجّاناً بدون بطاقة، ثمّ ٧٩٩ ريالاً في السنة.</p>
+            <p>سجّلوا خلال دقيقة، وجرّبوا ١٤ يوماً مجّاناً بدون بطاقة، ثمّ من ٩٩٠ ريالاً في السنة.</p>
             <div className="ctas">
               <a className="v2-btn v2-btn-primary" href={charityApp.signup}>ابدأ مجّاناً</a>
               <a className="v2-link" href={waHref("السلام عليكم، عندي سؤال عن نظام الجمعيات الشبابية")} target="_blank" rel="noopener">أو اسألني واتساب <span className="chev">‹</span></a>
