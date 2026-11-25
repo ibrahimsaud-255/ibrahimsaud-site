@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   title,
   description,
   alternates: { canonical: "https://ibrahimsaud.com/content/" },
-  ...share({ title, description }, "/content/"),
+  ...share({ title, description }, "/content/", "content"),
 };
 
 const ar = (n: number) => n.toLocaleString("ar-SA");

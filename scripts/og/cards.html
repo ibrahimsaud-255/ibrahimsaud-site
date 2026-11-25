@@ -1,0 +1,224 @@
+<!doctype html>
+<!-- بطاقات رابط الواتساب (og:image) لكلّ قسم — ١٢٠٠×٦٣٠.
+     تُصيَّر بـ scripts/og/render.sh إلى public/og/<id>.jpg — افتحها بـ ?c=<id> للمعاينة.
+     قاعدة: لا أسعار أبداً في البطاقة (طلب إبراهيم ٢٠٢٦-١١-٢٥) — نبذة جذّابة وصورة فقط. -->
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<style>
+@font-face{font-family:T;src:url(../../public/fonts/thmanyah/thmanyahsans-Medium.woff2);font-weight:500}
+@font-face{font-family:T;src:url(../../public/fonts/thmanyah/thmanyahsans-Bold.woff2);font-weight:700}
+@font-face{font-family:T;src:url(../../public/fonts/thmanyah/thmanyahsans-Black.woff2);font-weight:900}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{font-family:T,sans-serif;background:#fff}
+.card{display:none;position:relative;width:1200px;height:630px;overflow:hidden;background:#f6f7fb;color:#111}
+.card.on{display:block}
+/* خلفيّة بيضاء ونصّ أسود في كلّ البطاقات (طلب إبراهيم ٢٠٢٦-١١-٢٥: لا أزرق ولا داكن) */
+.glow{position:absolute;inset:0;background:radial-gradient(55% 80% at 22% 50%,rgba(0,0,0,.06),transparent 70%)}
+.txt{position:absolute;right:84px;top:0;bottom:0;width:560px;display:flex;flex-direction:column;justify-content:center;text-align:right}
+.eyebrow{font-weight:700;font-size:28px;color:#8a8a8e;margin-bottom:14px}
+h1{font-weight:900;font-size:108px;line-height:1.02;letter-spacing:-1px}
+h1 em{font-style:normal;color:#111}
+h1.s{font-size:88px}
+h1.xs{font-size:72px;line-height:1.1}
+.sub{font-weight:500;font-size:31px;line-height:1.45;color:#555;margin-top:24px}
+.foot{position:absolute;right:84px;bottom:46px;display:flex;align-items:center;gap:18px;direction:ltr}
+.foot b{font-weight:700;font-size:28px;color:#111;font-family:T,sans-serif}
+.foot img{height:50px}
+.vis{position:absolute;left:0;top:0;bottom:0;width:560px}
+/* إطارات الصور */
+.ph{position:absolute;border-radius:26px;overflow:hidden;box-shadow:0 30px 60px rgba(0,0,0,.22);background:#000}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.phone{position:absolute;border-radius:44px;padding:9px;background:#111;box-shadow:0 34px 70px rgba(0,0,0,.3)}
+.phone img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;border-radius:36px}
+.memoji{position:absolute;filter:drop-shadow(0 20px 30px rgba(0,0,0,.15))}
+/* شعار نظام الجمعيات الشبابية (الأسود) */
+.logo{width:520px;display:block;margin-bottom:10px}
+.logo-s{width:250px;display:block;margin-bottom:26px}
+</style>
+</head>
+<body>
+
+<!-- ورش الذكاء الاصطناعي /ai/ -->
+<div class="card" id="ai">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:70px;top:70px;width:250px;height:445px;transform:rotate(-5deg)"><img src="../../public/v2/shots/ws-ai-2.jpg"></div>
+    <div class="ph" style="left:250px;top:105px;width:260px;height:462px;transform:rotate(4deg)"><img src="../../public/v2/shots/ws-ai-1.jpg"></div>
+  </div>
+  <div class="txt">
+    <div class="eyebrow">ورش الذكاء الاصطناعي</div>
+    <h1>لا تدرسه…<br><em>جرّبه.</em></h1>
+    <div class="sub">ورش عمليّة للجهات والمدارس والفرق،<br>تطلع منها وأنت تستخدمه فعلاً.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- نظام الجمعيات الشبابية /systems/charities/ -->
+<div class="card" id="charities">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="phone" style="left:92px;top:58px;width:236px;height:500px;transform:rotate(-6deg)"><img src="../../public/v2/shots/youth-stu-card.jpg"></div>
+    <div class="phone" style="left:262px;top:88px;width:246px;height:520px;transform:rotate(4deg)"><img src="../../public/v2/shots/youth-stu-home.jpg"></div>
+  </div>
+  <div class="txt">
+    <img class="logo" src="../../public/charity/assets/logo-black.png">
+    <div class="sub">الطالب والمشرف والإدارة في تطبيق واحد:<br>فرق ونقاط وحضور، وبنك ومتجر وموقع.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b></div>
+</div>
+
+<!-- دليل: الأندية الشبابية -->
+<div class="card" id="charity-youth-clubs">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="phone" style="left:92px;top:58px;width:236px;height:500px;transform:rotate(-6deg)"><img src="../../public/v2/shots/youth-staff.jpg"></div>
+    <div class="phone" style="left:262px;top:88px;width:246px;height:520px;transform:rotate(4deg)"><img src="../../public/v2/shots/youth-stu-bank.jpg"></div>
+  </div>
+  <div class="txt">
+    <img class="logo-s" src="../../public/charity/assets/logo-black.png">
+    <h1 class="s">الأندية<br><em>الشبابية.</em></h1>
+    <div class="sub">برامج أسبوعيّة وصيفيّة ورحلات،<br>فرق ونقاط وترتيب، وحضور برمز QR.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b></div>
+</div>
+
+<!-- دليل: معيار الشفافية والإفصاح -->
+<div class="card" id="charity-transparency">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:60px;top:120px;width:470px;height:294px;transform:rotate(-3deg)"><img src="../../public/v2/shots/youth-desk.jpg"></div>
+  </div>
+  <div class="txt">
+    <img class="logo-s" src="../../public/charity/assets/logo-black.png">
+    <h1 class="xs">معيار الشفافية<br><em>والإفصاح.</em></h1>
+    <div class="sub">المؤشرات والممارسات والدرجات<br>في قائمة تحقّق واحدة لجمعيّتك.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b></div>
+</div>
+
+<!-- دليل: اللائحة التنفيذية ١٤٤٧ -->
+<div class="card" id="charity-regulation">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:60px;top:120px;width:470px;height:294px;transform:rotate(-3deg)"><img src="../../public/v2/shots/youth-desk.jpg"></div>
+  </div>
+  <div class="txt">
+    <img class="logo-s" src="../../public/charity/assets/logo-black.png">
+    <h1 class="xs">اللائحة التنفيذية<br><em>١٤٤٧هـ.</em></h1>
+    <div class="sub">وش تطلب من جمعيّتك ومتى،<br>بملخّص عمليّ واضح.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b></div>
+</div>
+
+<!-- جوّالي /charity/season/ -->
+<div class="card" id="jawwali">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="phone" style="left:250px;top:60px;width:250px;height:530px;transform:rotate(4deg)"><img src="../../public/v2/shots/youth-stu-home.jpg"></div>
+    <img src="../../public/charity/season/icons/icon-512.png" style="position:absolute;left:70px;top:190px;width:220px;border-radius:50px;box-shadow:0 30px 60px rgba(0,0,0,.5);transform:rotate(-8deg)">
+  </div>
+  <div class="txt">
+    <div class="eyebrow">نظام الجمعيات الشبابية</div>
+    <h1><em>جوّالي.</em></h1>
+    <div class="sub">بطاقتك ورصيدك وفريقك ومواعيدك،<br>كلّها في جوالك.</div>
+  </div>
+  <div class="foot"><b>App Store · iPhone</b></div>
+</div>
+
+<!-- صناعة المحتوى /content/ -->
+<div class="card" id="content">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:40px;top:95px;width:210px;height:373px;transform:rotate(-8deg)"><img src="../../public/reels/btech.jpg"></div>
+    <div class="ph" style="left:300px;top:95px;width:210px;height:373px;transform:rotate(7deg)"><img src="../../public/reels/lucas-oil.jpg"></div>
+    <div class="ph" style="left:165px;top:70px;width:240px;height:427px"><img src="../../public/reels/jazeel.jpg"></div>
+  </div>
+  <div class="txt">
+    <div class="eyebrow">إبراهيم سعود</div>
+    <h1>صناعة<br><em>المحتوى.</em></h1>
+    <div class="sub">أفلام وإعلانات وتغطيات وبودكاست،<br>من الفكرة إلى النشر.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- الاستوديو /video/ -->
+<div class="card" id="video">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:50px;top:135px;width:480px;height:360px;transform:rotate(-3deg)"><img src="../../public/v2/shots/studio.jpg" style="object-position:30% 50%"></div>
+  </div>
+  <div class="txt">
+    <div class="eyebrow">الرياض</div>
+    <h1>الاستوديو<em>.</em></h1>
+    <div class="sub">بودكاست بثلاث كاميرات،<br>وأفلام تعريفيّة وموشن جرافيك.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- ابنِ نظامك بنفسك /build/ -->
+<div class="card" id="build">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:40px;top:150px;width:500px;height:330px;transform:rotate(-3deg)"><img src="../../public/v2/shots/desk-office.jpg"></div>
+    <img class="memoji" src="../../public/v2/memoji/hands_on_hips.png" style="left:330px;top:300px;width:230px">
+  </div>
+  <div class="txt">
+    <div class="eyebrow">بالذكاء الاصطناعي</div>
+    <h1 class="s">ابنِ نظامك<br><em>بنفسك.</em></h1>
+    <div class="sub">موقعك أو منصّتك أو نظامك،<br>بدون خبرة برمجة، وكلّه باسمك.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- دورة «من الفكرة للنشر» /shop/ai-idea-to-launch/ -->
+<div class="card" id="course">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:40px;top:150px;width:500px;height:330px;transform:rotate(-3deg)"><img src="../../public/v2/shots/minwal-site.jpg"></div>
+    <img class="memoji" src="../../public/v2/memoji/wink.png" style="left:340px;top:300px;width:220px">
+  </div>
+  <div class="txt">
+    <div class="eyebrow">دورة عمليّة مباشرة</div>
+    <h1>من الفكرة<br><em>للنشر.</em></h1>
+    <div class="sub">من فكرة في راسك<br>إلى موقع شغّال على دومينك.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- إعلانات المتاجر /ad-packages/ -->
+<div class="card" id="ads">
+  <div class="glow"></div>
+  <div class="vis">
+    <div class="ph" style="left:80px;top:80px;width:240px;height:427px;transform:rotate(-6deg)"><img src="../../public/reels/tad-1.jpg"></div>
+    <div class="ph" style="left:270px;top:110px;width:250px;height:445px;transform:rotate(4deg)"><img src="../../public/reels/tad-2.jpg"></div>
+  </div>
+  <div class="txt">
+    <div class="eyebrow">للمتاجر الإلكترونيّة</div>
+    <h1>إعلانك<br><em>الطوليّ.</em></h1>
+    <div class="sub">فكرة وسكربت وتصوير ومونتاج،<br>جاهز لتيك توك وسناب وانستقرام.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<!-- المدونة /blog/ -->
+<div class="card" id="blog">
+  <div class="glow"></div>
+  <div class="vis">
+    <img class="memoji" src="../../public/v2/memoji/head_tilt.png" style="left:110px;top:130px;width:360px">
+  </div>
+  <div class="txt">
+    <div class="eyebrow">إبراهيم سعود</div>
+    <h1><em>المدوّنة.</em></h1>
+    <div class="sub">الذكاء الاصطناعي والأنظمة والأعمال،<br>بكلام واضح وأمثلة من الشغل.</div>
+  </div>
+  <div class="foot"><b>ibrahimsaud.com</b><img src="../../public/v2/ibrahim-saud-logo-sticker.png"></div>
+</div>
+
+<script>
+const id = new URLSearchParams(location.search).get("c") || "ai";
+document.getElementById(id).classList.add("on");
+</script>
+</body>
+</html>

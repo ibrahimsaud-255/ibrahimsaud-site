@@ -13,7 +13,7 @@ import { site } from "@/lib/site";
 // الذكاء الاصطناعي (قرار إبراهيم ٢٠٢٦-١١-٢١): صور حقيقيّة من الورش أوّل الصفحة، ثمّ الأخبار، ثمّ التواصل.
 // بلا خدمات مشروحة ولا شرائح عروض ولا نماذج طويلة — الزائر يتصفّح بسرعة ويأخذ معلومة وحدة: خبير ذكاء اصطناعي.
 
-export const metadata: Metadata = { ...a.meta, ...share(a.meta, "/ai/"), alternates: { canonical: "https://ibrahimsaud.com/ai/" } };
+export const metadata: Metadata = { ...a.meta, ...share(a.meta, "/ai/", "ai"), alternates: { canonical: "https://ibrahimsaud.com/ai/" } };
 
 const phone = `+${site.whatsapp}`;
 // أيقونات بسيطة بخطّ واحد (لون الزرّ نفسه)

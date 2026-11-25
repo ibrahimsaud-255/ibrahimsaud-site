@@ -16,7 +16,7 @@ import { share } from "@/lib/share";
 
 // «ابنِ نظامك بنفسك»: لمن يبي يتعلّم ويبني منصّته بيده. يطلع بالدومين وGitHub وقاعدة البيانات باسمه.
 
-export const metadata: Metadata = { ...b.meta, ...share(b.meta, "/build/"), alternates: { canonical: "https://ibrahimsaud.com/build/" } };
+export const metadata: Metadata = { ...b.meta, ...share(b.meta, "/build/", "build"), alternates: { canonical: "https://ibrahimsaud.com/build/" } };
 
 export default function BuildPage() {
   return (

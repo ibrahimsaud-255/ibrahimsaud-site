@@ -15,7 +15,7 @@ const meta = {
 
 export const metadata: Metadata = {
   ...meta,
-  ...share(meta, "/blog/"),
+  ...share(meta, "/blog/", "blog"),
   alternates: { canonical: `${SITE_URL}/blog/`, types: { "application/rss+xml": `${SITE_URL}/blog/feed.xml` } },
 };
 

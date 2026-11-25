@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { OG_IMAGE, SITE_URL } from "@/lib/share";
+import { ogImage, SITE_URL } from "@/lib/share";
 import "@/components/v2/v2.css";
 import "../blog.css";
 import Shell from "@/components/v2/Shell";
@@ -25,7 +25,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!p) return {};
   const url = postUrl(p);
   const description = (p.excerpt || plain(p.body_html)).slice(0, 160);
-  const images = p.cover_url ? [{ url: p.cover_url, alt: p.title }] : [OG_IMAGE];
+  const images = p.cover_url ? [{ url: p.cover_url, alt: p.title }] : [ogImage("blog")];
   return {
     title: `${p.title} — إبراهيم سعود`,
     description,
@@ -61,7 +61,7 @@ export default async function PostPage({ params }: Props) {
         datePublished: p.published_at,
         dateModified: p.published_at,
         wordCount: plain(p.body_html).split(" ").length,
-        image: p.cover_url || OG_IMAGE.url,
+        image: p.cover_url || ogImage("blog").url,
         author: { "@type": "Person", "@id": `${SITE_URL}/#ibrahim`, name: "إبراهيم سعود", url: SITE_URL },
         publisher: { "@type": "Person", "@id": `${SITE_URL}/#ibrahim` },
         isPartOf: { "@id": `${SITE_URL}/blog/#blog` },

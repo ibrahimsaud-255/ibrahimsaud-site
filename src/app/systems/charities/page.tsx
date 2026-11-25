@@ -20,7 +20,7 @@ import StickyCta from "@/components/v2/StickyCta";
 import { guides } from "@/lib/charity-guides";
 import { pkgs, waHref } from "@/lib/v2";
 
-export const metadata: Metadata = { ...c.meta, ...share(c.meta, c.path), alternates: { canonical: `${SITE_URL}${c.path}` } };
+export const metadata: Metadata = { ...c.meta, ...share(c.share, c.path, "charities"), alternates: { canonical: `${SITE_URL}${c.path}` } };
 
 export default function CharitiesPage() {
   return (

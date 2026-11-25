@@ -20,7 +20,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title, description: i.sub, robots: { index: false, follow: false },
     ...(i.publicPath ? { alternates: { canonical: `${SITE_URL}${i.publicPath}` } } : {}),
-    ...share({ title, description: i.sub }, `/shop/${i.slug}/`),
+    ...share({ title, description: i.sub }, `/shop/${i.slug}/`, i.slug.startsWith("lessons-broadcast")
+      ? { url: `${SITE_URL}/shop/lessons-broadcast/shot-book.jpg`, alt: i.name }
+      : i.slug === "ai-idea-to-launch" ? "course" : "home"),
   };
 }
 

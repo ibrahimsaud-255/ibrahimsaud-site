@@ -1,7 +1,7 @@
 // صفحات الهبوط حول «نظام الجمعيات الشبابية»: /systems/charities/<guide>/
 // المحتوى كلّه في src/lib/charity-guides.ts — هنا الشكل والبيانات المنظّمة فقط.
 import type { Metadata } from "next";
-import { share, SITE_URL } from "@/lib/share";
+import { share, SITE_URL, type OgCard } from "@/lib/share";
 import "@/components/v2/v2.css";
 import "../charities.css";
 import Shell from "@/components/v2/Shell";
@@ -21,9 +21,12 @@ export function generateStaticParams() {
 
 type Props = { params: Promise<{ guide: string }> };
 
+// بطاقة الرابط لكلّ دليل (public/og/)
+const GUIDE_CARD: Record<string, OgCard> = { "youth-clubs": "charity-youth-clubs", transparency: "charity-transparency", "regulation-1447": "charity-regulation" };
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const g = guideBySlug((await params).guide);
-  return { ...g.meta, ...share(g.meta, g.path), alternates: { canonical: `${SITE_URL}${g.path}` } };
+  return { ...g.meta, ...share(g.meta, g.path, GUIDE_CARD[g.slug] ?? "charities"), alternates: { canonical: `${SITE_URL}${g.path}` } };
 }
 
 const PERSON = `${SITE_URL}/#ibrahim`;
