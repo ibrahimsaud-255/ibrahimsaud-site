@@ -19,8 +19,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const ar = (n: number) => String(n).replace(/\d/g, (d) => "٠١٢٣٤٥٦٧٨٩"[+d]);
-
 export default async function TestHome() {
   const posts = (await getPosts()).length;
   const list = faces(posts);
@@ -29,10 +27,10 @@ export default async function TestHome() {
     <Shell>
       <p className="me-draft">نسخة تجريبيّة للمراجعة · ما تظهر في القائمة ولا في جوجل</p>
       <Nav />
-      <main>
+      <main className="me-page">
         {/* ===== من أنا ===== */}
         <section className="v2-hero me-hero">
-          <WindowLight style={{ top: -80, left: "50%", width: 1100, height: 700, marginLeft: -550 }} />
+          <WindowLight style={{ top: -40, left: "4%", width: 760, height: 620 }} />
           <div className="v2-wrap v2-hero-grid" style={{ position: "relative" }}>
             <div>
               <p className="v2-eyebrow">{meHero.eyebrow}</p>
@@ -96,7 +94,7 @@ export default async function TestHome() {
               </div>
               <div className="me-counter">
                 <div className="big" dir="ltr">{show.done}<small> / {show.total}</small></div>
-                <p className="label">حلقة نزلت من أوّل {ar(show.total)}</p>
+                <p className="label">حلقات نزلت من الموسم الأوّل</p>
                 <div className="me-bar" aria-hidden>
                   {Array.from({ length: show.total }, (_, i) => <i key={i} className={i < show.done ? "on" : ""} />)}
                 </div>

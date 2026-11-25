@@ -19,13 +19,13 @@ export default function Story() {
     <Shell>
       <p className="me-draft">نسخة تجريبيّة للمراجعة · ما تظهر في القائمة ولا في جوجل</p>
       <Nav />
-      <main>
-        <section className="v2-hero" style={{ textAlign: "center", paddingBottom: 40 }}>
+      <main className="me-page">
+        <section className="v2-hero me-story-hero" style={{ textAlign: "center", paddingBottom: 40 }}>
           <WindowLight style={{ top: -80, left: "50%", width: 1000, height: 600, marginLeft: -500 }} />
           <div className="v2-wrap" style={{ position: "relative" }}>
             <p className="v2-eyebrow" style={{ color: "var(--blue)", fontWeight: 800 }}>{storyHead.eyebrow}</p>
-            <h1 style={{ fontSize: "clamp(42px, 6.6vw, 80px)" }}>{storyHead.title}</h1>
-            <p className="sub" style={{ marginInline: "auto" }}>{storyHead.sub}</p>
+            <h1>{storyHead.title}</h1>
+            <p className="sub">{storyHead.sub}</p>
           </div>
         </section>
 
