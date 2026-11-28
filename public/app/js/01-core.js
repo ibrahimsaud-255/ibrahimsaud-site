@@ -106,20 +106,6 @@ const def={
   },
   suppliers:[],
   aiData:{folders:[],chats:[]},
-  workspace:{
-    team:[
-      {id:'ib',name:'إبراهيم',role:'المالك',color:'#f5a623'},
-      {id:'hala',name:'هالا',role:'مدير إبداعي',color:'#a855f7'},
-      {id:'saad',name:'سعد',role:'ماركيتنج أوفيسر',color:'#3b82f6'},
-      {id:'ahmed',name:'أحمد',role:'مصمم',color:'#22c55e'},
-      {id:'rawd',name:'رود',role:'محلل بيانات',color:'#ef4444'}
-    ],
-    tasks:[],   // {id,title,assignee,type,status,due,priority,notes,date}
-    events:[],  // التقويم التسويقي {id,title,date,channel,notes}
-    files:[],   // {id,name,url,cat,note}
-    brand:{colors:['#f5a623','#0a0a0b','#ffffff'],fonts:['Thmanyah','Tajawal'],notes:''},
-    growth:{journey:[],resources:[]}  // journey:[{id,title,done,note}] · resources:[{id,title,url,tag}]
-  },
   huroofGoal:{
     targetRevenue:20000,
     targetSubscribers:800,

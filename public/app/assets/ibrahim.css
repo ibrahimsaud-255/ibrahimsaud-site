@@ -1,0 +1,63 @@
+/*
+ * ibrahim.css — ما يخصّ نظام إبراهيم فوق طبقات تصميم آبل المنقولة من نظام الجمعيات الشبابية
+ * (org → brand → sidebar → apple → dark → contrast → hig ← هذا آخرها). الهويّة: أزرق إبراهيم #2F66FF.
+ */
+:root,:root[data-theme="light"]{--accent:#2F66FF;--accent-h:#1F4FE0;--accent-soft:rgba(47,102,255,.1);--gold:var(--accent);--teal:var(--accent)}
+html.ap-dark,html.ap-dark[data-theme],html.ap-dark[data-theme="light"]{--accent:#8FAEFF;--accent-h:#B0C6FF;--accent-soft:rgba(127,162,255,.2);--accent-fill:#2F66FF;--gold:var(--accent)}
+::selection{background:rgba(47,102,255,.18)}
+
+/* الزرّ العائم القديم «المكتب» استُبدل بالـDock */
+.fab-desk{display:none!important}
+
+/* الشعار: نسخة محلّيّة أحاديّة (أسود) — تنقلب أبيض في الداكن */
+.sidebar .logo-area img.ib-logo{border-radius:0!important;max-width:118px!important;margin:8px auto 2px!important}
+html.ap-dark .sidebar .logo-area img.ib-logo,html.ap-dark .login-box img.ib-logo{filter:invert(1)}
+
+/* صورة الحساب: دائرة بلون التمييز */
+.nv-av{flex:0 0 36px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent-fill,var(--accent));color:#fff;font-weight:700;font-size:16px;line-height:1}
+
+/* بطاقة الترحيب في الرئيسيّة + الإجراءات السريعة: بطاقة بيضاء كالبقيّة وأزرار كبسوليّة */
+.hero-card{background:rgba(255,255,255,.86)!important;border:0!important;border-radius:var(--ap-rl,26px)!important;
+  -webkit-backdrop-filter:blur(14px) saturate(140%)!important;backdrop-filter:blur(14px) saturate(140%)!important;box-shadow:0 1px 2px rgba(0,0,0,.04),0 0 0 .5px rgba(0,0,0,.06)!important}
+.hero-card h1{font-family:var(--org-font)!important;font-weight:700;color:var(--ink)!important;font-size:28px!important;letter-spacing:-.3px}
+.hero-card p{color:var(--ap-l2,var(--muted))!important}
+.quick button{background:var(--ap-fill,rgba(118,118,128,.12))!important;border:0!important;border-radius:999px!important;color:var(--accent)!important;font-weight:600!important;min-height:44px;
+  -webkit-backdrop-filter:none!important;backdrop-filter:none!important;transition:background .15s,transform .12s!important}
+.quick button:hover{background:var(--ap-fill3,rgba(118,118,128,.18))!important}
+.quick button:active{transform:scale(.97)}
+.glass-btn{background:var(--ap-fill,rgba(118,118,128,.12))!important;border:0!important;border-radius:999px!important;color:var(--accent)!important;font-weight:600!important;min-height:36px;padding:8px 16px!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.glass-btn:hover{background:var(--ap-fill3,rgba(118,118,128,.18))!important;transform:none!important}
+html.ap-dark .hero-card{background:rgba(28,28,30,.86)!important;box-shadow:0 0 0 .5px rgba(255,255,255,.08)!important}
+
+/* عناوين الصفحات مباشرة على الخلفيّة (في نظام إبراهيم .page-head ابن #main مباشرة لا داخل .r-page) */
+.has-wp .main>.page-head{background:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;border:0!important;padding:4px 2px 2px!important}
+html.wp-dark .main>.page-head h1,html.wp-dark .main>.page-head h1 svg,html.wp-dark .main>.page-head>div>p,html.wp-dark .main>.page-head p{color:#fff!important;text-shadow:0 1px 12px rgba(0,0,0,.35)}
+html.wp-light .main>.page-head h1{color:#1D1D1F!important;text-shadow:0 1px 14px rgba(255,255,255,.55)}
+html.wp-dark .main>.page-head .btn-ghost{background:rgba(255,255,255,.16)!important;color:#fff!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+html.wp-light .main>.page-head .btn-ghost{background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px)}
+
+/* بطاقات الأرقام وحالة «لا شيء بعد»: أسطح بيضاء كبطاقات آبل (كانت شفّافة من الثيم الداكن القديم) */
+.stat,.empty{background:rgba(255,255,255,.86)!important;border:0!important;border-radius:var(--ap-rl,26px)!important;
+  -webkit-backdrop-filter:blur(24px) saturate(170%)!important;backdrop-filter:blur(24px) saturate(170%)!important;box-shadow:0 1px 2px rgba(0,0,0,.04),0 0 0 .5px rgba(0,0,0,.06)!important}
+.stat:after{background:var(--accent-soft)!important}
+.stat .v{font-weight:700!important;letter-spacing:-.3px;color:var(--ink)}
+.stat .l,.empty{color:var(--ap-l2,var(--muted))!important}
+.stat .ic,.stat .ic svg{color:var(--accent)!important;opacity:1}
+.empty .big svg{color:#AEAEB2!important;opacity:1}
+html.ap-dark :is(.stat,.empty){background:rgba(28,28,30,.86)!important;box-shadow:0 0 0 .5px rgba(255,255,255,.08)!important}
+/* صفوف الجداول المميّزة: أزرق خفيف بدل الذهبيّ */
+#main tr[style*="245,166,35"],#main tr[style*="245, 166, 35"]{background:var(--accent-soft)!important}
+
+/* رؤوس «حروف ودروس» و«تحت التجربة» (.desk-head) — مثل عناوين الصفحات فوق الخلفيّة */
+html.wp-dark #main .desk-head h1,html.wp-dark #main .desk-head h1 svg,html.wp-dark #main .desk-head p{color:#fff!important;text-shadow:0 1px 12px rgba(0,0,0,.35)}
+html.wp-light #main .desk-head h1{color:#1D1D1F!important}
+/* أزرار ثانويّة مباشرة على الخلفيّة (خارج البطاقات): زجاج أبيض يُقرأ فوق أيّ صورة — كما في apple.css لرأس الصفحة */
+.has-wp #main :is(.btn-ghost,.glass-btn):not(:is(.card,.stat,.empty,.hero-card,.modal,table,.hru .hu-card) *){background:rgba(255,255,255,.74)!important;-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%)}
+html.ap-dark.has-wp #main :is(.btn-ghost,.glass-btn):not(:is(.card,.stat,.empty,.hero-card,.modal,table) *){background:rgba(44,44,46,.78)!important}
+
+/* الجوال: الإجراءات السريعة عمودان بدل خمسة صفوف كاملة */
+@media (max-width:760px){
+  .hero-card .quick{display:grid!important;grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px!important}
+  .hero-card .quick button{min-width:0!important}
+  .hero-card .quick button:last-child:nth-child(odd){grid-column:1/-1}
+}

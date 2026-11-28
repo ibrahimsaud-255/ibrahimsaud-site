@@ -17,7 +17,7 @@ let S=load();
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1001 */
-const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,workspace:renderWorkspace,dashboards:renderDashboards,sales:renderSales,partners:renderPartners,collab:renderCollab,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,dshop:renderDShop,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pricing:renderPricing,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
+const RENDER={home:renderHome,huroof:renderHuroof,desktop:renderDesktop,dashboards:renderDashboards,sales:renderSales,partners:renderPartners,collab:renderCollab,crm:renderCRM,habits:renderHabits,pipeline:renderPipeline,contacts:renderContacts,products:renderProducts,subs:renderSubscriptions,appointments:renderAppointments,calendar:renderCalendar,projects:renderProjects,sitework:renderSiteWorks,blog:renderBlog,newsletter:renderNewsletter,dshop:renderDShop,invoicing:renderInvoicing,quotedesign:renderQuoteDesign,pricing:renderPricing,accounting:renderAccounting,pos:renderPOS,suppliers:renderSuppliers,boards:renderBoards,lab:renderLab,ideas:renderIdeas,team:renderTeam,settings:renderSettings};
 ;
 
 /* ⤶ 02-shell.js · سطر الأصل 1002 */
@@ -55,7 +55,7 @@ const RBASE=location.origin+location.pathname.replace(/index\.html$/,'')+'r.html
 let calRef=new Date();
 ;
 
-/* ⤶ 18-workspace.js · سطر الأصل 5958 */
+/* ⤶ وضع التجربة (?demo=1): اللوحة كاملة والحفظ محلّيّ فقط — كان علم «مساحة العمل» المحذوفة */
 let WS_DEMO=/[?&]demo=/.test(location.search);
 ;
 
@@ -76,6 +76,10 @@ sb.auth.onAuthStateChange((event,session)=>{
 
 /* ⤶ 19-freeform.js · سطر الأصل 6577 */
 document.addEventListener('focusin',e=>{const t=e.target;if(t&&t.matches&&t.matches('input[type=number]')){try{t.select()}catch(_){}}});
+;
+
+/* ⤶ 29-apple.js — سلوكيّات آبل (السحب لإغلاق النوافذ، Esc، متابعة المظهر الفاتح/الداكن للجهاز) */
+if(typeof apInit==='function')apInit();
 ;
 
 /* ⤶ 19-freeform.js · سطر الأصل 6582 */

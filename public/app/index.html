@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>مؤسسة حروف ودروس</title>
-<meta name="theme-color" content="#0a0a0b">
+<meta name="theme-color" content="#F5F5F7">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -707,6 +707,17 @@
     .statusbar{border-radius:10px}
   }
 </style>
+<!-- تصميم آبل (منقول من نظام الجمعيات الشبابية بأزرق إبراهيم #2F66FF): أساس فاتح فوق خلفيّات النظام، زجاج، Dock، وضع داكن، تباين، معايير آبل -->
+<link rel="stylesheet" href="./assets/org.css?v=1">
+<link rel="stylesheet" href="./assets/board-apple.css?v=1">
+<link rel="stylesheet" href="./assets/calendar.css?v=1">
+<link rel="stylesheet" href="./assets/brand.css?v=1">
+<link rel="stylesheet" href="./assets/sidebar.css?v=1">
+<link rel="stylesheet" href="./assets/apple.css?v=1">
+<link rel="stylesheet" href="./assets/dark.css?v=1">
+<link rel="stylesheet" href="./assets/contrast.css?v=1">
+<link rel="stylesheet" href="./assets/hig.css?v=1">
+<link rel="stylesheet" href="./assets/ibrahim.css?v=1">
 </head>
 <body>
 
@@ -755,18 +766,17 @@
       <div class="main" id="main"></div>
     </div>
   </div>
-  <button class="fab-desk" onclick="go('desktop')" title="المكتب"><i data-lucide="layout-grid"></i><span>المكتب</span></button>
 </div>
 
 <div id="flView" class="hidden"></div>
 <div id="modalRoot"></div>
 
 <!-- منطق اللوحة: سكربتات كلاسيكيّة بالترتيب (انظر js/99-boot.js لسبب الترتيب) -->
-<script src="./js/01-core.js?v=6"></script>
+<script src="./js/01-core.js?v=7"></script>
 <script src="./js/02-shell.js?v=9"></script>
 <script src="./js/03-huroof.js?v=14"></script>
 <script src="./js/03c-funnel.js?v=2"></script>
-<script src="./js/04-home.js?v=3"></script>
+<script src="./js/04-home.js?v=4"></script>
 <script src="./js/05-helpers.js?v=4"></script>
 <script src="./js/06-pipeline-tasks.js?v=1"></script>
 <script src="./js/07-habits.js?v=1"></script>
@@ -780,8 +790,7 @@
 <script src="./js/15-calendar.js?v=7"></script>
 <script src="./js/16-blog.js?v=2"></script>
 <script src="./js/17-extensions.js?v=3"></script>
-<script src="./js/18-workspace.js?v=1"></script>
-<script src="./js/19-freeform.js?v=9"></script>
+<script src="./js/19-freeform.js?v=10"></script>
 <script src="./js/20-partners.js?v=7"></script>
 <script src="./js/21-pricing.js?v=5"></script>
 <script src="./js/22-moe.js?v=1"></script>
@@ -790,6 +799,9 @@
 <script src="./js/24-collab.js?v=2"></script>
 <script src="./js/25-hrstore.js?v=1"></script>
 <script src="./js/26-dshop.js?v=13"></script>
-<script src="./js/99-boot.js?v=11"></script>
+<script src="./js/27-desk.js?v=1"></script>
+<script src="./js/28-nav.js?v=1"></script>
+<script src="./js/29-apple.js?v=1"></script>
+<script src="./js/99-boot.js?v=12"></script>
 </body>
 </html>

@@ -1,0 +1,65 @@
+/*
+ * hig.css — طبقة «معايير آبل» (Human Interface Guidelines) فوق النظام كلّه
+ * ─────────────────────────────────────────────────────────────────────────
+ * تُحمَّل آخراً. لا تغيّر الشكل؛ تضبط ما تشترطه آبل:
+ *   • أهداف اللمس ٤٤×٤٤ نقطة على الأجهزة اللمسيّة (Accessibility › Controls) — المنطقة تكبر لا الرسم.
+ *   • لا نصّ أصغر من ١١ نقطة (Typography › minimum 11 pt).
+ *   • حقول الإدخال ١٦ نقطة فأكثر على الجوال (لا تكبير تلقائيّ مزعج في سفاري).
+ *   • تجاوب فوريّ مع اللمس (Feedback) · احترام «تقليل الحركة» و«تقليل الشفافية» و«زيادة التباين».
+ *   • الزجاج السائل للتحكّم والتنقّل فقط (الشريط العلويّ، القائمة، الـDock، النوافذ)، والمحتوى بطاقات صلبة.
+ */
+
+/* ═════════ ١) اللمس: ٤٤×٤٤ ═════════ */
+@media (pointer:coarse){
+  .main :is(.btn,.r-seg button,.r-tabs button,.tr-btn,.tr-addbtn),.modal .modal-foot .btn,.dk-pill{min-height:44px}
+  .main .link-btn,.modal .link-btn{display:inline-flex;align-items:center;min-height:44px}
+  :is(.main,.modal) :is(input:not([type=checkbox]):not([type=radio]):not([type=color]):not([type=range]):not([type=file]),select){min-height:44px}
+  /* أزرار الأيقونات الصغيرة: الرسم كما هو، ومنطقة اللمس ٤٤ */
+  .main :is(.tr-ib,.tr-done,.cv-add,.cv-today,.tr-view button,.ws-ord button,.ws-link-btn,button.r-chip),.modal-head .x,.content-top :is(.menu-toggle,.sb-btn){position:relative}
+  .main :is(.tr-ib,.tr-edit,.tr-done,.cv-add,.cv-today,.tr-view button,.ws-ord button,.ws-link-btn,button.r-chip)::after,.modal-head .x::after{
+    content:"";position:absolute;left:50%;top:50%;width:max(100%,44px);height:max(100%,44px);transform:translate(-50%,-50%)}
+  .modal-head .x{min-width:44px;min-height:44px}
+}
+/* ═════════ ٢) الطباعة: حدّ أدنى ١١ نقطة ═════════ */
+.cv-gutter,.cv-hours span,.cv-mini-g span,.cv-mh span,.cv-ml,.cal-card .fc .fc-daygrid-event{font-size:max(11px,1em)!important}
+.cv-ymg i{font-size:11px!important}
+@media (max-width:820px){:is(.main,.modal) :is(input,select,textarea){font-size:max(16px,1em)}}
+
+/* ═════════ ٣) التجاوب مع اللمس ═════════ */
+@media (hover:none){
+  .main :is(.btn,.r-item,.ws-step,.ws-tile,.r-tabs button,.r-seg button):active{transform:scale(.97);transition:transform .08s}
+}
+
+/* ═════════ ٤) إمكانيّة الوصول: إعدادات الجهاز ═════════ */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+}
+@media (prefers-reduced-transparency:reduce){
+  .content-top,.sidebar,.dk-dock,.dk-pill,.dk-tip,.dk-tray,.modal,.lp-ic.ai-clear{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+  .content-top{background:#F5F5F7!important}.sidebar{background:#F2F2F7!important}
+  .dk-dock{background:rgba(242,242,247,.97)!important}.dk-tip,.dk-pill{background:#3A3A3C!important}
+  .lp-ic.ai-clear{background:#48484A!important}
+}
+@media (prefers-contrast:more){
+  :root{--muted:#3C3C43;--line:#AEAEB2}
+  .card,.ws-card,.r-item,.modal{border-color:#8E8E93!important}
+  .dk-name{text-shadow:0 1px 3px rgba(0,0,0,.9),0 0 2px rgba(0,0,0,.9)!important}
+}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+/* ═════════ ٥) الجوال: كلّ الخيارات ظاهرة — لا أشرطة تُسحب يميناً ويساراً ═════════
+   آبل: لا تُخفِ الخيارات خلف تمرير أفقيّ لا يُكتشف. التبويبات تلتفّ صفوفاً متساوية تُرى كلّها دفعة واحدة. */
+@media (max-width:820px){
+  .main .r-tabs,.main .r-seg,.main .r-quick,.main .of-nav{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(108px,1fr));gap:6px;overflow:visible!important;
+    flex-wrap:wrap;width:100%!important;max-width:100%!important;box-sizing:border-box}
+  .main .r-tabs button,.main .r-seg button,.main .of-nav button{width:100%;min-width:0;justify-content:center;text-align:center;white-space:normal;line-height:1.3;padding:8px 8px;flex-shrink:1}
+  .main .r-quick .btn{width:100%;min-width:0;justify-content:center;white-space:normal;flex-shrink:1}
+  .main .r-seg{border-radius:14px;padding:4px}
+  .has-wp .main .r-tabs{border-radius:18px}
+  .main .of-nav button{flex-direction:column;gap:4px}
+  .main .of-nav .of-t{align-items:center}
+}
+
+/* شريط النسخة التجريبيّة/الاشتراك: مسافة عن الشريط العلويّ وعن المحتوى */
+.saas-bar{margin:14px 16px 8px!important}
+@media (max-width:820px){.saas-bar{margin:12px 12px 6px!important;padding:12px 14px!important;gap:10px!important}.saas-bar .saas-btn{width:100%;justify-content:center;min-height:44px}}

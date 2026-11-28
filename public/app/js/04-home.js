@@ -136,7 +136,6 @@ function wallpaperModal(){
 function navName(id){const n=NAV.find(x=>x.id===id)||LAUNCH.find(x=>x.id===id);return n?n.name:(id==='settings'?'الإعدادات':id)}
 /* تطبيقات «تحت التجربة» تُخفى من الشريط الجانبي — تظل داخل صفحة «تحت التجربة» فقط */
 function navItems(){
-  if(WS_DEMO)return NAV.filter(n=>n.id==='workspace');
   const lab=new Set(labApps());
   return NAV.filter(n=>n.id==='lab'||!lab.has(n.id));
 }

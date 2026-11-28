@@ -933,20 +933,17 @@ function setTheme(t){if(!S.settings)S.settings={};S.settings.theme=t;
 
 ;/* ⤷ جملة تنفيذيّة نُقلت إلى 99-boot.js بترتيبها: sb.auth.onAuthStateChange((event,session)=>{ */
 function enterDemo(){
-  WS_DEMO=true;const DK='ws_demo_v1';
+  WS_DEMO=true;const DK='app_demo_v1';  // نسخة تجربة: اللوحة كاملة، والحفظ محلّيّ فقط
   try{const r=localStorage.getItem(DK);S=r?deepMerge(JSON.parse(JSON.stringify(def)),JSON.parse(r)):JSON.parse(JSON.stringify(def))}catch(_){S=JSON.parse(JSON.stringify(def))}
   migrateCompanyData(S);
-  ws();
-  if(!S.workspace.events.length){const t=today();S.workspace.events.push({id:uid(),title:'حملة الصيف',start:t,end:t,channel:'instagram',notes:'',image:''})}
   save=function(){try{localStorage.setItem(DK,JSON.stringify(S))}catch(_){}};
   const foot=document.querySelector('.nav-foot');if(foot)foot.style.display='none';
-  const fab=document.querySelector('.fab-desk');if(fab)fab.style.display='none';
-  const tg=document.querySelector('.logo-area .tagline');if(tg)tg.textContent='نسخة تجريبية — مساحة العمل';
+  const tg=document.querySelector('.logo-area .tagline');if(tg)tg.textContent='نسخة تجريبية — الحفظ على هذا الجهاز فقط';
   document.getElementById('loginView').classList.add('hidden');
   document.getElementById('appShell').classList.remove('hidden');
   renderNav();initSidebarShell();applyBranding();
   const dt=document.getElementById('ctDate');if(dt)dt.textContent=new Date().toLocaleDateString('ar',{weekday:'long',day:'numeric',month:'long'});
-  go(deepView('workspace'));if(typeof calInit==='function')calInit();
+  go(deepView('home'));if(typeof calInit==='function')calInit();
 }
 async function bootstrap(){
   const params=new URLSearchParams(location.search);

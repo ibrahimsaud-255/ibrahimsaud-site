@@ -1,0 +1,122 @@
+/*
+ * board-apple.css — لوحة المهام (27-org-trello) بأسلوب آبل الفاتح بدل وضع Trello الداكن
+ * على نمط «التذكيرات» و«Freeform»: قوائم زجاجيّة فاتحة بنقطة لون، بطاقات بيضاء، تسميات كبسوليّة،
+ * ونافذة البطاقة ورقة (Sheet) فاتحة بأقسام مجمّعة. تُحمَّل بعد trello.css.
+ */
+.tr-app{--tx:#1D1D1F;--tx2:rgba(60,60,67,.62);--card:#fff;--card-h:#fff;--pop:rgba(250,250,252,.96);--line:rgba(60,60,67,.14);--blue:var(--accent);color:var(--tx)}
+
+/* الشريط العلويّ: زجاج فاتح عائم */
+.tr-bar{margin:10px 12px 0;border-radius:22px;background:rgba(255,255,255,.62)!important;-webkit-backdrop-filter:blur(30px) saturate(190%)!important;backdrop-filter:blur(30px) saturate(190%)!important;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 0 0 .5px rgba(255,255,255,.7) inset,0 10px 30px -18px rgba(0,0,0,.35);padding:10px 12px!important}
+.tr-title{color:var(--tx)!important;font-size:20px!important;font-weight:700!important}
+.tr-view{background:rgba(118,118,128,.12)!important;border-radius:999px!important;padding:3px!important}
+.tr-view button{color:var(--tx)!important;border-radius:999px!important;width:36px!important;height:30px!important}
+.tr-view button.on{background:#fff!important;color:var(--tx)!important;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.tr-btn{background:rgba(118,118,128,.12)!important;color:var(--accent)!important;border-radius:999px!important;font-weight:600!important;padding:0 14px!important}
+.tr-btn:hover,.tr-ib:hover{background:rgba(118,118,128,.2)!important}
+.tr-btn.on{background:var(--accent)!important;color:#fff!important}
+.tr-btn b{background:var(--accent)!important}
+.tr-ib{color:var(--tx2)!important;border-radius:50%!important}
+.tr-boards,.tr-search{background:rgba(118,118,128,.12)!important;color:var(--tx)!important;border:0!important;border-radius:999px!important;font-weight:600}
+.tr-boards option{color:#1D1D1F}
+.tr-search::placeholder{color:rgba(60,60,67,.45)!important}
+.tr-search:focus{background:#fff!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)!important}
+.tr-avs .r-av,.tr-avs .r-av-img{box-shadow:0 0 0 2px #fff!important}
+.tr-avs button.on{box-shadow:0 0 0 2px var(--accent)!important}
+
+/* القوائم: زجاج فاتح، والعنوان بنقطة لون القائمة */
+.tr-board{scrollbar-color:rgba(60,60,67,.3) transparent!important}
+.tr-list{background:rgba(242,242,247,.78)!important;-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);border-radius:24px!important;
+  box-shadow:0 0 0 .5px rgba(255,255,255,.7) inset,0 10px 30px -20px rgba(0,0,0,.4)!important}
+.tr-lh h3{color:var(--tx)!important;font-size:15px!important;font-weight:700!important;display:flex;align-items:center;gap:8px}
+.tr-lh h3::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--ap-lc,#8E8E93);flex:0 0 auto}
+.tr-list[data-list=todo]{--ap-lc:#8E8E93}.tr-list[data-list=doing]{--ap-lc:#0A84FF}.tr-list[data-list=review]{--ap-lc:#FF9500}.tr-list[data-list=done]{--ap-lc:#34C759}
+.tr-cnt{color:var(--tx2)!important;font-weight:600}
+.tr-shut b{color:var(--tx)!important}
+.tr-addbtn{color:var(--accent)!important;font-weight:600!important;border-radius:12px!important}
+.tr-addbtn:hover{background:rgba(118,118,128,.12)!important;color:var(--accent)!important}
+
+/* البطاقات: بيضاء بظلّ ناعم */
+.tr-card{background:#fff!important;border-radius:16px!important;box-shadow:0 1px 2px rgba(0,0,0,.06),0 0 0 .5px rgba(0,0,0,.05)!important;color:var(--tx)!important;outline:0!important;transition:transform .15s var(--ap-ease,ease),box-shadow .15s!important}
+.tr-card:hover{transform:translateY(-1px);box-shadow:0 6px 18px -6px rgba(0,0,0,.18),0 0 0 .5px rgba(0,0,0,.05)!important;background:#fff!important}
+.tr-cover{border-radius:16px 16px 0 0}
+.tr-ct{color:var(--tx)!important;font-size:15px!important;font-weight:500}
+.tr-card.done .tr-ct span{color:var(--tx2)!important;text-decoration:line-through;text-decoration-color:rgba(60,60,67,.3)}
+.tr-done{color:#C7C7CC!important}.tr-card.done .tr-done{color:#34C759!important}
+.tr-lbls span{border-radius:999px!important}
+.tr-lbls.open span{color:#fff!important}
+.tr-badges{color:var(--tx2)!important}
+.tr-badges .ok{background:rgba(52,199,89,.15)!important;color:#1E7E34!important;border-radius:999px!important;padding:1px 8px!important}
+.tr-due{border-radius:999px!important;padding:2px 8px!important;font-weight:600}
+.tr-due.late{background:rgba(255,59,48,.13)!important;color:#D70015!important}
+.tr-due.soon{background:rgba(255,149,0,.15)!important;color:#B25000!important}
+.tr-due.ok{background:rgba(52,199,89,.15)!important;color:#1E7E34!important}
+.tr-ms .r-av,.tr-ms .r-av-img{box-shadow:0 0 0 2px #fff!important}
+.tr-edit{position:absolute!important;top:8px!important;left:8px!important;width:30px!important;height:30px!important;background:rgba(255,255,255,.92)!important;color:var(--tx2)!important;
+  box-shadow:0 1px 3px rgba(0,0,0,.12),0 0 0 .5px rgba(0,0,0,.06)!important;z-index:2}
+.tr-edit svg{width:14px!important;height:14px!important}
+.tr-ph{background:rgba(118,118,128,.16)!important;border-radius:16px!important}
+.tr-ghost{box-shadow:0 18px 40px -10px rgba(0,0,0,.35)!important;transform:rotate(1.5deg)}
+
+/* الإضافة السريعة */
+.tr-composer textarea,.tr-itemadd textarea,#trDescIn{background:#fff!important;color:var(--tx)!important;border-radius:14px!important;box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.05)!important}
+.tr-primary{background:var(--accent)!important;color:#fff!important;border-radius:999px!important;padding:8px 16px!important}
+.tr-primary:hover{filter:brightness(1.1)}
+
+/* المنبثقات: قوائم سياق زجاجيّة فاتحة */
+.tr-pop{--pop:rgba(250,250,252,.96);background:rgba(250,250,252,.96)!important;color:var(--tx)!important;-webkit-backdrop-filter:blur(30px) saturate(180%);backdrop-filter:blur(30px) saturate(180%);
+  border-radius:18px!important;box-shadow:0 18px 50px -12px rgba(0,0,0,.35),0 0 0 .5px rgba(0,0,0,.1)!important;padding:8px!important}
+.tr-pop-h b{color:var(--tx)!important;font-weight:600}
+.tr-pop>button,.tr-quick button{color:var(--tx)!important;border-radius:10px!important;font-weight:500}
+.tr-pop>button:hover,.tr-quick button:hover{background:var(--accent)!important;color:#fff!important}
+.tr-quick button{background:rgba(255,255,255,.9)!important;box-shadow:0 0 0 .5px rgba(0,0,0,.08)}
+.tr-pop hr{border-top-color:rgba(60,60,67,.14)!important}
+.tr-pop-s{color:var(--tx2)!important}
+.tr-pop input[type=date],.tr-pop select,.tr-pop-q{background:rgba(118,118,128,.1)!important;color:var(--tx)!important;border:0!important;border-radius:10px!important}
+.tr-lrow span{border-radius:10px!important;color:#fff!important}
+.tr-mrow.on{background:color-mix(in srgb,var(--accent) 12%,transparent)!important}
+.tr-covers button{border-radius:12px!important}.tr-covers button.none{border-color:rgba(60,60,67,.3)!important;color:var(--tx2)!important}
+.tr-addrow small{color:var(--tx2)!important}
+
+/* نافذة البطاقة: ورقة فاتحة بأقسام */
+.tr-mbg{background:rgba(0,0,0,.32)!important;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.tr-modal{background:#F2F2F7!important;color:var(--tx)!important;border-radius:30px!important;box-shadow:0 40px 100px -30px rgba(0,0,0,.55)!important}
+.tr-mtop{background:rgba(255,255,255,.9)!important;border-bottom:.5px solid rgba(60,60,67,.14)!important}
+.tr-listchip{background:rgba(118,118,128,.12)!important;color:var(--tx)!important;border-radius:999px!important;padding:6px 12px!important}
+.tr-cib{background:rgba(118,118,128,.14)!important;color:#3C3C43!important}
+.tr-cib:hover{background:rgba(118,118,128,.24)!important}
+.tr-main{background:transparent}
+.tr-side{background:rgba(255,255,255,.6)!important;border-inline-start:.5px solid rgba(60,60,67,.14)!important}
+#trTitle{color:var(--tx)!important}
+#trTitle:focus{background:#fff!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 28%,transparent)!important;border-radius:10px}
+.tr-chips button{border:0!important;background:#fff!important;color:var(--tx)!important;border-radius:999px!important;padding:7px 14px!important;box-shadow:0 0 0 .5px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04)}
+.tr-chips button:hover{background:#fff!important;box-shadow:0 0 0 1px var(--accent)}
+.tr-chips svg{color:var(--accent)}
+.tr-meta label{color:var(--tx2)!important;font-weight:600!important}
+.tr-mlbls span{border-radius:999px!important;color:#fff!important}
+.tr-plus,.tr-datechip,.tr-sbtn{background:rgba(118,118,128,.12)!important;color:var(--tx)!important;border-radius:999px!important}
+.tr-meta-v{color:var(--tx)!important}
+.tr-sec{background:#fff;border-radius:20px;padding:14px 16px;box-shadow:0 0 0 .5px rgba(0,0,0,.05)}
+.tr-sec-h svg{color:var(--accent)!important}.tr-sec-h h4{color:var(--tx)!important;font-weight:600!important}
+.tr-desc{color:var(--tx)!important}
+.tr-descph{background:rgba(118,118,128,.08)!important;color:var(--tx2)!important;border-radius:12px!important}
+.tr-att a{color:var(--accent)!important}.tr-att-ic{background:rgba(118,118,128,.12)!important;border-radius:10px!important}
+.tr-prog span{color:var(--tx2)!important}.tr-prog div{background:rgba(118,118,128,.16)!important;border-radius:999px!important}
+.tr-item span{color:var(--tx)!important}.tr-item:hover{background:rgba(118,118,128,.06)!important}
+.tr-item input{accent-color:var(--accent)!important}
+.tr-cmtbox textarea{background:rgba(118,118,128,.08)!important;color:var(--tx)!important;box-shadow:none!important;border-radius:14px!important}
+.tr-actrow b{color:var(--tx)!important}.tr-actrow small{color:var(--tx2)!important}
+.tr-cbody{background:rgba(118,118,128,.08)!important;color:var(--tx)!important;box-shadow:none!important;border-radius:14px!important}
+.tr-tablewrap{border-radius:22px!important;box-shadow:0 0 0 .5px rgba(0,0,0,.06)}
+@media(max-width:820px){
+  .tr-bar{margin:8px 8px 0;border-radius:20px}
+  .tr-modal{border-radius:34px 34px 0 0!important;min-height:96dvh!important;margin:0!important}
+  /* من الأعلى لا الأسفل: البطاقة الطويلة تُمرَّر ويبقى رأسها (العنوان وزرّ الإغلاق) في متناول اليد */
+  .modal-bg.tr-mbg,.tr-mbg{align-items:flex-start!important;padding:4dvh 0 0!important;overflow-y:auto!important}
+  .tr-mbg .tr-modal{animation:none}
+  .tr-side{border:0!important;background:transparent!important}
+  .tr-sec{margin-inline:0}
+}
+/* القلم ظاهر دائماً على الجوال: نترك له مكاناً حتى لا يغطّي آخر العنوان */
+@media (max-width:820px),(hover:none){.tr-ct{padding-inline-end:46px!important}}
+.tr-card:hover .tr-ct{padding-inline-end:46px}
